@@ -1,7 +1,7 @@
 package com.aoindustries.website.framework;
 
 /*
- * Copyright 2000-2006 by AO Industries, Inc.,
+ * Copyright 2000-2007 by AO Industries, Inc.,
  * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
@@ -215,7 +215,7 @@ abstract public class WebPage extends ErrorReportingServlet {
     }
 
     /**
-     * The <code>getLastModified</code> is defaults to <code>-1</code>.
+     * The <code>getLastModified</code> defaults to <code>-1</code>.
      */
     public long getLastModified(WebSiteRequest req) throws IOException, SQLException {
 	return -1;
@@ -1510,6 +1510,8 @@ abstract public class WebPage extends ErrorReportingServlet {
                                 ChainWriter out = new ChainWriter(bytes);
 				try {
 				    doGet(out, null, null);
+                                } catch(NullPointerException err) {
+                                    getErrorHandler().reportWarning(err, null);
 				} finally {
 				    out.flush();
 				    out.close();
