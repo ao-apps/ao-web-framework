@@ -341,15 +341,21 @@ abstract public class WebPage extends ErrorReportingServlet {
 
                 // Check authentication first and return HTTP error code
                 boolean alreadyDone=false;
-                try {
-                    WebSiteUser user=req.getWebSiteUser();
-                    if(!page.canAccess(user)) {
-                        page.printUnauthorizedPage(page, req, resp);
+                if("true".equals(req.getParameter("login_requested"))) {
+                    page.printLoginForm(page, new LoginException("Please Login"), req, resp);
+                    alreadyDone = true;
+                }
+                if(!alreadyDone) {
+                    try {
+                        WebSiteUser user=req.getWebSiteUser();
+                        if(!page.canAccess(user)) {
+                            page.printUnauthorizedPage(page, req, resp);
+                            alreadyDone=true;
+                        }
+                    } catch(LoginException err) {
+                        page.printLoginForm(page, err, req, resp);
                         alreadyDone=true;
                     }
-                } catch(LoginException err) {
-                    page.printLoginForm(page, err, req, resp);
-                    alreadyDone=true;
                 }
                 if(!alreadyDone) {
                     String redirect=page.getRedirectURL(req);
@@ -400,7 +406,7 @@ abstract public class WebPage extends ErrorReportingServlet {
             }
             if(doRegular) {
                 req.setUsingFrames(false);
-                if(WebSiteFrameworkConfiguration.useWebSiteCaching()) {
+                if(WebSiteFrameworkConfiguration.useWebSiteCaching() && req.getParameter("login_requested")==null && req.getParameter("login_username")==null) {
                     // Try to use the cache if the last modified time is available
                     long pageLastModified=getLastModified(req);
                     if(pageLastModified!=-1) {
@@ -497,15 +503,21 @@ abstract public class WebPage extends ErrorReportingServlet {
 
                 // Check authentication first and return HTTP error code
                 boolean alreadyDone=false;
-                try {
-                    WebSiteUser user=req.getWebSiteUser();
-                    if(!page.canAccess(user)) {
-                        page.printUnauthorizedPage(page, req, resp);
+                if("true".equals(req.getParameter("login_requested"))) {
+                    page.printLoginForm(page, new LoginException("Please Login"), req, resp);
+                    alreadyDone = true;
+                }
+                if(!alreadyDone) {
+                    try {
+                        WebSiteUser user=req.getWebSiteUser();
+                        if(!page.canAccess(user)) {
+                            page.printUnauthorizedPage(page, req, resp);
+                            alreadyDone=true;
+                        }
+                    } catch(LoginException err) {
+                        page.printLoginForm(page, err, req, resp);
                         alreadyDone=true;
                     }
-                } catch(LoginException err) {
-                    page.printLoginForm(page, err, req, resp);
-                    alreadyDone=true;
                 }
                 if(!alreadyDone) {
                     String redirect=page.getRedirectURL(req);

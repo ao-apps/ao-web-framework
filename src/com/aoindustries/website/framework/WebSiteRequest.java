@@ -24,7 +24,7 @@ import javax.servlet.http.*;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class WebSiteRequest implements HttpServletRequest, FileRenamePolicy {
+public class WebSiteRequest implements HttpServletRequest, FileRenamePolicy {
 
     /**
      * Gets the random number generator used for this request.
@@ -190,6 +190,9 @@ abstract public class WebSiteRequest implements HttpServletRequest, FileRenamePo
 
     private boolean isLynx;
     private boolean isLynxDone;
+
+    private boolean isBlackBerry;
+    private boolean isBlackBerryDone;
 
     private boolean isLinux;
     private boolean isLinuxDone;
@@ -370,8 +373,6 @@ abstract public class WebSiteRequest implements HttpServletRequest, FileRenamePo
         try {
             boolean searchEngine="true".equals(getParameter("search_engine"));
             if(searchEngine) alreadyAppended=appendParams(SB, new String[] {"search_engine", "true"}, finishedParams, alreadyAppended);
-            String layout=getLayoutName();
-            if(layout!=null && (!layout.equalsIgnoreCase("default") || isLynx())) alreadyAppended=appendParams(SB, new String[] {"layout", layout}, finishedParams, alreadyAppended);
             return alreadyAppended;
         } finally {
             Profiler.endProfile(Profiler.FAST);
@@ -977,20 +978,6 @@ abstract public class WebSiteRequest implements HttpServletRequest, FileRenamePo
     }
 
     /**
-     * Gets the name of the currently selected WebPageLayout
-     */
-    public String getLayoutName() {
-        Profiler.startProfile(Profiler.FAST, WebSiteRequest.class, "getLayoutName()", null);
-        try {
-            String layout=req.getParameter("layout");
-            if(layout==null || layout.length()==0) layout=null;
-            return layout;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
-    }
-        
-    /**
      * Determines if the request is for a Lynx browser
      */
     public boolean isLynx() {
@@ -998,10 +985,27 @@ abstract public class WebSiteRequest implements HttpServletRequest, FileRenamePo
         try {
             if(!isLynxDone) {
                 String agent = req.getHeader("user-agent");
-                isLynx=agent == null || agent.toLowerCase().indexOf("lynx") != -1;
+                isLynx=agent != null && agent.toLowerCase().indexOf("lynx") != -1;
                 isLynxDone=true;
             }
             return isLynx;
+        } finally {
+            Profiler.endProfile(Profiler.FAST);
+        }
+    }
+
+    /**
+     * Determines if the request is for a BlackBerry browser
+     */
+    public boolean isBlackBerry() {
+        Profiler.startProfile(Profiler.FAST, WebSiteRequest.class, "isBlackBerry()", null);
+        try {
+            if(!isBlackBerryDone) {
+                String agent = req.getHeader("user-agent");
+                isBlackBerry=agent != null && agent.startsWith("BlackBerry");
+                isBlackBerryDone=true;
+            }
+            return isBlackBerry;
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -1118,7 +1122,8 @@ abstract public class WebSiteRequest implements HttpServletRequest, FileRenamePo
                     isSearchEngine=
                         agent.indexOf("mozilla") == -1
                         && agent.indexOf("msie") == -1
-                        && agent.indexOf("lynx") == -1
+                        && !isLynx()
+                        && !isBlackBerry()
                     ;
                 }
                 isSearchEngineDone=true;
@@ -1154,8 +1159,6 @@ abstract public class WebSiteRequest implements HttpServletRequest, FileRenamePo
         Profiler.startProfile(Profiler.FAST, WebSiteRequest.class, "printFormFields(ChainWriter,int)", null);
         try {
             if("true".equals(req.getParameter("search_engine"))) printHiddenField(out, indent, "search_engine", "true");
-            String layout=getLayoutName();
-            if(layout!=null && (!layout.equalsIgnoreCase("default") || isLynx())) printHiddenField(out, indent, "layout", layout);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -1266,7 +1269,9 @@ abstract public class WebSiteRequest implements HttpServletRequest, FileRenamePo
      *
      * @exception LoginException if an invalid login attempt is made or the user credentials are not found
      */
-    abstract public WebSiteUser getWebSiteUser() throws IOException, SQLException, LoginException;
+    public WebSiteUser getWebSiteUser() throws IOException, SQLException, LoginException {
+        return null;
+    }
 
     /**
      * Determines if the user is currently logged in.
@@ -1291,5 +1296,6 @@ abstract public class WebSiteRequest implements HttpServletRequest, FileRenamePo
     /**
      * Logs out the current user or does nothing if not logged in.
      */
-    abstract public void logout();
+    public void logout() {
+    }
 }

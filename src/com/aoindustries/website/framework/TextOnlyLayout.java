@@ -136,6 +136,11 @@ public class TextOnlyLayout extends WebPageLayout {
                     + "          Logout: <FORM target='_top' style='display:inline;' name='logout_form' method='post' action='").printEI(req.getURL(page, req.isSecure(), null)).print("'>");
             req.printFormFields(out, 2);
             out.print("<INPUT type='hidden' name='logout_requested' value='true'><INPUT type='submit' value='Logout'></FORM>\n");
+        } else {
+            out.print("          <HR>\n"
+                    + "          Login: <FORM target='_top' style='display:inline;' name='login_form' method='post' action='").printEI(req.getURL(page, true, null)).print("'>");
+            req.printFormFields(out, 2);
+            out.print("<INPUT type='hidden' name='login_requested' value='true'><INPUT type='submit' value='Login'></FORM>\n");
         }
         out.print("          <HR>\n"
                 + "          <SPAN style='white-space: nowrap'>\n");

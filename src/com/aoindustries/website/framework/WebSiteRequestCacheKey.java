@@ -15,15 +15,15 @@ import com.aoindustries.profiler.*;
 public class WebSiteRequestCacheKey {
 
     public final boolean isSearchEngine;
-    
     public final String layout;
 
     public WebSiteRequestCacheKey(WebSiteRequest req) {
         Profiler.startProfile(Profiler.FAST, WebSiteRequestCacheKey.class, "<init>(WebSiteRequest)", null);
         try {
             this.isSearchEngine=req.isSearchEngine();
-            String layout=req.getLayoutName();
-            this.layout=layout!=null?layout:req.isLynx()?"text":"default";
+            String layout=(String)req.getSession().getAttribute("layout");
+            if(layout==null) layout=req.isLynx() || req.isBlackBerry() ? "Text" : "Default";
+            this.layout=layout;
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
