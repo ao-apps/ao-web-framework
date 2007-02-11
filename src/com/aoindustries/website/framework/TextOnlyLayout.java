@@ -231,7 +231,7 @@ public class TextOnlyLayout extends WebPageLayout {
     public void startContent(ChainWriter out, WebSiteRequest req, int[] contentColumnSpans, int preferredWidth) {
         out.print("<TABLE cellpadding=0 cellspacing=0 border=0");
         if(preferredWidth!=-1) out.print(" width='").print(preferredWidth).print('\'');
-        out.print("' align='left' valign='top'>\n"
+        out.print(" align='left' valign='top'>\n"
                 + "  <TR>\n");
         int totalColumns=0;
         for(int c=0;c<contentColumnSpans.length;c++) {
