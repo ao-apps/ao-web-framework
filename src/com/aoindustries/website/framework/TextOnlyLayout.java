@@ -87,11 +87,11 @@ public class TextOnlyLayout extends WebPageLayout {
 	out.print("<HTML>\n"
 		+ "  <HEAD>\n"
                 + "    <META http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>\n"
-		+ "    <META name='keywords' content='").printEI(page.getKeywords()).print("'>\n"
-		+ "    <META name='description' content='").printEI(page.getDescription()).print("'>\n"
-		+ "    <META name='author' content='").printEI(page.getAuthor()).print("'>\n"
-                + "    <LINK rel='stylesheet' href='").printEI(req.getURL("layout/text/global.css", req.isSecure(), null, false)).print("' type='text/css'>\n"
-                + "    <SCRIPT language='JavaScript1.2' src='").printEI(req.getURL("global.js", req.isSecure(), null, false)).print("'></SCRIPT>\n");
+		+ "    <META name='keywords' content='").writeHtmlAttribute(page.getKeywords()).print("'>\n"
+		+ "    <META name='description' content='").writeHtmlAttribute(page.getDescription()).print("'>\n"
+		+ "    <META name='author' content='").writeHtmlAttribute(page.getAuthor()).print("'>\n"
+                + "    <LINK rel='stylesheet' href='").writeHtmlAttribute(req.getURL("layout/text/global.css", req.isSecure(), null, false)).print("' type='text/css'>\n"
+                + "    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(req.getURL("global.js", req.isSecure(), null, false)).print("'></SCRIPT>\n");
         printJavaScriptIncludes(req, out, page);
         out.print("    <TITLE>");
         List<WebPage> parents=new ArrayList<WebPage>();
@@ -109,15 +109,15 @@ public class TextOnlyLayout extends WebPageLayout {
                 + "  </HEAD>\n"
                 + "  <BODY\n");
         int color=getBackgroundColor(req);
-        if(color!=-1) out.print("    bgcolor='").printHTMLColor(color).print("'\n");
+        if(color!=-1) out.print("    bgcolor='").writeHtmlColor(color).print("'\n");
         color=getTextColor(req);
-        if(color!=-1) out.print("    text='").printHTMLColor(color).print("'\n");
+        if(color!=-1) out.print("    text='").writeHtmlColor(color).print("'\n");
         color=getLinkColor(req);
-        if(color!=-1) out.print("    link='").printHTMLColor(color).print("'\n");
+        if(color!=-1) out.print("    link='").writeHtmlColor(color).print("'\n");
         color=getVisitedLinkColor(req);
-        if(color!=-1) out.print("    vlink='").printHTMLColor(color).print("'\n");
+        if(color!=-1) out.print("    vlink='").writeHtmlColor(color).print("'\n");
         color=getActiveLinkColor(req);
-        if(color!=-1) out.print("    alink='").printHTMLColor(color).print("'\n");
+        if(color!=-1) out.print("    alink='").writeHtmlColor(color).print("'\n");
         out.print("    onLoad=\"");
 	if (onLoad == null) onLoad = page.getOnLoadScript(req);
 	if (onLoad != null) {
@@ -133,12 +133,12 @@ public class TextOnlyLayout extends WebPageLayout {
         boolean isLoggedIn=req.isLoggedIn();
         if(isLoggedIn) {
             out.print("          <HR>\n"
-                    + "          Logout: <FORM target='_top' style='display:inline;' name='logout_form' method='post' action='").printEI(req.getURL(page, req.isSecure(), null)).print("'>");
+                    + "          Logout: <FORM target='_top' style='display:inline;' name='logout_form' method='post' action='").writeHtmlAttribute(req.getURL(page, req.isSecure(), null)).print("'>");
             req.printFormFields(out, 2);
             out.print("<INPUT type='hidden' name='logout_requested' value='true'><INPUT type='submit' value='Logout'></FORM>\n");
         } else {
             out.print("          <HR>\n"
-                    + "          Login: <FORM target='_top' style='display:inline;' name='login_form' method='post' action='").printEI(req.getURL(page, true, null)).print("'>");
+                    + "          Login: <FORM target='_top' style='display:inline;' name='login_form' method='post' action='").writeHtmlAttribute(req.getURL(page, true, null)).print("'>");
             req.printFormFields(out, 2);
             out.print("<INPUT type='hidden' name='login_requested' value='true'><INPUT type='submit' value='Login'></FORM>\n");
         }
@@ -146,7 +146,7 @@ public class TextOnlyLayout extends WebPageLayout {
                 + "          <SPAN style='white-space: nowrap'>\n");
         if(getLayoutChoices().length>=2) out.print("Layout: ");
         if(printWebPageLayoutSelector(page, out, req)) out.print("<BR>\n"
-                + "            Search:  <FORM name='search_site' style='display:inline;' method='post' action='").printEI(req.getURL(page, req.isSecure(), null)).print("'>\n"
+                + "            Search:  <FORM name='search_site' style='display:inline;' method='post' action='").writeHtmlAttribute(req.getURL(page, req.isSecure(), null)).print("'>\n"
                 + "              <INPUT type='hidden' name='search_target' value='entire_site'>\n");
 	req.printFormFields(out, 3);
         out.print("              <INPUT type='text' name='search_query' size=12 maxlength=255>\n"
@@ -165,8 +165,8 @@ public class TextOnlyLayout extends WebPageLayout {
             parent=parents.get(c);
             String navAlt=parent.getNavImageAlt(req);
             String navSuffix=parent.getNavImageSuffix(req);
-            out.print("            <A href='").printEI(req.getURL(parent)).print("'>").print(TreePage.replaceHTML(navAlt));
-            if(navSuffix!=null) out.print(" (").printEH(navSuffix).print(')');
+            out.print("            <A href='").writeHtmlAttribute(req.getURL(parent)).print("'>").print(TreePage.replaceHTML(navAlt));
+            if(navSuffix!=null) out.print(" (").writeHtml(navSuffix).print(')');
             out.print("</A><BR>\n");
         }
         out.print("          </SPAN>\n"
@@ -192,14 +192,15 @@ public class TextOnlyLayout extends WebPageLayout {
                 String navAlt=tpage.getNavImageAlt(req);
                 String navSuffix=tpage.getNavImageSuffix(req);
                 boolean isSelected=tpage.equals(page);
-                out.print("          <A href='").printEI(tpage.getNavImageURL(req, null)).print("'>").printEH(TreePage.replaceHTML(navAlt));
-                if(navSuffix!=null) out.print(" (").printEH(navSuffix).print(')');
+                out.print("          <A href='").writeHtmlAttribute(tpage.getNavImageURL(req, null)).print("'>").writeHtml(TreePage.replaceHTML(navAlt));
+                if(navSuffix!=null) out.print(" (").writeHtml(navSuffix).print(')');
                 out.print("</A><BR>\n");
             }
         }
         out.print("          </SPAN>\n"
-                + "          <HR>\n"
-                + "        </TD>\n"
+                + "          <HR>\n");
+        printBelowRelatedPages(out, req);
+        out.print("        </TD>\n"
                 + "        <TD valign='top'>");
         WebPage[] commonPages=getCommonPages(page, req);
         if(commonPages!=null && commonPages.length>0) {
@@ -207,7 +208,7 @@ public class TextOnlyLayout extends WebPageLayout {
             for(int c=0;c<commonPages.length;c++) {
                 if(c>0) out.print("          <TD align='center' width='1%'>|</TD>\n");
                 WebPage tpage=commonPages[c];
-                out.print("          <TD nowrap align='center' width='").print((101-commonPages.length)/commonPages.length).print("%'><A href='").printEI(tpage.getNavImageURL(req, null)).print("'>").print(tpage.getNavImageAlt(req)).print("</A></TD>\n");
+                out.print("          <TD nowrap align='center' width='").print((101-commonPages.length)/commonPages.length).print("%'><A href='").writeHtmlAttribute(tpage.getNavImageURL(req, null)).print("'>").print(tpage.getNavImageAlt(req)).print("</A></TD>\n");
             }
             out.print("        </TR></TABLE>\n");
         }
@@ -356,5 +357,11 @@ public class TextOnlyLayout extends WebPageLayout {
     }
 
     public void printLogo(WebPage page, ChainWriter out, WebSiteRequest req) throws IOException, SQLException {
+    }
+
+    /**
+     * Prints content below the related pages area on the left.
+     */
+    public void printBelowRelatedPages(ChainWriter out, WebSiteRequest req) throws IOException, SQLException {
     }
 }

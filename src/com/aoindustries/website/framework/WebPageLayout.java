@@ -135,7 +135,7 @@ abstract public class WebPageLayout {
             out.print("      <FORM name='search_two' method='POST'>\n");
             req.printFormFields(out, 4);
             out.print("        <TABLE border=0 cellspacing=0 cellpadding=0><TR><TD nowrap>\n"
-                    + "          Word(s) to search for: <input type='text' size=24 name='search_query' value='").printEI(query).print("'><BR>\n"
+                    + "          Word(s) to search for: <input type='text' size=24 name='search_query' value='").writeHtmlAttribute(query).print("'><BR>\n"
                     + "          Search Location: <input type='radio' name='search_target' value='entire_site'");
             if(isEntireSite) out.print(" checked");
             out.print("> Entire Site&nbsp;&nbsp;&nbsp;<input type='radio' name='search_target' value='this_area'");
@@ -406,9 +406,9 @@ abstract public class WebPageLayout {
                         + "  <SELECT name='layout_selector' onChange='selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);'>\n");
                 for(int c=0; c<layoutChoices.length; c++) {
                     String choice=layoutChoices[c];
-                    out.print("    <OPTION value='").printEI(choice).print('\'');
+                    out.print("    <OPTION value='").writeHtmlAttribute(choice).print('\'');
                     if(choice.equalsIgnoreCase(getName())) out.print(" selected");
-                    out.print('>').printEH(choice).print("</OPTION>\n");
+                    out.print('>').writeHtml(choice).print("</OPTION>\n");
                 }
                 out.print("  </SELECT>\n"
                         + "</FORM>\n");
@@ -426,14 +426,14 @@ abstract public class WebPageLayout {
                 String[] SA = (String[]) O;
                 int len = SA.length;
                 for (int c = 0; c < len; c++) {
-                    out.print("    <SCRIPT language='JavaScript1.2' src='").printEI(req.getURL(SA[c], req.isSecure(), null, false)).print("'></SCRIPT>\n");
+                    out.print("    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(req.getURL(SA[c], req.isSecure(), null, false)).print("'></SCRIPT>\n");
                 }
             } else if(O instanceof Class) {
-                out.print("    <SCRIPT language='JavaScript1.2' src='").printEI(req.getURL((Class)O, null)).print("'></SCRIPT>\n");
+                out.print("    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(req.getURL((Class)O, null)).print("'></SCRIPT>\n");
             } else if(O instanceof WebPage) {
-                out.print("    <SCRIPT language='JavaScript1.2' src='").printEI(req.getURL((WebPage)O, req.isSecure(), null)).print("'></SCRIPT>\n");
+                out.print("    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(req.getURL((WebPage)O, req.isSecure(), null)).print("'></SCRIPT>\n");
             } else {
-                out.print("    <SCRIPT language='JavaScript1.2' src='").printEI(req.getURL(O.toString(), req.isSecure(), null, false)).print("'></SCRIPT>\n");
+                out.print("    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(req.getURL(O.toString(), req.isSecure(), null, false)).print("'></SCRIPT>\n");
             }
 	}
     }

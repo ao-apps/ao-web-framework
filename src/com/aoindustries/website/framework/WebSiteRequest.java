@@ -1171,7 +1171,7 @@ public class WebSiteRequest implements HttpServletRequest, FileRenamePolicy {
         Profiler.startProfile(Profiler.IO, WebSiteRequest.class, "printHiddenField(ChainWriter,int,String,String)", null);
         try {
             for(int c=0;c<indent;c++) out.print("  ");
-            out.print("<INPUT type='hidden' name='").printEI(name).print("' value='").printEI(value).print("'>\n");
+            out.print("<INPUT type='hidden' name='").writeHtmlAttribute(name).print("' value='").writeHtmlAttribute(value).print("'>\n");
         } finally {
             Profiler.endProfile(Profiler.IO);
         }

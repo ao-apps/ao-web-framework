@@ -75,7 +75,7 @@ abstract public class DumpURLs extends WebPage {
 
     private void printURLs(WebSiteRequest req, ChainWriter out, WebPage page, List<WebPage> finishedPages) throws IOException, SQLException {
         if(!finishedPages.contains(page)) {
-            out.print("<A class='ao_light_link' href='").printEI(req.getURL(page)).print("'>").printEH(req.getURL(page, page.useEncryption(), null)).print("</A>\n");
+            out.print("<A class='ao_light_link' href='").writeHtmlAttribute(req.getURL(page)).print("'>").writeHtml(req.getURL(page, page.useEncryption(), null)).print("</A>\n");
 
             finishedPages.add(page);
 

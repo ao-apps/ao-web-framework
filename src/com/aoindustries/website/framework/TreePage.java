@@ -431,7 +431,7 @@ abstract public class TreePage extends WebPage {
                                             } else break;
                                         }
                                     }
-                                    out.print("<IMG src='").printEI(req.getURL(this, "image_num="+(hasMore?1:0))).print("' border=0 width="+IMAGE_WIDTH+" height="+IMAGE_HEIGHT+">");
+                                    out.print("<IMG src='").writeHtmlAttribute(req.getURL(this, "image_num="+(hasMore?1:0))).print("' border=0 width="+IMAGE_WIDTH+" height="+IMAGE_HEIGHT+">");
                                 } else break;
                             }
 
@@ -475,7 +475,7 @@ abstract public class TreePage extends WebPage {
                                             .print(c)
                                             .print(");'><IMG alt='").print(opened[c] ? "Close" : "Open")
                                             .print("' src='")
-                                            .printEI(
+                                            .writeHtmlAttribute(
                                                 req.getURL(
                                                     this,
                                                     "image_num="+(
@@ -488,14 +488,14 @@ abstract public class TreePage extends WebPage {
                                     } else {
                                         out
                                             .print("<IMG src='")
-                                            .printEI(
+                                            .writeHtmlAttribute(
                                                 req.getURL(
                                                     this,
                                                     "image_num="+(hasMore ? 2 : 3)
                                                 )
                                             ).print("' border=0 width="+IMAGE_WIDTH+" height="+IMAGE_HEIGHT+">");
                                     }
-                                    out.print("<IMG src='").printEI(req.getURL(this, "image_num=0")).print("' border=0 width=4 height="+IMAGE_HEIGHT+"></TD><TD nowrap>");
+                                    out.print("<IMG src='").writeHtmlAttribute(req.getURL(this, "image_num=0")).print("' border=0 width=4 height="+IMAGE_HEIGHT+"></TD><TD nowrap>");
                                 }
 
                                 boolean useCodeFont=useCodeFont(req);
@@ -507,13 +507,13 @@ abstract public class TreePage extends WebPage {
                                         || (pos==(pathLen-1) && path[pathLen-1].length()>0)
                                     ) && (href = tree.get(c).getUrl()) != null
                                 ) {
-                                    out.print("<A class='ao_light_link' target='_top' href='").printEI(href).print("'>").print(path[pos]).print("</A>");
+                                    out.print("<A class='ao_light_link' target='_top' href='").writeHtmlAttribute(href).print("'>").print(path[pos]).print("</A>");
                                 } else if(path[pos].length()>0) out.print(path[pos]);
                                 if(useCodeFont) out.print("</CODE>");
                             }
 
                             out.print("</TD></TR></TABLE></TD>\n"
-                                    + "      <TD nowrap width=20><IMG src='").printEI(req.getURL(this, "image_num=0")).print("' width=20 height=1></TD>\n"
+                                    + "      <TD nowrap width=20><IMG src='").writeHtmlAttribute(req.getURL(this, "image_num=0")).print("' width=20 height=1></TD>\n"
                                     + "      <TD nowrap>");
                             String description=tree.get(c).getDescription();
                             if(description!=null) out.print(description);
