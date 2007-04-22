@@ -220,7 +220,7 @@ public class WebSiteRequest implements HttpServletRequest, FileRenamePolicy {
                     mreq = new MultipartRequest(req, WebSiteFrameworkConfiguration.getFileUploadDirectory().getPath(), WebSiteFrameworkConfiguration.getMaxFileUploadSize(), this);
                     try {
                         // Determine the authentication info
-                        WebSiteUser user=getWebSiteUser();
+                        WebSiteUser user=getWebSiteUser(null);
                         if(user!=null) {
                             keepFiles=true;
                             // Create an UploadedFile for each file in the MultipartRequest
@@ -1269,7 +1269,7 @@ public class WebSiteRequest implements HttpServletRequest, FileRenamePolicy {
      *
      * @exception LoginException if an invalid login attempt is made or the user credentials are not found
      */
-    public WebSiteUser getWebSiteUser() throws IOException, SQLException, LoginException {
+    public WebSiteUser getWebSiteUser(HttpServletResponse resp) throws IOException, SQLException, LoginException {
         return null;
     }
 
@@ -1278,7 +1278,7 @@ public class WebSiteRequest implements HttpServletRequest, FileRenamePolicy {
      */
     public boolean isLoggedIn() throws IOException, SQLException {
         try {
-            return getWebSiteUser()!=null;
+            return getWebSiteUser(null)!=null;
         } catch(LoginException err) {
             return false;
         }
@@ -1296,6 +1296,6 @@ public class WebSiteRequest implements HttpServletRequest, FileRenamePolicy {
     /**
      * Logs out the current user or does nothing if not logged in.
      */
-    public void logout() {
+    public void logout(HttpServletResponse resp) {
     }
 }

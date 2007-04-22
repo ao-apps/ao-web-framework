@@ -7,6 +7,7 @@ package com.aoindustries.website.framework;
  */
 import java.io.IOException;
 import java.sql.SQLException;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -29,7 +30,8 @@ public class RedirectWebPage extends WebPage {
      *
      * @param  path  the path relative to the top of the application, without a preceeding slash (/)
      */
-    public RedirectWebPage(WebPage parent, String path, boolean useEncryption, String description, String keywords, String navImageAlt, String title) {
+    public RedirectWebPage(ServletContext context, WebPage parent, String path, boolean useEncryption, String description, String keywords, String navImageAlt, String title) {
+        setServletContext(context);
         this.parent = parent;
         this.path = path;
         this.useEncryption = useEncryption;

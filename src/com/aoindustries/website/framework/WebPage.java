@@ -199,7 +199,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 
             // Check authentication first
             try {
-                WebSiteUser user=req.getWebSiteUser();
+                WebSiteUser user=req.getWebSiteUser(null);
                 if(!page.canAccess(user)) return -1;
             } catch(LoginException err) {
                 return -1;
@@ -331,13 +331,15 @@ abstract public class WebPage extends ErrorReportingServlet {
                 WebSiteFrameworkConfiguration.getEnforceSecureMode()
                 && page.enforceEncryption()
                 && req.isSecure()!=page.useEncryption()
+                && req.getParameter("login_requested")==null
+                && req.getParameter("login_username")==null
             ) {
                 // Redirect to use proper encryption mode
                 resp.sendRedirect(req.getURL(page, page.useEncryption(), null));
             } else {
                 // Logout when requested
                 boolean isLogout="true".equals(req.getParameter("logout_requested"));
-                if(isLogout) req.logout();
+                if(isLogout) req.logout(resp);
 
                 // Check authentication first and return HTTP error code
                 boolean alreadyDone=false;
@@ -347,7 +349,7 @@ abstract public class WebPage extends ErrorReportingServlet {
                 }
                 if(!alreadyDone) {
                     try {
-                        WebSiteUser user=req.getWebSiteUser();
+                        WebSiteUser user=req.getWebSiteUser(resp);
                         if(!page.canAccess(user)) {
                             page.printUnauthorizedPage(page, req, resp);
                             alreadyDone=true;
@@ -493,13 +495,15 @@ abstract public class WebPage extends ErrorReportingServlet {
                 WebSiteFrameworkConfiguration.getEnforceSecureMode()
                 && page.enforceEncryption()
                 && req.isSecure()!=page.useEncryption()
+                && req.getParameter("login_requested")==null
+                && req.getParameter("login_username")==null
             ) {
                 // Redirect to use proper encryption mode
                 resp.sendRedirect(req.getURL(page, page.useEncryption(), null));
             } else {
                 // Logout when requested
                 boolean isLogout="true".equals(req.getParameter("logout_requested"));
-                if(isLogout) req.logout();
+                if(isLogout) req.logout(resp);
 
                 // Check authentication first and return HTTP error code
                 boolean alreadyDone=false;
@@ -509,7 +513,7 @@ abstract public class WebPage extends ErrorReportingServlet {
                 }
                 if(!alreadyDone) {
                     try {
-                        WebSiteUser user=req.getWebSiteUser();
+                        WebSiteUser user=req.getWebSiteUser(resp);
                         if(!page.canAccess(user)) {
                             page.printUnauthorizedPage(page, req, resp);
                             alreadyDone=true;
@@ -1715,7 +1719,7 @@ abstract public class WebPage extends ErrorReportingServlet {
         }
     }
 
-    private void setServletContext(ServletContext context) {
+    void setServletContext(ServletContext context) {
         Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "setServletContext(ServletContext)", null);
         try {
             this.context=context;
