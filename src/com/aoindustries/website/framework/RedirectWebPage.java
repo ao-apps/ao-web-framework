@@ -54,7 +54,14 @@ public class RedirectWebPage extends WebPage {
     }
 
     public String getRedirectURL(WebSiteRequest req) throws IOException {
-        return (useEncryption ? WebSiteFrameworkConfiguration.getHttpsBase():WebSiteFrameworkConfiguration.getHttpBase())+path;
+        String lowerPath = path.toLowerCase();
+        if(lowerPath.startsWith("http:") || lowerPath.startsWith("https:")) return path;
+        return
+            (
+                useEncryption
+                ? WebSiteFrameworkConfiguration.getHttpsBase()
+                : WebSiteFrameworkConfiguration.getHttpBase()
+            )+path;
     }
 
     public String getURLPath() {

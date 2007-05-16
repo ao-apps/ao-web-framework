@@ -891,12 +891,16 @@ public class WebSiteRequest implements HttpServletRequest, FileRenamePolicy {
         try {
             List<String> finishedParams=new SortedArrayList<String>();
             StringBuilder SB = new StringBuilder();
-            SB.append(
-                useEncryption
-                ?WebSiteFrameworkConfiguration.getHttpsBase()
-                :WebSiteFrameworkConfiguration.getHttpBase()
-            );
-            SB.append(page.getURLPath());
+            String path = page.getURLPath();
+            String lowerPath = path.toLowerCase();
+            if(!path.startsWith("http:") && !path.startsWith("https:")) {
+                SB.append(
+                    useEncryption
+                    ?WebSiteFrameworkConfiguration.getHttpsBase()
+                    :WebSiteFrameworkConfiguration.getHttpBase()
+                );
+            }
+            SB.append(path);
             boolean alreadyAppended=appendParams(SB, optParam, finishedParams, false);
             alreadyAppended=appendParams(SB, page.getURLParams(this), finishedParams, alreadyAppended);
 
