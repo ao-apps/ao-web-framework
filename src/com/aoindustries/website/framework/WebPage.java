@@ -190,7 +190,8 @@ abstract public class WebPage extends ErrorReportingServlet {
         Profiler.startProfile(Profiler.FAST, WebPage.class, "reportingGetLastModified(HttpServletRequest)", null);
         try {
             WebSiteRequest req=getWebSiteRequest(httpReq);
-            WebPage page=getWebPage(getClass(), req);
+            Class<? extends WebPage> thisClass = getClass();
+            WebPage page=getWebPage(thisClass, req);
             if(
                 WebSiteFrameworkConfiguration.getEnforceSecureMode()
                 && page.enforceEncryption()
@@ -1082,8 +1083,8 @@ abstract public class WebPage extends ErrorReportingServlet {
     /**
      * @see  #getWebPage(ServletContext,Class,WebSiteRequest)
      */
-    public WebPage getWebPage(Class clazz, WebSiteRequest req) throws IOException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getWebPage(Class,WebSiteRequest)", null);
+    public WebPage getWebPage(Class<? extends WebPage> clazz, WebSiteRequest req) throws IOException {
+        Profiler.startProfile(Profiler.FAST, WebPage.class, "getWebPage(Class<? extends WebPage>,WebSiteRequest)", null);
         try {
             return getWebPage(getServletContext(), clazz, req);
         } finally {
@@ -1110,8 +1111,8 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @see  WebSiteFrameworkConfiguration#useWebSiteCaching()
      * @see  #isHandler(WebSiteRequest)
      */
-    public static WebPage getWebPage(ServletContext context, Class clazz, WebSiteRequest req) throws IOException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getWebPage(ServletContext,Class,WebSiteRequest)", null);
+    public static WebPage getWebPage(ServletContext context, Class<? extends WebPage> clazz, WebSiteRequest req) throws IOException {
+        Profiler.startProfile(Profiler.FAST, WebPage.class, "getWebPage(ServletContext,Class<? extends WebPage>,WebSiteRequest)", null);
         try {
             String classname=clazz.getName();
             boolean use_caching=WebSiteFrameworkConfiguration.useWebSiteCaching();
@@ -1130,8 +1131,8 @@ abstract public class WebPage extends ErrorReportingServlet {
             // Make a new instance and store in cache
             try {
                 if(!use_caching) clazz=loadClass(classname);
-                Constructor con=clazz.getConstructor(getWebPageRequestParams);
-                WebPage page=(WebPage)con.newInstance(new Object[] {req});
+                Constructor<? extends WebPage> con=clazz.getConstructor(getWebPageRequestParams);
+                WebPage page=con.newInstance(new Object[] {req});
                 page.setServletContext(context);
                 if(use_caching) {
                     List<WebPage> list=webPageCache.get(classname);
@@ -1178,8 +1179,8 @@ abstract public class WebPage extends ErrorReportingServlet {
     /**
      * @see  #getWebPage(ServletContext,Class,Object)
      */
-    public WebPage getWebPage(Class clazz, Object param) throws IOException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getWebPage(Class,Object)", null);
+    public WebPage getWebPage(Class<? extends WebPage> clazz, Object param) throws IOException {
+        Profiler.startProfile(Profiler.FAST, WebPage.class, "getWebPage(Class<? extends WebPage>,Object)", null);
         try {
             return getWebPage(getServletContext(), clazz, param);
         } finally {
@@ -1206,8 +1207,8 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @see  WebSiteFrameworkConfiguration#useWebSiteCaching()
      * @see  #isHandler(Object)
      */
-    public static WebPage getWebPage(ServletContext context, Class clazz, Object params) throws IOException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getWebPage(ServletContext,Class,Object)", null);
+    public static WebPage getWebPage(ServletContext context, Class<? extends WebPage> clazz, Object params) throws IOException {
+        Profiler.startProfile(Profiler.FAST, WebPage.class, "getWebPage(ServletContext,Class<? extends WebPage>,Object)", null);
         try {
             String classname=clazz.getName();
             boolean use_caching=WebSiteFrameworkConfiguration.useWebSiteCaching();
@@ -1292,12 +1293,12 @@ abstract public class WebPage extends ErrorReportingServlet {
     /**
      * Dynamically loads new classes based on the source .class file's modified time.
      */
-    synchronized public static Class loadClass(String className) throws ClassNotFoundException {
+    synchronized public static Class<? extends WebPage> loadClass(String className) throws ClassNotFoundException {
         Profiler.startProfile(Profiler.UNKNOWN, WebPage.class, "loadClass(String)", null);
         try {
             try {
                 if(WebSiteFrameworkConfiguration.useWebSiteCaching()) {
-                    return Class.forName(className);
+                    return Class.forName(className).asSubclass(WebPage.class);
                 } else {
                     // Find the directory to work in
                     File dir=new File(WebSiteFrameworkConfiguration.getServletDirectory());
@@ -1317,7 +1318,7 @@ abstract public class WebPage extends ErrorReportingServlet {
                         classnameCache.clear();
                         modified=null;
                     }
-                    Class clazz=webPageClassLoader.loadClass(className);
+                    Class<? extends WebPage> clazz=webPageClassLoader.loadClass(className).asSubclass(WebPage.class);
                     if(modified==null) {
                         classnameCache.put(className, Long.valueOf(lastModified));
                     }

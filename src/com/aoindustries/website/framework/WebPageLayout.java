@@ -429,7 +429,7 @@ abstract public class WebPageLayout {
                     out.print("    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(req.getURL(SA[c], req.isSecure(), null, false)).print("'></SCRIPT>\n");
                 }
             } else if(O instanceof Class) {
-                out.print("    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(req.getURL((Class)O, null)).print("'></SCRIPT>\n");
+                out.print("    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(req.getURL(((Class<?>)O).asSubclass(WebPage.class), null)).print("'></SCRIPT>\n");
             } else if(O instanceof WebPage) {
                 out.print("    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(req.getURL((WebPage)O, req.isSecure(), null)).print("'></SCRIPT>\n");
             } else {

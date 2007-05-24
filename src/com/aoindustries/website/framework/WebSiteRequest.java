@@ -334,7 +334,7 @@ public class WebSiteRequest implements HttpServletRequest, FileRenamePolicy {
         Profiler.startProfile(Profiler.FAST, WebSiteRequest.class, "getURL(String,String)", null);
         try {
             try {
-                Class clazz=Class.forName(classname);
+                Class<? extends WebPage> clazz=Class.forName(classname).asSubclass(WebPage.class);
                 return getURL(clazz, params);
             } catch(ClassNotFoundException err) {
                 IOException ioErr=new IOException("Unable to load class: "+classname);
@@ -915,8 +915,8 @@ public class WebSiteRequest implements HttpServletRequest, FileRenamePolicy {
     /**
      * Gets the absolute URL to a web page.
      */
-    public String getURL(Class clazz, Object param) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebSiteRequest.class, "getURL(Class,Object)", null);
+    public String getURL(Class<? extends WebPage> clazz, Object param) throws IOException, SQLException {
+        Profiler.startProfile(Profiler.FAST, WebSiteRequest.class, "getURL(Class<? extends WebPage>,Object)", null);
         try {
             WebPage page=WebPage.getWebPage(sourcePage.getServletContext(), clazz, param);
             return getURL(page, page.useEncryption(), param);
@@ -925,8 +925,8 @@ public class WebSiteRequest implements HttpServletRequest, FileRenamePolicy {
         }
     }
 
-    public String getURL(Class clazz) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebSiteRequest.class, "getURL(Class)", null);
+    public String getURL(Class<? extends WebPage> clazz) throws IOException, SQLException {
+        Profiler.startProfile(Profiler.FAST, WebSiteRequest.class, "getURL(Class<? extends WebPage>)", null);
         try {
             return getURL(clazz, null);
         } finally {
