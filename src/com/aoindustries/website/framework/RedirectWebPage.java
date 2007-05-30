@@ -68,6 +68,10 @@ public class RedirectWebPage extends WebPage {
         return path;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     public String getKeywords() {
         return keywords;
     }
