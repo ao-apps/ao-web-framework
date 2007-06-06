@@ -247,7 +247,7 @@ abstract public class TreePage extends WebPage {
                         String href;
                         if (pos == (path[pathLen-1].length()==0?(pathLen-2):(pathLen-1)) && (href = tree.get(c).getUrl()) != null) {
                             out.print("<A target='_top' href='");
-                            out.print(href);
+                            out.print(resp.encodeURL(href));
                             out.print("'>").print(replaced).print("</A>");
                         } else out.print(replaced);
                         String S;
@@ -287,11 +287,12 @@ abstract public class TreePage extends WebPage {
 	    try {
 		WebPageLayout layout = getWebPageLayout(req);
 		layout.startHTML(
-				 this,
-				 req,
-				 out,
-				 scrollToX >= 0 ? ("window.scrollTo(" + scrollToX + ", " + scrollToY + ");") : null
-				 );
+                    this,
+                    req,
+                    resp,
+                    out,
+                    scrollToX >= 0 ? ("window.scrollTo(" + scrollToX + ", " + scrollToY + ");") : null
+                );
 
 		int treeLen = tree.size();
 		boolean[] opened = new boolean[treeLen];
@@ -332,10 +333,10 @@ abstract public class TreePage extends WebPage {
         Profiler.startProfile(Profiler.IO, TreePage.class, "handleRequest(ChainWriter,WebSiteRequest,HttpServletResponse,List<TreePageData>,int,int,boolean[])", null);
         try {
             WebPageLayout layout=getWebPageLayout(req);
-            layout.startContent(out, req, 1, getPreferredContentWidth(req));
-            layout.printContentTitle(out, req, this, 1);
-            layout.printContentHorizontalDivider(out, req, 1, false);
-            layout.startContentLine(out, req, 1, null);
+            layout.startContent(out, req, resp, 1, getPreferredContentWidth(req));
+            layout.printContentTitle(out, req, resp, this, 1);
+            layout.printContentHorizontalDivider(out, req, resp, 1, false);
+            layout.startContentLine(out, req, resp, 1, null);
             try {
                 // Get the tree data
                 int treeLen = tree.size();
@@ -431,7 +432,7 @@ abstract public class TreePage extends WebPage {
                                             } else break;
                                         }
                                     }
-                                    out.print("<IMG src='").writeHtmlAttribute(req.getURL(this, "image_num="+(hasMore?1:0))).print("' border=0 width="+IMAGE_WIDTH+" height="+IMAGE_HEIGHT+">");
+                                    out.print("<IMG src='").writeHtmlAttribute(resp.encodeURL(req.getURL(this, "image_num="+(hasMore?1:0)))).print("' border=0 width="+IMAGE_WIDTH+" height="+IMAGE_HEIGHT+">");
                                 } else break;
                             }
 
@@ -476,12 +477,14 @@ abstract public class TreePage extends WebPage {
                                             .print(");'><IMG alt='").print(opened[c] ? "Close" : "Open")
                                             .print("' src='")
                                             .writeHtmlAttribute(
-                                                req.getURL(
-                                                    this,
-                                                    "image_num="+(
-                                                        opened[c]
-                                                        ? (hasMore ? 4 : (c > 0 ? 5 : 9))
-                                                        : (hasMore ? 6 : (c > 0 ? 7 : 8))
+                                                resp.encodeURL(
+                                                    req.getURL(
+                                                        this,
+                                                        "image_num="+(
+                                                            opened[c]
+                                                            ? (hasMore ? 4 : (c > 0 ? 5 : 9))
+                                                            : (hasMore ? 6 : (c > 0 ? 7 : 8))
+                                                        )
                                                     )
                                                 )
                                             ).print("' border=0 width="+IMAGE_WIDTH+" height="+IMAGE_HEIGHT+"></A>");
@@ -489,13 +492,15 @@ abstract public class TreePage extends WebPage {
                                         out
                                             .print("<IMG src='")
                                             .writeHtmlAttribute(
-                                                req.getURL(
-                                                    this,
-                                                    "image_num="+(hasMore ? 2 : 3)
+                                                resp.encodeURL(
+                                                    req.getURL(
+                                                        this,
+                                                        "image_num="+(hasMore ? 2 : 3)
+                                                    )
                                                 )
                                             ).print("' border=0 width="+IMAGE_WIDTH+" height="+IMAGE_HEIGHT+">");
                                     }
-                                    out.print("<IMG src='").writeHtmlAttribute(req.getURL(this, "image_num=0")).print("' border=0 width=4 height="+IMAGE_HEIGHT+"></TD><TD nowrap>");
+                                    out.print("<IMG src='").writeHtmlAttribute(resp.encodeURL(req.getURL(this, "image_num=0"))).print("' border=0 width=4 height="+IMAGE_HEIGHT+"></TD><TD nowrap>");
                                 }
 
                                 boolean useCodeFont=useCodeFont(req);
@@ -507,13 +512,13 @@ abstract public class TreePage extends WebPage {
                                         || (pos==(pathLen-1) && path[pathLen-1].length()>0)
                                     ) && (href = tree.get(c).getUrl()) != null
                                 ) {
-                                    out.print("<A class='ao_light_link' target='_top' href='").writeHtmlAttribute(href).print("'>").print(path[pos]).print("</A>");
+                                    out.print("<A class='ao_light_link' target='_top' href='").writeHtmlAttribute(resp.encodeURL(href)).print("'>").print(path[pos]).print("</A>");
                                 } else if(path[pos].length()>0) out.print(path[pos]);
                                 if(useCodeFont) out.print("</CODE>");
                             }
 
                             out.print("</TD></TR></TABLE></TD>\n"
-                                    + "      <TD nowrap width=20><IMG src='").writeHtmlAttribute(req.getURL(this, "image_num=0")).print("' width=20 height=1></TD>\n"
+                                    + "      <TD nowrap width=20><IMG src='").writeHtmlAttribute(resp.encodeURL(req.getURL(this, "image_num=0"))).print("' width=20 height=1></TD>\n"
                                     + "      <TD nowrap>");
                             String description=tree.get(c).getDescription();
                             if(description!=null) out.print(description);
@@ -526,8 +531,8 @@ abstract public class TreePage extends WebPage {
                 out.print("  </TABLE>\n"
                         + "</FORM>\n");
             } finally {
-                layout.endContentLine(out, req, 1, false);
-                layout.endContent(this, out, req, 1);
+                layout.endContentLine(out, req, resp, 1, false);
+                layout.endContent(this, out, req, resp, 1);
             }
         } finally {
             Profiler.endProfile(Profiler.IO);

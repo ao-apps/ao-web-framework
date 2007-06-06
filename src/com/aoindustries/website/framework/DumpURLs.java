@@ -40,7 +40,7 @@ abstract public class DumpURLs extends WebPage {
                 + "search engines:\n"
                 + "<pre>\n");
         WebPage page = getRootPage();
-        printURLs(req, out, page, new SortedArrayList<WebPage>());
+        printURLs(req, resp, out, page, new SortedArrayList<WebPage>());
         out.print("</pre>\n");
     }
 
@@ -73,15 +73,15 @@ abstract public class DumpURLs extends WebPage {
         return "List URLs";
     }
 
-    private void printURLs(WebSiteRequest req, ChainWriter out, WebPage page, List<WebPage> finishedPages) throws IOException, SQLException {
+    private void printURLs(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, WebPage page, List<WebPage> finishedPages) throws IOException, SQLException {
         if(!finishedPages.contains(page)) {
-            out.print("<A class='ao_light_link' href='").writeHtmlAttribute(req.getURL(page)).print("'>").writeHtml(req.getURL(page, page.useEncryption(), null)).print("</A>\n");
+            out.print("<A class='ao_light_link' href='").writeHtmlAttribute(resp.encodeURL(req.getURL(page))).print("'>").writeHtml(req.getURL(page, page.useEncryption(), null)).print("</A>\n");
 
             finishedPages.add(page);
 
             WebPage[] pages = page.getCachedPages(req);
             int len = pages.length;
-            for (int c = 0; c < len; c++) printURLs(req, out, pages[c], finishedPages);
+            for (int c = 0; c < len; c++) printURLs(req, resp, out, pages[c], finishedPages);
         }
     }
 }

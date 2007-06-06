@@ -59,6 +59,7 @@ abstract public class WebPageLayout {
     abstract public void printFrameSet(
 	WebPage page,
 	WebSiteRequest req,
+        HttpServletResponse resp,
 	ChainWriter out
     ) throws IOException, SQLException;
 
@@ -83,6 +84,7 @@ abstract public class WebPageLayout {
     abstract public void startHTML(
 	WebPage page,
 	WebSiteRequest req,
+        HttpServletResponse resp,
 	ChainWriter out,
 	String onLoad
     ) throws IOException, SQLException;
@@ -123,14 +125,14 @@ abstract public class WebPageLayout {
      *
      * @see  WebPage#doPostWithSearch(WebSiteRequest,HttpServletResponse)
      */
-    public void printSearchOutput(WebPage page, ChainWriter out, WebSiteRequest req, String query, boolean isEntireSite, List<SearchResult> results, String[] words) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.IO, WebPageLayout.class, "printSearchOutput(WebPage page, ChainWriter,WebSiteRequest,String,boolean,List<SearchResult>,String[])", null);
+    public void printSearchOutput(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) throws IOException, SQLException {
+        Profiler.startProfile(Profiler.IO, WebPageLayout.class, "printSearchOutput(WebPage page, ChainWriter,WebSiteRequest,HttpServletResponse,String,boolean,List<SearchResult>,String[])", null);
         try {
-            startContent(out, req, 1, 600);
-            printContentTitle(out, req, "Search Results", 1);
-            printContentHorizontalDivider(out, req, 1, false);
-            startContentLine(out, req, 1, "center");
-            beginLightArea(req, out, "300", true);
+            startContent(out, req, resp, 1, 600);
+            printContentTitle(out, req, resp, "Search Results", 1);
+            printContentHorizontalDivider(out, req, resp, 1, false);
+            startContentLine(out, req, resp, 1, "center");
+            beginLightArea(req, resp, out, "300", true);
             boolean isSecure = req.isSecure();
             out.print("      <FORM name='search_two' method='POST'>\n");
             req.printFormFields(out, 4);
@@ -146,10 +148,10 @@ abstract public class WebPageLayout {
                     + "        </TD></TR></TABLE>\n"
                     + "      </FORM>\n"
             );
-            endLightArea(req, out);
-            endContentLine(out, req, 1, false);
-            printContentHorizontalDivider(out, req, 1, false);
-            startContentLine(out, req, 1, "center");
+            endLightArea(req, resp, out);
+            endContentLine(out, req, resp, 1, false);
+            printContentHorizontalDivider(out, req, resp, 1, false);
+            startContentLine(out, req, resp, 1, "center");
             if (results.isEmpty()) {
                 if (words.length > 0) {
                     out.print(
@@ -157,7 +159,7 @@ abstract public class WebPageLayout {
                     );
                 }
             } else {
-                beginLightArea(req, out);
+                beginLightArea(req, resp, out);
                 out.print("  <table cellspacing=0 border=0 cellpadding=0 class='ao_light_row'>\n"
                         + "    <TR>\n"
                         + "      <TH nowrap>% Match</TH>\n"
@@ -181,7 +183,7 @@ abstract public class WebPageLayout {
                     String description=result.getDescription();
                     out.print("    <TR class='").print(rowClass).print("'>\n"
                             + "      <TD nowrap align=center>").print(Math.round(99 * result.getProbability() / highest)).print("%</TD>\n"
-                            + "      <TD nowrap><A class='"+linkClass+"' href='").print(url).print("'>").print(title.length()==0?"&nbsp;":title).print("</A></TD>\n"
+                            + "      <TD nowrap><A class='"+linkClass+"' href='").print(resp.encodeURL(url)).print("'>").print(title.length()==0?"&nbsp;":title).print("</A></TD>\n"
                             + "      <TD nowrap>&nbsp;&nbsp;&nbsp;</TD>\n"
                             + "      <TD nowrap>").print(description.length()==0?"&nbsp;":description).print("</TD>\n"
                             + "    </TR>\n");
@@ -189,10 +191,10 @@ abstract public class WebPageLayout {
                 out.print(
                       "  </TABLE>\n"
                 );
-                endLightArea(req, out);
+                endLightArea(req, resp, out);
             }
-            endContentLine(out, req, 1, false);
-            endContent(page, out, req, 1);
+            endContentLine(out, req, resp, 1, false);
+            endContent(page, out, req, resp, 1);
         } finally {
             Profiler.endProfile(Profiler.IO);
         }
@@ -201,10 +203,10 @@ abstract public class WebPageLayout {
     /**
      * Starts the content area of a page.
      */
-    final public void startContent(ChainWriter out, WebSiteRequest req, int contentColumns, int preferredWidth) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPageLayout.class, "startContent(ChainWriter,WebSiteRequest,int,int)", null);
+    final public void startContent(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int contentColumns, int preferredWidth) throws IOException, SQLException {
+        Profiler.startProfile(Profiler.FAST, WebPageLayout.class, "startContent(ChainWriter,WebSiteRequest,HttpServletResponse,int,int)", null);
         try {
-            startContent(out, req, new int[] {contentColumns}, preferredWidth);
+            startContent(out, req, resp, new int[] {contentColumns}, preferredWidth);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -213,15 +215,15 @@ abstract public class WebPageLayout {
     /**
      * Starts the content area of a page.
      */
-    abstract public void startContent(ChainWriter out, WebSiteRequest req, int[] contentColumnSpans, int preferredWidth) throws IOException, SQLException;
+    abstract public void startContent(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) throws IOException, SQLException;
 
     /**
      * Prints a horizontal divider of the provided colspan.
      */
-    final public void printContentHorizontalDivider(ChainWriter out, WebSiteRequest req, int colspan, boolean endsInternal) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPageLayout.class, "printContentHorizontalDivider(ChainWriter,WebSiteRequest,int,boolean)", null);
+    final public void printContentHorizontalDivider(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int colspan, boolean endsInternal) throws IOException, SQLException {
+        Profiler.startProfile(Profiler.FAST, WebPageLayout.class, "printContentHorizontalDivider(ChainWriter,WebSiteRequest,HttpServletResponse,int,boolean)", null);
         try {
-            printContentHorizontalDivider(out, req, new int[] {colspan}, endsInternal);
+            printContentHorizontalDivider(out, req, resp, new int[] {colspan}, endsInternal);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -230,15 +232,15 @@ abstract public class WebPageLayout {
     /**
      * Prints a horizontal divider of the provided colspan.
      */
-    abstract public void printContentHorizontalDivider(ChainWriter out, WebSiteRequest req, int[] colspansAndDirections, boolean endsInternal) throws IOException, SQLException;
+    abstract public void printContentHorizontalDivider(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int[] colspansAndDirections, boolean endsInternal) throws IOException, SQLException;
 
     /**
      * Prints the title of the page in one row in the content area.
      */
-    final public void printContentTitle(ChainWriter out, WebSiteRequest req, WebPage page, int contentColumns) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPageLayout.class, "printContentTitle(ChainWriter,WebSiteRequest,WebPage,int)", null);
+    final public void printContentTitle(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, WebPage page, int contentColumns) throws IOException, SQLException {
+        Profiler.startProfile(Profiler.FAST, WebPageLayout.class, "printContentTitle(ChainWriter,WebSiteRequest,HttpServletResponse,WebPage,int)", null);
         try {
-            printContentTitle(out, req, page.getTitle(), contentColumns);
+            printContentTitle(out, req, resp, page.getTitle(), contentColumns);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -247,30 +249,30 @@ abstract public class WebPageLayout {
     /**
      * Prints the title of the page in one row in the content area.
      */
-    abstract public void printContentTitle(ChainWriter out, WebSiteRequest req, String title, int contentColumns) throws IOException, SQLException;
+    abstract public void printContentTitle(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) throws IOException, SQLException;
 
     /**
      * Starts one line of content with the initial colspan set to the provided colspan.
      */
-    abstract public void startContentLine(ChainWriter out, WebSiteRequest req, int colspan, String align) throws IOException, SQLException;
+    abstract public void startContentLine(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int colspan, String align) throws IOException, SQLException;
 
     /**
      * Ends one part of a line and starts the next.
      */
-    abstract public void printContentVerticalDivider(ChainWriter out, WebSiteRequest req, int direction, int colspan, int rowspan, String align) throws IOException, SQLException;
+    abstract public void printContentVerticalDivider(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align) throws IOException, SQLException;
 
     /**
      * Ends one line of content.
      */
-    abstract public void endContentLine(ChainWriter out, WebSiteRequest req, int rowspan, boolean endsInternal) throws IOException, SQLException;
+    abstract public void endContentLine(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int rowspan, boolean endsInternal) throws IOException, SQLException;
 
     /**
      * Ends the content area of a page.
      */
-    final public void endContent(WebPage page, ChainWriter out, WebSiteRequest req, int contentColumns) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPageLayout.class, "endContent(WebPage,ChainWriter,WebSiteRequest,int)", null);
+    final public void endContent(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int contentColumns) throws IOException, SQLException {
+        Profiler.startProfile(Profiler.FAST, WebPageLayout.class, "endContent(WebPage,ChainWriter,WebSiteRequest,HttpServletResponse,int)", null);
         try {
-            endContent(page, out, req, new int[] {contentColumns});
+            endContent(page, out, req, resp, new int[] {contentColumns});
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -279,7 +281,7 @@ abstract public class WebPageLayout {
     /**
      * Ends the content area of a page.
      */
-    abstract public void endContent(WebPage page, ChainWriter out, WebSiteRequest req, int[] contentColumnSpans) throws IOException, SQLException;
+    abstract public void endContent(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) throws IOException, SQLException;
 
     /**
      * The background color for the page or <code>-1</code> for browser default.
@@ -344,10 +346,10 @@ abstract public class WebPageLayout {
     /**
      * Begins a lighter colored area of the site.
      */
-    final public void beginLightArea(WebSiteRequest req, ChainWriter out) throws IOException {
-        Profiler.startProfile(Profiler.FAST, WebPageLayout.class, "beginLightArea(WebSiteRequest,ChainWriter)", null);
+    final public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out) throws IOException {
+        Profiler.startProfile(Profiler.FAST, WebPageLayout.class, "beginLightArea(WebSiteRequest,HttpServletResponse,ChainWriter)", null);
         try {
-            beginLightArea(req, out, null, false);
+            beginLightArea(req, resp, out, null, false);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -356,20 +358,20 @@ abstract public class WebPageLayout {
     /**
      * Begins a lighter colored area of the site.
      */
-    abstract public void beginLightArea(WebSiteRequest req, ChainWriter out, String width, boolean nowrap) throws IOException;
+    abstract public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, String width, boolean nowrap) throws IOException;
 
     /**
      * Ends a lighter area of the site.
      */
-    abstract public void endLightArea(WebSiteRequest req, ChainWriter out) throws IOException;
+    abstract public void endLightArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out) throws IOException;
     
     /**
      * Begins an area with a white background.
      */
-    final public void beginWhiteArea(WebSiteRequest req, ChainWriter out) throws IOException {
-        Profiler.startProfile(Profiler.FAST, WebPageLayout.class, "beginWhiteArea(WebSiteRequest,ChainWriter)", null);
+    final public void beginWhiteArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out) throws IOException {
+        Profiler.startProfile(Profiler.FAST, WebPageLayout.class, "beginWhiteArea(WebSiteRequest,HttpServletResponse,ChainWriter)", null);
         try {
-            beginWhiteArea(req, out, null, false);
+            beginWhiteArea(req, resp, out, null, false);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -378,27 +380,27 @@ abstract public class WebPageLayout {
     /**
      * Begins a lighter colored area of the site.
      */
-    abstract public void beginWhiteArea(WebSiteRequest req, ChainWriter out, String width, boolean nowrap) throws IOException;
+    abstract public void beginWhiteArea(WebSiteRequest req, HttpServletResponse response, ChainWriter out, String width, boolean nowrap) throws IOException;
 
     /**
      * Ends a lighter area of the site.
      */
-    abstract public void endWhiteArea(WebSiteRequest req, ChainWriter out) throws IOException;
+    abstract public void endWhiteArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out) throws IOException;
 
     /**
      * Each layout has a name.
      */
     abstract public String getName();
     
-    public boolean printWebPageLayoutSelector(WebPage page, ChainWriter out, WebSiteRequest req) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.IO, WebPageLayout.class, "printWebPageLayoutSelector(WebPage,ChainWriter,WebSiteRequest)", null);
+    public boolean printWebPageLayoutSelector(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+        Profiler.startProfile(Profiler.IO, WebPageLayout.class, "printWebPageLayoutSelector(WebPage,ChainWriter,WebSiteRequest,HttpServletResponse)", null);
         try {
             if(layoutChoices.length>=2) {
                 out.print("<SCRIPT language='JavaScript1.2'><!--\n"
                         + "  function selectLayout(layout) {\n");
                 for(int c=0;c<layoutChoices.length;c++) {
                     String choice=layoutChoices[c];
-                    out.print("    if(layout=='").print(choice).print("') window.top.location.href='").print(req.getURL(page, "layout="+choice)).print("';\n");
+                    out.print("    if(layout=='").print(choice).print("') window.top.location.href='").print(resp.encodeURL(req.getURL(page, "layout="+choice))).print("';\n");
                 }
                 out.print("  }\n"
                         + "// --></SCRIPT>\n"
@@ -419,21 +421,21 @@ abstract public class WebPageLayout {
         }
     }
     
-    protected void printJavaScriptIncludes(WebSiteRequest req, ChainWriter out, WebPage page) throws IOException, SQLException {
+    protected void printJavaScriptIncludes(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, WebPage page) throws IOException, SQLException {
 	Object O = page.getJavaScriptSrc(req);
 	if (O != null) {
             if (O instanceof String[]) {
                 String[] SA = (String[]) O;
                 int len = SA.length;
                 for (int c = 0; c < len; c++) {
-                    out.print("    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(req.getURL(SA[c], req.isSecure(), null, false)).print("'></SCRIPT>\n");
+                    out.print("    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(resp.encodeURL(req.getURL(SA[c], req.isSecure(), null, false))).print("'></SCRIPT>\n");
                 }
             } else if(O instanceof Class) {
-                out.print("    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(req.getURL(((Class<?>)O).asSubclass(WebPage.class), null)).print("'></SCRIPT>\n");
+                out.print("    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(resp.encodeURL(req.getURL(((Class<?>)O).asSubclass(WebPage.class), null))).print("'></SCRIPT>\n");
             } else if(O instanceof WebPage) {
-                out.print("    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(req.getURL((WebPage)O, req.isSecure(), null)).print("'></SCRIPT>\n");
+                out.print("    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(resp.encodeURL(req.getURL((WebPage)O, req.isSecure(), null))).print("'></SCRIPT>\n");
             } else {
-                out.print("    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(req.getURL(O.toString(), req.isSecure(), null, false)).print("'></SCRIPT>\n");
+                out.print("    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(resp.encodeURL(req.getURL(O.toString(), req.isSecure(), null, false))).print("'></SCRIPT>\n");
             }
 	}
     }

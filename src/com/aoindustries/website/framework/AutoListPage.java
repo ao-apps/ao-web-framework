@@ -43,18 +43,18 @@ abstract public class AutoListPage extends WebPage {
         Profiler.startProfile(Profiler.IO, AutoListPage.class, "doGet(ChainWriter,WebSiteRequest,HttpServletResponse)", null);
         try {
             WebPageLayout layout=getWebPageLayout(req);
-            layout.startContent(out, req, 1, getPreferredContentWidth(req));
-            layout.printContentTitle(out, req, this, 1);
-            layout.printContentHorizontalDivider(out, req, 1, false);
-            layout.startContentLine(out, req, 1, null);
+            layout.startContent(out, req, resp, 1, getPreferredContentWidth(req));
+            layout.printContentTitle(out, req, resp, this, 1);
+            layout.printContentHorizontalDivider(out, req, resp, 1, false);
+            layout.startContentLine(out, req, resp, 1, null);
             printContentStart(out, req, resp);
             try {
                 out.print("      <table cellpadding=0 cellspacing=10 border=0>\n");
-                printPageList(out, req, this, layout);
+                printPageList(out, req, resp, this, layout);
                 out.print("      </table>\n");
             } finally {
-                layout.endContentLine(out, req, 1, false);
-                layout.endContent(this, out, req, 1);
+                layout.endContentLine(out, req, resp, 1, false);
+                layout.endContent(this, out, req, resp, 1);
             }
         } finally {
             Profiler.endProfile(Profiler.IO);
@@ -76,14 +76,14 @@ abstract public class AutoListPage extends WebPage {
     /**
      * Prints a list of pages.
      */
-    public static void printPageList(ChainWriter out, WebSiteRequest req, WebPage[] pages, WebPageLayout layout) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.IO, AutoListPage.class, "printPageList(ChainWriter,WebSiteRequest,WebPage[],WebPageLayout)", null);
+    public static void printPageList(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, WebPage[] pages, WebPageLayout layout) throws IOException, SQLException {
+        Profiler.startProfile(Profiler.IO, AutoListPage.class, "printPageList(ChainWriter,WebSiteRequest,HttpServletResponse,WebPage[],WebPageLayout)", null);
         try {
             int len = pages.length;
             for (int c = 0; c < len; c++) {
                 WebPage page = pages[c];
                 out.print("  <TR>\n"
-                        + "    <TD nowrap><A class='ao_light_link' href='").writeHtmlAttribute(req==null?"":req.getURL(page)).print("'>").print(page.getShortTitle()).print("</A>\n"
+                        + "    <TD nowrap><A class='ao_light_link' href='").writeHtmlAttribute(req==null?"":resp.encodeURL(req.getURL(page))).print("'>").print(page.getShortTitle()).print("</A>\n"
                         + "    </TD>\n"
                         + "    <TD width=12 nowrap>&nbsp;</TD>\n"
                         + "    <TD nowrap>").print(page.getDescription()).print("</TD>\n"
@@ -98,10 +98,10 @@ abstract public class AutoListPage extends WebPage {
     /**
      * Prints an unordered list of the available pages.
      */
-    public static void printPageList(ChainWriter out, WebSiteRequest req, WebPage parent, WebPageLayout layout) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, AutoListPage.class, "printPageList(ChainWriter,WebSiteRequest,WebPageLayout)", null);
+    public static void printPageList(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, WebPage parent, WebPageLayout layout) throws IOException, SQLException {
+        Profiler.startProfile(Profiler.FAST, AutoListPage.class, "printPageList(ChainWriter,WebSiteRequest,HttpServletResponse,WebPageLayout)", null);
         try {
-            printPageList(out, req, parent.getCachedPages(req), layout);
+            printPageList(out, req, resp, parent.getCachedPages(req), layout);
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }

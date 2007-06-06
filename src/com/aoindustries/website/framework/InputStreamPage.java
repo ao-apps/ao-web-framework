@@ -44,23 +44,23 @@ abstract public class InputStreamPage extends WebPage {
         Profiler.startProfile(Profiler.FAST, InputStreamPage.class, "doGet(ChainWriter,WebSiteRequest,HttpServletResponse)", null);
         try {
             WebPageLayout layout=getWebPageLayout(req);
-            layout.startContent(out, req, 1, getPreferredContentWidth(req));
+            layout.startContent(out, req, resp, 1, getPreferredContentWidth(req));
             try {
-                layout.printContentTitle(out, req, this, 1);
-                layout.printContentHorizontalDivider(out, req, 1, false);
-                layout.startContentLine(out, req, 1, null);
+                layout.printContentTitle(out, req, resp, this, 1);
+                layout.printContentHorizontalDivider(out, req, resp, 1, false);
+                layout.startContentLine(out, req, resp, 1, null);
                 try {
                     InputStream in=getInputStream();
                     try {
-                        printStream(out, req, in);
+                        printStream(out, req, resp, in);
                     } finally {
                         in.close();
                     }
                 } finally {
-                    layout.endContentLine(out, req, 1, false);
+                    layout.endContentLine(out, req, resp, 1, false);
                 }
             } finally {
-                layout.endContent(this, out, req, 1);
+                layout.endContent(this, out, req, resp, 1);
             }
         } finally {
             Profiler.endProfile(Profiler.FAST);
@@ -72,8 +72,8 @@ abstract public class InputStreamPage extends WebPage {
      */
     public abstract InputStream getInputStream() throws IOException;
 
-    public void printStream(ChainWriter out, WebSiteRequest req, InputStream in) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, InputStreamPage.class, "printStream(ChainWriter,WebSiteRequest,InputStream)", null);
+    public void printStream(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws IOException, SQLException {
+        Profiler.startProfile(Profiler.FAST, InputStreamPage.class, "printStream(ChainWriter,WebSiteRequest,HttpServletResponse,InputStream)", null);
         try {
             printStreamStatic(out, in);
         } finally {

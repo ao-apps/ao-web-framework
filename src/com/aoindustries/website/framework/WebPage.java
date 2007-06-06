@@ -336,7 +336,7 @@ abstract public class WebPage extends ErrorReportingServlet {
                 && req.getParameter("login_username")==null
             ) {
                 // Redirect to use proper encryption mode
-                resp.sendRedirect(req.getURL(page, page.useEncryption(), null));
+                resp.sendRedirect(resp.encodeRedirectURL(req.getURL(page, page.useEncryption(), null)));
             } else {
                 // Logout when requested
                 boolean isLogout="true".equals(req.getParameter("logout_requested"));
@@ -400,7 +400,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 		       frame==null
 		       || (frame=frame.trim()).length()==0
 		       || !layout.printFrame(this, req, resp, out, null, frame)
-		       ) layout.printFrameSet(this, req, out);
+		       ) layout.printFrameSet(this, req, resp, out);
 		} finally {
 		    out.flush();
 		    out.close();
@@ -426,7 +426,7 @@ abstract public class WebPage extends ErrorReportingServlet {
                                     ByteArrayOutputStream bout=new ByteArrayOutputStream();
                                     ChainWriter out=new ChainWriter(bout);
 				    try {
-					layout.startHTML(this, req, out, null);
+					layout.startHTML(this, req, resp, out, null);
 					doGet(out, req, resp);
 					layout.endHTML(this, req, out);
 				    } finally {
@@ -450,7 +450,7 @@ abstract public class WebPage extends ErrorReportingServlet {
                 if(doRegular) {
                     ChainWriter out=getHTMLChainWriter(req, resp);
 		    try {
-			layout.startHTML(this, req, out, null);
+			layout.startHTML(this, req, resp, out, null);
 			doGet(out, req, resp);
 			layout.endHTML(this, req, out);
 		    } finally {
@@ -500,7 +500,7 @@ abstract public class WebPage extends ErrorReportingServlet {
                 && req.getParameter("login_username")==null
             ) {
                 // Redirect to use proper encryption mode
-                resp.sendRedirect(req.getURL(page, page.useEncryption(), null));
+                resp.sendRedirect(resp.encodeRedirectURL(req.getURL(page, page.useEncryption(), null)));
             } else {
                 // Logout when requested
                 boolean isLogout="true".equals(req.getParameter("logout_requested"));
@@ -557,7 +557,7 @@ abstract public class WebPage extends ErrorReportingServlet {
                 ChainWriter out=getHTMLChainWriter(req, resp);
 		try {
 		    req.setUsingFrames(false);
-		    layout.startHTML(this, req, out, "document.forms['search_two'].search_query.select(); document.forms['search_two'].search_query.focus();");
+		    layout.startHTML(this, req, resp, out, "document.forms['search_two'].search_query.select(); document.forms['search_two'].search_query.focus();");
 		    boolean entire_site=searchTarget.equals("entire_site");
 		    WebPage target = entire_site ? getRootPage() : this;
 
@@ -575,7 +575,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 			//StringUtility.sortObjectsAndFloatDescending(results, 1, 5);
 		    }
 
-		    layout.printSearchOutput(this, out, req, query, entire_site, results, words);
+		    layout.printSearchOutput(this, out, req, resp, query, entire_site, results, words);
 
 		    layout.endHTML(this, req, out);
 		} finally {
@@ -608,7 +608,7 @@ abstract public class WebPage extends ErrorReportingServlet {
             ChainWriter out=getHTMLChainWriter(req, resp);
 	    try {
 		WebPageLayout layout=getWebPageLayout(req);
-		layout.startHTML(this, req, out, null);
+		layout.startHTML(this, req, resp, out, null);
 
 		doPost(out, req, resp);
 

@@ -28,7 +28,7 @@ public class TextOnlyLayout extends WebPageLayout {
         super(layoutChoices);
     }
 
-    public void beginLightArea(WebSiteRequest req, ChainWriter out, String width, boolean nowrap) {
+    public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, String width, boolean nowrap) {
         out.print("<TABLE border=5 cellpadding=0 cellspacing=0>\n"
                 + "  <TR>\n"
                 + "    <TD class='ao_light_row'");
@@ -37,13 +37,13 @@ public class TextOnlyLayout extends WebPageLayout {
         out.print(">");
     }
 
-    public void endLightArea(WebSiteRequest req, ChainWriter out) {
+    public void endLightArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out) {
 	out.print("</TD>\n"
                 + "  </TR>\n"
                 + "</TABLE>\n");
     }
 
-    public void beginWhiteArea(WebSiteRequest req, ChainWriter out, String width, boolean nowrap) {
+    public void beginWhiteArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, String width, boolean nowrap) {
         out.print("<TABLE border=5 cellpadding=0 cellspacing=0>\n"
                 + "  <TR>\n"
                 + "    <TD class='ao_light_row'");
@@ -52,7 +52,7 @@ public class TextOnlyLayout extends WebPageLayout {
         out.print(" bgcolor='white'>");
     }
 
-    public void endWhiteArea(WebSiteRequest req, ChainWriter out) {
+    public void endWhiteArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out) {
 	out.print("</TD>\n"
                 + "  </TR>\n"
                 + "</TABLE>\n");
@@ -61,6 +61,7 @@ public class TextOnlyLayout extends WebPageLayout {
     public void printFrameSet(
 	WebPage page,
 	WebSiteRequest req,
+        HttpServletResponse resp,
 	ChainWriter out
     ) throws IOException, SQLException {
         throw new RuntimeException("Frames should never be used for text only layout.");
@@ -81,6 +82,7 @@ public class TextOnlyLayout extends WebPageLayout {
     public void startHTML(
 	WebPage page,
 	WebSiteRequest req,
+        HttpServletResponse resp,
 	ChainWriter out,
 	String onLoad
     ) throws IOException, SQLException {
@@ -90,9 +92,9 @@ public class TextOnlyLayout extends WebPageLayout {
 		+ "    <META name='keywords' content='").writeHtmlAttribute(page.getKeywords()).print("'>\n"
 		+ "    <META name='description' content='").writeHtmlAttribute(page.getDescription()).print("'>\n"
 		+ "    <META name='author' content='").writeHtmlAttribute(page.getAuthor()).print("'>\n"
-                + "    <LINK rel='stylesheet' href='").writeHtmlAttribute(req.getURL("layout/text/global.css", req.isSecure(), null, false)).print("' type='text/css'>\n"
-                + "    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(req.getURL("global.js", req.isSecure(), null, false)).print("'></SCRIPT>\n");
-        printJavaScriptIncludes(req, out, page);
+                + "    <LINK rel='stylesheet' href='").writeHtmlAttribute(resp.encodeURL(req.getURL("layout/text/global.css", req.isSecure(), null, false))).print("' type='text/css'>\n"
+                + "    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(resp.encodeURL(req.getURL("global.js", req.isSecure(), null, false))).print("'></SCRIPT>\n");
+        printJavaScriptIncludes(req, resp, out, page);
         out.print("    <TITLE>");
         List<WebPage> parents=new ArrayList<WebPage>();
         WebPage parent=page;
@@ -129,24 +131,24 @@ public class TextOnlyLayout extends WebPageLayout {
                 + "    <TABLE border=0 cellspacing=10 cellpadding=0>\n");
         out.print("      <TR>\n"
                 + "        <TD valign='top'>\n");
-        printLogo(page, out, req);
+        printLogo(page, out, req, resp);
         boolean isLoggedIn=req.isLoggedIn();
         if(isLoggedIn) {
             out.print("          <HR>\n"
-                    + "          Logout: <FORM target='_top' style='display:inline;' name='logout_form' method='post' action='").writeHtmlAttribute(req.getURL(page, req.isSecure(), null)).print("'>");
+                    + "          Logout: <FORM target='_top' style='display:inline;' name='logout_form' method='post' action='").writeHtmlAttribute(resp.encodeURL(req.getURL(page, req.isSecure(), null))).print("'>");
             req.printFormFields(out, 2);
             out.print("<INPUT type='hidden' name='logout_requested' value='true'><INPUT type='submit' value='Logout'></FORM>\n");
         } else {
             out.print("          <HR>\n"
-                    + "          Login: <FORM target='_top' style='display:inline;' name='login_form' method='post' action='").writeHtmlAttribute(req.getURL(page, true, null)).print("'>");
+                    + "          Login: <FORM target='_top' style='display:inline;' name='login_form' method='post' action='").writeHtmlAttribute(resp.encodeURL(req.getURL(page, true, null))).print("'>");
             req.printFormFields(out, 2);
             out.print("<INPUT type='hidden' name='login_requested' value='true'><INPUT type='submit' value='Login'></FORM>\n");
         }
         out.print("          <HR>\n"
                 + "          <SPAN style='white-space: nowrap'>\n");
         if(getLayoutChoices().length>=2) out.print("Layout: ");
-        if(printWebPageLayoutSelector(page, out, req)) out.print("<BR>\n"
-                + "            Search:  <FORM name='search_site' style='display:inline;' method='post' action='").writeHtmlAttribute(req.getURL(page, req.isSecure(), null)).print("'>\n"
+        if(printWebPageLayoutSelector(page, out, req, resp)) out.print("<BR>\n"
+                + "            Search:  <FORM name='search_site' style='display:inline;' method='post' action='").writeHtmlAttribute(resp.encodeURL(req.getURL(page, req.isSecure(), null))).print("'>\n"
                 + "              <INPUT type='hidden' name='search_target' value='entire_site'>\n");
 	req.printFormFields(out, 3);
         out.print("              <INPUT type='text' name='search_query' size=12 maxlength=255>\n"
@@ -165,7 +167,7 @@ public class TextOnlyLayout extends WebPageLayout {
             parent=parents.get(c);
             String navAlt=parent.getNavImageAlt(req);
             String navSuffix=parent.getNavImageSuffix(req);
-            out.print("            <A href='").writeHtmlAttribute(req.getURL(parent)).print("'>").print(TreePage.replaceHTML(navAlt));
+            out.print("            <A href='").writeHtmlAttribute(resp.encodeURL(req.getURL(parent))).print("'>").print(TreePage.replaceHTML(navAlt));
             if(navSuffix!=null) out.print(" (").writeHtml(navSuffix).print(')');
             out.print("</A><BR>\n");
         }
@@ -192,7 +194,7 @@ public class TextOnlyLayout extends WebPageLayout {
                 String navAlt=tpage.getNavImageAlt(req);
                 String navSuffix=tpage.getNavImageSuffix(req);
                 boolean isSelected=tpage.equals(page);
-                out.print("          <A href='").writeHtmlAttribute(tpage.getNavImageURL(req, null)).print("'>").writeHtml(TreePage.replaceHTML(navAlt));
+                out.print("          <A href='").writeHtmlAttribute(resp.encodeURL(tpage.getNavImageURL(req, null))).print("'>").writeHtml(TreePage.replaceHTML(navAlt));
                 if(navSuffix!=null) out.print(" (").writeHtml(navSuffix).print(')');
                 out.print("</A><BR>\n");
             }
@@ -208,7 +210,7 @@ public class TextOnlyLayout extends WebPageLayout {
             for(int c=0;c<commonPages.length;c++) {
                 if(c>0) out.print("          <TD align='center' width='1%'>|</TD>\n");
                 WebPage tpage=commonPages[c];
-                out.print("          <TD nowrap align='center' width='").print((101-commonPages.length)/commonPages.length).print("%'><A href='").writeHtmlAttribute(tpage.getNavImageURL(req, null)).print("'>").print(tpage.getNavImageAlt(req)).print("</A></TD>\n");
+                out.print("          <TD nowrap align='center' width='").print((101-commonPages.length)/commonPages.length).print("%'><A href='").writeHtmlAttribute(resp.encodeURL(tpage.getNavImageURL(req, null))).print("'>").print(tpage.getNavImageAlt(req)).print("</A></TD>\n");
             }
             out.print("        </TR></TABLE>\n");
         }
@@ -229,7 +231,7 @@ public class TextOnlyLayout extends WebPageLayout {
     /**
      * Starts the content area of a page.
      */
-    public void startContent(ChainWriter out, WebSiteRequest req, int[] contentColumnSpans, int preferredWidth) {
+    public void startContent(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) {
         out.print("<TABLE cellpadding=0 cellspacing=0 border=0");
         if(preferredWidth!=-1) out.print(" width='").print(preferredWidth).print('\'');
         out.print(" align='left' valign='top'>\n"
@@ -248,7 +250,7 @@ public class TextOnlyLayout extends WebPageLayout {
     /**
      * Prints a horizontal divider of the provided colspan.
      */
-    public void printContentHorizontalDivider(ChainWriter out, WebSiteRequest req, int[] colspansAndDirections, boolean endsInternal) {
+    public void printContentHorizontalDivider(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int[] colspansAndDirections, boolean endsInternal) {
         out.print("  <TR>\n");
         for(int c=0;c<colspansAndDirections.length;c+=2) {
             int direction=c==0?-1:colspansAndDirections[c-1];
@@ -278,16 +280,16 @@ public class TextOnlyLayout extends WebPageLayout {
     /**
      * Prints the title of the page in one row in the content area.
      */
-    public void printContentTitle(ChainWriter out, WebSiteRequest req, String title, int contentColumns) {
-        startContentLine(out, req, contentColumns, "center");
+    public void printContentTitle(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) {
+        startContentLine(out, req, resp, contentColumns, "center");
         out.print("<H1>").print(title).print("</H1>\n");
-        endContentLine(out, req, 1, false);
+        endContentLine(out, req, resp, 1, false);
     }
 
     /**
      * Starts one line of content with the initial colspan set to the provided colspan.
      */
-    public void startContentLine(ChainWriter out, WebSiteRequest req, int colspan, String align) {
+    public void startContentLine(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int colspan, String align) {
         out.print("  <TR>\n"
                 + "    <TD valign='top'");
         if(colspan!=1) out.print(" colspan=").print(colspan);
@@ -298,7 +300,7 @@ public class TextOnlyLayout extends WebPageLayout {
     /**
      * Starts one line of content with the initial colspan set to the provided colspan.
      */
-    public void printContentVerticalDivider(ChainWriter out, WebSiteRequest req, int direction, int colspan, int rowspan, String align) {
+    public void printContentVerticalDivider(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align) {
         out.print("    </TD>\n");
         switch(direction) {
             case UP_AND_DOWN:
@@ -318,7 +320,7 @@ public class TextOnlyLayout extends WebPageLayout {
     /**
      * Ends one line of content.
      */
-    public void endContentLine(ChainWriter out, WebSiteRequest req, int rowspan, boolean endsInternal) {
+    public void endContentLine(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int rowspan, boolean endsInternal) {
         out.print("    </TD>\n"
                 + "  </TR>\n");
     }
@@ -326,7 +328,7 @@ public class TextOnlyLayout extends WebPageLayout {
     /**
      * Ends the content area of a page.
      */
-    public void endContent(WebPage page, ChainWriter out, WebSiteRequest req, int[] contentColumnSpans) throws IOException, SQLException {
+    public void endContent(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) throws IOException, SQLException {
         int totalColumns=0;
         for(int c=0;c<contentColumnSpans.length;c++) {
             if(c>0) totalColumns+=1;
@@ -356,7 +358,7 @@ public class TextOnlyLayout extends WebPageLayout {
         return null;
     }
 
-    public void printLogo(WebPage page, ChainWriter out, WebSiteRequest req) throws IOException, SQLException {
+    public void printLogo(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
     }
 
     /**

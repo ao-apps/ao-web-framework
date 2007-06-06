@@ -39,10 +39,10 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
         Profiler.endProfile(Profiler.INSTANTANEOUS);
     }
 
-    public void printStream(ChainWriter out, WebSiteRequest req, InputStream in) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, HTMLInputStreamPage.class, "printStream(ChainWriter,WebSiteRequest,InputStream)", null);
+    public void printStream(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws IOException, SQLException {
+        Profiler.startProfile(Profiler.FAST, HTMLInputStreamPage.class, "printStream(ChainWriter,WebSiteRequest,HttpServletResponse,InputStream)", null);
         try {
-            printHTMLStream(out, req, getWebPageLayout(req), in, "ao_light_link");
+            printHTMLStream(out, req, resp, getWebPageLayout(req), in, "ao_light_link");
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -84,8 +84,8 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
      *   <LI>@LINK_CLASS        The preferred link class for this element</LI>
      * </UL>
      */
-    public static void printHTML(ChainWriter out, WebSiteRequest req, WebPageLayout layout, String html, String linkClass) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.IO, HTMLInputStreamPage.class, "printHTML(ChainWriter,WebSiteRequest,WebPageLayout,String,String)", null);
+    public static void printHTML(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, String html, String linkClass) throws IOException, SQLException {
+        Profiler.startProfile(Profiler.IO, HTMLInputStreamPage.class, "printHTML(ChainWriter,WebSiteRequest,HttpServletResponse,WebPageLayout,String,String)", null);
         try {
             if(req==null) out.print(html);
             else {
@@ -98,22 +98,22 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
                             int endPos=html.indexOf(')', pos+4);
                             if(endPos==-1) throw new IllegalArgumentException("Unable to find closing parenthesis for @URL( substitution, pos="+pos);
                             String className=html.substring(pos+4, endPos);
-                            out.writeHtmlAttribute(req.getURL(className));
+                            out.writeHtmlAttribute(resp.encodeURL(req.getURL(className)));
                             pos=endPos+1;
                         } else if((pos+16)<len && html.substring(pos, pos+16).equalsIgnoreCase("BEGIN_LIGHT_AREA")) {
-                            layout.beginLightArea(req, out);
+                            layout.beginLightArea(req, resp, out);
                             pos+=16;
                         } else if((pos+14)<len && html.substring(pos, pos+14).equalsIgnoreCase("END_LIGHT_AREA")) {
-                            layout.endLightArea(req, out);
+                            layout.endLightArea(req, resp, out);
                             pos+=14;
                         } else if((pos+16)<len && html.substring(pos, pos+16).equalsIgnoreCase("END_CONTENT_LINE")) {
-                            layout.endContentLine(out, req, 1, false);
+                            layout.endContentLine(out, req, resp, 1, false);
                             pos+=16;
                         } else if((pos+32)<len && html.substring(pos, pos+32).equalsIgnoreCase("PRINT_CONTENT_HORIZONTAL_DIVIDER")) {
-                            layout.printContentHorizontalDivider(out, req, 1, false);
+                            layout.printContentHorizontalDivider(out, req, resp, 1, false);
                             pos+=32;
                         } else if((pos+18)<len && html.substring(pos, pos+18).equalsIgnoreCase("START_CONTENT_LINE")) {
-                            layout.startContentLine(out, req, 1, null);
+                            layout.startContentLine(out, req, resp, 1, null);
                             pos+=18;
                         } else if((pos+10)<len && html.substring(pos, pos+10).equalsIgnoreCase("LINK_CLASS")) {
                             out.print(linkClass==null?"ao_light_link":linkClass);
@@ -142,8 +142,8 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
     /**
      * @see  #printHTML
      */
-    public static void printHTMLStream(ChainWriter out, WebSiteRequest req, WebPageLayout layout, InputStream in, String linkClass) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.IO, HTMLInputStreamPage.class, "printHTMLStream(ChainWriter,WebSiteRequest,WebPageLayout,InputStream,String)", null);
+    public static void printHTMLStream(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, InputStream in, String linkClass) throws IOException, SQLException {
+        Profiler.startProfile(Profiler.IO, HTMLInputStreamPage.class, "printHTMLStream(ChainWriter,WebSiteRequest,HttpServletResponse,WebPageLayout,InputStream,String)", null);
         try {
             if(in==null) throw new NullPointerException("in is null");
             if(req==null) {
@@ -186,18 +186,18 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
                                     String tag=tags[c];
                                     if(tag.length()>=tagPart.length()) {
                                         if(tags[c].equalsIgnoreCase(tagPart)) {
-                                            if(c==0) layout.printContentHorizontalDivider(out, req, 1, false);
-                                            else if(c==1) layout.startContentLine(out, req, 1, null);
-                                            else if(c==2) layout.beginLightArea(req, out);
-                                            else if(c==3) layout.endContentLine(out, req, 1, false);
-                                            else if(c==4) layout.endLightArea(req, out);
+                                            if(c==0) layout.printContentHorizontalDivider(out, req, resp, 1, false);
+                                            else if(c==1) layout.startContentLine(out, req, resp, 1, null);
+                                            else if(c==2) layout.beginLightArea(req, resp, out);
+                                            else if(c==3) layout.endContentLine(out, req, resp, 1, false);
+                                            else if(c==4) layout.endLightArea(req, resp, out);
                                             else if(c==5) out.print(linkClass==null?"ao_light_link":linkClass);
                                             else if(c==6) {
                                                 // Read up to a ')'
                                                 while((ch=in.read())!=-1) {
                                                     if(ch==')') {
                                                         String className=buffer.toString().substring(5, buffer.length());
-                                                        out.writeHtmlAttribute(req.getURL(className));
+                                                        out.writeHtmlAttribute(resp.encodeURL(req.getURL(className)));
                                                         buffer.setLength(0);
                                                         break;
                                                     } else buffer.append((char)ch);

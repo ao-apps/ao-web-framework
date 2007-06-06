@@ -21,7 +21,7 @@ public class Redirect extends ErrorReportingServlet {
     protected void reportingDoGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, SQLException, IOException {
         Profiler.startProfile(Profiler.FAST, Redirect.class, "reportingDoGet(HttpServletRequest,HttpServletResponse)", null);
         try {
-            resp.sendRedirect((req.isSecure()?WebSiteFrameworkConfiguration.getHttpsBase():WebSiteFrameworkConfiguration.getHttpBase())+getServletConfig().getInitParameter("url"));
+            resp.sendRedirect(resp.encodeRedirectURL((req.isSecure()?WebSiteFrameworkConfiguration.getHttpsBase():WebSiteFrameworkConfiguration.getHttpBase())+getServletConfig().getInitParameter("url")));
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
@@ -30,7 +30,7 @@ public class Redirect extends ErrorReportingServlet {
     protected void reportingDoPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, SQLException, IOException {
         Profiler.startProfile(Profiler.FAST, Redirect.class, "reportingDoPost(HttpServletRequest,HttpServletResponse)", null);
         try {
-            resp.sendRedirect((req.isSecure()?WebSiteFrameworkConfiguration.getHttpsBase():WebSiteFrameworkConfiguration.getHttpBase())+getServletConfig().getInitParameter("url"));
+            resp.sendRedirect(resp.encodeRedirectURL((req.isSecure()?WebSiteFrameworkConfiguration.getHttpsBase():WebSiteFrameworkConfiguration.getHttpBase())+getServletConfig().getInitParameter("url")));
         } finally {
             Profiler.endProfile(Profiler.FAST);
         }
