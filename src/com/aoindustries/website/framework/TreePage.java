@@ -583,7 +583,7 @@ abstract public class TreePage extends WebPage {
             String mode=req.getParameter(TREEPAGE_MODE);
 
             // Auto mode
-            if(mode==null || MODE_AUTO.equals(mode)) return req.isSearchEngine() || req.isLynx();
+            if(mode==null || MODE_AUTO.equals(mode)) return req.isLynx();
 
             // Text mode
             if(MODE_TEXT.equals(mode)) return true;

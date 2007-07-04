@@ -14,13 +14,11 @@ import com.aoindustries.profiler.*;
  */
 public class WebSiteRequestCacheKey {
 
-    public final boolean isSearchEngine;
     public final String layout;
 
     public WebSiteRequestCacheKey(WebSiteRequest req) {
         Profiler.startProfile(Profiler.FAST, WebSiteRequestCacheKey.class, "<init>(WebSiteRequest)", null);
         try {
-            this.isSearchEngine=req.isSearchEngine();
             String layout=(String)req.getSession().getAttribute("layout");
             if(layout==null) layout=req.isLynx() || req.isBlackBerry() ? "Text" : "Default";
             this.layout=layout;
@@ -32,7 +30,6 @@ public class WebSiteRequestCacheKey {
     public int hashCode() {
         Profiler.startProfile(Profiler.FAST, WebSiteRequestCacheKey.class, "hashCode()", null);
         try {
-            if(isSearchEngine) return -layout.hashCode();
             return layout.hashCode();
         } finally {
             Profiler.endProfile(Profiler.FAST);
@@ -46,8 +43,7 @@ public class WebSiteRequestCacheKey {
             if(!(O instanceof WebSiteRequestCacheKey)) return false;
             WebSiteRequestCacheKey otherKey=(WebSiteRequestCacheKey)O;
             return
-                isSearchEngine==otherKey.isSearchEngine
-                && layout.equals(otherKey.layout)
+                layout.equals(otherKey.layout)
             ;
         } finally {
             Profiler.endProfile(Profiler.FAST);

@@ -203,9 +203,6 @@ public class WebSiteRequest implements HttpServletRequest, FileRenamePolicy {
     private boolean isNetscape4;
     private boolean isNetscape4Done;
 
-    private boolean isSearchEngine;
-    private boolean isSearchEngineDone;
-
     private boolean isFramed;
 
     public WebSiteRequest(HttpServlet sourcePage, HttpServletRequest req) throws IOException, SQLException {
@@ -1104,37 +1101,6 @@ public class WebSiteRequest implements HttpServletRequest, FileRenamePolicy {
             return req.isRequestedSessionIdValid();
         } finally {
             Profiler.endProfile(Profiler.UNKNOWN);
-        }
-    }
-
-    /**
-     * Determines if the request is for a search engine.
-     */
-    public boolean isSearchEngine() {
-        Profiler.startProfile(Profiler.FAST, WebSiteRequest.class, "isSearchEngine()", null);
-        try {
-            if(!isSearchEngineDone) {
-                if("true".equals(getParameter("search_engine"))) {
-                    isSearchEngine=true;
-                    isSearchEngineDone=true;
-                    return true;
-                }
-                String agent = req.getHeader("user-agent");
-                if (agent == null) isSearchEngine=true;
-                else {
-                    agent = agent.toLowerCase();
-                    isSearchEngine=
-                        agent.indexOf("mozilla") == -1
-                        && agent.indexOf("msie") == -1
-                        && !isLynx()
-                        && !isBlackBerry()
-                    ;
-                }
-                isSearchEngineDone=true;
-            }
-            return isSearchEngine;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
         }
     }
 

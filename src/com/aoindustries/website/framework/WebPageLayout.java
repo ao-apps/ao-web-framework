@@ -111,7 +111,6 @@ abstract public class WebPageLayout {
             return
                 page.useFrames(req)
                 && !req.isLynx()
-                && !req.isSearchEngine()
             ;
         } finally {
             Profiler.endProfile(Profiler.FAST);
