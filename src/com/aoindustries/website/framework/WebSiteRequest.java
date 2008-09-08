@@ -1,8 +1,8 @@
 package com.aoindustries.website.framework;
 
 /*
- * Copyright 2000-2007 by AO Industries, Inc.,
- * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
+ * Copyright 2000-2008 by AO Industries, Inc.,
+ * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 import com.aoindustries.io.*;
@@ -932,7 +932,7 @@ public class WebSiteRequest implements HttpServletRequest, FileRenamePolicy {
     }
 
     /**
-     * Gets the URL String with the given parameters embedded.
+     * Gets the URL String with the given parameters embedded, keeping the current settings.
      *
      * @param  url            the URL from the top of the webapp
      * @param  useEncryption  if <code>true</code> the link refers to an page that should be served over encryption
