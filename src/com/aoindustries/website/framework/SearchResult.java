@@ -5,7 +5,6 @@ package com.aoindustries.website.framework;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.profiler.Profiler;
 
 /**
  * Automatically generates a list of all pages.
@@ -27,61 +26,31 @@ public class SearchResult implements Comparable<SearchResult> {
         String description,
         String author
     ) {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, SearchResult.class, "<init>(String,float,String,String,String)", null);
-        try {
-            this.url=url;
-            this.probability=probability;
-            this.title=title;
-            this.description=description;
-            this.author=author;
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        this.url=url;
+        this.probability=probability;
+        this.title=title;
+        this.description=description;
+        this.author=author;
     }
 
     public String getUrl() {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, SearchResult.class, "getUrl()", null);
-        try {
-            return url;
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return url;
     }
 
     public float getProbability() {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, SearchResult.class, "getProbability()", null);
-        try {
-            return probability;
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return probability;
     }
 
     public String getTitle() {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, SearchResult.class, "getTitle()", null);
-        try {
-            return title;
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return title;
     }
 
     public String getDescription() {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, SearchResult.class, "getDescription()", null);
-        try {
-            return description;
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return description;
     }
 
     public String getAuthor() {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, SearchResult.class, "getAuthor()", null);
-        try {
-            return author;
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return author;
     }
     
     public int compareTo(SearchResult other) {

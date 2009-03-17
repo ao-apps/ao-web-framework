@@ -6,16 +6,11 @@ package com.aoindustries.website.framework;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
-import com.aoindustries.website.framework.*;
-import java.awt.*;
-import java.io.*;
-import java.net.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * The default text-only layout.
@@ -63,7 +58,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	WebSiteRequest req,
         HttpServletResponse resp,
 	ChainWriter out
-    ) throws IOException, SQLException {
+    ) {
         throw new RuntimeException("Frames should never be used for text only layout.");
     }
 
@@ -74,7 +69,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	ChainWriter out,
 	String onLoad,
 	String frame
-    ) throws IOException, SQLException {
+    ) {
         // Frames are not supported by text only layout
 	return false;
     }
@@ -88,14 +83,7 @@ public class TextOnlyLayout extends WebPageLayout {
     ) throws IOException, SQLException {
 	out.print("<HTML>\n"
 		+ "  <HEAD>\n"
-                + "    <META http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>\n"
-		+ "    <META name='keywords' content='").writeHtmlAttribute(page.getKeywords()).print("'>\n"
-		+ "    <META name='description' content='").writeHtmlAttribute(page.getDescription()).print("'>\n"
-		+ "    <META name='author' content='").writeHtmlAttribute(page.getAuthor()).print("'>\n"
-                + "    <LINK rel='stylesheet' href='").writeHtmlAttribute(resp.encodeURL(req.getURL("layout/text/global.css", req.isSecure(), null, false))).print("' type='text/css'>\n"
-                + "    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(resp.encodeURL(req.getURL("global.js", req.isSecure(), null, false))).print("'></SCRIPT>\n");
-        printJavaScriptIncludes(req, resp, out, page);
-        out.print("    <TITLE>");
+                + "    <TITLE>");
         List<WebPage> parents=new ArrayList<WebPage>();
         WebPage parent=page;
         while(parent!=null) {
@@ -107,8 +95,19 @@ public class TextOnlyLayout extends WebPageLayout {
             parent=parents.get(c);
             out.print(parent.getTitle());
         }
-        out.print("</TITLE>\n"
-                + "  </HEAD>\n"
+        out.print("</TITLE>\n");
+        // If this is not the default layout, then robots noindex
+        if(!getName().equals(getLayoutChoices()[0])) {
+            out.print("    <META NAME=\"ROBOTS\" CONTENT=\"NOINDEX, NOFOLLOW\">\n");
+        }
+        out.print("    <META http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>\n"
+		+ "    <META name='keywords' content='").writeHtmlAttribute(page.getKeywords()).print("'>\n"
+		+ "    <META name='description' content='").writeHtmlAttribute(page.getDescription()).print("'>\n"
+		+ "    <META name='author' content='").writeHtmlAttribute(page.getAuthor()).print("'>\n"
+                + "    <LINK rel='stylesheet' href='").writeHtmlAttribute(resp.encodeURL(req.getURL("layout/text/global.css", req.isSecure(), null, false))).print("' type='text/css'>\n"
+                + "    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(resp.encodeURL(req.getURL("global.js", req.isSecure(), null, false))).print("'></SCRIPT>\n");
+        printJavaScriptIncludes(req, resp, out, page);
+        out.print("  </HEAD>\n"
                 + "  <BODY\n");
         int color=getBackgroundColor(req);
         if(color!=-1) out.print("    bgcolor='").writeHtmlColor(color).print("'\n");
@@ -350,6 +349,7 @@ public class TextOnlyLayout extends WebPageLayout {
         return "Text";
     }
 
+    @Override
     public boolean useFrames(WebPage page, WebSiteRequest req) {
         return false;
     }

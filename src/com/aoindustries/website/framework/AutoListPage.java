@@ -6,7 +6,6 @@ package com.aoindustries.website.framework;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import java.io.*;
 import java.sql.*;
 import javax.servlet.http.*;
@@ -19,45 +18,35 @@ import javax.servlet.http.*;
 abstract public class AutoListPage extends WebPage {
 
     public AutoListPage() {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, AutoListPage.class, "<init>()", null);
-        Profiler.endProfile(Profiler.INSTANTANEOUS);
     }
 
     public AutoListPage(WebSiteRequest req) {
 	super(req);
-        Profiler.startProfile(Profiler.INSTANTANEOUS, AutoListPage.class, "<init>(WebSiteRequest)", null);
-        Profiler.endProfile(Profiler.INSTANTANEOUS);
     }
 
     public AutoListPage(Object param) {
 	super(param);
-        Profiler.startProfile(Profiler.INSTANTANEOUS, AutoListPage.class, "<init>(Object)", null);
-        Profiler.endProfile(Profiler.INSTANTANEOUS);
     }
 
+    @Override
     public void doGet(
 	ChainWriter out,
 	WebSiteRequest req,
 	HttpServletResponse resp
     ) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.IO, AutoListPage.class, "doGet(ChainWriter,WebSiteRequest,HttpServletResponse)", null);
+        WebPageLayout layout=getWebPageLayout(req);
+        layout.startContent(out, req, resp, 1, getPreferredContentWidth(req));
+        layout.printContentTitle(out, req, resp, this, 1);
+        layout.printContentHorizontalDivider(out, req, resp, 1, false);
+        layout.startContentLine(out, req, resp, 1, null);
+        printContentStart(out, req, resp);
         try {
-            WebPageLayout layout=getWebPageLayout(req);
-            layout.startContent(out, req, resp, 1, getPreferredContentWidth(req));
-            layout.printContentTitle(out, req, resp, this, 1);
-            layout.printContentHorizontalDivider(out, req, resp, 1, false);
-            layout.startContentLine(out, req, resp, 1, null);
-            printContentStart(out, req, resp);
-            try {
-                out.print("      <table cellpadding=0 cellspacing=10 border=0>\n");
-                printPageList(out, req, resp, this, layout);
-                out.print("      </table>\n");
-            } finally {
-                layout.endContentLine(out, req, resp, 1, false);
-                layout.endContent(this, out, req, resp, 1);
-            }
+            out.print("      <table cellpadding=0 cellspacing=10 border=0>\n");
+            printPageList(out, req, resp, this, layout);
+            out.print("      </table>\n");
         } finally {
-            Profiler.endProfile(Profiler.IO);
+            layout.endContentLine(out, req, resp, 1, false);
+            layout.endContent(this, out, req, resp, 1);
         }
     }
 
@@ -69,29 +58,22 @@ abstract public class AutoListPage extends WebPage {
 	WebSiteRequest req,
 	HttpServletResponse resp
     ) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, AutoListPage.class, "printContentStart(ChainWriter,WebSiteRequest,HttpServletResponse)", null);
-        Profiler.endProfile(Profiler.INSTANTANEOUS);
     }
         
     /**
      * Prints a list of pages.
      */
     public static void printPageList(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, WebPage[] pages, WebPageLayout layout) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.IO, AutoListPage.class, "printPageList(ChainWriter,WebSiteRequest,HttpServletResponse,WebPage[],WebPageLayout)", null);
-        try {
-            int len = pages.length;
-            for (int c = 0; c < len; c++) {
-                WebPage page = pages[c];
-                out.print("  <TR>\n"
-                        + "    <TD nowrap><A class='ao_light_link' href='").writeHtmlAttribute(req==null?"":resp.encodeURL(req.getURL(page))).print("'>").print(page.getShortTitle()).print("</A>\n"
-                        + "    </TD>\n"
-                        + "    <TD width=12 nowrap>&nbsp;</TD>\n"
-                        + "    <TD nowrap>").print(page.getDescription()).print("</TD>\n"
-                        + "  </TR>\n")
-                ;
-            }
-        } finally {
-            Profiler.endProfile(Profiler.IO);
+        int len = pages.length;
+        for (int c = 0; c < len; c++) {
+            WebPage page = pages[c];
+            out.print("  <TR>\n"
+                    + "    <TD nowrap><A class='ao_light_link' href='").writeHtmlAttribute(req==null?"":resp.encodeURL(req.getURL(page))).print("'>").print(page.getShortTitle()).print("</A>\n"
+                    + "    </TD>\n"
+                    + "    <TD width=12 nowrap>&nbsp;</TD>\n"
+                    + "    <TD nowrap>").print(page.getDescription()).print("</TD>\n"
+                    + "  </TR>\n")
+            ;
         }
     }
 
@@ -99,20 +81,11 @@ abstract public class AutoListPage extends WebPage {
      * Prints an unordered list of the available pages.
      */
     public static void printPageList(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, WebPage parent, WebPageLayout layout) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, AutoListPage.class, "printPageList(ChainWriter,WebSiteRequest,HttpServletResponse,WebPageLayout)", null);
-        try {
-            printPageList(out, req, resp, parent.getCachedPages(req), layout);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        printPageList(out, req, resp, parent.getCachedPages(req), layout);
     }
 
+    @Override
     public Object getOutputCacheKey(WebSiteRequest req) {
-        Profiler.startProfile(Profiler.FAST, AutoListPage.class, "getOutputCacheKey(WebSiteRequest)", null);
-        try {
-            return req.getOutputCacheKey();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return req.getOutputCacheKey();
     }
 }

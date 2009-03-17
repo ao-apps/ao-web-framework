@@ -6,7 +6,6 @@ package com.aoindustries.website.framework;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import java.io.*;
 import java.sql.*;
 import javax.servlet.http.*;
@@ -19,35 +18,25 @@ import javax.servlet.http.*;
 abstract public class DescriptionAutoListPage extends AutoListPage {
 
     public DescriptionAutoListPage() {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, DescriptionAutoListPage.class, "<init>()", null);
-        Profiler.endProfile(Profiler.INSTANTANEOUS);
     }
 
     public DescriptionAutoListPage(WebSiteRequest req) {
 	super(req);
-        Profiler.startProfile(Profiler.INSTANTANEOUS, DescriptionAutoListPage.class, "<init>(WebSiteRequest)", null);
-        Profiler.endProfile(Profiler.INSTANTANEOUS);
     }
 
     public DescriptionAutoListPage(Object param) {
 	super(param);
-        Profiler.startProfile(Profiler.INSTANTANEOUS, DescriptionAutoListPage.class, "<init>(Object)", null);
-        Profiler.endProfile(Profiler.INSTANTANEOUS);
     }
 
     /**
      * Prints the content that will be put before the auto-generated list.
      */
+    @Override
     public void printContentStart(
 	ChainWriter out,
 	WebSiteRequest req,
 	HttpServletResponse resp
     ) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, DescriptionAutoListPage.class, "printContentStart(ChainWriter,WebSiteRequest,HttpServletResponse)", null);
-        try {
-            out.print(getDescription());
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        out.print(getDescription());
     }
 }

@@ -6,7 +6,6 @@ package com.aoindustries.website.framework;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
@@ -20,50 +19,40 @@ import javax.servlet.http.*;
 abstract public class InputStreamPage extends WebPage {
 
     public InputStreamPage() {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, InputStreamPage.class, "<init>()", null);
-        Profiler.endProfile(Profiler.INSTANTANEOUS);
     }
 
     public InputStreamPage(WebSiteRequest req) {
 	super(req);
-        Profiler.startProfile(Profiler.INSTANTANEOUS, InputStreamPage.class, "<init>(WebSiteRequest)", null);
-        Profiler.endProfile(Profiler.INSTANTANEOUS);
     }
 
     public InputStreamPage(Object param) {
 	super(param);
-        Profiler.startProfile(Profiler.INSTANTANEOUS, InputStreamPage.class, "<init>(Object)", null);
-        Profiler.endProfile(Profiler.INSTANTANEOUS);
     }
 
+    @Override
     public void doGet(
 	ChainWriter out,
 	WebSiteRequest req,
 	HttpServletResponse resp
     ) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, InputStreamPage.class, "doGet(ChainWriter,WebSiteRequest,HttpServletResponse)", null);
+        WebPageLayout layout=getWebPageLayout(req);
+        layout.startContent(out, req, resp, 1, getPreferredContentWidth(req));
         try {
-            WebPageLayout layout=getWebPageLayout(req);
-            layout.startContent(out, req, resp, 1, getPreferredContentWidth(req));
+            layout.printContentTitle(out, req, resp, this, 1);
+            layout.printContentHorizontalDivider(out, req, resp, 1, false);
+            layout.startContentLine(out, req, resp, 1, null);
             try {
-                layout.printContentTitle(out, req, resp, this, 1);
-                layout.printContentHorizontalDivider(out, req, resp, 1, false);
-                layout.startContentLine(out, req, resp, 1, null);
+                InputStream in=getInputStream();
                 try {
-                    InputStream in=getInputStream();
-                    try {
-                        printStream(out, req, resp, in);
-                    } finally {
-                        in.close();
-                    }
+                    printStream(out, req, resp, in);
                 } finally {
-                    layout.endContentLine(out, req, resp, 1, false);
+                    in.close();
                 }
             } finally {
-                layout.endContent(this, out, req, resp, 1);
+                layout.endContentLine(out, req, resp, 1, false);
             }
         } finally {
-            Profiler.endProfile(Profiler.FAST);
+            layout.endContent(this, out, req, resp, 1);
         }
     }
 
@@ -73,38 +62,28 @@ abstract public class InputStreamPage extends WebPage {
     public abstract InputStream getInputStream() throws IOException;
 
     public void printStream(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, InputStreamPage.class, "printStream(ChainWriter,WebSiteRequest,HttpServletResponse,InputStream)", null);
-        try {
-            printStreamStatic(out, in);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        printStreamStatic(out, in);
     }
 
     public static void printStreamStatic(ChainWriter out, InputStream in) throws IOException {
-        Profiler.startProfile(Profiler.IO, InputStreamPage.class, "printStreamStatic(ChainWriter,InputStream)", null);
         try {
-	    try {
-		byte[] bytes = BufferManager.getBytes();
-		try {
-		    char[] chars = BufferManager.getChars();
-		    try {
-			int ret;
-			while ((ret = in.read(bytes, 0, BufferManager.BUFFER_SIZE)) != -1) {
-			    for (int c = 0; c < ret; c++) chars[c] = (char) bytes[c];
-			    out.write(chars, 0, ret);
-			}
-		    } finally {
-			BufferManager.release(chars);
-		    }
-		} finally {
-		    BufferManager.release(bytes);
-		}
-	    } finally {
-		in.close();
-	    }
+            byte[] bytes = BufferManager.getBytes();
+            try {
+                char[] chars = BufferManager.getChars();
+                try {
+                    int ret;
+                    while ((ret = in.read(bytes, 0, BufferManager.BUFFER_SIZE)) != -1) {
+                        for (int c = 0; c < ret; c++) chars[c] = (char) bytes[c];
+                        out.write(chars, 0, ret);
+                    }
+                } finally {
+                    BufferManager.release(chars);
+                }
+            } finally {
+                BufferManager.release(bytes);
+            }
         } finally {
-            Profiler.endProfile(Profiler.IO);
+            in.close();
         }
     }
 }

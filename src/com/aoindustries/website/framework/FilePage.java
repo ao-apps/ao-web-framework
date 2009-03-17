@@ -6,7 +6,6 @@ package com.aoindustries.website.framework;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
@@ -21,33 +20,23 @@ import javax.servlet.http.*;
 abstract public class FilePage extends WebPage {
 
     public FilePage() {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, FilePage.class, "<init>()", null);
-        Profiler.endProfile(Profiler.INSTANTANEOUS);
     }
 
     public FilePage(WebSiteRequest req) {
 	super(req);
-        Profiler.startProfile(Profiler.INSTANTANEOUS, FilePage.class, "<init>(WebSiteRequest)", null);
-        Profiler.endProfile(Profiler.INSTANTANEOUS);
     }
 
     public FilePage(Object param) {
 	super(param);
-        Profiler.startProfile(Profiler.INSTANTANEOUS, FilePage.class, "<init>(Object)", null);
-        Profiler.endProfile(Profiler.INSTANTANEOUS);
     }
 
+    @Override
     public void doGet(
 	ChainWriter out,
 	WebSiteRequest req,
 	HttpServletResponse resp
     ) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, FilePage.class, "doGet(ChainWriter,WebSiteRequest,HttpServletResponse)", null);
-        try {
-            printFile(out, getFile());
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        printFile(out, getFile());
     }
 
     /**
@@ -55,40 +44,31 @@ abstract public class FilePage extends WebPage {
      */
     public abstract File getFile() throws IOException;
 
+    @Override
     public long getLastModified(WebSiteRequest req) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, FilePage.class, "getLastModified(WebSiteRequest)", null);
-        try {
-            return Math.max(super.getLastModified(req), getFile().lastModified());
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return Math.max(super.getLastModified(req), getFile().lastModified());
     }
 
     public static void printFile(ChainWriter out, File file) throws IOException {
-        Profiler.startProfile(Profiler.IO, FilePage.class, "printFile(ChainWriter,File)", null);
+        InputStream in = new FileInputStream(file);
         try {
-            InputStream in = new FileInputStream(file);
+            byte[] bytes = BufferManager.getBytes();
             try {
-                byte[] bytes = BufferManager.getBytes();
+                char[] chars = BufferManager.getChars();
                 try {
-                    char[] chars = BufferManager.getChars();
-                    try {
-                        int ret;
-                        while ((ret = in.read(bytes, 0, BufferManager.BUFFER_SIZE)) != -1) {
-                            for (int c = 0; c < ret; c++) chars[c] = (char) bytes[c];
-                            out.write(chars, 0, ret);
-                        }
-                    } finally {
-                        BufferManager.release(chars);
+                    int ret;
+                    while ((ret = in.read(bytes, 0, BufferManager.BUFFER_SIZE)) != -1) {
+                        for (int c = 0; c < ret; c++) chars[c] = (char) bytes[c];
+                        out.write(chars, 0, ret);
                     }
                 } finally {
-                    BufferManager.release(bytes);
+                    BufferManager.release(chars);
                 }
             } finally {
-                in.close();
+                BufferManager.release(bytes);
             }
         } finally {
-            Profiler.endProfile(Profiler.FAST);
+            in.close();
         }
     }
 }

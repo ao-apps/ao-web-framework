@@ -6,7 +6,6 @@ package com.aoindustries.website.framework;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
@@ -20,38 +19,23 @@ import javax.servlet.http.*;
 abstract public class ProcessPage extends InputStreamPage {
 
     public ProcessPage() {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, ProcessPage.class, "<init>()", null);
-        Profiler.endProfile(Profiler.INSTANTANEOUS);
     }
 
     public ProcessPage(WebSiteRequest req) {
 	super(req);
-        Profiler.startProfile(Profiler.INSTANTANEOUS, ProcessPage.class, "<init>(WebSiteRequest)", null);
-        Profiler.endProfile(Profiler.INSTANTANEOUS);
     }
 
     public ProcessPage(Object param) {
 	super(param);
-        Profiler.startProfile(Profiler.INSTANTANEOUS, ProcessPage.class, "<init>(Object)", null);
-        Profiler.endProfile(Profiler.INSTANTANEOUS);
     }
 
     public InputStream getInputStream() throws IOException {
-        Profiler.startProfile(Profiler.FAST, ProcessPage.class, "getInputStream()", null);
-        try {
-            return getProcess().getInputStream();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return getProcess().getInputStream();
     }
 
+    @Override
     public long getLastModified(WebSiteRequest req) {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, ProcessPage.class, "getLastModified(WebSiteRequest)", null);
-        try {
-            return -1;
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return -1;
     }
 
     /**
@@ -62,12 +46,8 @@ abstract public class ProcessPage extends InputStreamPage {
     /**
      * The search format of this page is indexed.
      */
+    @Override
     public long getSearchLastModified() throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, ProcessPage.class, "getSearchLastModified()", null);
-        try {
-            return super.getLastModified(null);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return super.getLastModified(null);
     }
 }

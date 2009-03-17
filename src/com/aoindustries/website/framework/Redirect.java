@@ -5,7 +5,6 @@ package com.aoindustries.website.framework;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.profiler.*;
 import java.io.*;
 import java.sql.*;
 import javax.servlet.*;
@@ -18,21 +17,13 @@ import javax.servlet.http.*;
  */
 public class Redirect extends ErrorReportingServlet {
 
+    @Override
     protected void reportingDoGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, SQLException, IOException {
-        Profiler.startProfile(Profiler.FAST, Redirect.class, "reportingDoGet(HttpServletRequest,HttpServletResponse)", null);
-        try {
-            resp.sendRedirect(resp.encodeRedirectURL((req.isSecure()?WebSiteFrameworkConfiguration.getHttpsBase():WebSiteFrameworkConfiguration.getHttpBase())+getServletConfig().getInitParameter("url")));
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        resp.sendRedirect(resp.encodeRedirectURL((req.isSecure()?WebSiteFrameworkConfiguration.getHttpsBase():WebSiteFrameworkConfiguration.getHttpBase())+getServletConfig().getInitParameter("url")));
     }
 
+    @Override
     protected void reportingDoPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, SQLException, IOException {
-        Profiler.startProfile(Profiler.FAST, Redirect.class, "reportingDoPost(HttpServletRequest,HttpServletResponse)", null);
-        try {
-            resp.sendRedirect(resp.encodeRedirectURL((req.isSecure()?WebSiteFrameworkConfiguration.getHttpsBase():WebSiteFrameworkConfiguration.getHttpBase())+getServletConfig().getInitParameter("url")));
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        resp.sendRedirect(resp.encodeRedirectURL((req.isSecure()?WebSiteFrameworkConfiguration.getHttpsBase():WebSiteFrameworkConfiguration.getHttpBase())+getServletConfig().getInitParameter("url")));
     }
 }

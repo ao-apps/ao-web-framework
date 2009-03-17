@@ -6,7 +6,6 @@ package com.aoindustries.website.framework;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.profiler.*;
 import com.aoindustries.security.*;
 import com.aoindustries.sql.*;
 import com.aoindustries.util.*;
@@ -100,45 +99,34 @@ abstract public class WebPage extends ErrorReportingServlet {
     private Map<Object,OutputCacheEntry> outputCache;
 
     public WebPage() {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "<init>()", null);
-        Profiler.endProfile(Profiler.INSTANTANEOUS);
     }
 
     public WebPage(WebSiteRequest req) {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "<init>(WebSiteRequest)", null);
-        Profiler.endProfile(Profiler.INSTANTANEOUS);
     }
 
     public WebPage(Object param) {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "<init>(Object)", null);
-        Profiler.endProfile(Profiler.INSTANTANEOUS);
     }
 
     private void addSearchWords(String words, int weight) {
-        Profiler.startProfile(Profiler.UNKNOWN, WebPage.class, "addSearchWords(String,int)", null);
-        try {
-            // Remove HTML
-            words=reHTMLPattern.substituteAll(words, " ");
+        // Remove HTML
+        words=reHTMLPattern.substituteAll(words, " ");
 
-            // Iterate through all the words in the content
-            StringTokenizer st=new StringTokenizer(words, " ");
-            while(st.hasMoreTokens()) {
-                String word=st.nextToken().toLowerCase(); //reWordPattern.getMatch(st.nextToken()).toString(1);
+        // Iterate through all the words in the content
+        StringTokenizer st=new StringTokenizer(words, " ");
+        while(st.hasMoreTokens()) {
+            String word=st.nextToken().toLowerCase(); //reWordPattern.getMatch(st.nextToken()).toString(1);
 
-                // Find the index of the word
-                int index=searchWords.indexOf(word);
-                if(index==-1) {
-                    // Add to the word list
-                    searchWords.add(word);
-                    index=searchWords.indexOf(word);
-                    searchCounts.add(index, new int[] {weight});
-                } else {
-                    // Increment the existing count
-                    searchCounts.get(index)[0]+=weight;
-                }
+            // Find the index of the word
+            int index=searchWords.indexOf(word);
+            if(index==-1) {
+                // Add to the word list
+                searchWords.add(word);
+                index=searchWords.indexOf(word);
+                searchCounts.add(index, new int[] {weight});
+            } else {
+                // Increment the existing count
+                searchCounts.get(index)[0]+=weight;
             }
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
         }
     }
 
@@ -147,36 +135,21 @@ abstract public class WebPage extends ErrorReportingServlet {
      * to inheriting the behavior of the parent page.
      */
     public boolean canAccess(WebSiteUser user) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "canAccess(WebSiteUser)", null);
-        try {
-            return getParent().canAccess(user);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return getParent().canAccess(user);
     }
 
     /**
      * Prints the form that is used to login.
      */
     public void printLoginForm(WebPage page, LoginException loginException, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "printLoginForm(WebPage,LoginException,WebSiteRequest,HttpServletResponse)", null);
-        try {
-            getParent().printLoginForm(page, loginException, req, resp);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        getParent().printLoginForm(page, loginException, req, resp);
     }
 
     /**
      * Prints the unauthorized page message.
      */
     public void printUnauthorizedPage(WebPage page, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "printUnauthorizedPage(WebPage,WebSiteRequest,HttpServletResponse)", null);
-        try {
-            getParent().printUnauthorizedPage(page, req, resp);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        getParent().printUnauthorizedPage(page, req, resp);
     }
 
     /**
@@ -186,33 +159,29 @@ abstract public class WebPage extends ErrorReportingServlet {
      *
      * @see  #getLastModified(WebSiteRequest)
      */
+    @Override
     final public long reportingGetLastModified(HttpServletRequest httpReq) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "reportingGetLastModified(HttpServletRequest)", null);
+        WebSiteRequest req=getWebSiteRequest(httpReq);
+        Class<? extends WebPage> thisClass = getClass();
+        WebPage page=getWebPage(thisClass, req);
+        if(
+            WebSiteFrameworkConfiguration.getEnforceSecureMode()
+            && page.enforceEncryption()
+            && req.isSecure()!=page.useEncryption()
+        ) return -1;
+
+        // Check authentication first
         try {
-            WebSiteRequest req=getWebSiteRequest(httpReq);
-            Class<? extends WebPage> thisClass = getClass();
-            WebPage page=getWebPage(thisClass, req);
-            if(
-                WebSiteFrameworkConfiguration.getEnforceSecureMode()
-                && page.enforceEncryption()
-                && req.isSecure()!=page.useEncryption()
-            ) return -1;
-
-            // Check authentication first
-            try {
-                WebSiteUser user=req.getWebSiteUser(null);
-                if(!page.canAccess(user)) return -1;
-            } catch(LoginException err) {
-                return -1;
-            }
-
-            // If redirected
-            if(page.getRedirectURL(req)!=null) return -1;
-
-            return page.getLastModified(req);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+            WebSiteUser user=req.getWebSiteUser(null);
+            if(!page.canAccess(user)) return -1;
+        } catch(LoginException err) {
+            return -1;
         }
+
+        // If redirected
+        if(page.getRedirectURL(req)!=null) return -1;
+
+        return page.getLastModified(req);
     }
 
     /**
@@ -243,63 +212,48 @@ abstract public class WebPage extends ErrorReportingServlet {
      * Gets the most recent last modified time of this page and its immediate children.
      */
     public long getWebPageAndChildrenLastModified(WebSiteRequest req) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getWebPageAndChildrenLastModified(WebSiteRequest)", null);
-        try {
-            WebPage[] pages = getCachedPages(req);
-            int len = pages.length;
-            long mostRecent = getClassLastModified();
-            if(mostRecent==-1) return -1;
-            for (int c = 0; c < len; c++) {
-                long time = pages[c].getLastModified(req);
-                if(time==-1) return -1;
-                if (time > mostRecent) mostRecent = time;
-            }
-            return mostRecent;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        WebPage[] myPages = getCachedPages(req);
+        int len = myPages.length;
+        long mostRecent = getClassLastModified();
+        if(mostRecent==-1) return -1;
+        for (int c = 0; c < len; c++) {
+            long time = myPages[c].getLastModified(req);
+            if(time==-1) return -1;
+            if (time > mostRecent) mostRecent = time;
         }
+        return mostRecent;
     }
 
     /**
      * Recursively gets the most recent modification time.
      */
     final public long getLastModifiedRecursive(WebSiteRequest req) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getLastModifiedRecursive(WebSiteRequest)", null);
-        try {
-            long time=getLastModified(req);
-            WebPage[] pages=getCachedPages(req);
-            int len=pages.length;
-            for(int c=0; c<len; c++) {
-                long time2=pages[c].getLastModifiedRecursive(req);
-                if(time2>time) time=time2;
-            }
-            return time;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        long time=getLastModified(req);
+        WebPage[] myPages=getCachedPages(req);
+        int len=myPages.length;
+        for(int c=0; c<len; c++) {
+            long time2=myPages[c].getLastModifiedRecursive(req);
+            if(time2>time) time=time2;
         }
+        return time;
     }
 
     /**
      * Recursively gets the most recent modification time of a file or directory.
      */
     public static long getLastModifiedRecursive(File file) {
-        Profiler.startProfile(Profiler.IO, WebPage.class, "getLastModifiedRecursive(File)", null);
-        try {
-            long time=file.lastModified();
-            if(file.isDirectory()) {
-                String[] list=file.list();
-                if(list!=null) {
-                    int len=list.length;
-                    for(int c=0; c<len; c++) {
-                        long time2=getLastModifiedRecursive(new File(file, list[c]));
-                        if (time2 > time) time=time2;
-                    }
+        long time=file.lastModified();
+        if(file.isDirectory()) {
+            String[] list=file.list();
+            if(list!=null) {
+                int len=list.length;
+                for(int c=0; c<len; c++) {
+                    long time2=getLastModifiedRecursive(new File(file, list[c]));
+                    if (time2 > time) time=time2;
                 }
             }
-            return time;
-        } finally {
-            Profiler.endProfile(Profiler.IO);
         }
+        return time;
     }
 
     /**
@@ -309,12 +263,7 @@ abstract public class WebPage extends ErrorReportingServlet {
      * with a null <code>WebSiteRequest</code>.
      */
     public long getSearchLastModified() throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getSearchLastModified()", null);
-        try {
-            return getLastModified(null);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return getLastModified(null);
     }
 
     /**
@@ -323,54 +272,50 @@ abstract public class WebPage extends ErrorReportingServlet {
      *
      * @see  #doGet(WebSiteRequest,HttpServletResponse)
      */
-    final protected void reportingDoGet(HttpServletRequest httpReq, HttpServletResponse resp) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "reportingDoGet(HttpServletRequest,HttpServletResponse)", null);
-        try {
-            WebSiteRequest req=getWebSiteRequest(httpReq);
-            WebPage page=getWebPage(getClass(), req);
-            if(
-                WebSiteFrameworkConfiguration.getEnforceSecureMode()
-                && page.enforceEncryption()
-                && req.isSecure()!=page.useEncryption()
-                && req.getParameter("login_requested")==null
-                && req.getParameter("login_username")==null
-            ) {
-                // Redirect to use proper encryption mode
-                resp.sendRedirect(resp.encodeRedirectURL(req.getURL(page, page.useEncryption(), null)));
-            } else {
-                // Logout when requested
-                boolean isLogout="true".equals(req.getParameter("logout_requested"));
-                if(isLogout) req.logout(resp);
+    @Override
+    final protected void reportingDoGet(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+        WebSiteRequest req=getWebSiteRequest(httpReq);
+        WebPage page=getWebPage(getClass(), req);
+        if(
+            WebSiteFrameworkConfiguration.getEnforceSecureMode()
+            && page.enforceEncryption()
+            && req.isSecure()!=page.useEncryption()
+            && req.getParameter("login_requested")==null
+            && req.getParameter("login_username")==null
+        ) {
+            // Redirect to use proper encryption mode
+            resp.sendRedirect(resp.encodeRedirectURL(req.getURL(page, page.useEncryption(), null)));
+        } else {
+            // Logout when requested
+            boolean isLogout="true".equals(req.getParameter("logout_requested"));
+            if(isLogout) req.logout(resp);
 
-                // Check authentication first and return HTTP error code
-                boolean alreadyDone=false;
-                if("true".equals(req.getParameter("login_requested"))) {
-                    page.printLoginForm(page, new LoginException("Please Login"), req, resp);
-                    alreadyDone = true;
-                }
-                if(!alreadyDone) {
-                    try {
-                        WebSiteUser user=req.getWebSiteUser(resp);
-                        if(!page.canAccess(user)) {
-                            page.printUnauthorizedPage(page, req, resp);
-                            alreadyDone=true;
-                        }
-                    } catch(LoginException err) {
-                        page.printLoginForm(page, err, req, resp);
+            // Check authentication first and return HTTP error code
+            boolean alreadyDone=false;
+            if("true".equals(req.getParameter("login_requested"))) {
+                page.printLoginForm(page, new LoginException("Please Login"), req, resp);
+                alreadyDone = true;
+            }
+            if(!alreadyDone) {
+                try {
+                    WebSiteUser user=req.getWebSiteUser(resp);
+                    if(!page.canAccess(user)) {
+                        page.printUnauthorizedPage(page, req, resp);
                         alreadyDone=true;
                     }
-                }
-                if(!alreadyDone) {
-                    String redirect=page.getRedirectURL(req);
-                    if(redirect!=null) {
-                        resp.sendRedirect(resp.encodeRedirectURL(redirect));
-                    } else {
-                        page.doGet(req, resp);
-                    }
+                } catch(LoginException err) {
+                    page.printLoginForm(page, err, req, resp);
+                    alreadyDone=true;
                 }
             }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+            if(!alreadyDone) {
+                String redirect=page.getRedirectURL(req);
+                if(redirect!=null) {
+                    resp.sendRedirect(resp.encodeRedirectURL(redirect));
+                } else {
+                    page.doGet(req, resp);
+                }
+            }
         }
     }
 
@@ -385,82 +330,77 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @see #getOutputCacheKey(WebSiteRequest)
      * @see #doGet(ChainWriter,WebSiteRequest,HttpServletResponse)
      */
-    protected void doGet(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "doGet(WebSiteRequest,HttpServletResponse)", null);
-        try {
-            WebPageLayout layout=getWebPageLayout(req);
+    protected void doGet(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+        WebPageLayout layout=getWebPageLayout(req);
 
-            boolean doRegular=true;
-            if(layout.useFrames(this, req)) {
-                ChainWriter out=getHTMLChainWriter(req, resp);
-		try {
-		    req.setUsingFrames(true);
-		    String frame=req.getParameter("frame");
-		    if(
-		       frame==null
-		       || (frame=frame.trim()).length()==0
-		       || !layout.printFrame(this, req, resp, out, null, frame)
-		       ) layout.printFrameSet(this, req, resp, out);
-		} finally {
-		    out.flush();
-		    out.close();
-		}
-                doRegular=false;
+        boolean doRegular=true;
+        if(layout.useFrames(this, req)) {
+            ChainWriter out=getHTMLChainWriter(req, resp);
+            try {
+                req.setUsingFrames(true);
+                String frame=req.getParameter("frame");
+                if(
+                   frame==null
+                   || (frame=frame.trim()).length()==0
+                   || !layout.printFrame(this, req, resp, out, null, frame)
+                   ) layout.printFrameSet(this, req, resp, out);
+            } finally {
+                out.flush();
+                out.close();
             }
-            if(doRegular) {
-                req.setUsingFrames(false);
-                if(WebSiteFrameworkConfiguration.useWebSiteCaching() && req.getParameter("login_requested")==null && req.getParameter("login_username")==null) {
-                    // Try to use the cache if the last modified time is available
-                    long pageLastModified=getLastModified(req);
-                    if(pageLastModified!=-1) {
-                        Object outputCacheKey=getOutputCacheKey(req);
-                        if(outputCacheKey!=null) {
-                            OutputCacheEntry existingCache;
-                            synchronized(this) {
-                                if(outputCache==null) {
-                                    outputCache=new HashMap<Object,OutputCacheEntry>();
-                                    existingCache=null;
-                                } else existingCache=outputCache.get(outputCacheKey);
+            doRegular=false;
+        }
+        if(doRegular) {
+            req.setUsingFrames(false);
+            if(WebSiteFrameworkConfiguration.useWebSiteCaching() && req.getParameter("login_requested")==null && req.getParameter("login_username")==null) {
+                // Try to use the cache if the last modified time is available
+                long pageLastModified=getLastModified(req);
+                if(pageLastModified!=-1) {
+                    Object outputCacheKey=getOutputCacheKey(req);
+                    if(outputCacheKey!=null) {
+                        OutputCacheEntry existingCache;
+                        synchronized(this) {
+                            if(outputCache==null) {
+                                outputCache=new HashMap<Object,OutputCacheEntry>();
+                                existingCache=null;
+                            } else existingCache=outputCache.get(outputCacheKey);
 
-                                if(existingCache==null || existingCache.lastModified!=pageLastModified) {
-                                    ByteArrayOutputStream bout=new ByteArrayOutputStream();
-                                    ChainWriter out=new ChainWriter(bout);
-				    try {
-					layout.startHTML(this, req, resp, out, null);
-					doGet(out, req, resp);
-					layout.endHTML(this, req, out);
-				    } finally {
-					out.flush();
-					out.close();
-				    }
-                                    outputCache.put(outputCacheKey, existingCache=new OutputCacheEntry(outputCacheKey, pageLastModified, bout.toByteArray()));
+                            if(existingCache==null || existingCache.lastModified!=pageLastModified) {
+                                ByteArrayOutputStream bout=new ByteArrayOutputStream();
+                                ChainWriter out=new ChainWriter(bout);
+                                try {
+                                    layout.startHTML(this, req, resp, out, null);
+                                    doGet(out, req, resp);
+                                    layout.endHTML(this, req, out);
+                                } finally {
+                                    out.flush();
+                                    out.close();
                                 }
+                                outputCache.put(outputCacheKey, existingCache=new OutputCacheEntry(outputCacheKey, pageLastModified, bout.toByteArray()));
                             }
-                            OutputStream out=getHTMLOutputStream(req, resp);
-			    try {
-				out.write(existingCache.bytes);
-			    } finally {
-				out.flush();
-				out.close();
-			    }
-                            doRegular=false;
                         }
+                        OutputStream out=getHTMLOutputStream(req, resp);
+                        try {
+                            out.write(existingCache.bytes);
+                        } finally {
+                            out.flush();
+                            out.close();
+                        }
+                        doRegular=false;
                     }
                 }
-                if(doRegular) {
-                    ChainWriter out=getHTMLChainWriter(req, resp);
-		    try {
-			layout.startHTML(this, req, resp, out, null);
-			doGet(out, req, resp);
-			layout.endHTML(this, req, out);
-		    } finally {
-			out.flush();
-			out.close();
-		    }
+            }
+            if(doRegular) {
+                ChainWriter out=getHTMLChainWriter(req, resp);
+                try {
+                    layout.startHTML(this, req, resp, out, null);
+                    doGet(out, req, resp);
+                    layout.endHTML(this, req, out);
+                } finally {
+                    out.flush();
+                    out.close();
                 }
             }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
         }
     }
 
@@ -475,9 +415,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	ChainWriter out,
 	WebSiteRequest req,
 	HttpServletResponse resp
-    ) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "doGet(ChainWriter,WebSiteRequest,HttpServletResponse)", null);
-        Profiler.endProfile(Profiler.INSTANTANEOUS);
+    ) throws ServletException, IOException, SQLException {
     }
 
     /**
@@ -487,54 +425,50 @@ abstract public class WebPage extends ErrorReportingServlet {
      *
      * @see  #doPostWithSearch(WebSiteRequest,HttpServletResponse)
      */
-    protected final void reportingDoPost(HttpServletRequest httpReq, HttpServletResponse resp) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.UNKNOWN, WebPage.class, "reportingDoPost(HttpServletRequest,HttpServletResponse)", null);
-        try {
-            WebSiteRequest req=getWebSiteRequest(httpReq);
-            WebPage page=getWebPage(getClass(), req);
-            if(
-                WebSiteFrameworkConfiguration.getEnforceSecureMode()
-                && page.enforceEncryption()
-                && req.isSecure()!=page.useEncryption()
-                && req.getParameter("login_requested")==null
-                && req.getParameter("login_username")==null
-            ) {
-                // Redirect to use proper encryption mode
-                resp.sendRedirect(resp.encodeRedirectURL(req.getURL(page, page.useEncryption(), null)));
-            } else {
-                // Logout when requested
-                boolean isLogout="true".equals(req.getParameter("logout_requested"));
-                if(isLogout) req.logout(resp);
+    @Override
+    protected final void reportingDoPost(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+        WebSiteRequest req=getWebSiteRequest(httpReq);
+        WebPage page=getWebPage(getClass(), req);
+        if(
+            WebSiteFrameworkConfiguration.getEnforceSecureMode()
+            && page.enforceEncryption()
+            && req.isSecure()!=page.useEncryption()
+            && req.getParameter("login_requested")==null
+            && req.getParameter("login_username")==null
+        ) {
+            // Redirect to use proper encryption mode
+            resp.sendRedirect(resp.encodeRedirectURL(req.getURL(page, page.useEncryption(), null)));
+        } else {
+            // Logout when requested
+            boolean isLogout="true".equals(req.getParameter("logout_requested"));
+            if(isLogout) req.logout(resp);
 
-                // Check authentication first and return HTTP error code
-                boolean alreadyDone=false;
-                if("true".equals(req.getParameter("login_requested"))) {
-                    page.printLoginForm(page, new LoginException("Please Login"), req, resp);
-                    alreadyDone = true;
-                }
-                if(!alreadyDone) {
-                    try {
-                        WebSiteUser user=req.getWebSiteUser(resp);
-                        if(!page.canAccess(user)) {
-                            page.printUnauthorizedPage(page, req, resp);
-                            alreadyDone=true;
-                        }
-                    } catch(LoginException err) {
-                        page.printLoginForm(page, err, req, resp);
+            // Check authentication first and return HTTP error code
+            boolean alreadyDone=false;
+            if("true".equals(req.getParameter("login_requested"))) {
+                page.printLoginForm(page, new LoginException("Please Login"), req, resp);
+                alreadyDone = true;
+            }
+            if(!alreadyDone) {
+                try {
+                    WebSiteUser user=req.getWebSiteUser(resp);
+                    if(!page.canAccess(user)) {
+                        page.printUnauthorizedPage(page, req, resp);
                         alreadyDone=true;
                     }
-                }
-                if(!alreadyDone) {
-                    String redirect=page.getRedirectURL(req);
-                    if(redirect!=null) resp.sendRedirect(resp.encodeRedirectURL(redirect));
-                    else {
-                        if(isLogout || (req.getParameter("login_username")!=null && req.getParameter("login_password")!=null)) page.doGet(req, resp);
-                        else page.doPostWithSearch(req, resp);
-                    }
+                } catch(LoginException err) {
+                    page.printLoginForm(page, err, req, resp);
+                    alreadyDone=true;
                 }
             }
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+            if(!alreadyDone) {
+                String redirect=page.getRedirectURL(req);
+                if(redirect!=null) resp.sendRedirect(resp.encodeRedirectURL(redirect));
+                else {
+                    if(isLogout || (req.getParameter("login_username")!=null && req.getParameter("login_password")!=null)) page.doGet(req, resp);
+                    else page.doPostWithSearch(req, resp);
+                }
+            }
         }
     }
 
@@ -546,48 +480,43 @@ abstract public class WebPage extends ErrorReportingServlet {
      *
      * @see  #doPost(WebSiteRequest,HttpServletResponse)
      */
-    protected void doPostWithSearch(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.UNKNOWN, WebPage.class, "doPostWithSearch(WebSiteRequest,HttpServletResponse)", null);
-        try {
-            String query=req.getParameter("search_query");
-            String searchTarget=req.getParameter("search_target");
-            WebPageLayout layout=getWebPageLayout(req);
-            if(query!=null && searchTarget!=null) {
-                // Search request
-                ChainWriter out=getHTMLChainWriter(req, resp);
-		try {
-		    req.setUsingFrames(false);
-		    layout.startHTML(this, req, resp, out, "document.forms['search_two'].search_query.select(); document.forms['search_two'].search_query.focus();");
-		    boolean entire_site=searchTarget.equals("entire_site");
-		    WebPage target = entire_site ? getRootPage() : this;
+    protected void doPostWithSearch(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+        String query=req.getParameter("search_query");
+        String searchTarget=req.getParameter("search_target");
+        WebPageLayout layout=getWebPageLayout(req);
+        if(query!=null && searchTarget!=null) {
+            // Search request
+            ChainWriter out=getHTMLChainWriter(req, resp);
+            try {
+                req.setUsingFrames(false);
+                layout.startHTML(this, req, resp, out, "document.forms['search_two'].search_query.select(); document.forms['search_two'].search_query.focus();");
+                boolean entire_site=searchTarget.equals("entire_site");
+                WebPage target = entire_site ? getRootPage() : this;
 
-		    // If the target contains no pages, use its parent
-		    if(target.getCachedPages(req).length==0) target=target.getParent();
+                // If the target contains no pages, use its parent
+                if(target.getCachedPages(req).length==0) target=target.getParent();
 
-		    // Get the list of words to search for
-		    String[] words=StringUtility.splitString(query.replace('.', ' '));
+                // Get the list of words to search for
+                String[] words=StringUtility.splitString(query.replace('.', ' '));
 
-		    List<SearchResult> results=new ArrayList<SearchResult>();
-		    if(words.length>0) {
-			// Perform the search
-			target.search(words, req, results, new BetterByteArrayOutputStream(), new SortedArrayList<WebPage>());
-                        AutoSort.sortStatic(results);
-			//StringUtility.sortObjectsAndFloatDescending(results, 1, 5);
-		    }
+                List<SearchResult> results=new ArrayList<SearchResult>();
+                if(words.length>0) {
+                    // Perform the search
+                    target.search(words, req, results, new BetterByteArrayOutputStream(), new SortedArrayList<WebPage>());
+                    AutoSort.sortStatic(results);
+                    //StringUtility.sortObjectsAndFloatDescending(results, 1, 5);
+                }
 
-		    layout.printSearchOutput(this, out, req, resp, query, entire_site, results, words);
+                layout.printSearchOutput(this, out, req, resp, query, entire_site, results, words);
 
-		    layout.endHTML(this, req, out);
-		} finally {
-		    out.close();
-		}
-            } else {
-                boolean useFrames=layout.useFrames(this, req);
-                req.setUsingFrames(useFrames);
-                doPost(req, resp);
+                layout.endHTML(this, req, out);
+            } finally {
+                out.close();
             }
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        } else {
+            boolean useFrames=layout.useFrames(this, req);
+            req.setUsingFrames(useFrames);
+            doPost(req, resp);
         }
     }
 
@@ -602,23 +531,18 @@ abstract public class WebPage extends ErrorReportingServlet {
     protected void doPost(
 	WebSiteRequest req,
 	HttpServletResponse resp
-    ) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "doPost(WebSiteRequest,HttpServletResponse)", null);
+    ) throws ServletException, IOException, SQLException {
+        ChainWriter out=getHTMLChainWriter(req, resp);
         try {
-            ChainWriter out=getHTMLChainWriter(req, resp);
-	    try {
-		WebPageLayout layout=getWebPageLayout(req);
-		layout.startHTML(this, req, resp, out, null);
+            WebPageLayout layout=getWebPageLayout(req);
+            layout.startHTML(this, req, resp, out, null);
 
-		doPost(out, req, resp);
+            doPost(out, req, resp);
 
-		layout.endHTML(this, req, out);
-	    } finally {
-		out.flush();
-		out.close();
-	    }
+            layout.endHTML(this, req, out);
         } finally {
-            Profiler.endProfile(Profiler.FAST);
+            out.flush();
+            out.close();
         }
     }
 
@@ -635,25 +559,15 @@ abstract public class WebPage extends ErrorReportingServlet {
         ChainWriter out,
 	WebSiteRequest req,
 	HttpServletResponse resp
-    ) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "doPost(ChainWriter,WebSiteRequest,HttpServletResponse)", null);
-        try {
-            doGet(out, req, resp);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+    ) throws ServletException, IOException, SQLException {
+        doGet(out, req, resp);
     }
 
     /**
      * Gets whether this page should enforce the current encrpyption requirement or not.
      */
     public boolean enforceEncryption() throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "enforceEncryption()", null);
-        try {
-            return getParent().enforceEncryption();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return getParent().enforceEncryption();
     }
 
 
@@ -662,16 +576,12 @@ abstract public class WebPage extends ErrorReportingServlet {
      *
      * @see  #equals(WebPage)
      */
+    @Override
     final public boolean equals(Object O) {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "equals(Object)", null);
-        try {
-            return
-                (O instanceof WebPage)
-                && equals((WebPage)O)
-            ;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return
+            (O instanceof WebPage)
+            && equals((WebPage)O)
+        ;
     }
 
     /**
@@ -681,12 +591,7 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @see  #hashCode
      */
     public boolean equals(WebPage other) {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "equals(WebPage)", null);
-        try {
-            return other.getClass().getName().equals(getClass().getName());
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return other.getClass().getName().equals(getClass().getName());
     }
 
     /**
@@ -695,37 +600,23 @@ abstract public class WebPage extends ErrorReportingServlet {
      *
      * @see  #equals(WebPage)
      */
+    @Override
     public int hashCode() {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "hashCode()", null);
-        try {
-            return getClass().getName().hashCode();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return getClass().getName().hashCode();
     }
 
     /**
      * Gets additional headers for this page.  The format must be in a String[] of name/value pairs, two elements each, name and then value.
      */
     public String[] getAdditionalHeaders(WebSiteRequest req) {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "getAdditionalHeaders(WebSiteRequest)", null);
-        try {
-            return null;
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return null;
     }
 
     /**
      * Gets the author of this page.  By default, the author of the parent page is used.
      */
     public String getAuthor() throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getAuthor()", null);
-        try {
-            return getParent().getAuthor();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return getParent().getAuthor();
     }
 
     /**
@@ -736,12 +627,7 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @see  WebPageLayout
      */
     public int getPreferredContentWidth(WebSiteRequest req) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "getPreferredContentWidth(WebSiteRequest)", null);
-        try {
-            return getParent().getPreferredContentWidth(req);
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return getParent().getPreferredContentWidth(req);
     }
 
     /**
@@ -751,39 +637,24 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @see  WebPageLayout
      */
     public String getContentVAlign(WebSiteRequest req) {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "getContentVAlign(WebSiteRequest)", null);
-        try {
-            return "top";
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return "top";
     }
 
     /**
      * Gets the description of this page.  By default, the description of the parent page is used.
      */
     public String getDescription() throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getDescription()", null);
-        try {
-            return getParent().getDescription();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return getParent().getDescription();
     }
 
     /**
      * Gets the root page in the web page hierarchy.  The root page has no parent.
      */
     public final WebPage getRootPage() throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getRootPage()", null);
-        try {
-            WebPage page = this;
-            WebPage parent;
-            while ((parent = page.getParent()) != null) page = parent;
-            return page;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        WebPage page = this;
+        WebPage parent;
+        while ((parent = page.getParent()) != null) page = parent;
+        return page;
     }
 
     /**
@@ -792,18 +663,13 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @see  #getAdditionalHeaders
      */
     protected final ChainWriter getHTMLChainWriter(WebSiteRequest req, HttpServletResponse resp) throws IOException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getHTMLChainWriter(WebSiteRequest,HttpServletResponse)", null);
-        try {
-            resp.setContentType("text/html");
-            String[] headers=getAdditionalHeaders(req);
-            if(headers!=null) {
-                int len=headers.length;
-                for(int c=0; c<len; c+=2) resp.setHeader(headers[c], headers[c+1]);
-            }
-            return new ChainWriter(resp.getWriter());
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        resp.setContentType("text/html");
+        String[] headers=getAdditionalHeaders(req);
+        if(headers!=null) {
+            int len=headers.length;
+            for(int c=0; c<len; c+=2) resp.setHeader(headers[c], headers[c+1]);
         }
+        return new ChainWriter(resp.getWriter());
     }
 
     /**
@@ -812,18 +678,13 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @see  #getAdditionalHeaders
      */
     protected final OutputStream getHTMLOutputStream(WebSiteRequest req, HttpServletResponse resp) throws IOException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getHTMLOutputStream(WebSiteRequest,HttpServletResponse)", null);
-        try {
-            resp.setContentType("text/html");
-            String[] headers=getAdditionalHeaders(req);
-            if(headers!=null) {
-                int len=headers.length;
-                for(int c=0; c<len; c+=2) resp.setHeader(headers[c], headers[c+1]);
-            }
-            return resp.getOutputStream();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+        resp.setContentType("text/html");
+        String[] headers=getAdditionalHeaders(req);
+        if(headers!=null) {
+            int len=headers.length;
+            for(int c=0; c<len; c+=2) resp.setHeader(headers[c], headers[c+1]);
         }
+        return resp.getOutputStream();
     }
 
     /**
@@ -836,24 +697,14 @@ abstract public class WebPage extends ErrorReportingServlet {
      *          or <code>null</code> for none
      */
     public Object getJavaScriptSrc(WebSiteRequest req) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "getJavaScriptSrc(WebSiteRequest)", null);
-        try {
-            return null;
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return null;
     }
 
     /**
      * Gets the keywords for this page.  By default, the keywords of the parent page are used.
      */
     public String getKeywords() throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getKeywords()", null);
-        try {
-            return getParent().getKeywords();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return getParent().getKeywords();
     }
 
     /**
@@ -866,12 +717,7 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @see  #getNavImageURL
      */
     public String getNavImageAlt(WebSiteRequest req) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getNavImageAlt(WebSiteRequest)", null);
-        try {
-            return getShortTitle();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return getShortTitle();
     }
 
     /**
@@ -883,12 +729,7 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @see  #getNavImageURL
      */
     public String getNavImageSuffix(WebSiteRequest req) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "getNavImageSuffix(WebSiteRequest)", null);
-        try {
-            return null;
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return null;
     }
 
     /**
@@ -898,27 +739,17 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @see  #getNavImageSuffix
      */
     public String getNavImageURL(WebSiteRequest req, Object params) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getNavImageURL(WebSiteRequest,Object)", null);
-        try {
-            return req.getURL(this, params);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return req.getURL(this, params);
     }
 
     /**
      * Gets the index of this page in the parents list of children pages.
      */
     final public int getPageIndexInParent(WebSiteRequest req) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getPageIndexInParent(WebSiteRequest)", null);
-        try {
-            WebPage[] pages=getParent().getCachedPages(req);
-            int len=pages.length;
-            for(int c=0;c<len;c++) if(pages[c].equals(this)) return c;
-            throw new RuntimeException("Unable to find page index in parent.");
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        WebPage[] myPages=getParent().getCachedPages(req);
+        int len=myPages.length;
+        for(int c=0;c<len;c++) if(myPages[c].equals(this)) return c;
+        throw new RuntimeException("Unable to find page index in parent.");
     }
 
     /**
@@ -928,23 +759,18 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @return  the <code>WebPage</code> or <code>null</code> if not found
      */
     final public WebPage getNextPage(WebSiteRequest req) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getNextPage(WebSiteRequest)", null);
-        try {
-            WebPage parent=getParent();
-            if (parent!=null) {
-		WebPage[] pages=parent.getCachedPages(req);
-		int len=pages.length;
-		for(int c=0; c<len; c++) {
-                    if(pages[c].getClass() == getClass()) {
-                        if (c < (len - 1)) return pages[c + 1];
-                        return null;
-                    }
-		}
+        WebPage parent=getParent();
+        if (parent!=null) {
+            WebPage[] myPages=parent.getCachedPages(req);
+            int len=myPages.length;
+            for(int c=0; c<len; c++) {
+                if(myPages[c].getClass() == getClass()) {
+                    if (c < (len - 1)) return myPages[c + 1];
+                    return null;
+                }
             }
-            return null;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
         }
+        return null;
     }
 
     /**
@@ -954,23 +780,18 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @return  the <code>WebPage</code> or <code>null</code> if not found
      */
     final public WebPage getPreviousPage(WebSiteRequest req) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getPreviousPage(WebSiteRequest)", null);
-        try {
-            WebPage parent = getParent();
-            if (parent != null) {
-                WebPage[] pages = parent.getCachedPages(req);
-                int len = pages.length;
-                for (int c = 0; c < len; c++) {
-                    if (pages[c].getClass() == getClass()) {
-                        if (c > 0) return pages[c - 1];
-                        return null;
-                    }
+        WebPage parent = getParent();
+        if (parent != null) {
+            WebPage[] myPages = parent.getCachedPages(req);
+            int len = myPages.length;
+            for (int c = 0; c < len; c++) {
+                if (myPages[c].getClass() == getClass()) {
+                    if (c > 0) return myPages[c - 1];
+                    return null;
                 }
             }
-            return null;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
         }
+        return null;
     }
 
     /**
@@ -981,12 +802,7 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @return  a <code>String</code> or <code>null</code> for none
      */
     public String getOnLoadScript(WebSiteRequest req) {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "getOnLoadScript(WebSiteRequest)", null);
-        try {
-            return null;
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return null;
     }
 
     /**
@@ -1003,16 +819,11 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @see  #getWebPages(WebSiteRequest)
      */
     synchronized public WebPage[] getCachedPages(WebSiteRequest req) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getCachedPages(WebSiteRequest)", null);
-        try {
-            if(WebSiteFrameworkConfiguration.useWebSiteCaching()) {
-                WebPage[] pages=this.pages;
-                if(pages==null) pages=this.pages=getWebPages(req);
-                return pages;
-            } else return getWebPages(req);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        if(WebSiteFrameworkConfiguration.useWebSiteCaching()) {
+            WebPage[] myPages=this.pages;
+            if(myPages==null) myPages=this.pages=getWebPages(req);
+            return myPages;
+        } else return getWebPages(req);
     }
 
     /**
@@ -1028,12 +839,7 @@ abstract public class WebPage extends ErrorReportingServlet {
      *          no redirect.
      */
     public String getRedirectURL(WebSiteRequest req) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "getRedirectURL(WebSiteRequest)", null);
-        try {
-            return null;
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return null;
     }
 
     /**
@@ -1045,12 +851,7 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @see  #getTitle
      */
     public String getShortTitle() throws IOException, SQLException{
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getShortTitle()", null);
-        try {
-            return getTitle();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return getTitle();
     }
 
     /**
@@ -1060,36 +861,21 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @return  the page title
      */
     public String getTitle() throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getTitle()", null);
-        try {
-            return getParent().getTitle();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return getParent().getTitle();
     }
 
     /**
      * Gets parameters that are added to the query string of URLs generated for this page.
      */
     public Object getURLParams(WebSiteRequest req) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "getURLParams(WebSiteRequest)", null);
-        try {
-            return null;
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return null;
     }
 
     /**
      * @see  #getWebPage(ServletContext,Class,WebSiteRequest)
      */
     public WebPage getWebPage(Class<? extends WebPage> clazz, WebSiteRequest req) throws IOException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getWebPage(Class<? extends WebPage>,WebSiteRequest)", null);
-        try {
-            return getWebPage(getServletContext(), clazz, req);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return getWebPage(getServletContext(), clazz, req);
     }
 
     /**
@@ -1112,67 +898,62 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @see  #isHandler(WebSiteRequest)
      */
     public static WebPage getWebPage(ServletContext context, Class<? extends WebPage> clazz, WebSiteRequest req) throws IOException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getWebPage(ServletContext,Class<? extends WebPage>,WebSiteRequest)", null);
-        try {
-            String classname=clazz.getName();
-            boolean use_caching=WebSiteFrameworkConfiguration.useWebSiteCaching();
-            if(use_caching) {
-                // First look for a match in the cache
-                List<WebPage> list=webPageCache.get(classname);
-                if(list!=null) {
-                    int size=list.size();
-                    for(int c=0;c<size;c++) {
-                        WebPage page=list.get(c);
-                        if(page.getClass()==clazz && page.isHandler(req)) return page;
-                    }
+        String classname=clazz.getName();
+        boolean use_caching=WebSiteFrameworkConfiguration.useWebSiteCaching();
+        if(use_caching) {
+            // First look for a match in the cache
+            List<WebPage> list=webPageCache.get(classname);
+            if(list!=null) {
+                int size=list.size();
+                for(int c=0;c<size;c++) {
+                    WebPage page=list.get(c);
+                    if(page.getClass()==clazz && page.isHandler(req)) return page;
                 }
             }
+        }
 
-            // Make a new instance and store in cache
-            try {
-                if(!use_caching) clazz=loadClass(classname);
-                Constructor<? extends WebPage> con=clazz.getConstructor(getWebPageRequestParams);
-                WebPage page=con.newInstance(new Object[] {req});
-                page.setServletContext(context);
-                if(use_caching) {
-                    List<WebPage> list=webPageCache.get(classname);
-                    if(list==null) webPageCache.put(classname, list=new ArrayList<WebPage>());
-                    list.add(page);
-                }
-                return page;
-            } catch (ClassNotFoundException e) {
-                log(context, null, e, new Object[] {"classname="+classname, "req="+req});
-                IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
-                ioExc.initCause(e);
-                throw ioExc;
-            } catch (ClassCastException e) {
-                log(context, null, e, new Object[] {"classname="+classname, "req="+req});
-                IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
-                ioExc.initCause(e);
-                throw ioExc;
-            } catch (IllegalAccessException e) {
-                log(context, null, e, new Object[] {"classname="+classname, "req="+req});
-                IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
-                ioExc.initCause(e);
-                throw ioExc;
-            } catch (InstantiationException e) {
-                log(context, null, e, new Object[] {"classname="+classname, "req="+req});
-                IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
-                ioExc.initCause(e);
-                throw ioExc;
-            } catch (InvocationTargetException e) {
-                log(context, null, e, new Object[] {"classname="+classname, "req="+req});
-                IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
-                ioExc.initCause(e);
-                throw ioExc;
-            } catch (NoSuchMethodException e) {
-                log(context, null, e, new Object[] {"classname="+classname, "req="+req});
-                IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
-                ioExc.initCause(e);
-                throw ioExc;
+        // Make a new instance and store in cache
+        try {
+            if(!use_caching) clazz=loadClass(classname);
+            Constructor<? extends WebPage> con=clazz.getConstructor(getWebPageRequestParams);
+            WebPage page=con.newInstance(new Object[] {req});
+            page.setServletContext(context);
+            if(use_caching) {
+                List<WebPage> list=webPageCache.get(classname);
+                if(list==null) webPageCache.put(classname, list=new ArrayList<WebPage>());
+                list.add(page);
             }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+            return page;
+        } catch (ClassNotFoundException e) {
+            log(context, null, e, new Object[] {"classname="+classname, "req="+req});
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            ioExc.initCause(e);
+            throw ioExc;
+        } catch (ClassCastException e) {
+            log(context, null, e, new Object[] {"classname="+classname, "req="+req});
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            ioExc.initCause(e);
+            throw ioExc;
+        } catch (IllegalAccessException e) {
+            log(context, null, e, new Object[] {"classname="+classname, "req="+req});
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            ioExc.initCause(e);
+            throw ioExc;
+        } catch (InstantiationException e) {
+            log(context, null, e, new Object[] {"classname="+classname, "req="+req});
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            ioExc.initCause(e);
+            throw ioExc;
+        } catch (InvocationTargetException e) {
+            log(context, null, e, new Object[] {"classname="+classname, "req="+req});
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            ioExc.initCause(e);
+            throw ioExc;
+        } catch (NoSuchMethodException e) {
+            log(context, null, e, new Object[] {"classname="+classname, "req="+req});
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            ioExc.initCause(e);
+            throw ioExc;
         }
     }
 
@@ -1180,12 +961,7 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @see  #getWebPage(ServletContext,Class,Object)
      */
     public WebPage getWebPage(Class<? extends WebPage> clazz, Object param) throws IOException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getWebPage(Class<? extends WebPage>,Object)", null);
-        try {
-            return getWebPage(getServletContext(), clazz, param);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return getWebPage(getServletContext(), clazz, param);
     }
 
     /**
@@ -1208,67 +984,62 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @see  #isHandler(Object)
      */
     public static WebPage getWebPage(ServletContext context, Class<? extends WebPage> clazz, Object params) throws IOException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getWebPage(ServletContext,Class<? extends WebPage>,Object)", null);
-        try {
-            String classname=clazz.getName();
-            boolean use_caching=WebSiteFrameworkConfiguration.useWebSiteCaching();
-            if(use_caching) {
-                // First look for a match in the cache
-                List<WebPage> list=webPageCache.get(classname);
-                if(list!=null) {
-                    int size=list.size();
-                    for(int c=0;c<size;c++) {
-                        WebPage page=list.get(c);
-                        if(page.getClass()==clazz && page.isHandler(params)) return page;
-                    }
+        String classname=clazz.getName();
+        boolean use_caching=WebSiteFrameworkConfiguration.useWebSiteCaching();
+        if(use_caching) {
+            // First look for a match in the cache
+            List<WebPage> list=webPageCache.get(classname);
+            if(list!=null) {
+                int size=list.size();
+                for(int c=0;c<size;c++) {
+                    WebPage page=list.get(c);
+                    if(page.getClass()==clazz && page.isHandler(params)) return page;
                 }
             }
+        }
 
-            // Make a new instance and store in cache
-            try {
-                if(!use_caching) clazz=loadClass(classname);
-                Constructor con=clazz.getConstructor(getWebPageObjectParams);
-                WebPage page=(WebPage)con.newInstance(new Object[] {params});
-                page.setServletContext(context);
-                if(use_caching) {
-                    List<WebPage> list=webPageCache.get(classname);
-                    if(list==null) webPageCache.put(classname, list=new ArrayList<WebPage>());
-                    list.add(page);
-                }
-                return page;
-            } catch (ClassNotFoundException e) {
-                log(context, null, e, new Object[] {"classname="+classname, "params="+params});
-                IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
-                ioExc.initCause(e);
-                throw ioExc;
-            } catch (ClassCastException e) {
-                log(context, null, e, new Object[] {"classname="+classname, "params="+params});
-                IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
-                ioExc.initCause(e);
-                throw ioExc;
-            } catch (IllegalAccessException e) {
-                log(context, null, e, new Object[] {"classname="+classname, "params="+params});
-                IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
-                ioExc.initCause(e);
-                throw ioExc;
-            } catch (InstantiationException e) {
-                log(context, null, e, new Object[] {"classname="+classname, "params="+params});
-                IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
-                ioExc.initCause(e);
-                throw ioExc;
-            } catch (InvocationTargetException e) {
-                log(context, null, e, new Object[] {"classname="+classname, "params="+params});
-                IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
-                ioExc.initCause(e);
-                throw ioExc;
-            } catch (NoSuchMethodException e) {
-                log(context, null, e, new Object[] {"classname="+classname, "params="+params});
-                IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
-                ioExc.initCause(e);
-                throw ioExc;
+        // Make a new instance and store in cache
+        try {
+            if(!use_caching) clazz=loadClass(classname);
+            Constructor con=clazz.getConstructor(getWebPageObjectParams);
+            WebPage page=(WebPage)con.newInstance(new Object[] {params});
+            page.setServletContext(context);
+            if(use_caching) {
+                List<WebPage> list=webPageCache.get(classname);
+                if(list==null) webPageCache.put(classname, list=new ArrayList<WebPage>());
+                list.add(page);
             }
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
+            return page;
+        } catch (ClassNotFoundException e) {
+            log(context, null, e, new Object[] {"classname="+classname, "params="+params});
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            ioExc.initCause(e);
+            throw ioExc;
+        } catch (ClassCastException e) {
+            log(context, null, e, new Object[] {"classname="+classname, "params="+params});
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            ioExc.initCause(e);
+            throw ioExc;
+        } catch (IllegalAccessException e) {
+            log(context, null, e, new Object[] {"classname="+classname, "params="+params});
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            ioExc.initCause(e);
+            throw ioExc;
+        } catch (InstantiationException e) {
+            log(context, null, e, new Object[] {"classname="+classname, "params="+params});
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            ioExc.initCause(e);
+            throw ioExc;
+        } catch (InvocationTargetException e) {
+            log(context, null, e, new Object[] {"classname="+classname, "params="+params});
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            ioExc.initCause(e);
+            throw ioExc;
+        } catch (NoSuchMethodException e) {
+            log(context, null, e, new Object[] {"classname="+classname, "params="+params});
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            ioExc.initCause(e);
+            throw ioExc;
         }
     }
 
@@ -1277,14 +1048,9 @@ abstract public class WebPage extends ErrorReportingServlet {
      * the modified time of classes that are dynamically loaded.
      */
     public static long getClassLoaderUptime() {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getClassloaderUptime()", null);
-        try {
-            WebPageClassLoader loader=webPageClassLoader;
-            if(loader!=null) return loader.getUptime();
-            return getUptime();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        WebPageClassLoader loader=webPageClassLoader;
+        if(loader!=null) return WebPageClassLoader.getUptime();
+        return getUptime();
     }
 
     private static WebPageClassLoader webPageClassLoader;
@@ -1294,41 +1060,36 @@ abstract public class WebPage extends ErrorReportingServlet {
      * Dynamically loads new classes based on the source .class file's modified time.
      */
     synchronized public static Class<? extends WebPage> loadClass(String className) throws ClassNotFoundException {
-        Profiler.startProfile(Profiler.UNKNOWN, WebPage.class, "loadClass(String)", null);
         try {
-            try {
-                if(WebSiteFrameworkConfiguration.useWebSiteCaching()) {
-                    return Class.forName(className).asSubclass(WebPage.class);
-                } else {
-                    // Find the directory to work in
-                    File dir=new File(WebSiteFrameworkConfiguration.getServletDirectory());
-                    File file=new File(dir, className.replace('.', '/') + ".class");
-                    long lastModified=file.lastModified();
+            if(WebSiteFrameworkConfiguration.useWebSiteCaching()) {
+                return Class.forName(className).asSubclass(WebPage.class);
+            } else {
+                // Find the directory to work in
+                File dir=new File(WebSiteFrameworkConfiguration.getServletDirectory());
+                File file=new File(dir, className.replace('.', '/') + ".class");
+                long lastModified=file.lastModified();
 
-                    // Look in the cache for an existing class
-                    Long modified=classnameCache.get(className);
-                    if(
-                        webPageClassLoader==null
-                        || (
-                            modified!=null
-                            && modified.longValue()!=lastModified
-                        )
-                    ) {
-                        webPageClassLoader=new WebPageClassLoader();
-                        classnameCache.clear();
-                        modified=null;
-                    }
-                    Class<? extends WebPage> clazz=webPageClassLoader.loadClass(className).asSubclass(WebPage.class);
-                    if(modified==null) {
-                        classnameCache.put(className, Long.valueOf(lastModified));
-                    }
-                    return clazz;
+                // Look in the cache for an existing class
+                Long modified=classnameCache.get(className);
+                if(
+                    webPageClassLoader==null
+                    || (
+                        modified!=null
+                        && modified.longValue()!=lastModified
+                    )
+                ) {
+                    webPageClassLoader=new WebPageClassLoader();
+                    classnameCache.clear();
+                    modified=null;
                 }
-            } catch(IOException err) {
-                throw new ClassNotFoundException("Unable to loadClass: "+className, err);
+                Class<? extends WebPage> clazz=webPageClassLoader.loadClass(className).asSubclass(WebPage.class);
+                if(modified==null) {
+                    classnameCache.put(className, Long.valueOf(lastModified));
+                }
+                return clazz;
             }
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+        } catch(IOException err) {
+            throw new ClassNotFoundException("Unable to loadClass: "+className, err);
         }
     }
 
@@ -1339,12 +1100,7 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @return  the <code>WebPageLayout</code>
      */
     public WebPageLayout getWebPageLayout(WebSiteRequest req) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getWebPageLayout(WebSiteRequest)", null);
-        try {
-            return getParent().getWebPageLayout(req);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return getParent().getWebPageLayout(req);
     }
 
     /**
@@ -1359,12 +1115,7 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @see  #emptyWebPageArray
      */
     protected WebPage[] getWebPages(WebSiteRequest req) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "getWebPages(WebSiteRequest)", null);
-        try {
-            return emptyWebPageArray;
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return emptyWebPageArray;
     }
     
     /**
@@ -1375,12 +1126,7 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @see  #getWebPage(ServletContext,Class,WebSiteRequest)
      */
     public boolean isHandler(WebSiteRequest req) {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "isHandler(WebSiteRequest)", null);
-        try {
-            return true;
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return true;
     }
 
     /**
@@ -1391,12 +1137,7 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @see  #getWebPage(ServletContext,Class,Object)
      */
     public boolean isHandler(Object O) {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "isHandler(Object)", null);
-        try {
-            return true;
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return true;
     }
 
     /**
@@ -1430,13 +1171,8 @@ abstract public class WebPage extends ErrorReportingServlet {
 	List<SearchResult> results,
 	BetterByteArrayOutputStream bytes,
         List<WebPage> finishedPages
-    ) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "search(String[],WebSiteRequest,List<SearchResult>,BetterByteArrayOutputStream,List<WebPage>)", null);
-        try {
-            standardSearch(words, req, results, bytes, finishedPages);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+    ) throws ServletException, IOException, SQLException {
+        standardSearch(words, req, results, bytes, finishedPages);
     }
 
     /**
@@ -1450,176 +1186,171 @@ abstract public class WebPage extends ErrorReportingServlet {
         List<SearchResult> results,
         BetterByteArrayOutputStream bytes,
         List<WebPage> finishedPages
-    ) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.UNKNOWN, WebPage.class, "standardSearch(String[],WebSiteRequest,List<SearchResult>,BetterByteArrayOutputStream,List<WebPage>)", null);
-        try {
-            if(!finishedPages.contains(this)) {
-                String title = null;
-                String description = null;
-                String author = null;
+    ) throws ServletException, IOException, SQLException {
+        if(!finishedPages.contains(this)) {
+            String title = null;
+            String description = null;
+            String author = null;
 
-                // The counted matches will go here
-                int totalMatches = 0;
-                int size;
+            // The counted matches will go here
+            int totalMatches = 0;
+            int size;
 
-                // Search the byte data only if not able to index
-                long searchLastModified = getSearchLastModified();
-                if (searchLastModified == -1) {
-                    title = getTitle();
-                    description = getDescription();
-                    author = getAuthor();
-                    String keywords = getKeywords();
+            // Search the byte data only if not able to index
+            long mySearchLastModified = getSearchLastModified();
+            if (mySearchLastModified == -1) {
+                title = getTitle();
+                description = getDescription();
+                author = getAuthor();
+                String keywords = getKeywords();
 
-                    // Get the HTML content
-                    bytes.reset();
-                    ChainWriter out = new ChainWriter(bytes);
-		    try {
-			doGet(out, null, null);
-		    } finally {
-			out.flush();
-			out.close();
-		    }
-                    byte[] content = bytes.getInternalByteArray();
-                    size = bytes.size();
+                // Get the HTML content
+                bytes.reset();
+                ChainWriter out = new ChainWriter(bytes);
+                try {
+                    doGet(out, null, null);
+                } finally {
+                    out.flush();
+                    out.close();
+                }
+                byte[] content = bytes.getInternalByteArray();
+                size = bytes.size();
 
-                    int len = words.length;
-                    for (int c = 0; c < len; c++) {
-                        String word = words[c];
-                        int wordMatch =
-                            // Add the keywords with weight 10
-                            StringUtility.countOccurances(keywords, word) * 10
+                int len = words.length;
+                for (int c = 0; c < len; c++) {
+                    String word = words[c];
+                    int wordMatch =
+                        // Add the keywords with weight 10
+                        StringUtility.countOccurances(keywords, word) * 10
 
-                            // Add the description with weight 5
-                            +StringUtility.countOccurances(description, word) * 5
+                        // Add the description with weight 5
+                        +StringUtility.countOccurances(description, word) * 5
 
-                            // Add the title with weight 5
-                            +StringUtility.countOccurances(title, word) * 5
+                        // Add the title with weight 5
+                        +StringUtility.countOccurances(title, word) * 5
 
-                            // Add the content with weight 1
-                            +StringUtility.countOccurances(content, size, word)
+                        // Add the content with weight 1
+                        +StringUtility.countOccurances(content, size, word)
 
-                            // Add the author with weight 1
-                            +StringUtility.countOccurances(author, word);
+                        // Add the author with weight 1
+                        +StringUtility.countOccurances(author, word);
 
-                        if (wordMatch == 0) {
-                            totalMatches = 0;
-                            break;
-                        }
-                        totalMatches += wordMatch;
+                    if (wordMatch == 0) {
+                        totalMatches = 0;
+                        break;
                     }
-
-                    if (totalMatches > 0) {
-                        size += keywords.length() + description.length() + title.length() + author.length();
-                    }
-                } else {
-                    // Rebuild the search index if no longer valid
-                    if (searchLastModified != this.searchLastModified) {
-                        // Only synchronize for index rebuild
-                        synchronized (this) {
-                            if (searchLastModified != this.searchLastModified) {
-                                title = getTitle();
-                                description = getDescription();
-                                author = getAuthor();
-                                String keywords = getKeywords();
-
-                                // Get the HTML content
-                                bytes.reset();
-                                ChainWriter out = new ChainWriter(bytes);
-				try {
-				    doGet(out, null, null);
-                                } catch(NullPointerException err) {
-                                    getErrorHandler().reportWarning(err, null);
-				} finally {
-				    out.flush();
-				    out.close();
-				}
-                                byte[] bcontent = bytes.getInternalByteArray();
-                                size = bytes.size();
-                                String content = new String(bcontent, 0, size);
-
-                                // Remove all the indexed words
-                                searchWords.clear();
-                                searchCounts.clear();
-
-                                // Add the keywords with weight 10
-                                addSearchWords(keywords, 10);
-
-                                // Add the description with weight 5
-                                addSearchWords(description, 5);
-
-                                // Add the title with weight 5
-                                addSearchWords(title, 5);
-
-                                // Add the content with weight 1
-                                addSearchWords(content, 1);
-
-                                // Add the author with weight 1
-                                addSearchWords(author, 1);
-
-                                searchByteCount = size + keywords.length() + description.length() + title.length() + author.length();
-                                //searchWords.trimToSize();
-                                //searchCounts.trimToSize();
-                                this.searchLastModified = searchLastModified;
-                            }
-                        }
-                    }
-
-                    // Count the words from the index
-                    int searchWordsSize = searchWords.size();
-
-                    int len = words.length;
-                    for (int c = 0; c < len; c++) {
-                        String word = words[c];
-
-                        // Count through each word
-                        int wordMatch = 0;
-                        for (int d = 0; d < searchWordsSize; d++) {
-                            String searchWord = searchWords.get(d);
-                            int count = StringUtility.countOccurances(searchWord, word);
-                            if (count > 0) wordMatch += count * searchCounts.get(d)[0];
-                        }
-
-                        if (wordMatch == 0) {
-                            totalMatches = 0;
-                            break;
-                        }
-                        totalMatches += wordMatch;
-                    }
-
-                    // Use the cached size
-                    size = searchByteCount;
+                    totalMatches += wordMatch;
                 }
 
                 if (totalMatches > 0) {
-                    float probability=
-                        totalMatches
-                        / (
-                            size <= 0
-                            ? 1.0f :
-                            ((float)Math.log(size))
-                        )
-                    ;
-                    results.add(
-                        new SearchResult(
-                            req.getURL(this),
-                            probability,
-                            title == null ? getTitle() : title,
-                            description == null ? getDescription() : description,
-                            author == null ? getAuthor() : author
-                        )
-                    );
+                    size += keywords.length() + description.length() + title.length() + author.length();
+                }
+            } else {
+                // Rebuild the search index if no longer valid
+                if (mySearchLastModified != this.searchLastModified) {
+                    // Only synchronize for index rebuild
+                    synchronized (this) {
+                        if (mySearchLastModified != this.searchLastModified) {
+                            title = getTitle();
+                            description = getDescription();
+                            author = getAuthor();
+                            String keywords = getKeywords();
+
+                            // Get the HTML content
+                            bytes.reset();
+                            ChainWriter out = new ChainWriter(bytes);
+                            try {
+                                doGet(out, null, null);
+                            } catch(NullPointerException err) {
+                                getErrorHandler().reportWarning(err, null);
+                            } finally {
+                                out.flush();
+                                out.close();
+                            }
+                            byte[] bcontent = bytes.getInternalByteArray();
+                            size = bytes.size();
+                            String content = new String(bcontent, 0, size);
+
+                            // Remove all the indexed words
+                            searchWords.clear();
+                            searchCounts.clear();
+
+                            // Add the keywords with weight 10
+                            addSearchWords(keywords, 10);
+
+                            // Add the description with weight 5
+                            addSearchWords(description, 5);
+
+                            // Add the title with weight 5
+                            addSearchWords(title, 5);
+
+                            // Add the content with weight 1
+                            addSearchWords(content, 1);
+
+                            // Add the author with weight 1
+                            addSearchWords(author, 1);
+
+                            searchByteCount = size + keywords.length() + description.length() + title.length() + author.length();
+                            //searchWords.trimToSize();
+                            //searchCounts.trimToSize();
+                            this.searchLastModified = mySearchLastModified;
+                        }
+                    }
                 }
 
-                // Flag as done
-                finishedPages.add(this);
+                // Count the words from the index
+                int searchWordsSize = searchWords.size();
 
-                // Search recursively
-                WebPage[] pages = getCachedPages(req);
-                int len = pages.length;
-                for (int c = 0; c < len; c++) pages[c].search(words, req, results, bytes, finishedPages);
+                int len = words.length;
+                for (int c = 0; c < len; c++) {
+                    String word = words[c];
+
+                    // Count through each word
+                    int wordMatch = 0;
+                    for (int d = 0; d < searchWordsSize; d++) {
+                        String searchWord = searchWords.get(d);
+                        int count = StringUtility.countOccurances(searchWord, word);
+                        if (count > 0) wordMatch += count * searchCounts.get(d)[0];
+                    }
+
+                    if (wordMatch == 0) {
+                        totalMatches = 0;
+                        break;
+                    }
+                    totalMatches += wordMatch;
+                }
+
+                // Use the cached size
+                size = searchByteCount;
             }
-        } finally {
-            Profiler.endProfile(Profiler.UNKNOWN);
+
+            if (totalMatches > 0) {
+                float probability=
+                    totalMatches
+                    / (
+                        size <= 0
+                        ? 1.0f :
+                        ((float)Math.log(size))
+                    )
+                ;
+                results.add(
+                    new SearchResult(
+                        req.getURL(this),
+                        probability,
+                        title == null ? getTitle() : title,
+                        description == null ? getDescription() : description,
+                        author == null ? getAuthor() : author
+                    )
+                );
+            }
+
+            // Flag as done
+            finishedPages.add(this);
+
+            // Search recursively
+            WebPage[] myPages = getCachedPages(req);
+            int len = myPages.length;
+            for (int c = 0; c < len; c++) myPages[c].search(words, req, results, bytes, finishedPages);
         }
     }
 
@@ -1628,12 +1359,7 @@ abstract public class WebPage extends ErrorReportingServlet {
      * of the parent page is used.
      */
     public boolean useEncryption() throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "useEncryption()", null);
-        try {
-            return getParent().useEncryption();
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return getParent().useEncryption();
     }
 
     /**
@@ -1649,12 +1375,7 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @see  WebSiteRequest#isUsingFrames
      */
     public boolean useFrames(WebSiteRequest req) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "useFrames(WebSiteRequest)", null);
-        try {
-            return false;
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return false;
     }
 
     /**
@@ -1662,83 +1383,49 @@ abstract public class WebPage extends ErrorReportingServlet {
      * its children are displayed.  The default is <code>false</code>.
      */
     public boolean includeNavImageAsParent() {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "includeNavImageAsParent()", null);
-        try {
-            return false;
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return false;
     }
 
     /**
      * Determines whether or not to display the page in the left navigation.
      */
     public boolean useNavImage() throws IOException, SQLException {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "useNavImage()", null);
-        try {
-            return true;
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return true;
     }
 
     /**
      * Determines if this page will be displayed in the standard site map.
      */
     public boolean useSiteMap() {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "useSiteMap()", null);
-        try {
-            return true;
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return true;
     }
 
     /**
      * Determines if this page will be displayed in the location bar.
      */
     public boolean showInLocationPath(WebSiteRequest req) {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "showInLocationPath(WebSiteRequest)", null);
-        try {
-            return true;
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return true;
     }
     
     private ServletContext context;
 
+    @Override
     public ServletContext getServletContext() {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getServletContext()", null);
-        try {
-            if(context!=null) return context;
-            ServletContext sc=super.getServletContext();
-            if(sc==null) throw new NullPointerException("ServletContext is null");
-            return sc;
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        if(context!=null) return context;
+        ServletContext sc=super.getServletContext();
+        if(sc==null) throw new NullPointerException("ServletContext is null");
+        return sc;
     }
 
     void setServletContext(ServletContext context) {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "setServletContext(ServletContext)", null);
-        try {
-            this.context=context;
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        this.context=context;
     }
 
     /**
      * Gets the copyright information for this page.  Defaults to the copyright of the parent page.
      */
     public String getCopyright(WebSiteRequest req, WebPage requestPage) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getCopyright(WebSiteRequest,WebPage)", null);
-        try {
-            return getParent().getCopyright(req, requestPage);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return getParent().getCopyright(req, requestPage);
     }
     
     /**
@@ -1750,24 +1437,14 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @see #getLastModified(WebSiteRequest)
      */
     public Object getOutputCacheKey(WebSiteRequest req) {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "getOutputCacheKey(WebSiteRequest)", null);
-        try {
-            return null;
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return null;
     }
     
     /**
      * Gets the path of for the URL relative to the top of the site.
      */
     public String getURLPath() throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "getURLPath()", null);
-        try {
-            return generateURLPath(this);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return generateURLPath(this);
     }
     
     /**
@@ -1776,23 +1453,13 @@ abstract public class WebPage extends ErrorReportingServlet {
      * top-level <code>WebPage</code> of a site must implement this method.
      */
     public String generateURLPath(WebPage page) throws IOException, SQLException {
-        Profiler.startProfile(Profiler.FAST, WebPage.class, "generateURLPath(WebPage)", null);
-        try {
-            return getParent().generateURLPath(page);
-        } finally {
-            Profiler.endProfile(Profiler.FAST);
-        }
+        return getParent().generateURLPath(page);
     }
 
     /**
      * Gets the URL pattern for this page as used in <code>web.xml</code>.
      */
     public String getURLPattern() throws IOException, SQLException {
-        Profiler.startProfile(Profiler.INSTANTANEOUS, WebPage.class, "getURLPattern()", null);
-        try {
-            return "/"+getURLPath();
-        } finally {
-            Profiler.endProfile(Profiler.INSTANTANEOUS);
-        }
+        return "/"+getURLPath();
     }
 }
