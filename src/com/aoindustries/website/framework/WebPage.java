@@ -148,7 +148,7 @@ abstract public class WebPage extends ErrorReportingServlet {
     /**
      * Prints the unauthorized page message.
      */
-    public void printUnauthorizedPage(WebPage page, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+    public void printUnauthorizedPage(WebPage page, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
         getParent().printUnauthorizedPage(page, req, resp);
     }
 

@@ -9,6 +9,7 @@ import com.aoindustries.io.ChainWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -64,7 +65,7 @@ abstract public class WebPageLayout {
 	ChainWriter out,
 	String onLoad,
 	String frame
-    ) throws IOException, SQLException;
+    ) throws ServletException, IOException, SQLException;
 
     /**
      * Writes all of the HTML preceeding the content of the page,
