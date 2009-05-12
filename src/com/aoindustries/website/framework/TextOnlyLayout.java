@@ -81,9 +81,13 @@ public class TextOnlyLayout extends WebPageLayout {
 	ChainWriter out,
 	String onLoad
     ) throws IOException, SQLException {
-	out.print("<HTML>\n"
-		+ "  <HEAD>\n"
-                + "    <TITLE>");
+        out.print("<HTML>\n"
+            + "  <HEAD>\n");
+        // If this is not the default layout, then robots noindex
+        if(!getName().equals(getLayoutChoices()[0])) {
+            out.print("    <META NAME=\"ROBOTS\" CONTENT=\"NOINDEX, NOFOLLOW\" />\n");
+        }
+        out.print("    <TITLE>");
         List<WebPage> parents=new ArrayList<WebPage>();
         WebPage parent=page;
         while(parent!=null) {
@@ -95,12 +99,8 @@ public class TextOnlyLayout extends WebPageLayout {
             parent=parents.get(c);
             out.print(parent.getTitle());
         }
-        out.print("</TITLE>\n");
-        // If this is not the default layout, then robots noindex
-        if(!getName().equals(getLayoutChoices()[0])) {
-            out.print("    <META NAME=\"ROBOTS\" CONTENT=\"NOINDEX, NOFOLLOW\">\n");
-        }
-        out.print("    <META http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>\n"
+        out.print("</TITLE>\n"
+                + "    <META http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>\n"
 		+ "    <META name='keywords' content='").writeHtmlAttribute(page.getKeywords()).print("'>\n"
 		+ "    <META name='description' content='").writeHtmlAttribute(page.getDescription()).print("'>\n"
 		+ "    <META name='author' content='").writeHtmlAttribute(page.getAuthor()).print("'>\n"
