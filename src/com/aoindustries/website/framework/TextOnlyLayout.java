@@ -215,15 +215,35 @@ public class TextOnlyLayout extends WebPageLayout {
         }
     }
 
+    /**
+     * Gets the Google Analytics New Tracking Code (ga.js) or <code>null</code>
+     * if unavailable.
+     */
+    public String getGoogleAnalyticsNewTrackingCode() {
+        return null;
+    }
+
     public void endHTML(
-	WebPage page,
-	WebSiteRequest req,
-	ChainWriter out
+        WebPage page,
+        WebSiteRequest req,
+        ChainWriter out
     ) throws IOException, SQLException {
         out.print("        </TD>\n"
                 + "      </TR>\n"
-                + "    </TABLE>\n"
-                + "  </BODY>\n"
+                + "    </TABLE>\n");
+        String googleAnalyticsNewTrackingCode = getGoogleAnalyticsNewTrackingCode();
+        if(googleAnalyticsNewTrackingCode!=null) {
+            out.print("<script type=\"text/javascript\">\n"
+                    + "var gaJsHost = ((\"https:\" == document.location.protocol) ? \"https://ssl.\" : \"http://www.\");\n"
+                    + "document.write(unescape(\"%3Cscript src='\" + gaJsHost + \"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E\"));\n"
+                    + "</script>\n"
+                    + "<script type=\"text/javascript\">\n"
+                    + "try {\n"
+                    + "var pageTracker = _gat._getTracker(\""); out.print(googleAnalyticsNewTrackingCode); out.print("\");\n"
+                    + "pageTracker._trackPageview();\n"
+                    + "} catch(err) {}</script>\n");
+        }
+        out.print("  </BODY>\n"
                 + "</HTML>\n");
     }
 
