@@ -408,7 +408,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
     /**
      * Gets the URL String with the given parameters embedded, keeping the current settings.
      *
-     * @param  url            the URL from the top of the webapp
+     * @param  url            the URL from the top of the webapp, without any beginning slash
      * @param  useEncryption  if <code>true</code> the link refers to an page that should be served over encryption
      * @param  optParam       any number of additional parameters.  This parameter can accept several types of
      *                        objects.  The following is a list of supported objects and a brief description of its
