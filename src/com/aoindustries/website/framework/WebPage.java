@@ -7,15 +7,11 @@ package com.aoindustries.website.framework;
  */
 import com.aoindustries.io.*;
 import com.aoindustries.security.*;
-import com.aoindustries.sql.*;
 import com.aoindustries.util.*;
 import com.aoindustries.util.sort.AutoSort;
 import gnu.regexp.*;
-import java.awt.*;
-import java.awt.font.*;
 import java.io.*;
 import java.lang.reflect.*;
-import java.net.*;
 import java.sql.*;
 import java.util.*;
 import java.util.List;
@@ -321,8 +317,8 @@ abstract public class WebPage extends ErrorReportingServlet {
 
     /**
      * The layout is automatically applied to the page, then <code>doGet</code> is called.  To not have this automatically applied,
-     * override this method.  By the time this method is called, security checks, authentication, and redirects have been done.<BR>
-     * <BR>
+     * override this method.  By the time this method is called, security checks, authentication, and redirects have been done.<br />
+     * <br />
      * The first thing this method does is print the frameset if needed.  Second, it uses the output cache to quickly print
      * the output if possible.  And third, it will call doGet(ChainWriter,WebSiteRequest,HttpServletResponse) with a stream
      * directly out if the first two actions were not taken.
@@ -795,13 +791,13 @@ abstract public class WebPage extends ErrorReportingServlet {
     }
 
     /**
-     * Gets the JavaScript that should be executed with the onLoad event of the body tag
+     * Gets the JavaScript that should be executed with the onload event of the body tag
      *
      * @param  req  the current <code>WebSiteRequest</code>
      *
      * @return  a <code>String</code> or <code>null</code> for none
      */
-    public String getOnLoadScript(WebSiteRequest req) {
+    public String getOnloadScript(WebSiteRequest req) {
         return null;
     }
 

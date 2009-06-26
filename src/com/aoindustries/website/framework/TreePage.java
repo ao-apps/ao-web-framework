@@ -180,7 +180,7 @@ abstract public class TreePage extends WebPage {
                 if(width>longest) longest=width;
             }
 
-            out.print("<PRE>\n");
+            out.print("<pre>\n");
 
             String[] last = new String[0];
             for (int c = 0; c < treeLen; c++) {
@@ -222,9 +222,9 @@ abstract public class TreePage extends WebPage {
                     }
                     String href;
                     if (pos == (path[pathLen-1].length()==0?(pathLen-2):(pathLen-1)) && (href = tree.get(c).getUrl()) != null) {
-                        out.print("<A target='_top' href='");
+                        out.print("<a target='_top' href='");
                         out.print(resp.encodeURL(href));
-                        out.print("'>").print(replaced).print("</A>");
+                        out.print("'>").print(replaced).print("</a>");
                     } else out.print(replaced);
                     String S;
                     if (replaced.length()>0 && (pos < (pathLen - 1) || ((S = tree.get(c).getPath()).length() > 0 && S.charAt(S.length() - 1) == '/')))
@@ -240,7 +240,7 @@ abstract public class TreePage extends WebPage {
 
                 last = path;
             }
-            out.print("</PRE>\n");
+            out.print("</pre>\n");
         } else handleRequest(out, req, resp, tree, -1, -1, null);
     }
 
@@ -318,7 +318,7 @@ abstract public class TreePage extends WebPage {
             }
 
             // Write the javascript that controls the form
-            out.print("<SCRIPT language='JavaScript'><!--\n"
+            out.print("<script type='text/javascript'>\n"
                     + "  function openNode(index) {\n"
                     + "    eval('document.tree_form.opened_'+index+'.value=\"true\";');\n"
                     + "    document.tree_form.scroll_to_x.value=getPageXOffset(window);\n"
@@ -332,19 +332,19 @@ abstract public class TreePage extends WebPage {
                     + "    document.tree_form.scroll_to_y.value=getPageYOffset(window);\n"
                     + "    document.tree_form.submit();\n"
                     + "  }\n"
-                    + "// --></SCRIPT>\n");
+                    + "</script>\n");
 
             // Write the form containing the current settings
-            out.print("<FORM name='tree_form' method='POST'>\n");
+            out.print("<form id='tree_form' method='POST'>\n");
             req.printFormFields(out, 1);
-            out.print("  <INPUT type='hidden' name='scroll_to_x' value='").print(scrollToX).print("'>\n"
-                    + "  <INPUT type='hidden' name='scroll_to_y' value='").print(scrollToY).print("'>\n");
+            out.print("  <input type='hidden' name='scroll_to_x' value='").print(scrollToX).print("'>\n"
+                    + "  <input type='hidden' name='scroll_to_y' value='").print(scrollToY).print("'>\n");
             for(int c=0; c<treeLen; c++) {
-                out.print("  <INPUT type='hidden' name='opened_").print(c).print("' value='").print(opened[c]).print("'>\n");
+                out.print("  <input type='hidden' name='opened_").print(c).print("' value='").print(opened[c]).print("'>\n");
             }
 
             // Display the tree in a table with links for opening/closing the different parts
-            out.print("  <TABLE border=0 cellspacing=0 cellpadding=0>\n");
+            out.print("  <table cellspacing='0' cellpadding='0'>\n");
 
             String[] last = new String[0];
             for (int c = 0; c < treeLen; c++) {
@@ -377,8 +377,8 @@ abstract public class TreePage extends WebPage {
                         }
                     }
                     if (visible) {
-                        out.print("    <TR>\n"
-                                + "      <TD nowrap><TABLE border=0 cellspacing=0 cellpadding=0><TR><TD nowrap>");
+                        out.print("    <tr>\n"
+                                + "      <td nowrap><table cellspacing='0' cellpadding='0'><tr><td nowrap>");
 
                         int max = Math.min(pathLen - 1, last.length);
                         int pos = 0;
@@ -399,7 +399,7 @@ abstract public class TreePage extends WebPage {
                                         } else break;
                                     }
                                 }
-                                out.print("<IMG src='").writeHtmlAttribute(resp.encodeURL(req.getURL(this, "image_num="+(hasMore?1:0)))).print("' border=0 width="+IMAGE_WIDTH+" height="+IMAGE_HEIGHT+">");
+                                out.print("<img src='").writeHtmlAttribute(resp.encodeURL(req.getURL(this, "image_num="+(hasMore?1:0)))).print("' border='0' width='"+IMAGE_WIDTH+"' height='"+IMAGE_HEIGHT+"' />");
                             } else break;
                         }
 
@@ -438,10 +438,10 @@ abstract public class TreePage extends WebPage {
 
                                 if(hasSub) {
                                     out
-                                        .print("<A href='javascript:")
+                                        .print("<a href='javascript:")
                                         .print(opened[c] ? "closeNode(" : "openNode(")
                                         .print(c)
-                                        .print(");'><IMG alt='").print(opened[c] ? "Close" : "Open")
+                                        .print(");'><img alt='").print(opened[c] ? "Close" : "Open")
                                         .print("' src='")
                                         .writeHtmlAttribute(
                                             resp.encodeURL(
@@ -454,10 +454,10 @@ abstract public class TreePage extends WebPage {
                                                     )
                                                 )
                                             )
-                                        ).print("' border=0 width="+IMAGE_WIDTH+" height="+IMAGE_HEIGHT+"></A>");
+                                        ).print("' border='0' width='"+IMAGE_WIDTH+"' height='"+IMAGE_HEIGHT+"' /></a>");
                                 } else {
                                     out
-                                        .print("<IMG src='")
+                                        .print("<img src='")
                                         .writeHtmlAttribute(
                                             resp.encodeURL(
                                                 req.getURL(
@@ -465,13 +465,13 @@ abstract public class TreePage extends WebPage {
                                                     "image_num="+(hasMore ? 2 : 3)
                                                 )
                                             )
-                                        ).print("' border=0 width="+IMAGE_WIDTH+" height="+IMAGE_HEIGHT+">");
+                                        ).print("' border='0' width='"+IMAGE_WIDTH+"' height='"+IMAGE_HEIGHT+"' />");
                                 }
-                                out.print("<IMG src='").writeHtmlAttribute(resp.encodeURL(req.getURL(this, "image_num=0"))).print("' border=0 width=4 height="+IMAGE_HEIGHT+"></TD><TD nowrap>");
+                                out.print("<img src='").writeHtmlAttribute(resp.encodeURL(req.getURL(this, "image_num=0"))).print("' border='0' width='4' height='"+IMAGE_HEIGHT+"' /></td><td nowrap>");
                             }
 
                             boolean useCodeFont=useCodeFont(req);
-                            if (useCodeFont) out.print("<CODE>");
+                            if (useCodeFont) out.print("<code>");
                             String href;
                             if(
                                 (
@@ -479,24 +479,24 @@ abstract public class TreePage extends WebPage {
                                     || (pos==(pathLen-1) && path[pathLen-1].length()>0)
                                 ) && (href = tree.get(c).getUrl()) != null
                             ) {
-                                out.print("<A class='ao_light_link' target='_top' href='").writeHtmlAttribute(resp.encodeURL(href)).print("'>").print(path[pos]).print("</A>");
+                                out.print("<a class='aoLightLink' target='_top' href='").writeHtmlAttribute(resp.encodeURL(href)).print("'>").print(path[pos]).print("</a>");
                             } else if(path[pos].length()>0) out.print(path[pos]);
-                            if(useCodeFont) out.print("</CODE>");
+                            if(useCodeFont) out.print("</code>");
                         }
 
-                        out.print("</TD></TR></TABLE></TD>\n"
-                                + "      <TD nowrap width=20><IMG src='").writeHtmlAttribute(resp.encodeURL(req.getURL(this, "image_num=0"))).print("' width=20 height=1></TD>\n"
-                                + "      <TD nowrap>");
+                        out.print("</td></tr></table></td>\n"
+                                + "      <td nowrap width=20><img src='").writeHtmlAttribute(resp.encodeURL(req.getURL(this, "image_num=0"))).print("' width='20' height='1' /></td>\n"
+                                + "      <td nowrap>");
                         String description=tree.get(c).getDescription();
                         if(description!=null) out.print(description);
-                        out.print("</TD>\n"
-                                + "    </TR>\n");
+                        out.print("</td>\n"
+                                + "    </tr>\n");
                         last = path;
                     }
             }
 
-            out.print("  </TABLE>\n"
-                    + "</FORM>\n");
+            out.print("  </table>\n"
+                    + "</form>\n");
         } finally {
             layout.endContentLine(out, req, resp, 1, false);
             layout.endContent(this, out, req, resp, 1);

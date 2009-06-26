@@ -34,7 +34,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 
     @Override
     public void printStream(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws IOException, SQLException {
-        printHTMLStream(out, req, resp, getWebPageLayout(req), in, "ao_light_link");
+        printHTMLStream(out, req, resp, getWebPageLayout(req), in, "aoLightLink");
     }
 
     /**
@@ -53,15 +53,15 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 
     /**
      * Prints HTML content, parsing for special <code>@</code> tags.  Types of tags include:
-     * <UL>
-     *   <LI>@URL(classname)    Loads a WebPage of the given class and builds a URL to it</LI>
-     *   <LI>@BEGIN_LIGHT_AREA  Calls <code>layout.beginLightArea(ChainWriter)</code></LI>
-     *   <LI>@END_LIGHT_AREA    Calls <code>layout.endLightArea(ChainWriter)</code></LI>
-     *   <LI>@END_CONTENT_LINE  Calls <code>layout.endContentLine</code></LI>
-     *   <LI>@PRINT_CONTENT_HORIZONTAL_DIVIDER  Calls <code>layout.printContentHorizontalDivider</code></LI>
-     *   <LI>@START_CONTENT_LINE  Calls <code>layout.startContentLine</code></LI>
-     *   <LI>@LINK_CLASS        The preferred link class for this element</LI>
-     * </UL>
+     * <ul>
+     *   <li>@URL(classname)    Loads a WebPage of the given class and builds a URL to it</li>
+     *   <li>@BEGIN_LIGHT_AREA  Calls <code>layout.beginLightArea(ChainWriter)</code></li>
+     *   <li>@END_LIGHT_AREA    Calls <code>layout.endLightArea(ChainWriter)</code></li>
+     *   <li>@END_CONTENT_LINE  Calls <code>layout.endContentLine</code></li>
+     *   <li>@PRINT_CONTENT_HORIZONTAL_DIVIDER  Calls <code>layout.printContentHorizontalDivider</code></li>
+     *   <li>@START_CONTENT_LINE  Calls <code>layout.startContentLine</code></li>
+     *   <li>@LINK_CLASS        The preferred link class for this element</li>
+     * </ul>
      */
     public static void printHTML(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, String html, String linkClass) throws IOException, SQLException {
         if(req==null) out.print(html);
@@ -93,7 +93,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
                         layout.startContentLine(out, req, resp, 1, null);
                         pos+=18;
                     } else if((pos+10)<len && html.substring(pos, pos+10).equalsIgnoreCase("LINK_CLASS")) {
-                        out.print(linkClass==null?"ao_light_link":linkClass);
+                        out.print(linkClass==null?"aoLightLink":linkClass);
                         pos+=10;
                     } else out.print('@');
                 } else {
@@ -163,7 +163,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
                                         else if(c==2) layout.beginLightArea(req, resp, out);
                                         else if(c==3) layout.endContentLine(out, req, resp, 1, false);
                                         else if(c==4) layout.endLightArea(req, resp, out);
-                                        else if(c==5) out.print(linkClass==null?"ao_light_link":linkClass);
+                                        else if(c==5) out.print(linkClass==null?"aoLightLink":linkClass);
                                         else if(c==6) {
                                             // Read up to a ')'
                                             while((ch=in.read())!=-1) {

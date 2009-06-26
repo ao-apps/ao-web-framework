@@ -41,7 +41,7 @@ abstract public class AutoListPage extends WebPage {
         layout.startContentLine(out, req, resp, 1, null);
         printContentStart(out, req, resp);
         try {
-            out.print("      <table cellpadding=0 cellspacing=10 border=0>\n");
+            out.print("      <table cellpadding='0' cellspacing='10'>\n");
             printPageList(out, req, resp, this, layout);
             out.print("      </table>\n");
         } finally {
@@ -67,12 +67,12 @@ abstract public class AutoListPage extends WebPage {
         int len = pages.length;
         for (int c = 0; c < len; c++) {
             WebPage page = pages[c];
-            out.print("  <TR>\n"
-                    + "    <TD nowrap><A class='ao_light_link' href='").writeHtmlAttribute(req==null?"":resp.encodeURL(req.getURL(page))).print("'>").print(page.getShortTitle()).print("</A>\n"
-                    + "    </TD>\n"
-                    + "    <TD width=12 nowrap>&nbsp;</TD>\n"
-                    + "    <TD nowrap>").print(page.getDescription()).print("</TD>\n"
-                    + "  </TR>\n")
+            out.print("  <tr>\n"
+                    + "    <td nowrap><a class='aoLightLink' href='").writeHtmlAttribute(req==null?"":resp.encodeURL(req.getURL(page))).print("'>").print(page.getShortTitle()).print("</a>\n"
+                    + "    </td>\n"
+                    + "    <td width=12 nowrap>&nbsp;</td>\n"
+                    + "    <td nowrap>").print(page.getDescription()).print("</td>\n"
+                    + "  </tr>\n")
             ;
         }
     }

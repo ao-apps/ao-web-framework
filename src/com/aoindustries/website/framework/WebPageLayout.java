@@ -63,7 +63,7 @@ abstract public class WebPageLayout {
 	WebSiteRequest req,
 	HttpServletResponse resp,
 	ChainWriter out,
-	String onLoad,
+	String onload,
 	String frame
     ) throws ServletException, IOException, SQLException;
 
@@ -76,7 +76,7 @@ abstract public class WebPageLayout {
 	WebSiteRequest req,
         HttpServletResponse resp,
 	ChainWriter out,
-	String onLoad
+	String onload
     ) throws IOException, SQLException;
 
     /**
@@ -116,19 +116,19 @@ abstract public class WebPageLayout {
         startContentLine(out, req, resp, 1, "center");
         beginLightArea(req, resp, out, "300", true);
         boolean isSecure = req.isSecure();
-        out.print("      <FORM name='search_two' method='POST'>\n");
+        out.print("      <form id='search_two' method='POST'>\n");
         req.printFormFields(out, 4);
-        out.print("        <TABLE border=0 cellspacing=0 cellpadding=0><TR><TD nowrap>\n"
-                + "          Word(s) to search for: <input type='text' size=24 name='search_query' value='").writeHtmlAttribute(query).print("'><BR>\n"
+        out.print("        <table cellspacing='0' cellpadding='0'><tr><td nowrap>\n"
+                + "          Word(s) to search for: <input type='text' size=24 name='search_query' value='").writeHtmlAttribute(query).print("'><br />\n"
                 + "          Search Location: <input type='radio' name='search_target' value='entire_site'");
         if(isEntireSite) out.print(" checked");
         out.print("> Entire Site&nbsp;&nbsp;&nbsp;<input type='radio' name='search_target' value='this_area'");
         if(!isEntireSite) out.print(" checked");
-        out.print("> This Area<BR>\n"
-                + "          <BR>\n"
-                + "          <CENTER><INPUT type='submit' class='ao_button' value=' Search '></CENTER>\n"
-                + "        </TD></TR></TABLE>\n"
-                + "      </FORM>\n"
+        out.print("> This Area<br />\n"
+                + "          <br />\n"
+                + "          <center><input type='submit' class='ao_button' value=' Search '></center>\n"
+                + "        </td></tr></table>\n"
+                + "      </form>\n"
         );
         endLightArea(req, resp, out);
         endContentLine(out, req, resp, 1, false);
@@ -137,18 +137,18 @@ abstract public class WebPageLayout {
         if (results.isEmpty()) {
             if (words.length > 0) {
                 out.print(
-                      "      <B>No matches found</B>\n"
+                      "      <b>No matches found</b>\n"
                 );
             }
         } else {
             beginLightArea(req, resp, out);
-            out.print("  <table cellspacing=0 border=0 cellpadding=0 class='ao_light_row'>\n"
-                    + "    <TR>\n"
-                    + "      <TH nowrap>% Match</TH>\n"
-                    + "      <TH nowrap>Title</TH>\n"
-                    + "      <TH nowrap>&nbsp;</TH>\n"
-                    + "      <TH nowrap>Description</TH>\n"
-                    + "    </TR>\n"
+            out.print("  <table cellspacing='0' cellpadding=0 class='aoLightRow'>\n"
+                    + "    <tr>\n"
+                    + "      <th nowrap>% Match</th>\n"
+                    + "      <th nowrap>Title</th>\n"
+                    + "      <th nowrap>&nbsp;</th>\n"
+                    + "      <th nowrap>Description</th>\n"
+                    + "    </tr>\n"
             );
 
             // Find the highest probability
@@ -157,21 +157,21 @@ abstract public class WebPageLayout {
             // Display the results
             int size = results.size();
             for (int c = 0; c < size; c++) {
-                String rowClass= (c & 1) == 0 ? "ao_light_row":"ao_dark_row";
-                String linkClass = (c & 1) == 0 ? "ao_dark_link":"ao_light_link";
+                String rowClass= (c & 1) == 0 ? "aoLightRow":"aoDarkRow";
+                String linkClass = (c & 1) == 0 ? "aoDarkLink":"aoLightLink";
                 SearchResult result = results.get(c);
                 String url=result.getUrl();
                 String title=result.getTitle();
                 String description=result.getDescription();
-                out.print("    <TR class='").print(rowClass).print("'>\n"
-                        + "      <TD nowrap align=center>").print(Math.round(99 * result.getProbability() / highest)).print("%</TD>\n"
-                        + "      <TD nowrap><A class='"+linkClass+"' href='").print(resp.encodeURL(url)).print("'>").print(title.length()==0?"&nbsp;":title).print("</A></TD>\n"
-                        + "      <TD nowrap>&nbsp;&nbsp;&nbsp;</TD>\n"
-                        + "      <TD nowrap>").print(description.length()==0?"&nbsp;":description).print("</TD>\n"
-                        + "    </TR>\n");
+                out.print("    <tr class='").print(rowClass).print("'>\n"
+                        + "      <td nowrap align=center>").print(Math.round(99 * result.getProbability() / highest)).print("%</td>\n"
+                        + "      <td nowrap><a class='"+linkClass+"' href='").print(resp.encodeURL(url)).print("'>").print(title.length()==0?"&nbsp;":title).print("</a></td>\n"
+                        + "      <td nowrap>&nbsp;&nbsp;&nbsp;</td>\n"
+                        + "      <td nowrap>").print(description.length()==0?"&nbsp;":description).print("</td>\n"
+                        + "    </tr>\n");
             }
             out.print(
-                  "  </TABLE>\n"
+                  "  </table>\n"
             );
             endLightArea(req, resp, out);
         }
@@ -318,24 +318,24 @@ abstract public class WebPageLayout {
     
     public boolean printWebPageLayoutSelector(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
         if(layoutChoices.length>=2) {
-            out.print("<SCRIPT language='JavaScript1.2'><!--\n"
+            out.print("<script type='text/javascript'>\n"
                     + "  function selectLayout(layout) {\n");
             for(int c=0;c<layoutChoices.length;c++) {
                 String choice=layoutChoices[c];
                 out.print("    if(layout=='").print(choice).print("') window.top.location.href='").print(resp.encodeURL(req.getURL(page, "layout="+choice))).print("';\n");
             }
             out.print("  }\n"
-                    + "// --></SCRIPT>\n"
-                    + "<FORM style='display:inline;'>\n"
-                    + "  <SELECT name='layout_selector' onChange='selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);'>\n");
+                    + "</script>\n"
+                    + "<form style='display:inline;'>\n"
+                    + "  <select name='layout_selector' onChange='selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);'>\n");
             for(int c=0; c<layoutChoices.length; c++) {
                 String choice=layoutChoices[c];
-                out.print("    <OPTION value='").writeHtmlAttribute(choice).print('\'');
+                out.print("    <option value='").writeHtmlAttribute(choice).print('\'');
                 if(choice.equalsIgnoreCase(getName())) out.print(" selected");
-                out.print('>').writeHtml(choice).print("</OPTION>\n");
+                out.print('>').writeHtml(choice).print("</option>\n");
             }
-            out.print("  </SELECT>\n"
-                    + "</FORM>\n");
+            out.print("  </select>\n"
+                    + "</form>\n");
             return true;
         } else return false;
     }
@@ -347,14 +347,14 @@ abstract public class WebPageLayout {
                 String[] SA = (String[]) O;
                 int len = SA.length;
                 for (int c = 0; c < len; c++) {
-                    out.print("    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(resp.encodeURL(req.getURL(SA[c], req.isSecure(), null, false))).print("'></SCRIPT>\n");
+                    out.print("    <script type='text/javascript' src='").writeHtmlAttribute(resp.encodeURL(req.getURL(SA[c], req.isSecure(), null, false))).print("'></script>\n");
                 }
             } else if(O instanceof Class) {
-                out.print("    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(resp.encodeURL(req.getURL(((Class<?>)O).asSubclass(WebPage.class), null))).print("'></SCRIPT>\n");
+                out.print("    <script type='text/javascript' src='").writeHtmlAttribute(resp.encodeURL(req.getURL(((Class<?>)O).asSubclass(WebPage.class), null))).print("'></script>\n");
             } else if(O instanceof WebPage) {
-                out.print("    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(resp.encodeURL(req.getURL((WebPage)O, req.isSecure(), null))).print("'></SCRIPT>\n");
+                out.print("    <script type='text/javascript' src='").writeHtmlAttribute(resp.encodeURL(req.getURL((WebPage)O, req.isSecure(), null))).print("'></script>\n");
             } else {
-                out.print("    <SCRIPT language='JavaScript1.2' src='").writeHtmlAttribute(resp.encodeURL(req.getURL(O.toString(), req.isSecure(), null, false))).print("'></SCRIPT>\n");
+                out.print("    <script type='text/javascript' src='").writeHtmlAttribute(resp.encodeURL(req.getURL(O.toString(), req.isSecure(), null, false))).print("'></script>\n");
             }
 	}
     }
