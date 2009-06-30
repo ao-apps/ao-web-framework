@@ -319,6 +319,7 @@ abstract public class TreePage extends WebPage {
 
             // Write the javascript that controls the form
             out.print("<script type='text/javascript'>\n"
+                    + "  // <![CDATA[\n"
                     + "  function openNode(index) {\n"
                     + "    eval('document.tree_form.opened_'+index+'.value=\"true\";');\n"
                     + "    document.tree_form.scroll_to_x.value=getPageXOffset(window);\n"
@@ -332,6 +333,7 @@ abstract public class TreePage extends WebPage {
                     + "    document.tree_form.scroll_to_y.value=getPageYOffset(window);\n"
                     + "    document.tree_form.submit();\n"
                     + "  }\n"
+                    + "  // ]]>\n"
                     + "</script>\n");
 
             // Write the form containing the current settings
@@ -399,7 +401,7 @@ abstract public class TreePage extends WebPage {
                                         } else break;
                                     }
                                 }
-                                out.print("<img src='").writeHtmlAttribute(resp.encodeURL(req.getURL(this, "image_num="+(hasMore?1:0)))).print("' border='0' width='"+IMAGE_WIDTH+"' height='"+IMAGE_HEIGHT+"' />");
+                                out.print("<img src='").print(resp.encodeURL(req.getURL(this, "image_num="+(hasMore?1:0)))).print("' border='0' width='"+IMAGE_WIDTH+"' height='"+IMAGE_HEIGHT+"' />");
                             } else break;
                         }
 
@@ -443,7 +445,7 @@ abstract public class TreePage extends WebPage {
                                         .print(c)
                                         .print(");'><img alt='").print(opened[c] ? "Close" : "Open")
                                         .print("' src='")
-                                        .writeHtmlAttribute(
+                                        .print(
                                             resp.encodeURL(
                                                 req.getURL(
                                                     this,
@@ -458,7 +460,7 @@ abstract public class TreePage extends WebPage {
                                 } else {
                                     out
                                         .print("<img src='")
-                                        .writeHtmlAttribute(
+                                        .print(
                                             resp.encodeURL(
                                                 req.getURL(
                                                     this,
@@ -467,7 +469,7 @@ abstract public class TreePage extends WebPage {
                                             )
                                         ).print("' border='0' width='"+IMAGE_WIDTH+"' height='"+IMAGE_HEIGHT+"' />");
                                 }
-                                out.print("<img src='").writeHtmlAttribute(resp.encodeURL(req.getURL(this, "image_num=0"))).print("' border='0' width='4' height='"+IMAGE_HEIGHT+"' /></td><td nowrap>");
+                                out.print("<img src='").print(resp.encodeURL(req.getURL(this, "image_num=0"))).print("' border='0' width='4' height='"+IMAGE_HEIGHT+"' /></td><td nowrap>");
                             }
 
                             boolean useCodeFont=useCodeFont(req);
@@ -479,13 +481,13 @@ abstract public class TreePage extends WebPage {
                                     || (pos==(pathLen-1) && path[pathLen-1].length()>0)
                                 ) && (href = tree.get(c).getUrl()) != null
                             ) {
-                                out.print("<a class='aoLightLink' target='_top' href='").writeHtmlAttribute(resp.encodeURL(href)).print("'>").print(path[pos]).print("</a>");
+                                out.print("<a class='aoLightLink' target='_top' href='").print(resp.encodeURL(href)).print("'>").print(path[pos]).print("</a>");
                             } else if(path[pos].length()>0) out.print(path[pos]);
                             if(useCodeFont) out.print("</code>");
                         }
 
                         out.print("</td></tr></table></td>\n"
-                                + "      <td nowrap width=20><img src='").writeHtmlAttribute(resp.encodeURL(req.getURL(this, "image_num=0"))).print("' width='20' height='1' /></td>\n"
+                                + "      <td nowrap width=20><img src='").print(resp.encodeURL(req.getURL(this, "image_num=0"))).print("' width='20' height='1' /></td>\n"
                                 + "      <td nowrap>");
                         String description=tree.get(c).getDescription();
                         if(description!=null) out.print(description);

@@ -75,7 +75,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
                         int endPos=html.indexOf(')', pos+4);
                         if(endPos==-1) throw new IllegalArgumentException("Unable to find closing parenthesis for @URL( substitution, pos="+pos);
                         String className=html.substring(pos+4, endPos);
-                        out.writeHtmlAttribute(resp.encodeURL(req.getURL(className)));
+                        out.print(resp.encodeURL(req.getURL(className)));
                         pos=endPos+1;
                     } else if((pos+16)<len && html.substring(pos, pos+16).equalsIgnoreCase("BEGIN_LIGHT_AREA")) {
                         layout.beginLightArea(req, resp, out);
@@ -169,7 +169,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
                                             while((ch=in.read())!=-1) {
                                                 if(ch==')') {
                                                     String className=buffer.toString().substring(5, buffer.length());
-                                                    out.writeHtmlAttribute(resp.encodeURL(req.getURL(className)));
+                                                    out.print(resp.encodeURL(req.getURL(className)));
                                                     buffer.setLength(0);
                                                     break;
                                                 } else buffer.append((char)ch);

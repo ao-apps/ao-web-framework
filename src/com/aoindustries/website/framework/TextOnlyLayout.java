@@ -24,7 +24,7 @@ public class TextOnlyLayout extends WebPageLayout {
     }
 
     public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, String width, boolean nowrap) {
-        out.print("<table border=5 cellpadding=0 cellspacing='0'>\n"
+        out.print("<table border=5 cellpadding='0' cellspacing='0'>\n"
                 + "  <tr>\n"
                 + "    <td class='aoLightRow'");
         if(width!=null) out.print(" width='").print(width).print('\'');
@@ -39,7 +39,7 @@ public class TextOnlyLayout extends WebPageLayout {
     }
 
     public void beginWhiteArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, String width, boolean nowrap) {
-        out.print("<table border=5 cellpadding=0 cellspacing='0'>\n"
+        out.print("<table border=5 cellpadding='0' cellspacing='0'>\n"
                 + "  <tr>\n"
                 + "    <td class='aoLightRow'");
         if(width!=null) out.print(" width='").print(width).print('\'');
@@ -104,12 +104,19 @@ public class TextOnlyLayout extends WebPageLayout {
         }
         out.print("</title>\n"
                 + "    <meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1' />\n"
-                + "    <meta name='keywords' content='").writeHtmlAttribute(page.getKeywords()).print("' />\n"
-                + "    <meta name='description' content='").writeHtmlAttribute(page.getDescription()).print("' />\n"
-                + "    <meta name='abstract' content='").writeHtmlAttribute(page.getDescription()).print("' />\n"
-                + "    <meta name='author' content='").writeHtmlAttribute(page.getAuthor()).print("' />\n"
-                + "    <link rel='stylesheet' href='").writeHtmlAttribute(resp.encodeURL(req.getURL("layout/text/global.css", req.isSecure(), null, false))).print("' type='text/css' />\n"
-                + "    <script type='text/javascript' src='").writeHtmlAttribute(resp.encodeURL(req.getURL("global.js", req.isSecure(), null, false))).print("'></script>\n");
+                + "    <meta name='keywords' content='").writeXmlAttribute(page.getKeywords()).print("' />\n"
+                + "    <meta name='description' content='").writeXmlAttribute(page.getDescription()).print("' />\n"
+                + "    <meta name='abstract' content='").writeXmlAttribute(page.getDescription()).print("' />\n");
+        String copyright = page.getCopyright(req, page);
+        if(copyright!=null && copyright.length()>0) {
+            out.print("    <meta name='copyright' content='").writeXmlAttribute(copyright).print("' />\n");
+        }
+        String author = page.getAuthor();
+        if(author!=null && author.length()>0) {
+            out.print("    <meta name='author' content='").writeXmlAttribute(author).print("' />\n");
+        }
+        out.print("    <link rel='stylesheet' href='").print(resp.encodeURL(req.getURL("layout/text/global.css", req.isSecure(), null, false))).print("' type='text/css' />\n"
+                + "    <script type='text/javascript' src='").print(resp.encodeURL(req.getURL("global.js", req.isSecure(), null, false))).print("'></script>\n");
         printJavaScriptIncludes(req, resp, out, page);
         out.print("  </head>\n"
                 + "  <body\n");
@@ -138,12 +145,12 @@ public class TextOnlyLayout extends WebPageLayout {
         boolean isLoggedIn=req.isLoggedIn();
         if(isLoggedIn) {
             out.print("          <hr />\n"
-                    + "          Logout: <form target='_top' style='display:inline;' id='logout_form' method='post' action='").writeHtmlAttribute(resp.encodeURL(req.getURL(page, req.isSecure(), null))).print("'>");
+                    + "          Logout: <form target='_top' style='display:inline;' id='logout_form' method='post' action='").print(resp.encodeURL(req.getURL(page, req.isSecure(), null))).print("'>");
             req.printFormFields(out, 2);
             out.print("<input type='hidden' name='logout_requested' value='true'><input type='submit' value='Logout'></form>\n");
         } else {
             out.print("          <hr />\n"
-                    + "          Login: <form target='_top' style='display:inline;' id='login_form' method='post' action='").writeHtmlAttribute(resp.encodeURL(req.getURL(page, true, null))).print("'>");
+                    + "          Login: <form target='_top' style='display:inline;' id='login_form' method='post' action='").print(resp.encodeURL(req.getURL(page, true, null))).print("'>");
             req.printFormFields(out, 2);
             out.print("<input type='hidden' name='login_requested' value='true'><input type='submit' value='Login'></form>\n");
         }
@@ -151,7 +158,7 @@ public class TextOnlyLayout extends WebPageLayout {
                 + "          <span style='white-space: nowrap'>\n");
         if(getLayoutChoices().length>=2) out.print("Layout: ");
         if(printWebPageLayoutSelector(page, out, req, resp)) out.print("<br />\n"
-                + "            Search:  <form id='search_site' style='display:inline;' method='post' action='").writeHtmlAttribute(resp.encodeURL(req.getURL(page, req.isSecure(), null))).print("'>\n"
+                + "            Search:  <form id='search_site' style='display:inline;' method='post' action='").print(resp.encodeURL(req.getURL(page, req.isSecure(), null))).print("'>\n"
                 + "              <input type='hidden' name='search_target' value='entire_site'>\n");
 	req.printFormFields(out, 3);
         out.print("              <input type='text' name='search_query' size=12 maxlength=255>\n"
@@ -170,7 +177,7 @@ public class TextOnlyLayout extends WebPageLayout {
             parent=parents.get(c);
             String navAlt=parent.getNavImageAlt(req);
             String navSuffix=parent.getNavImageSuffix(req);
-            out.print("            <a href='").writeHtmlAttribute(resp.encodeURL(req.getURL(parent))).print("'>").print(TreePage.replaceHTML(navAlt));
+            out.print("            <a href='").print(resp.encodeURL(req.getURL(parent))).print("'>").print(TreePage.replaceHTML(navAlt));
             if(navSuffix!=null) out.print(" (").writeHtml(navSuffix).print(')');
             out.print("</a><br />\n");
         }
@@ -196,8 +203,8 @@ public class TextOnlyLayout extends WebPageLayout {
             if(tpage!=null && (tpage.useNavImage() || tpage.equals(page) || (tpage.includeNavImageAsParent() && tpage.equals(parent)))) {
                 String navAlt=tpage.getNavImageAlt(req);
                 String navSuffix=tpage.getNavImageSuffix(req);
-                boolean isSelected=tpage.equals(page);
-                out.print("          <a href='").writeHtmlAttribute(resp.encodeURL(tpage.getNavImageURL(req, null))).print("'>").writeHtml(TreePage.replaceHTML(navAlt));
+                //boolean isSelected=tpage.equals(page);
+                out.print("          <a href='").print(tpage.getNavImageURL(req, resp, null)).print("'>").writeHtml(TreePage.replaceHTML(navAlt));
                 if(navSuffix!=null) out.print(" (").writeHtml(navSuffix).print(')');
                 out.print("</a><br />\n");
             }
@@ -209,11 +216,11 @@ public class TextOnlyLayout extends WebPageLayout {
                 + "        <td valign='top'>");
         WebPage[] commonPages=getCommonPages(page, req);
         if(commonPages!=null && commonPages.length>0) {
-            out.print("        <table cellspacing='0' cellpadding=0 width=100%><tr>\n");
+            out.print("        <table cellspacing='0' cellpadding='0' width=100%><tr>\n");
             for(int c=0;c<commonPages.length;c++) {
                 if(c>0) out.print("          <td align='center' width='1%'>|</td>\n");
                 WebPage tpage=commonPages[c];
-                out.print("          <td nowrap align='center' width='").print((101-commonPages.length)/commonPages.length).print("%'><a href='").writeHtmlAttribute(resp.encodeURL(tpage.getNavImageURL(req, null))).print("'>").print(tpage.getNavImageAlt(req)).print("</a></td>\n");
+                out.print("          <td nowrap align='center' width='").print((101-commonPages.length)/commonPages.length).print("%'><a href='").print(tpage.getNavImageURL(req, resp, null)).print("'>").print(tpage.getNavImageAlt(req)).print("</a></td>\n");
             }
             out.print("        </tr></table>\n");
         }

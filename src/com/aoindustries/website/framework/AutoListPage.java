@@ -68,7 +68,7 @@ abstract public class AutoListPage extends WebPage {
         for (int c = 0; c < len; c++) {
             WebPage page = pages[c];
             out.print("  <tr>\n"
-                    + "    <td nowrap><a class='aoLightLink' href='").writeHtmlAttribute(req==null?"":resp.encodeURL(req.getURL(page))).print("'>").print(page.getShortTitle()).print("</a>\n"
+                    + "    <td nowrap><a class='aoLightLink' href='").print(req==null?"":resp.encodeURL(req.getURL(page))).print("'>").print(page.getShortTitle()).print("</a>\n"
                     + "    </td>\n"
                     + "    <td width=12 nowrap>&nbsp;</td>\n"
                     + "    <td nowrap>").print(page.getDescription()).print("</td>\n"

@@ -242,15 +242,16 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 
     /**
      * Appends the parameters to a URL.
+     * Parameters should already be URL encoded and have &amp; as separator.
      */
     protected static boolean appendParams(StringBuilder SB, Object optParam, List<String> finishedParams, boolean alreadyAppended) {
         if (optParam != null) {
             if (optParam instanceof String) {
-                String[] SA=StringUtility.splitString((String)optParam, '&');
-                int len=SA.length;
+                List<String> nameValuePairs=StringUtility.splitString((String)optParam, "&amp;");
+                int len=nameValuePairs.size();
                 for(int c=0;c<len;c++) {
-                    SB.append(alreadyAppended?'&':'?');
-                    String S=SA[c];
+                    SB.append(alreadyAppended?"&amp;":"?");
+                    String S=nameValuePairs.get(c);
                     int pos=S.indexOf('=');
                     if(pos==-1) {
                         SB.append(S);
@@ -270,7 +271,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
                 for (int c = 0; c < len; c += 2) {
                     String name=SA[c];
                     if(!finishedParams.contains(name)) {
-                        SB.append(alreadyAppended?'&':'?').append(name).append('=').append(SA[c + 1]);
+                        SB.append(alreadyAppended?"&amp;":"?").append(name).append('=').append(SA[c + 1]);
                         finishedParams.add(name);
                         alreadyAppended=true;
                     }
@@ -282,6 +283,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 
     /**
      * Gets a relative URL from a String containing a classname and optional parameters.
+     * Parameters should already be URL encoded and have &amp; as separator.
      */
     public String getURL(String classAndParams) throws IOException, SQLException {
         String className, params;
@@ -298,6 +300,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 
     /**
      * Gets a relative URL given its classname and optional parameters.
+     * Parameters should already be URL encoded and have &amp; as separator.
      */
     public String getURL(String classname, String params) throws IOException, SQLException {
         try {
@@ -312,6 +315,8 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 
     /**
      * Gets the absolute URL String, optionally with the settings embedded.
+     * (&amp;amp; instead of standalone &amp; as parameter separator)
+     * Parameters should already be URL encoded and have &amp; as separator.
      */
     public String getURL(String url, boolean useEncryption, Object optParam, boolean keepSettings) throws IOException {
         StringBuilder SB=new StringBuilder();
@@ -364,6 +369,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 
     /**
      * Gets the absolute URL to a web page.
+     * Parameters should already be URL encoded and have &amp; as separator.
      */
     public String getURL(WebPage page, Object optParam) throws IOException, SQLException {
         return getURL(page, page.useEncryption(), optParam);
@@ -371,13 +377,14 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 
     /**
      * Gets the absolute URL to a web page.
+     * Parameters should already be URL encoded and have &amp; as separator.
      */
     public String getURL(WebPage page, boolean useEncryption, Object optParam) throws IOException, SQLException {
         List<String> finishedParams=new SortedArrayList<String>();
         StringBuilder SB = new StringBuilder();
         String path = page.getURLPath();
         String lowerPath = path.toLowerCase();
-        if(!path.startsWith("http:") && !path.startsWith("https:")) {
+        if(!lowerPath.startsWith("http:") && !lowerPath.startsWith("https:")) {
             SB.append(
                 useEncryption
                 ?WebSiteFrameworkConfiguration.getHttpsBase()
@@ -395,6 +402,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 
     /**
      * Gets the absolute URL to a web page.
+     * Parameters should already be URL encoded and have &amp; as separator.
      */
     public String getURL(Class<? extends WebPage> clazz, Object param) throws IOException, SQLException {
         WebPage page=WebPage.getWebPage(sourcePage.getServletContext(), clazz, param);
@@ -413,6 +421,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
      * @param  optParam       any number of additional parameters.  This parameter can accept several types of
      *                        objects.  The following is a list of supported objects and a brief description of its
      *                        behavior.
+     *                        Parameters should already be URL encoded and have &amp; as separator.
      *                        <ul>
      *                          <li>
      *                            <code>String</code> - appended to the end of the parameters, assumed to be in the
@@ -501,16 +510,16 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
     /**
      * Prints the hidden variables that contain all of the current settings.
      */
-    public void printFormFields(ChainWriter out, int indent) {
+    public void printFormFields(ChainWriter out, int indent) throws IOException {
         if("true".equals(req.getParameter("search_engine"))) printHiddenField(out, indent, "search_engine", "true");
     }
 
     /**
      * Prints the hidden variables that contain all of the current settings.
      */
-    protected static void printHiddenField(ChainWriter out, int indent, String name, String value) {
+    protected static void printHiddenField(ChainWriter out, int indent, String name, String value) throws IOException {
         for(int c=0;c<indent;c++) out.print("  ");
-        out.print("<input type='hidden' name='").writeHtmlAttribute(name).print("' value='").writeHtmlAttribute(value).print("'>\n");
+        out.print("<input type='hidden' name='").writeXmlAttribute(name).print("' value='").writeXmlAttribute(value).print("'>\n");
     }
 
     void setUsingFrames(boolean isFramed) {

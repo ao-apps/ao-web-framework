@@ -6,6 +6,7 @@ package com.aoindustries.website.framework;
  * All rights reserved.
  */
 import com.aoindustries.io.ChainWriter;
+import com.aoindustries.util.StringUtility;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -119,7 +120,7 @@ abstract public class WebPageLayout {
         out.print("      <form id='search_two' method='POST'>\n");
         req.printFormFields(out, 4);
         out.print("        <table cellspacing='0' cellpadding='0'><tr><td nowrap>\n"
-                + "          Word(s) to search for: <input type='text' size=24 name='search_query' value='").writeHtmlAttribute(query).print("'><br />\n"
+                + "          Word(s) to search for: <input type='text' size=24 name='search_query' value='").writeXmlAttribute(query).print("'><br />\n"
                 + "          Search Location: <input type='radio' name='search_target' value='entire_site'");
         if(isEntireSite) out.print(" checked");
         out.print("> Entire Site&nbsp;&nbsp;&nbsp;<input type='radio' name='search_target' value='this_area'");
@@ -142,7 +143,7 @@ abstract public class WebPageLayout {
             }
         } else {
             beginLightArea(req, resp, out);
-            out.print("  <table cellspacing='0' cellpadding=0 class='aoLightRow'>\n"
+            out.print("  <table cellspacing='0' cellpadding='0' class='aoLightRow'>\n"
                     + "    <tr>\n"
                     + "      <th nowrap>% Match</th>\n"
                     + "      <th nowrap>Title</th>\n"
@@ -319,19 +320,31 @@ abstract public class WebPageLayout {
     public boolean printWebPageLayoutSelector(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
         if(layoutChoices.length>=2) {
             out.print("<script type='text/javascript'>\n"
+                    + "  // <![CDATA[\n"
                     + "  function selectLayout(layout) {\n");
             for(int c=0;c<layoutChoices.length;c++) {
                 String choice=layoutChoices[c];
-                out.print("    if(layout=='").print(choice).print("') window.top.location.href='").print(resp.encodeURL(req.getURL(page, "layout="+choice))).print("';\n");
+                out
+                    .print("    if(layout=='")
+                    .writeJavaScriptString(choice)
+                    .print("') window.top.location.href='")
+                    .writeJavaScriptString(                                     // Escape for JavaScript
+                        StringUtility.replace(                                  // Convert XML &amp; to &
+                            resp.encodeURL(req.getURL(page, "layout="+choice)),
+                            "&amp;",
+                            "&"
+                        )
+                    ).print("';\n");
             }
             out.print("  }\n"
+                    + "  // ]]>\n"
                     + "</script>\n"
                     + "<form style='display:inline;'>\n"
-                    + "  <select name='layout_selector' onChange='selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);'>\n");
+                    + "  <select name='layout_selector' onchange='selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);'>\n");
             for(int c=0; c<layoutChoices.length; c++) {
                 String choice=layoutChoices[c];
-                out.print("    <option value='").writeHtmlAttribute(choice).print('\'');
-                if(choice.equalsIgnoreCase(getName())) out.print(" selected");
+                out.print("    <option value='").writeXmlAttribute(choice).print('\'');
+                if(choice.equalsIgnoreCase(getName())) out.print(" selected='selected'");
                 out.print('>').writeHtml(choice).print("</option>\n");
             }
             out.print("  </select>\n"
@@ -347,14 +360,14 @@ abstract public class WebPageLayout {
                 String[] SA = (String[]) O;
                 int len = SA.length;
                 for (int c = 0; c < len; c++) {
-                    out.print("    <script type='text/javascript' src='").writeHtmlAttribute(resp.encodeURL(req.getURL(SA[c], req.isSecure(), null, false))).print("'></script>\n");
+                    out.print("    <script type='text/javascript' src='").print(resp.encodeURL(req.getURL(SA[c], req.isSecure(), null, false))).print("'></script>\n");
                 }
             } else if(O instanceof Class) {
-                out.print("    <script type='text/javascript' src='").writeHtmlAttribute(resp.encodeURL(req.getURL(((Class<?>)O).asSubclass(WebPage.class), null))).print("'></script>\n");
+                out.print("    <script type='text/javascript' src='").print(resp.encodeURL(req.getURL(((Class<?>)O).asSubclass(WebPage.class), null))).print("'></script>\n");
             } else if(O instanceof WebPage) {
-                out.print("    <script type='text/javascript' src='").writeHtmlAttribute(resp.encodeURL(req.getURL((WebPage)O, req.isSecure(), null))).print("'></script>\n");
+                out.print("    <script type='text/javascript' src='").print(resp.encodeURL(req.getURL((WebPage)O, req.isSecure(), null))).print("'></script>\n");
             } else {
-                out.print("    <script type='text/javascript' src='").writeHtmlAttribute(resp.encodeURL(req.getURL(O.toString(), req.isSecure(), null, false))).print("'></script>\n");
+                out.print("    <script type='text/javascript' src='").print(resp.encodeURL(req.getURL(O.toString(), req.isSecure(), null, false))).print("'></script>\n");
             }
 	}
     }

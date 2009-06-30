@@ -729,13 +729,18 @@ abstract public class WebPage extends ErrorReportingServlet {
     }
 
     /**
-     * Gets the URL associated with a nav image.
+     * Gets the URL associated with a nav image.  This should be fully encoded for
+     * direct output into an XML attribute.  This means URL encoded and
+     * &amp;amp; separators instead of only &amp;  If this is a
+     * javascript: link, then should be escaped via
+     * ChainWriter.writeJavaScriptStringInXmlAttribute.
      *
      * @see  #getNavImageAlt
      * @see  #getNavImageSuffix
+     * @see  ChainWriter#writeJavaScriptStringInXmlAttribute(String,Writer)
      */
-    public String getNavImageURL(WebSiteRequest req, Object params) throws IOException, SQLException {
-        return req.getURL(this, params);
+    public String getNavImageURL(WebSiteRequest req, HttpServletResponse resp, Object params) throws IOException, SQLException {
+        return resp.encodeURL(req.getURL(this, params));
     }
 
     /**
