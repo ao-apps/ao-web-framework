@@ -70,7 +70,7 @@ abstract public class AutoListPage extends WebPage {
             out.print("  <tr>\n"
                     + "    <td nowrap><a class='aoLightLink' href='").print(req==null?"":resp.encodeURL(req.getURL(page))).print("'>").print(page.getShortTitle()).print("</a>\n"
                     + "    </td>\n"
-                    + "    <td width=12 nowrap>&nbsp;</td>\n"
+                    + "    <td width=12 nowrap>&#160;</td>\n"
                     + "    <td nowrap>").print(page.getDescription()).print("</td>\n"
                     + "  </tr>\n")
             ;

@@ -103,20 +103,25 @@ public class TextOnlyLayout extends WebPageLayout {
             out.print(parent.getTitle());
         }
         out.print("</title>\n"
-                + "    <meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1' />\n"
-                + "    <meta name='keywords' content='").writeXmlAttribute(page.getKeywords()).print("' />\n"
-                + "    <meta name='description' content='").writeXmlAttribute(page.getDescription()).print("' />\n"
-                + "    <meta name='abstract' content='").writeXmlAttribute(page.getDescription()).print("' />\n");
+                + "    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />\n"
+                + "    <meta name='keywords' content='").encodeXmlAttribute(page.getKeywords()).print("' />\n"
+                + "    <meta name='description' content='").encodeXmlAttribute(page.getDescription()).print("' />\n"
+                + "    <meta name='abstract' content='").encodeXmlAttribute(page.getDescription()).print("' />\n");
         String copyright = page.getCopyright(req, page);
         if(copyright!=null && copyright.length()>0) {
-            out.print("    <meta name='copyright' content='").writeXmlAttribute(copyright).print("' />\n");
+            out.print("    <meta name='copyright' content='").encodeXmlAttribute(copyright).print("' />\n");
         }
         String author = page.getAuthor();
         if(author!=null && author.length()>0) {
-            out.print("    <meta name='author' content='").writeXmlAttribute(author).print("' />\n");
+            out.print("    <meta name='author' content='").encodeXmlAttribute(author).print("' />\n");
         }
         out.print("    <link rel='stylesheet' href='").print(resp.encodeURL(req.getURL("layout/text/global.css", req.isSecure(), null, false))).print("' type='text/css' />\n"
                 + "    <script type='text/javascript' src='").print(resp.encodeURL(req.getURL("global.js", req.isSecure(), null, false))).print("'></script>\n");
+        String googleAnalyticsNewTrackingCode = getGoogleAnalyticsNewTrackingCode();
+        if(googleAnalyticsNewTrackingCode!=null) {
+            out.print("    <script type='text/javascript' src='").print(req.isSecure() ? "https://ssl.google-analytics.com/ga.js" : "http://www.google-analytics.com/ga.js").print("'></script>\n");
+        }
+
         printJavaScriptIncludes(req, resp, out, page);
         out.print("  </head>\n"
                 + "  <body\n");
@@ -178,7 +183,7 @@ public class TextOnlyLayout extends WebPageLayout {
             String navAlt=parent.getNavImageAlt(req);
             String navSuffix=parent.getNavImageSuffix(req);
             out.print("            <a href='").print(resp.encodeURL(req.getURL(parent))).print("'>").print(TreePage.replaceHTML(navAlt));
-            if(navSuffix!=null) out.print(" (").writeHtml(navSuffix).print(')');
+            if(navSuffix!=null) out.print(" (").encodeHtml(navSuffix).print(')');
             out.print("</a><br />\n");
         }
         out.print("          </span>\n"
@@ -204,8 +209,8 @@ public class TextOnlyLayout extends WebPageLayout {
                 String navAlt=tpage.getNavImageAlt(req);
                 String navSuffix=tpage.getNavImageSuffix(req);
                 //boolean isSelected=tpage.equals(page);
-                out.print("          <a href='").print(tpage.getNavImageURL(req, resp, null)).print("'>").writeHtml(TreePage.replaceHTML(navAlt));
-                if(navSuffix!=null) out.print(" (").writeHtml(navSuffix).print(')');
+                out.print("          <a href='").print(tpage.getNavImageURL(req, resp, null)).print("'>").encodeHtml(TreePage.replaceHTML(navAlt));
+                if(navSuffix!=null) out.print(" (").encodeHtml(navSuffix).print(')');
                 out.print("</a><br />\n");
             }
         }
@@ -244,15 +249,13 @@ public class TextOnlyLayout extends WebPageLayout {
                 + "    </table>\n");
         String googleAnalyticsNewTrackingCode = getGoogleAnalyticsNewTrackingCode();
         if(googleAnalyticsNewTrackingCode!=null) {
-            out.print("<script type=\"text/javascript\">\n"
-                    + "var gaJsHost = ((\"https:\" == document.location.protocol) ? \"https://ssl.\" : \"http://www.\");\n"
-                    + "document.write(unescape(\"%3Cscript src='\" + gaJsHost + \"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E\"));\n"
-                    + "</script>\n"
-                    + "<script type=\"text/javascript\">\n"
-                    + "try {\n"
-                    + "var pageTracker = _gat._getTracker(\""); out.print(googleAnalyticsNewTrackingCode); out.print("\");\n"
-                    + "pageTracker._trackPageview();\n"
-                    + "} catch(err) {}</script>\n");
+            out.print("    <script type=\"text/javascript\">\n"
+                    + "      try {\n"
+                    + "        var pageTracker = _gat._getTracker(\"").print(googleAnalyticsNewTrackingCode).print("\");\n"
+                    + "        pageTracker._trackPageview();\n"
+                    + "      } catch(err) {\n"
+                    + "      }\n"
+                    + "    </script>\n");
         }
         out.print("  </body>\n"
                 + "</html>\n");
@@ -287,13 +290,13 @@ public class TextOnlyLayout extends WebPageLayout {
             if(direction!=-1) {
                 switch(direction) {
                     case UP:
-                        out.print("    <td>&nbsp;</td>\n");
+                        out.print("    <td>&#160;</td>\n");
                         break;
                     case DOWN:
-                        out.print("    <td>&nbsp;</td>\n");
+                        out.print("    <td>&#160;</td>\n");
                         break;
                     case UP_AND_DOWN:
-                        out.print("    <td>&nbsp;</td>\n");
+                        out.print("    <td>&#160;</td>\n");
                         break;
                     default: throw new IllegalArgumentException("Unknown direction: "+direction);
                 }
@@ -334,7 +337,7 @@ public class TextOnlyLayout extends WebPageLayout {
         out.print("    </td>\n");
         switch(direction) {
             case UP_AND_DOWN:
-                out.print("    <td>&nbsp;</td>\n");
+                out.print("    <td>&#160;</td>\n");
                 break;
             case NONE:
                 break;

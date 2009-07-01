@@ -654,12 +654,13 @@ abstract public class WebPage extends ErrorReportingServlet {
     }
 
     /**
-     * Sets the content type, sets the additional headers, then returns the <code>ChainWriter</code>.
+     * Sets the content type, encoding to UTF-8, sets the additional headers, then returns the <code>ChainWriter</code>.
      *
      * @see  #getAdditionalHeaders
      */
     protected final ChainWriter getHTMLChainWriter(WebSiteRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("text/html");
+        resp.setCharacterEncoding("UTF-8");
         String[] headers=getAdditionalHeaders(req);
         if(headers!=null) {
             int len=headers.length;
@@ -669,12 +670,13 @@ abstract public class WebPage extends ErrorReportingServlet {
     }
 
     /**
-     * Sets the content type, sets the additional headers, then returns the <code>OutputStream</code>.
+     * Sets the content type, encoding to UTF-8, sets the additional headers, then returns the <code>OutputStream</code>.
      *
      * @see  #getAdditionalHeaders
      */
     protected final OutputStream getHTMLOutputStream(WebSiteRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("text/html");
+        resp.setCharacterEncoding("UTF-8");
         String[] headers=getAdditionalHeaders(req);
         if(headers!=null) {
             int len=headers.length;
@@ -733,11 +735,11 @@ abstract public class WebPage extends ErrorReportingServlet {
      * direct output into an XML attribute.  This means URL encoded and
      * &amp;amp; separators instead of only &amp;  If this is a
      * javascript: link, then should be escaped via
-     * ChainWriter.writeJavaScriptStringInXmlAttribute.
+     * EncodingUtils.encodeJavaScriptStringInXmlAttribute.
      *
      * @see  #getNavImageAlt
      * @see  #getNavImageSuffix
-     * @see  ChainWriter#writeJavaScriptStringInXmlAttribute(String,Writer)
+     * @see  ChainWriter#encodeJavaScriptStringInXmlAttribute(String,Writer)
      */
     public String getNavImageURL(WebSiteRequest req, HttpServletResponse resp, Object params) throws IOException, SQLException {
         return resp.encodeURL(req.getURL(this, params));

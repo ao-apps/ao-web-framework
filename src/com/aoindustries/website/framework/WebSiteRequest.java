@@ -519,7 +519,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
      */
     protected static void printHiddenField(ChainWriter out, int indent, String name, String value) throws IOException {
         for(int c=0;c<indent;c++) out.print("  ");
-        out.print("<input type='hidden' name='").writeXmlAttribute(name).print("' value='").writeXmlAttribute(value).print("'>\n");
+        out.print("<input type='hidden' name='").encodeXmlAttribute(name).print("' value='").encodeXmlAttribute(value).print("'>\n");
     }
 
     void setUsingFrames(boolean isFramed) {

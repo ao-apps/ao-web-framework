@@ -337,7 +337,7 @@ abstract public class TreePage extends WebPage {
                     + "</script>\n");
 
             // Write the form containing the current settings
-            out.print("<form id='tree_form' method='POST'>\n");
+            out.print("<form id='tree_form' method='post'>\n");
             req.printFormFields(out, 1);
             out.print("  <input type='hidden' name='scroll_to_x' value='").print(scrollToX).print("'>\n"
                     + "  <input type='hidden' name='scroll_to_y' value='").print(scrollToY).print("'>\n");

@@ -117,14 +117,14 @@ abstract public class WebPageLayout {
         startContentLine(out, req, resp, 1, "center");
         beginLightArea(req, resp, out, "300", true);
         boolean isSecure = req.isSecure();
-        out.print("      <form id='search_two' method='POST'>\n");
+        out.print("      <form id='search_two' method='post'>\n");
         req.printFormFields(out, 4);
         out.print("        <table cellspacing='0' cellpadding='0'><tr><td nowrap>\n"
-                + "          Word(s) to search for: <input type='text' size=24 name='search_query' value='").writeXmlAttribute(query).print("'><br />\n"
+                + "          Word(s) to search for: <input type='text' size=24 name='search_query' value='").encodeXmlAttribute(query).print("'><br />\n"
                 + "          Search Location: <input type='radio' name='search_target' value='entire_site'");
-        if(isEntireSite) out.print(" checked");
-        out.print("> Entire Site&nbsp;&nbsp;&nbsp;<input type='radio' name='search_target' value='this_area'");
-        if(!isEntireSite) out.print(" checked");
+        if(isEntireSite) out.print(" checked='checked'");
+        out.print("> Entire Site&#160;&#160;&#160;<input type='radio' name='search_target' value='this_area'");
+        if(!isEntireSite) out.print(" checked='checked'");
         out.print("> This Area<br />\n"
                 + "          <br />\n"
                 + "          <center><input type='submit' class='ao_button' value=' Search '></center>\n"
@@ -147,7 +147,7 @@ abstract public class WebPageLayout {
                     + "    <tr>\n"
                     + "      <th nowrap>% Match</th>\n"
                     + "      <th nowrap>Title</th>\n"
-                    + "      <th nowrap>&nbsp;</th>\n"
+                    + "      <th nowrap>&#160;</th>\n"
                     + "      <th nowrap>Description</th>\n"
                     + "    </tr>\n"
             );
@@ -166,9 +166,9 @@ abstract public class WebPageLayout {
                 String description=result.getDescription();
                 out.print("    <tr class='").print(rowClass).print("'>\n"
                         + "      <td nowrap align=center>").print(Math.round(99 * result.getProbability() / highest)).print("%</td>\n"
-                        + "      <td nowrap><a class='"+linkClass+"' href='").print(resp.encodeURL(url)).print("'>").print(title.length()==0?"&nbsp;":title).print("</a></td>\n"
-                        + "      <td nowrap>&nbsp;&nbsp;&nbsp;</td>\n"
-                        + "      <td nowrap>").print(description.length()==0?"&nbsp;":description).print("</td>\n"
+                        + "      <td nowrap><a class='"+linkClass+"' href='").print(resp.encodeURL(url)).print("'>").print(title.length()==0?"&#160;":title).print("</a></td>\n"
+                        + "      <td nowrap>&#160;&#160;&#160;</td>\n"
+                        + "      <td nowrap>").print(description.length()==0?"&#160;":description).print("</td>\n"
                         + "    </tr>\n");
             }
             out.print(
@@ -326,9 +326,9 @@ abstract public class WebPageLayout {
                 String choice=layoutChoices[c];
                 out
                     .print("    if(layout=='")
-                    .writeJavaScriptString(choice)
+                    .encodeJavaScriptString(choice)
                     .print("') window.top.location.href='")
-                    .writeJavaScriptString(                                     // Escape for JavaScript
+                    .encodeJavaScriptString(                                     // Escape for JavaScript
                         StringUtility.replace(                                  // Convert XML &amp; to &
                             resp.encodeURL(req.getURL(page, "layout="+choice)),
                             "&amp;",
@@ -343,9 +343,9 @@ abstract public class WebPageLayout {
                     + "  <select name='layout_selector' onchange='selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);'>\n");
             for(int c=0; c<layoutChoices.length; c++) {
                 String choice=layoutChoices[c];
-                out.print("    <option value='").writeXmlAttribute(choice).print('\'');
+                out.print("    <option value='").encodeXmlAttribute(choice).print('\'');
                 if(choice.equalsIgnoreCase(getName())) out.print(" selected='selected'");
-                out.print('>').writeHtml(choice).print("</option>\n");
+                out.print('>').encodeHtml(choice).print("</option>\n");
             }
             out.print("  </select>\n"
                     + "</form>\n");
