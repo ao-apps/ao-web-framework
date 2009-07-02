@@ -183,14 +183,6 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
     private boolean isLinux;
     private boolean isLinuxDone;
 
-    private boolean isNetscape;
-    private boolean isNetscapeDone;
-
-    private boolean isNetscape4;
-    private boolean isNetscape4Done;
-
-    private boolean isFramed;
-
     public WebSiteRequest(HttpServlet sourcePage, HttpServletRequest req) throws IOException, SQLException {
         super(req);
         this.sourcePage=sourcePage;
@@ -438,10 +430,6 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
         return getURL(url, useEncryption, optParam, true);
     }
 
-    public boolean isUsingFrames() {
-        return isFramed;
-    }
-
     /**
      * Determines if the request is for a Lynx browser
      */
@@ -478,30 +466,6 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
         return isLinux;
     }
 
-    /**
-     * Determines if the request is for a Netscape browser.
-     */
-    public boolean isNetscape() {
-        if(!isNetscapeDone) {
-            String agent=req.getHeader("user-agent");
-            isNetscape=agent!=null && agent.indexOf("Mozilla")!=-1 && agent.indexOf("MSIE")==-1;
-            isNetscapeDone=true;
-        }
-        return isNetscape;
-    }
-
-    /**
-     * Determines if the request is for a Netscape browser.
-     */
-    public boolean isNetscape4() {
-        if(!isNetscape4Done) {
-            String agent=req.getHeader("user-agent");
-            isNetscape4=agent!=null && agent.indexOf("Mozilla/4")!=-1 && agent.indexOf("MSIE")==-1;
-            isNetscape4Done=true;
-        }
-        return isNetscape4;
-    }
-
     @Override
     public boolean isSecure() {
         return req.isSecure() || req.getServerPort()==443 || req.getRequestURI().indexOf("/https/")!=-1;
@@ -522,10 +486,6 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
         out.print("<input type='hidden' name='").encodeXmlAttribute(name).print("' value='").encodeXmlAttribute(value).print("'>\n");
     }
 
-    void setUsingFrames(boolean isFramed) {
-        this.isFramed=isFramed;
-    }
-    
     public List<UploadedFile> getUploadedFiles() {
         if(reqUploadedFiles==null) Collections.emptyList();
         return Collections.unmodifiableList(reqUploadedFiles);

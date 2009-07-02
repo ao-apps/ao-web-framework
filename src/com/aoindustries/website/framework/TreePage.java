@@ -222,7 +222,7 @@ abstract public class TreePage extends WebPage {
                     }
                     String href;
                     if (pos == (path[pathLen-1].length()==0?(pathLen-2):(pathLen-1)) && (href = tree.get(c).getUrl()) != null) {
-                        out.print("<a target='_top' href='");
+                        out.print("<a href='");
                         out.print(resp.encodeURL(href));
                         out.print("'>").print(replaced).print("</a>");
                     } else out.print(replaced);
@@ -337,12 +337,12 @@ abstract public class TreePage extends WebPage {
                     + "</script>\n");
 
             // Write the form containing the current settings
-            out.print("<form id='tree_form' method='post'>\n");
+            out.print("<form action='' id='tree_form' method='post'><div>\n");
             req.printFormFields(out, 1);
-            out.print("  <input type='hidden' name='scroll_to_x' value='").print(scrollToX).print("'>\n"
-                    + "  <input type='hidden' name='scroll_to_y' value='").print(scrollToY).print("'>\n");
+            out.print("  <input type='hidden' name='scroll_to_x' value='").print(scrollToX).print("' />\n"
+                    + "  <input type='hidden' name='scroll_to_y' value='").print(scrollToY).print("' />\n");
             for(int c=0; c<treeLen; c++) {
-                out.print("  <input type='hidden' name='opened_").print(c).print("' value='").print(opened[c]).print("'>\n");
+                out.print("  <input type='hidden' name='opened_").print(c).print("' value='").print(opened[c]).print("' />\n");
             }
 
             // Display the tree in a table with links for opening/closing the different parts
@@ -380,7 +380,7 @@ abstract public class TreePage extends WebPage {
                     }
                     if (visible) {
                         out.print("    <tr>\n"
-                                + "      <td nowrap><table cellspacing='0' cellpadding='0'><tr><td nowrap>");
+                                + "      <td style='white-space:nowrap; vertical-align:bottom; border:0px;'><table cellspacing='0' cellpadding='0'><tr><td style='white-space:nowrap; vertical-align:bottom; border:0px;'>");
 
                         int max = Math.min(pathLen - 1, last.length);
                         int pos = 0;
@@ -401,7 +401,7 @@ abstract public class TreePage extends WebPage {
                                         } else break;
                                     }
                                 }
-                                out.print("<img src='").print(resp.encodeURL(req.getURL(this, "image_num="+(hasMore?1:0)))).print("' border='0' width='"+IMAGE_WIDTH+"' height='"+IMAGE_HEIGHT+"' />");
+                                out.print("<img src='").print(resp.encodeURL(req.getURL(this, "image_num="+(hasMore?1:0)))).print("' style='border:0px; display:inline; vertical-align:bottom;' width='"+IMAGE_WIDTH+"' height='"+IMAGE_HEIGHT+"' alt='' />");
                             } else break;
                         }
 
@@ -456,7 +456,7 @@ abstract public class TreePage extends WebPage {
                                                     )
                                                 )
                                             )
-                                        ).print("' border='0' width='"+IMAGE_WIDTH+"' height='"+IMAGE_HEIGHT+"' /></a>");
+                                        ).print("' style='vertical-align:bottom; border:0px; display:inline;' width='"+IMAGE_WIDTH+"' height='"+IMAGE_HEIGHT+"' /></a>");
                                 } else {
                                     out
                                         .print("<img src='")
@@ -467,9 +467,9 @@ abstract public class TreePage extends WebPage {
                                                     "image_num="+(hasMore ? 2 : 3)
                                                 )
                                             )
-                                        ).print("' border='0' width='"+IMAGE_WIDTH+"' height='"+IMAGE_HEIGHT+"' />");
+                                        ).print("' style='vertical-align:bottom; border:0px; display:inline;' width='"+IMAGE_WIDTH+"' height='"+IMAGE_HEIGHT+"' alt='' />");
                                 }
-                                out.print("<img src='").print(resp.encodeURL(req.getURL(this, "image_num=0"))).print("' border='0' width='4' height='"+IMAGE_HEIGHT+"' /></td><td nowrap>");
+                                out.print("<img src='").print(resp.encodeURL(req.getURL(this, "image_num=0"))).print("' style='vertical-align:bottom; border:0px; display:inline;' width='4' height='"+IMAGE_HEIGHT+"' alt='' /></td><td style='white-space:nowrap'>");
                             }
 
                             boolean useCodeFont=useCodeFont(req);
@@ -481,14 +481,14 @@ abstract public class TreePage extends WebPage {
                                     || (pos==(pathLen-1) && path[pathLen-1].length()>0)
                                 ) && (href = tree.get(c).getUrl()) != null
                             ) {
-                                out.print("<a class='aoLightLink' target='_top' href='").print(resp.encodeURL(href)).print("'>").print(path[pos]).print("</a>");
+                                out.print("<a class='aoLightLink' href='").print(resp.encodeURL(href)).print("'>").print(path[pos]).print("</a>");
                             } else if(path[pos].length()>0) out.print(path[pos]);
                             if(useCodeFont) out.print("</code>");
                         }
 
                         out.print("</td></tr></table></td>\n"
-                                + "      <td nowrap width=20><img src='").print(resp.encodeURL(req.getURL(this, "image_num=0"))).print("' width='20' height='1' /></td>\n"
-                                + "      <td nowrap>");
+                                + "      <td style='white-space:nowrap; width:20px'><img src='").print(resp.encodeURL(req.getURL(this, "image_num=0"))).print("' style='vertical-align:bottom; border:0px; display:inline;' width='20' height='1' alt='' /></td>\n"
+                                + "      <td style='white-space:nowrap'>");
                         String description=tree.get(c).getDescription();
                         if(description!=null) out.print(description);
                         out.print("</td>\n"
@@ -498,7 +498,7 @@ abstract public class TreePage extends WebPage {
             }
 
             out.print("  </table>\n"
-                    + "</form>\n");
+                    + "</div></form>\n");
         } finally {
             layout.endContentLine(out, req, resp, 1, false);
             layout.endContent(this, out, req, resp, 1);
@@ -509,11 +509,6 @@ abstract public class TreePage extends WebPage {
         return false;
     }
 
-    @Override
-    public boolean useFrames(WebSiteRequest req) throws IOException, SQLException {
-        return !displayText(req);
-    }
-    
     private static String[][] getLines(List<TreePageData> tree) {
         int treeLen = tree.size();
         String[][] paths=new String[treeLen][];

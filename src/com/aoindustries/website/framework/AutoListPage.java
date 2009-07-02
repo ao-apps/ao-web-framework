@@ -5,10 +5,10 @@ package com.aoindustries.website.framework;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import javax.servlet.http.*;
+import com.aoindustries.io.ChainWriter;
+import java.io.IOException;
+import java.sql.SQLException;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Automatically generates a list of all pages.
@@ -21,18 +21,18 @@ abstract public class AutoListPage extends WebPage {
     }
 
     public AutoListPage(WebSiteRequest req) {
-	super(req);
+        super(req);
     }
 
     public AutoListPage(Object param) {
-	super(param);
+        super(param);
     }
 
     @Override
     public void doGet(
-	ChainWriter out,
-	WebSiteRequest req,
-	HttpServletResponse resp
+        ChainWriter out,
+        WebSiteRequest req,
+        HttpServletResponse resp
     ) throws IOException, SQLException {
         WebPageLayout layout=getWebPageLayout(req);
         layout.startContent(out, req, resp, 1, getPreferredContentWidth(req));
@@ -68,10 +68,10 @@ abstract public class AutoListPage extends WebPage {
         for (int c = 0; c < len; c++) {
             WebPage page = pages[c];
             out.print("  <tr>\n"
-                    + "    <td nowrap><a class='aoLightLink' href='").print(req==null?"":resp.encodeURL(req.getURL(page))).print("'>").print(page.getShortTitle()).print("</a>\n"
+                    + "    <td style='white-space:nowrap'><a class='aoLightLink' href='").print(req==null?"":resp.encodeURL(req.getURL(page))).print("'>").print(page.getShortTitle()).print("</a>\n"
                     + "    </td>\n"
-                    + "    <td width=12 nowrap>&#160;</td>\n"
-                    + "    <td nowrap>").print(page.getDescription()).print("</td>\n"
+                    + "    <td style='width:12px; white-space:nowrap'>&#160;</td>\n"
+                    + "    <td style='white-space:nowrap'>").print(page.getDescription()).print("</td>\n"
                     + "  </tr>\n")
             ;
         }

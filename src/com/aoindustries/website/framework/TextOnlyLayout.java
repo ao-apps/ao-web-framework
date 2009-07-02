@@ -53,33 +53,12 @@ public class TextOnlyLayout extends WebPageLayout {
                 + "</table>\n");
     }
 
-    public void printFrameSet(
-	WebPage page,
-	WebSiteRequest req,
-        HttpServletResponse resp,
-	ChainWriter out
-    ) {
-        throw new RuntimeException("Frames should never be used for text only layout.");
-    }
-
-    public boolean printFrame(
-	WebPage page,
-	WebSiteRequest req,
-	HttpServletResponse resp,
-	ChainWriter out,
-	String onload,
-	String frame
-    ) {
-        // Frames are not supported by text only layout
-	return false;
-    }
-
     public void startHTML(
-	WebPage page,
-	WebSiteRequest req,
+        WebPage page,
+        WebSiteRequest req,
         HttpServletResponse resp,
-	ChainWriter out,
-	String onload
+        ChainWriter out,
+        String onload
     ) throws IOException, SQLException {
         out.print("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n"
                 + "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\">\n"
@@ -150,12 +129,12 @@ public class TextOnlyLayout extends WebPageLayout {
         boolean isLoggedIn=req.isLoggedIn();
         if(isLoggedIn) {
             out.print("          <hr />\n"
-                    + "          Logout: <form target='_top' style='display:inline;' id='logout_form' method='post' action='").print(resp.encodeURL(req.getURL(page, req.isSecure(), null))).print("'>");
+                    + "          Logout: <form style='display:inline;' id='logout_form' method='post' action='").print(resp.encodeURL(req.getURL(page, req.isSecure(), null))).print("'>");
             req.printFormFields(out, 2);
             out.print("<input type='hidden' name='logout_requested' value='true'><input type='submit' value='Logout'></form>\n");
         } else {
             out.print("          <hr />\n"
-                    + "          Login: <form target='_top' style='display:inline;' id='login_form' method='post' action='").print(resp.encodeURL(req.getURL(page, true, null))).print("'>");
+                    + "          Login: <form style='display:inline;' id='login_form' method='post' action='").print(resp.encodeURL(req.getURL(page, true, null))).print("'>");
             req.printFormFields(out, 2);
             out.print("<input type='hidden' name='login_requested' value='true'><input type='submit' value='Login'></form>\n");
         }
@@ -275,8 +254,8 @@ public class TextOnlyLayout extends WebPageLayout {
             totalColumns+=contentColumnSpans[c];
         }
         out.print("    <td");
-        if(totalColumns!=1) out.print(" colspan=").print(totalColumns);
-        out.print("><hr /></td>\n"
+        if(totalColumns!=1) out.print(" colspan='").print(totalColumns);
+        out.print("'><hr /></td>\n"
                 + "  </tr>\n");
     }
 
@@ -304,7 +283,7 @@ public class TextOnlyLayout extends WebPageLayout {
 
             int colspan=colspansAndDirections[c];
             out.print("    <td");
-            if(colspan!=1) out.print(" colspan=").print(colspan);
+            if(colspan!=1) out.print(" colspan='").print(colspan).print('\'');
             out.print("><hr /></td>\n");
         }
         out.print("  </tr>\n");
@@ -325,7 +304,7 @@ public class TextOnlyLayout extends WebPageLayout {
     public void startContentLine(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int colspan, String align) {
         out.print("  <tr>\n"
                 + "    <td valign='top'");
-        if(colspan!=1) out.print(" colspan=").print(colspan);
+        if(colspan!=1) out.print(" colspan='").print(colspan).print('\'');
         if(align!=null && !align.equalsIgnoreCase("left")) out.print(" align='").print(align).print('\'');
         out.print('>');
     }
@@ -344,8 +323,8 @@ public class TextOnlyLayout extends WebPageLayout {
             default: throw new IllegalArgumentException("Unknown direction: "+direction);
         }
         out.print("    <td valign='top'");
-        if(colspan!=1) out.print(" colspan=").print(colspan);
-        if(rowspan!=1) out.print(" rowspan=").print(rowspan);
+        if(colspan!=1) out.print(" colspan='").print(colspan).print('\'');
+        if(rowspan!=1) out.print(" rowspan='").print(rowspan).print('\'');
         if(align!=null && !align.equals("left")) out.print(" align='").print(align).print('\'');
         out.print('>');
     }
@@ -368,12 +347,12 @@ public class TextOnlyLayout extends WebPageLayout {
             totalColumns+=contentColumnSpans[c];
         }
         out.print("  <tr><td");
-        if(totalColumns!=1) out.print(" colspan=").print(totalColumns);
+        if(totalColumns!=1) out.print(" colspan='").print(totalColumns).print('\'');
         out.print("><hr /></td></tr>\n");
         String copyright=page.getCopyright(req, page);
         if(copyright!=null && copyright.length()>0) {
             out.print("  <tr><td");
-            if(totalColumns!=1) out.print(" colspan=").print(totalColumns);
+            if(totalColumns!=1) out.print(" colspan='").print(totalColumns).print('\'');
             out.print(" align='center'><font size=-2>").print(copyright).print("</font></td></tr>\n");
         }
         out.print("</table>\n");
@@ -381,11 +360,6 @@ public class TextOnlyLayout extends WebPageLayout {
     
     public String getName() {
         return "Text";
-    }
-
-    @Override
-    public boolean useFrames(WebPage page, WebSiteRequest req) {
-        return false;
     }
 
     public WebPage[] getCommonPages(WebPage page, WebSiteRequest req) throws IOException, SQLException {

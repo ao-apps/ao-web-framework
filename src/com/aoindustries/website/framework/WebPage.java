@@ -330,72 +330,53 @@ abstract public class WebPage extends ErrorReportingServlet {
         WebPageLayout layout=getWebPageLayout(req);
 
         boolean doRegular=true;
-        if(layout.useFrames(this, req)) {
+        if(WebSiteFrameworkConfiguration.useWebSiteCaching() && req.getParameter("login_requested")==null && req.getParameter("login_username")==null) {
+            // Try to use the cache if the last modified time is available
+            long pageLastModified=getLastModified(req);
+            if(pageLastModified!=-1) {
+                Object outputCacheKey=getOutputCacheKey(req);
+                if(outputCacheKey!=null) {
+                    OutputCacheEntry existingCache;
+                    synchronized(this) {
+                        if(outputCache==null) {
+                            outputCache=new HashMap<Object,OutputCacheEntry>();
+                            existingCache=null;
+                        } else existingCache=outputCache.get(outputCacheKey);
+
+                        if(existingCache==null || existingCache.lastModified!=pageLastModified) {
+                            ByteArrayOutputStream bout=new ByteArrayOutputStream();
+                            ChainWriter out=new ChainWriter(bout);
+                            try {
+                                layout.startHTML(this, req, resp, out, null);
+                                doGet(out, req, resp);
+                                layout.endHTML(this, req, out);
+                            } finally {
+                                out.flush();
+                                out.close();
+                            }
+                            outputCache.put(outputCacheKey, existingCache=new OutputCacheEntry(outputCacheKey, pageLastModified, bout.toByteArray()));
+                        }
+                    }
+                    OutputStream out=getHTMLOutputStream(req, resp);
+                    try {
+                        out.write(existingCache.bytes);
+                    } finally {
+                        out.flush();
+                        out.close();
+                    }
+                    doRegular=false;
+                }
+            }
+        }
+        if(doRegular) {
             ChainWriter out=getHTMLChainWriter(req, resp);
             try {
-                req.setUsingFrames(true);
-                String frame=req.getParameter("frame");
-                if(
-                   frame==null
-                   || (frame=frame.trim()).length()==0
-                   || !layout.printFrame(this, req, resp, out, null, frame)
-                   ) layout.printFrameSet(this, req, resp, out);
+                layout.startHTML(this, req, resp, out, null);
+                doGet(out, req, resp);
+                layout.endHTML(this, req, out);
             } finally {
                 out.flush();
                 out.close();
-            }
-            doRegular=false;
-        }
-        if(doRegular) {
-            req.setUsingFrames(false);
-            if(WebSiteFrameworkConfiguration.useWebSiteCaching() && req.getParameter("login_requested")==null && req.getParameter("login_username")==null) {
-                // Try to use the cache if the last modified time is available
-                long pageLastModified=getLastModified(req);
-                if(pageLastModified!=-1) {
-                    Object outputCacheKey=getOutputCacheKey(req);
-                    if(outputCacheKey!=null) {
-                        OutputCacheEntry existingCache;
-                        synchronized(this) {
-                            if(outputCache==null) {
-                                outputCache=new HashMap<Object,OutputCacheEntry>();
-                                existingCache=null;
-                            } else existingCache=outputCache.get(outputCacheKey);
-
-                            if(existingCache==null || existingCache.lastModified!=pageLastModified) {
-                                ByteArrayOutputStream bout=new ByteArrayOutputStream();
-                                ChainWriter out=new ChainWriter(bout);
-                                try {
-                                    layout.startHTML(this, req, resp, out, null);
-                                    doGet(out, req, resp);
-                                    layout.endHTML(this, req, out);
-                                } finally {
-                                    out.flush();
-                                    out.close();
-                                }
-                                outputCache.put(outputCacheKey, existingCache=new OutputCacheEntry(outputCacheKey, pageLastModified, bout.toByteArray()));
-                            }
-                        }
-                        OutputStream out=getHTMLOutputStream(req, resp);
-                        try {
-                            out.write(existingCache.bytes);
-                        } finally {
-                            out.flush();
-                            out.close();
-                        }
-                        doRegular=false;
-                    }
-                }
-            }
-            if(doRegular) {
-                ChainWriter out=getHTMLChainWriter(req, resp);
-                try {
-                    layout.startHTML(this, req, resp, out, null);
-                    doGet(out, req, resp);
-                    layout.endHTML(this, req, out);
-                } finally {
-                    out.flush();
-                    out.close();
-                }
             }
         }
     }
@@ -484,7 +465,6 @@ abstract public class WebPage extends ErrorReportingServlet {
             // Search request
             ChainWriter out=getHTMLChainWriter(req, resp);
             try {
-                req.setUsingFrames(false);
                 layout.startHTML(this, req, resp, out, "document.forms['search_two'].search_query.select(); document.forms['search_two'].search_query.focus();");
                 boolean entire_site=searchTarget.equals("entire_site");
                 WebPage target = entire_site ? getRootPage() : this;
@@ -510,8 +490,6 @@ abstract public class WebPage extends ErrorReportingServlet {
                 out.close();
             }
         } else {
-            boolean useFrames=layout.useFrames(this, req);
-            req.setUsingFrames(useFrames);
             doPost(req, resp);
         }
     }
@@ -1363,22 +1341,6 @@ abstract public class WebPage extends ErrorReportingServlet {
      */
     public boolean useEncryption() throws IOException, SQLException {
         return getParent().useEncryption();
-    }
-
-    /**
-     * Determines if this page wants to be placed in a frame set.
-     * A page will not necessarily be placed in a frameset, however.
-     * <code>WebPageLayout.useFrames</code> determines if frames are actually
-     * used, and <code>WebSiteRequest.isUsingFrames</code> indicates if
-     * frames are actually being used.  In no event should a page
-     * the return <code>false</code> to <code>useFrames</code> be
-     * put into a frameset.
-     *
-     * @see  WebPageLayout#useFrames
-     * @see  WebSiteRequest#isUsingFrames
-     */
-    public boolean useFrames(WebSiteRequest req) throws IOException, SQLException {
-        return false;
     }
 
     /**
