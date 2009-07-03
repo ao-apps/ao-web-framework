@@ -974,6 +974,7 @@ abstract public class WebPage extends ErrorReportingServlet {
                 int size=list.size();
                 for(int c=0;c<size;c++) {
                     WebPage page=list.get(c);
+                    if(page==null) throw new NullPointerException("page is null");
                     if(page.getClass()==clazz && page.isHandler(params)) return page;
                 }
             }

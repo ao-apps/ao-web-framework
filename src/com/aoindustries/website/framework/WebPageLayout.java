@@ -10,7 +10,6 @@ import com.aoindustries.util.StringUtility;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -79,18 +78,17 @@ abstract public class WebPageLayout {
         printContentHorizontalDivider(out, req, resp, 1, false);
         startContentLine(out, req, resp, 1, "center");
         beginLightArea(req, resp, out, "300", true);
-        boolean isSecure = req.isSecure();
-        out.print("      <form id='search_two' method='post'>\n");
+        out.print("      <form action='' id='search_two' method='post'>\n");
         req.printFormFields(out, 4);
         out.print("        <table cellspacing='0' cellpadding='0'><tr><td style='white-space:nowrap'>\n"
-                + "          Word(s) to search for: <input type='text' size=24 name='search_query' value='").encodeXmlAttribute(query).print("'><br />\n"
+                + "          Word(s) to search for: <input type='text' size='24' name='search_query' value='").encodeXmlAttribute(query).print("' /><br />\n"
                 + "          Search Location: <input type='radio' name='search_target' value='entire_site'");
         if(isEntireSite) out.print(" checked='checked'");
-        out.print("> Entire Site&#160;&#160;&#160;<input type='radio' name='search_target' value='this_area'");
+        out.print(" /> Entire Site&#160;&#160;&#160;<input type='radio' name='search_target' value='this_area'");
         if(!isEntireSite) out.print(" checked='checked'");
-        out.print("> This Area<br />\n"
+        out.print(" /> This Area<br />\n"
                 + "          <br />\n"
-                + "          <center><input type='submit' class='ao_button' value=' Search '></center>\n"
+                + "          <div style='text-align:center'><input type='submit' class='ao_button' value=' Search ' /></div>\n"
                 + "        </td></tr></table>\n"
                 + "      </form>\n"
         );
@@ -108,10 +106,10 @@ abstract public class WebPageLayout {
             beginLightArea(req, resp, out);
             out.print("  <table cellspacing='0' cellpadding='0' class='aoLightRow'>\n"
                     + "    <tr>\n"
-                    + "      <th nowrap>% Match</th>\n"
-                    + "      <th nowrap>Title</th>\n"
-                    + "      <th nowrap>&#160;</th>\n"
-                    + "      <th nowrap>Description</th>\n"
+                    + "      <th style='white-space:nowrap'>% Match</th>\n"
+                    + "      <th style='white-space:nowrap'>Title</th>\n"
+                    + "      <th style='white-space:nowrap'>&#160;</th>\n"
+                    + "      <th style='white-space:nowrap'>Description</th>\n"
                     + "    </tr>\n"
             );
 
@@ -128,7 +126,7 @@ abstract public class WebPageLayout {
                 String title=result.getTitle();
                 String description=result.getDescription();
                 out.print("    <tr class='").print(rowClass).print("'>\n"
-                        + "      <td nowrap align=center>").print(Math.round(99 * result.getProbability() / highest)).print("%</td>\n"
+                        + "      <td style='white-space:nowrap; text-align:center;'>").print(Math.round(99 * result.getProbability() / highest)).print("%</td>\n"
                         + "      <td style='white-space:nowrap'><a class='"+linkClass+"' href='").print(resp.encodeURL(url)).print("'>").print(title.length()==0?"&#160;":title).print("</a></td>\n"
                         + "      <td style='white-space:nowrap'>&#160;&#160;&#160;</td>\n"
                         + "      <td style='white-space:nowrap'>").print(description.length()==0?"&#160;":description).print("</td>\n"

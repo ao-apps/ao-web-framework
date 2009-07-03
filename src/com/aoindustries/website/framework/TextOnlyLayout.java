@@ -24,11 +24,11 @@ public class TextOnlyLayout extends WebPageLayout {
     }
 
     public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, String width, boolean nowrap) {
-        out.print("<table border=5 cellpadding='0' cellspacing='0'>\n"
+        out.print("<table style='border:5px outset #a0a0a0;' cellpadding='0' cellspacing='0'>\n"
                 + "  <tr>\n"
                 + "    <td class='aoLightRow'");
         if(width!=null) out.print(" width='").print(width).print('\'');
-        if(nowrap) out.print(" nowrap");
+        if(nowrap) out.print(" style='white-space:nowrap'");
         out.print(">");
     }
 
@@ -39,11 +39,11 @@ public class TextOnlyLayout extends WebPageLayout {
     }
 
     public void beginWhiteArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, String width, boolean nowrap) {
-        out.print("<table border=5 cellpadding='0' cellspacing='0'>\n"
+        out.print("<table style='border:5px outset #a0a0a0;' cellpadding='0' cellspacing='0'>\n"
                 + "  <tr>\n"
                 + "    <td class='aoLightRow'");
         if(width!=null) out.print(" width='").print(width).print('\'');
-        if(nowrap) out.print(" nowrap");
+        if(nowrap) out.print(" style='white-space:nowrap'");
         out.print(" bgcolor='white'>");
     }
 
@@ -129,28 +129,28 @@ public class TextOnlyLayout extends WebPageLayout {
         boolean isLoggedIn=req.isLoggedIn();
         if(isLoggedIn) {
             out.print("          <hr />\n"
-                    + "          Logout: <form style='display:inline;' id='logout_form' method='post' action='").print(resp.encodeURL(req.getURL(page, req.isSecure(), null))).print("'>");
+                    + "          Logout: <form style='display:inline;' id='logout_form' method='post' action='").print(resp.encodeURL(req.getURL(page, req.isSecure(), null))).print("'><div style='display:inline;'>");
             req.printFormFields(out, 2);
-            out.print("<input type='hidden' name='logout_requested' value='true'><input type='submit' value='Logout'></form>\n");
+            out.print("<input type='hidden' name='logout_requested' value='true' /><input type='submit' value='Logout' /></div></form>\n");
         } else {
             out.print("          <hr />\n"
-                    + "          Login: <form style='display:inline;' id='login_form' method='post' action='").print(resp.encodeURL(req.getURL(page, true, null))).print("'>");
+                    + "          Login: <form style='display:inline;' id='login_form' method='post' action='").print(resp.encodeURL(req.getURL(page, true, null))).print("'><div style='display:inline;'>");
             req.printFormFields(out, 2);
-            out.print("<input type='hidden' name='login_requested' value='true'><input type='submit' value='Login'></form>\n");
+            out.print("<input type='hidden' name='login_requested' value='true' /><input type='submit' value='Login' /></div></form>\n");
         }
         out.print("          <hr />\n"
-                + "          <span style='white-space: nowrap'>\n");
+                + "          <div style='white-space:nowrap'>\n");
         if(getLayoutChoices().length>=2) out.print("Layout: ");
         if(printWebPageLayoutSelector(page, out, req, resp)) out.print("<br />\n"
-                + "            Search:  <form id='search_site' style='display:inline;' method='post' action='").print(resp.encodeURL(req.getURL(page, req.isSecure(), null))).print("'>\n"
-                + "              <input type='hidden' name='search_target' value='entire_site'>\n");
+                + "            Search: <form id='search_site' style='display:inline;' method='post' action='").print(resp.encodeURL(req.getURL(page, req.isSecure(), null))).print("'><div style='display:inline;'>\n"
+                + "              <input type='hidden' name='search_target' value='entire_site' />\n");
 	req.printFormFields(out, 3);
-        out.print("              <input type='text' name='search_query' size=12 maxlength=255>\n"
-                + "            </form><br />\n"
-                + "          </span>\n"
+        out.print("              <input type='text' name='search_query' size='12' maxlength='255' />\n"
+                + "            </div></form><br />\n"
+                + "          </div>\n"
                 + "          <hr />\n"
                 + "          <b>Current Location</b><br />\n"
-                + "          <span style='white-space: nowrap'>\n");
+                + "          <div style='white-space:nowrap'>\n");
         parents.clear();
         parent=page;
         while(parent!=null) {
@@ -165,10 +165,10 @@ public class TextOnlyLayout extends WebPageLayout {
             if(navSuffix!=null) out.print(" (").encodeHtml(navSuffix).print(')');
             out.print("</a><br />\n");
         }
-        out.print("          </span>\n"
+        out.print("          </div>\n"
                 + "          <hr />\n"
                 + "          <b>Related Pages</b><br />\n"
-                + "          <span style='white-space: nowrap'>\n");
+                + "          <div style='white-space:nowrap'>\n");
         WebPage[] pages=page.getCachedPages(req);
         parent=page;
         if(pages.length==0) {
@@ -193,18 +193,18 @@ public class TextOnlyLayout extends WebPageLayout {
                 out.print("</a><br />\n");
             }
         }
-        out.print("          </span>\n"
+        out.print("          </div>\n"
                 + "          <hr />\n");
         printBelowRelatedPages(out, req);
         out.print("        </td>\n"
                 + "        <td valign='top'>");
         WebPage[] commonPages=getCommonPages(page, req);
         if(commonPages!=null && commonPages.length>0) {
-            out.print("        <table cellspacing='0' cellpadding='0' width=100%><tr>\n");
+            out.print("        <table cellspacing='0' cellpadding='0' style='width:100%;'><tr>\n");
             for(int c=0;c<commonPages.length;c++) {
-                if(c>0) out.print("          <td align='center' width='1%'>|</td>\n");
+                if(c>0) out.print("          <td align='center' style='width:1%'>|</td>\n");
                 WebPage tpage=commonPages[c];
-                out.print("          <td nowrap align='center' width='").print((101-commonPages.length)/commonPages.length).print("%'><a href='").print(tpage.getNavImageURL(req, resp, null)).print("'>").print(tpage.getNavImageAlt(req)).print("</a></td>\n");
+                out.print("          <td style='white-space:nowrap; text-align:center; width:").print((101-commonPages.length)/commonPages.length).print("%'><a href='").print(tpage.getNavImageURL(req, resp, null)).print("'>").print(tpage.getNavImageAlt(req)).print("</a></td>\n");
             }
             out.print("        </tr></table>\n");
         }
@@ -254,8 +254,8 @@ public class TextOnlyLayout extends WebPageLayout {
             totalColumns+=contentColumnSpans[c];
         }
         out.print("    <td");
-        if(totalColumns!=1) out.print(" colspan='").print(totalColumns);
-        out.print("'><hr /></td>\n"
+        if(totalColumns!=1) out.print(" colspan='").print(totalColumns).print('\'');
+        out.print("><hr /></td>\n"
                 + "  </tr>\n");
     }
 
@@ -353,7 +353,7 @@ public class TextOnlyLayout extends WebPageLayout {
         if(copyright!=null && copyright.length()>0) {
             out.print("  <tr><td");
             if(totalColumns!=1) out.print(" colspan='").print(totalColumns).print('\'');
-            out.print(" align='center'><font size=-2>").print(copyright).print("</font></td></tr>\n");
+            out.print(" align='center'><span style='font-size:x-small;'>").print(copyright).print("</span></td></tr>\n");
         }
         out.print("</table>\n");
     }

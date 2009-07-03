@@ -321,17 +321,17 @@ abstract public class TreePage extends WebPage {
             out.print("<script type='text/javascript'>\n"
                     + "  // <![CDATA[\n"
                     + "  function openNode(index) {\n"
-                    + "    eval('document.tree_form.opened_'+index+'.value=\"true\";');\n"
-                    + "    document.tree_form.scroll_to_x.value=getPageXOffset(window);\n"
-                    + "    document.tree_form.scroll_to_y.value=getPageYOffset(window);\n"
-                    + "    document.tree_form.submit();\n"
+                    + "    eval('document.forms[\"tree_form\"].opened_'+index+'.value=\"true\";');\n"
+                    + "    document.forms[\"tree_form\"].scroll_to_x.value=getPageXOffset(window);\n"
+                    + "    document.forms[\"tree_form\"].scroll_to_y.value=getPageYOffset(window);\n"
+                    + "    document.forms[\"tree_form\"].submit();\n"
                     + "  }\n"
                     + "\n"
                     + "  function closeNode(index) {\n"
-                    + "    eval('document.tree_form.opened_'+index+'.value=\"false\";');\n"
-                    + "    document.tree_form.scroll_to_x.value=getPageXOffset(window);\n"
-                    + "    document.tree_form.scroll_to_y.value=getPageYOffset(window);\n"
-                    + "    document.tree_form.submit();\n"
+                    + "    eval('document.forms[\"tree_form\"].opened_'+index+'.value=\"false\";');\n"
+                    + "    document.forms[\"tree_form\"].scroll_to_x.value=getPageXOffset(window);\n"
+                    + "    document.forms[\"tree_form\"].scroll_to_y.value=getPageYOffset(window);\n"
+                    + "    document.forms[\"tree_form\"].submit();\n"
                     + "  }\n"
                     + "  // ]]>\n"
                     + "</script>\n");
@@ -380,7 +380,7 @@ abstract public class TreePage extends WebPage {
                     }
                     if (visible) {
                         out.print("    <tr>\n"
-                                + "      <td style='white-space:nowrap; vertical-align:bottom; border:0px;'><table cellspacing='0' cellpadding='0'><tr><td style='white-space:nowrap; vertical-align:bottom; border:0px;'>");
+                                + "      <td style='white-space:nowrap; border:0px;'><table cellspacing='0' cellpadding='0'><tr><td style='white-space:nowrap; border:0px;'>");
 
                         int max = Math.min(pathLen - 1, last.length);
                         int pos = 0;
