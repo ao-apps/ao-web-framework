@@ -122,8 +122,10 @@ abstract public class TreePage extends WebPage {
         else {
             try {
                 int imageNum=Integer.parseInt(S);
-                if(imageNum<0 || imageNum>9) resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unable to find image number "+imageNum);
-                else {
+                if(imageNum<0 || imageNum>9) {
+                    req.setAttribute(TextOnlyLayout.HTTP_SERVLET_RESPONSE_STATUS, Integer.valueOf(HttpServletResponse.SC_NOT_FOUND));
+                    resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unable to find image number "+imageNum);
+                } else {
                     boolean useSmooth=useSmoothOutline(req);
                     resp.setContentType(imageNum==0?"image/gif":useSmooth?"image/jpeg":"image/gif");
                     byte[] bytes=getImageBytes(imageNum, useSmooth);
@@ -136,6 +138,7 @@ abstract public class TreePage extends WebPage {
                     }
                 }
             } catch(NumberFormatException err) {
+                req.setAttribute(TextOnlyLayout.HTTP_SERVLET_RESPONSE_STATUS, Integer.valueOf(HttpServletResponse.SC_BAD_REQUEST));
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unable to parse image_num");
             }
         }

@@ -53,6 +53,16 @@ public class TextOnlyLayout extends WebPageLayout {
                 + "</table>\n");
     }
 
+    /**
+     * Until version 3.0 there will not be a getStatus method on the HttpServletResponse class.
+     * To allow code to detect the current status, anytime the status is set one should
+     * also set the request attribute of this name to a java.lang.Integer of the status.
+     *
+     * Matches value in com.aoindustries.website.Constants.HTTP_SERVLET_RESPONSE_STATUS for
+     * interoperability between the frameworks.
+     */
+    public static final String HTTP_SERVLET_RESPONSE_STATUS = "httpServletResponseStatus";
+
     public void startHTML(
         WebPage page,
         WebSiteRequest req,
@@ -60,11 +70,17 @@ public class TextOnlyLayout extends WebPageLayout {
         ChainWriter out,
         String onload
     ) throws IOException, SQLException {
+        boolean isOkResponseStatus;
+        {
+            Integer responseStatus = (Integer)req.getAttribute(HTTP_SERVLET_RESPONSE_STATUS);
+            isOkResponseStatus = responseStatus==null || responseStatus.intValue()==HttpServletResponse.SC_OK;
+        }
+
         out.print("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n"
                 + "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\">\n"
                 + "  <head>\n");
         // If this is not the default layout, then robots noindex
-        if(!getName().equals(getLayoutChoices()[0])) {
+        if(!isOkResponseStatus || !getName().equals(getLayoutChoices()[0])) {
             out.print("    <meta name=\"ROBOTS\" content=\"NOINDEX, NOFOLLOW\" />\n");
         }
         // Default style language
@@ -229,11 +245,20 @@ public class TextOnlyLayout extends WebPageLayout {
         String googleAnalyticsNewTrackingCode = getGoogleAnalyticsNewTrackingCode();
         if(googleAnalyticsNewTrackingCode!=null) {
             out.print("    <script type=\"text/javascript\">\n"
+                    + "      // <![CDATA[\n"
                     + "      try {\n"
-                    + "        var pageTracker = _gat._getTracker(\"").print(googleAnalyticsNewTrackingCode).print("\");\n"
-                    + "        pageTracker._trackPageview();\n"
-                    + "      } catch(err) {\n"
+                    + "        var pageTracker = _gat._getTracker(\""); out.print(googleAnalyticsNewTrackingCode); out.print("\");\n");
+            Integer responseStatus = (Integer)req.getAttribute(HTTP_SERVLET_RESPONSE_STATUS);
+            if(responseStatus==null || responseStatus.intValue()==HttpServletResponse.SC_OK) {
+                out.print("        pageTracker._trackPageview();\n");
+            } else {
+                out.print("        pageTracker._trackPageview(\"/");
+                out.print(responseStatus.toString());
+                out.print(".html?page=\"+document.location.pathname+document.location.search+\"&from=\"+document.referrer);\n");
+            }
+            out.print("      } catch(err) {\n"
                     + "      }\n"
+                    + "      // ]]>\n"
                     + "    </script>\n");
         }
         out.print("  </body>\n"
