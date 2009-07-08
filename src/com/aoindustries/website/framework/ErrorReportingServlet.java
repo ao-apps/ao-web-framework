@@ -76,7 +76,7 @@ public abstract class ErrorReportingServlet extends HttpServlet {
     /**
      * Gets the logger for this servlet.
      */
-    protected Logger getLogger() {
+    public Logger getLogger() {
         return getLogger(getClass());
     }
 
@@ -108,16 +108,16 @@ public abstract class ErrorReportingServlet extends HttpServlet {
         } catch (ThreadDeath t) {
             throw t;
         } catch (RuntimeException e) {
-            log(null, e);
+            getLogger().log(Level.SEVERE, null, e);
             throw e;
         } catch (ServletException e) {
-            log(null, e);
+            getLogger().log(Level.SEVERE, null, e);
             throw e;
         } catch (IOException e) {
-            log(null, e);
+            getLogger().log(Level.SEVERE, null, e);
             throw e;
         } catch (Throwable t) {
-            log(null, t);
+            getLogger().log(Level.SEVERE, null, t);
         }
     }
 
@@ -135,16 +135,16 @@ public abstract class ErrorReportingServlet extends HttpServlet {
         } catch (ThreadDeath t) {
             throw t;
         } catch (RuntimeException e) {
-            log(null, e);
+            getLogger().log(Level.SEVERE, null, e);
             throw e;
         } catch (ServletException e) {
-            log(null, e);
+            getLogger().log(Level.SEVERE, null, e);
             throw e;
         } catch (IOException e) {
-            log(null, e);
+            getLogger().log(Level.SEVERE, null, e);
             throw e;
         } catch (Throwable t) {
-            log(null, t);
+            getLogger().log(Level.SEVERE, null, t);
         }
     }
 
@@ -168,12 +168,12 @@ public abstract class ErrorReportingServlet extends HttpServlet {
         try {
             return reportingGetLastModified(req);
         } catch (RuntimeException err) {
-            log(null, err);
+            getLogger().log(Level.SEVERE, null, err);
             throw err;
         } catch (ThreadDeath err) {
             throw err;
         } catch (Throwable err) {
-            log(null, err);
+            getLogger().log(Level.SEVERE, null, err);
             throw new WrappedException(err, new Object[] {"req="+req});
         }
     }
@@ -217,12 +217,20 @@ public abstract class ErrorReportingServlet extends HttpServlet {
         return super.getLastModified(req);
     }
 
+    /**
+     * @deprecated  Please call logger directly for accurate class and method
+     */
     @Override
+    @Deprecated
     final public void log(String message) {
         getLogger().log(Level.SEVERE, message);
     }
 
+    /**
+     * @deprecated  Please call logger directly for accurate class and method
+     */
     @Override
+    @Deprecated
     final public void log(String message, Throwable err) {
         getLogger().log(Level.SEVERE, message, err);
     }
