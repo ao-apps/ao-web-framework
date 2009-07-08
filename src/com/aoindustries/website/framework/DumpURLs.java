@@ -21,16 +21,19 @@ import javax.servlet.http.*;
  */
 abstract public class DumpURLs extends WebPage {
 
-    public DumpURLs() {}
+    public DumpURLs(LoggerAccessor loggerAccessor) {
+        super(loggerAccessor);
+    }
 
     public DumpURLs(WebSiteRequest req) {
         super(req);
     }
 
-    public DumpURLs(Object param) {
-        super(param);
+    public DumpURLs(LoggerAccessor loggerAccessor, Object param) {
+        super(loggerAccessor, param);
     }
 
+    @Override
     public void doGet(
         ChainWriter out,
         WebSiteRequest req,

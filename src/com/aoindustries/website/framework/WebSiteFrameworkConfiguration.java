@@ -37,26 +37,6 @@ public final class WebSiteFrameworkConfiguration {
         return props.getProperty(name);
     }
     
-    public static boolean getLogToSystemErr() throws IOException {
-        return "true".equals(getProperty("com.aoindustries.website.framework.log_to_system_err"));
-    }
-
-    public static String getErrorSmtpServer() throws IOException {
-        return getProperty("com.aoindustries.website.framework.error.smtp.server");
-    }
-
-    public static String getErrorFromAddress() throws IOException {
-        return getProperty("com.aoindustries.website.framework.error.email.from");
-    }
-
-    public static String getErrorSubject() throws IOException {
-        return getProperty("com.aoindustries.website.framework.error.email.subject");
-    }
-
-    public static List<String> getErrorToAddresses() throws IOException {
-        return StringUtility.splitStringCommaSpace(getProperty("com.aoindustries.website.framework.error.email.to"));
-    }
-
     public static String getServletDirectory() throws IOException {
         return getProperty("com.aoindustries.website.framework.directory.servlet");
     }

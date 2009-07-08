@@ -5,16 +5,13 @@ package com.aoindustries.website.framework;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.email.ErrorMailer;
-import com.aoindustries.util.ErrorHandler;
-import com.aoindustries.util.ErrorPrinter;
 import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Random;
-import javax.servlet.ServletContext;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +25,11 @@ import javax.servlet.http.HttpServletResponse;
  */
 public abstract class ErrorReportingServlet extends HttpServlet {
 
+    /**
+     * The response buffer is set to this size.
+     */
+    public static final int BUFFER_SIZE = 256 * 1024;
+    
     /**
      * The time that the servlet environment started.
      */
@@ -58,11 +60,46 @@ public abstract class ErrorReportingServlet extends HttpServlet {
     private static final Object lastModifiedLock=new Object();
     private static long lastModifiedCount=0;
 
+    private final LoggerAccessor loggerAccessor;
+
+    protected ErrorReportingServlet(LoggerAccessor loggerAccessor) {
+        this.loggerAccessor = loggerAccessor;
+    }
+
+    /**
+     * Gets the loggerAccess for this page.
+     */
+    protected LoggerAccessor getLoggerAccessor() {
+        return loggerAccessor;
+    }
+
+    /**
+     * Gets the logger for this servlet.
+     */
+    protected Logger getLogger() {
+        return getLogger(getClass());
+    }
+
+    /**
+     * Gets the logger for the provided class.
+     */
+    protected Logger getLogger(Class clazz) {
+        return getLogger(clazz.getName());
+    }
+
+    /**
+     * Gets the provided named logger.
+     */
+    protected Logger getLogger(String name) {
+        return loggerAccessor.getLogger(getServletContext(), name);
+    }
+
     /**
      * Any error that occurs during a <code>doGet</code> is caught and reported here.
      */
     @Override
     final protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setBufferSize(BUFFER_SIZE);
         synchronized (getLock) {
             getCount++;
         }
@@ -89,6 +126,7 @@ public abstract class ErrorReportingServlet extends HttpServlet {
      */
     @Override
     final protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setBufferSize(BUFFER_SIZE);
         synchronized (postLock) {
             postCount++;
         }
@@ -180,93 +218,13 @@ public abstract class ErrorReportingServlet extends HttpServlet {
     }
 
     @Override
-    public void log(String message) {
-        log(getServletContext(), message, null, null);
+    final public void log(String message) {
+        getLogger().log(Level.SEVERE, message);
     }
-    
+
     @Override
-    public void log(String message, Throwable err) {
-        log(getServletContext(), message, err, null);
-    }
-
-    public void log(String message, Throwable err, Object[] extraInfo) {
-        log(getServletContext(), message, err, extraInfo);
-    }
-
-    public static void log(ServletContext context, String message) {
-        log(context, message, null, null);
-    }
-
-    public static void log(ServletContext context, String message, Throwable err, Object[] extraInfo) {
-        log0(context, message, err, extraInfo);
-
-        // Optionally email the error
-        try {
-            String smtp=WebSiteFrameworkConfiguration.getErrorSmtpServer();
-            if(smtp!=null && smtp.length()>0) {
-                String from=WebSiteFrameworkConfiguration.getErrorFromAddress();
-                List<String> tos=WebSiteFrameworkConfiguration.getErrorToAddresses();
-                for(int c=0;c<tos.size();c++) {
-                    String to=tos.get(c);
-                    ErrorMailer.emailError(
-                        getRandom(),
-                        message==null
-                            ?(err==null?"null":err.getMessage())
-                            :(err==null?message:(message+" - "+err.getMessage())),
-                        smtp,
-                        from,
-                        to,
-                        WebSiteFrameworkConfiguration.getErrorSubject()
-                    );
-                }
-            }
-        } catch(IOException ioErr) {
-            log0(context, "Unable to email error", ioErr, null);
-        }
-    }
-
-    /**
-     * Errors are logged one at a time.
-     */
-    private static final Object logLock=new Object();
-
-    private static void log0(ServletContext context, String message, Throwable err, Object[] extraInfo) {
-        try {
-            synchronized(logLock) {
-                if(context==null || WebSiteFrameworkConfiguration.getLogToSystemErr()) {
-                    if(message!=null) System.err.println(message);
-                    if(err!=null) ErrorPrinter.printStackTraces(err, extraInfo);
-                    System.err.flush();
-                } else context.log(message, err);
-            }
-        } catch(IOException err2) {
-            synchronized(logLock) {
-                if(err!=null) ErrorPrinter.printStackTraces(err, extraInfo);
-                System.err.println("Unable to access web site framework configuration: log_to_system_err");
-                ErrorPrinter.printStackTraces(err2);
-                System.err.flush();
-            }
-            if(context!=null) {
-                context.log(message, err);
-                context.log("Unable to access web site framework configuration: log_to_system_err", err2);
-            }
-        }
-    }
-
-    private static ErrorHandler errorHandler;
-    public synchronized static ErrorHandler getErrorHandler() {
-        if(errorHandler==null) {
-            errorHandler=new ErrorHandler() {
-                public final void reportError(Throwable T, Object[] extraInfo) {
-                    ErrorReportingServlet.log(null, null, T, extraInfo);
-                }
-
-                public final void reportWarning(Throwable T, Object[] extraInfo) {
-                    ErrorReportingServlet.log(null, null, T, extraInfo);
-                }
-            };
-        }
-        return errorHandler;
+    final public void log(String message, Throwable err) {
+        getLogger().log(Level.SEVERE, message, err);
     }
 
     private static final Random random = new SecureRandom();

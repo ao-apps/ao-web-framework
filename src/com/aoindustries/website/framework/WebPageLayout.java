@@ -5,6 +5,8 @@ package com.aoindustries.website.framework;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.encoding.NewEncodingUtils;
+import com.aoindustries.encoding.TextInJavaScriptEncoder;
 import com.aoindustries.io.ChainWriter;
 import com.aoindustries.util.StringUtility;
 import java.io.IOException;
@@ -281,24 +283,23 @@ abstract public class WebPageLayout {
     public boolean printWebPageLayoutSelector(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
         if(layoutChoices.length>=2) {
             out.print("<script type='text/javascript'>\n"
-                    + "  // <![CDATA[\n"
                     + "  function selectLayout(layout) {\n");
             for(int c=0;c<layoutChoices.length;c++) {
                 String choice=layoutChoices[c];
-                out
-                    .print("    if(layout=='")
-                    .encodeJavaScriptString(choice)
-                    .print("') window.top.location.href='")
-                    .encodeJavaScriptString(                                     // Escape for JavaScript
-                        StringUtility.replace(                                  // Convert XML &amp; to &
-                            resp.encodeURL(req.getURL(page, "layout="+choice)),
-                            "&amp;",
-                            "&"
-                        )
-                    ).print("';\n");
+                out.print("    if(layout=='");
+                TextInJavaScriptEncoder.encodeTextInJavaScript(choice, out);
+                out.print("') window.top.location.href='");
+                TextInJavaScriptEncoder.encodeTextInJavaScript(
+                    StringUtility.replace(                                  // Convert XML &amp; to &
+                        resp.encodeURL(req.getURL(page, "layout="+choice)),
+                        "&amp;",
+                        "&"
+                    ),
+                    out
+                );
+                out.print("';\n");
             }
             out.print("  }\n"
-                    + "  // ]]>\n"
                     + "</script>\n"
                     + "<form action='#' style='display:inline;'><div style='display:inline;'>\n"
                     + "  <select name='layout_selector' onchange='selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);'>\n");

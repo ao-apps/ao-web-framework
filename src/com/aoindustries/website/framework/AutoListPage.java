@@ -17,15 +17,16 @@ import javax.servlet.http.HttpServletResponse;
  */
 abstract public class AutoListPage extends WebPage {
 
-    public AutoListPage() {
+    public AutoListPage(LoggerAccessor loggerAccessor) {
+        super(loggerAccessor);
     }
 
     public AutoListPage(WebSiteRequest req) {
         super(req);
     }
 
-    public AutoListPage(Object param) {
-        super(param);
+    public AutoListPage(LoggerAccessor loggerAccessor, Object param) {
+        super(loggerAccessor, param);
     }
 
     @Override
@@ -82,10 +83,5 @@ abstract public class AutoListPage extends WebPage {
      */
     public static void printPageList(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, WebPage parent, WebPageLayout layout) throws IOException, SQLException {
         printPageList(out, req, resp, parent.getCachedPages(req), layout);
-    }
-
-    @Override
-    public Object getOutputCacheKey(WebSiteRequest req) {
-        return req.getOutputCacheKey();
     }
 }

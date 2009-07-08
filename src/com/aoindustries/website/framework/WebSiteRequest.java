@@ -25,8 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.logging.Level;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
@@ -98,7 +98,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
     }
 
     private static Thread uploadedFileCleanup;
-    private static void addUploadedFile(UploadedFile uf) {
+    private static void addUploadedFile(UploadedFile uf, final ServletContext servletContext, final LoggerAccessor loggerAccessor) {
         synchronized(uploadedFiles) {
             uploadedFiles.put(Long.valueOf(uf.getID()), uf);
 
@@ -123,7 +123,9 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
                                                 long timeSince=System.currentTimeMillis()-uf.getLastAccessed();
                                                 if(timeSince<0 || timeSince>=((long)60*60*1000)) {
                                                     File file=uf.getStorageFile();
-                                                    if(file.exists() && !file.delete()) ErrorReportingServlet.log(null, null, new IOException("Unable to delete file"), new Object[] {"file.getPath()="+file.getPath()});
+                                                    if(file.exists() && !file.delete()) {
+                                                        loggerAccessor.getLogger(servletContext, getClass().getName()).log(Level.SEVERE, "file.getPath()="+file.getPath(), new IOException("Unable to delete file"));
+                                                    }
                                                     I.remove();
                                                 }
                                             }
@@ -145,7 +147,9 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
                                                             break;
                                                         }
                                                     }
-                                                    if(!found && !file.delete()) ErrorReportingServlet.log(null, null, new IOException("Unable to delete file"), new Object[] {"file.getPath()="+file.getPath()});
+                                                    if(!found && !file.delete()) {
+                                                        loggerAccessor.getLogger(servletContext, getClass().getName()).log(Level.SEVERE, "file.getPath()="+file.getPath(), new IOException("Unable to delete file"));
+                                                    }
                                                 }
                                             }
                                         }
@@ -154,11 +158,11 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
                             } catch(ThreadDeath TD) {
                                 throw TD;
                             } catch(Throwable T) {
-                                ErrorReportingServlet.log(null, null, T, null);
+                                loggerAccessor.getLogger(servletContext, getClass().getName()).log(Level.SEVERE, null, T);
                                 try {
                                     sleep(60*1000);
                                 } catch(InterruptedException err) {
-                                    ErrorReportingServlet.log(null, null, err, null);
+                                    loggerAccessor.getLogger(servletContext, getClass().getName()).log(Level.WARNING, null, err);
                                 }
                             }
                         }
@@ -169,7 +173,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
         }
     }
 
-    final protected HttpServlet sourcePage;
+    final protected WebPage sourcePage;
     final private HttpServletRequest req;
     private MultipartRequest mreq;
     private List<UploadedFile> reqUploadedFiles;
@@ -183,7 +187,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
     private boolean isLinux;
     private boolean isLinuxDone;
 
-    public WebSiteRequest(HttpServlet sourcePage, HttpServletRequest req) throws IOException, SQLException {
+    public WebSiteRequest(WebPage sourcePage, HttpServletRequest req) throws IOException, SQLException {
         super(req);
         this.sourcePage=sourcePage;
         this.req=req;
@@ -211,7 +215,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
                                     user,
                                     getContentType(mreq, filename)
                                 );
-                                addUploadedFile(uf);
+                                addUploadedFile(uf, sourcePage.getServletContext(), sourcePage.getLoggerAccessor());
                                 reqUploadedFiles.add(uf);
                             }
                         }
@@ -500,12 +504,14 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
      *
      * @exception  SecurityException  if the ID is not assigned to the person logged in
      */
-    public static UploadedFile getUploadedFile(WebSiteUser owner, long id, ServletContext context) throws SecurityException {
+    public static UploadedFile getUploadedFile(WebSiteUser owner, long id, ServletContext context, LoggerAccessor loggerAccessor) throws SecurityException {
         synchronized(uploadedFiles) {
             UploadedFile uf=uploadedFiles.get(Long.valueOf(id));
             if(uf!=null) {
                 if(uf.getOwner().equals(owner)) return uf;
-                else WebPage.log(context, "UploadedFile found, but owner doesn't match: uf.getOwner()=\""+uf.getOwner()+"\", owner=\""+owner+"\".");
+                else {
+                    loggerAccessor.getLogger(context, WebSiteRequest.class.getName()).severe("UploadedFile found, but owner doesn't match: uf.getOwner()=\""+uf.getOwner()+"\", owner=\""+owner+"\".");
+                }
             }
             return null;
         }
@@ -542,10 +548,6 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
         }
     }
 
-    public Object getOutputCacheKey() {
-        return new WebSiteRequestCacheKey(this);
-    }
-    
     /**
      * Logs out the current user or does nothing if not logged in.
      */

@@ -17,15 +17,16 @@ import javax.servlet.http.*;
  */
 public abstract class PreProcessPage extends ProcessPage {
 
-    public PreProcessPage() {
+    public PreProcessPage(LoggerAccessor loggerAccessor) {
+        super(loggerAccessor);
     }
 
     public PreProcessPage(WebSiteRequest req) {
-	super(req);
+        super(req);
     }
 
-    public PreProcessPage(Object param) {
-	super(param);
+    public PreProcessPage(LoggerAccessor loggerAccessor, Object param) {
+        super(loggerAccessor, param);
     }
 
     @Override

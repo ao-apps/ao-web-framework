@@ -95,7 +95,7 @@ public class TextOnlyLayout extends WebPageLayout {
         for(int c=(parents.size()-1);c>=0;c--) {
             if(c<(parents.size()-1)) out.print(" - ");
             parent=parents.get(c);
-            out.print(parent.getTitle());
+            out.encodeXhtml(parent.getTitle());
         }
         out.print("</title>\n"
                 + "    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />\n"

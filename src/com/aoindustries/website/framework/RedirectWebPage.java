@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class RedirectWebPage extends WebPage {
 
+    private static final long serialVersionUID = 1L;
+    
     private WebPage parent;
     private String path;
     private boolean useEncryption;
@@ -30,7 +32,8 @@ public class RedirectWebPage extends WebPage {
      *
      * @param  path  the path relative to the top of the application, without a preceeding slash (/)
      */
-    public RedirectWebPage(ServletContext context, WebPage parent, String path, boolean useEncryption, String description, String keywords, String navImageAlt, String title) {
+    public RedirectWebPage(LoggerAccessor logAccessor, ServletContext context, WebPage parent, String path, boolean useEncryption, String description, String keywords, String navImageAlt, String title) {
+        super(logAccessor);
         setServletContext(context);
         this.parent = parent;
         this.path = path;
@@ -49,10 +52,12 @@ public class RedirectWebPage extends WebPage {
         return parent;
     }
 
+    @Override
     public boolean useEncryption() {
         return useEncryption;
     }
 
+    @Override
     public String getRedirectURL(WebSiteRequest req) throws IOException {
         String lowerPath = path.toLowerCase();
         if(lowerPath.startsWith("http:") || lowerPath.startsWith("https:")) return path;
@@ -64,22 +69,27 @@ public class RedirectWebPage extends WebPage {
             )+path;
     }
 
+    @Override
     public String getURLPath() {
         return path;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public String getKeywords() {
         return keywords;
     }
 
+    @Override
     public String getNavImageAlt(WebSiteRequest req) {
         return navImageAlt;
     }
 
+    @Override
     public String getTitle() {
         return title;
     }

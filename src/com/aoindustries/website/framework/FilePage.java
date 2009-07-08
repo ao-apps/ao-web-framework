@@ -19,15 +19,16 @@ import javax.servlet.http.*;
  */
 abstract public class FilePage extends WebPage {
 
-    public FilePage() {
+    public FilePage(LoggerAccessor loggerAccessor) {
+        super(loggerAccessor);
     }
 
     public FilePage(WebSiteRequest req) {
 	super(req);
     }
 
-    public FilePage(Object param) {
-	super(param);
+    public FilePage(LoggerAccessor loggerAccessor, Object param) {
+	super(loggerAccessor, param);
     }
 
     @Override

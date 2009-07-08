@@ -21,15 +21,16 @@ import javax.servlet.http.*;
  */
 public abstract class HTMLInputStreamPage extends InputStreamPage {
 
-    public HTMLInputStreamPage() {
+    public HTMLInputStreamPage(LoggerAccessor loggerAccessor) {
+        super(loggerAccessor);
     }
 
     public HTMLInputStreamPage(WebSiteRequest req) {
-	super(req);
+        super(req);
     }
 
-    public HTMLInputStreamPage(Object param) {
-	super(param);
+    public HTMLInputStreamPage(LoggerAccessor loggerAccessor, Object param) {
+        super(loggerAccessor, param);
     }
 
     @Override
@@ -197,10 +198,5 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
                 } else out.print((char)ch);
             }
         }
-    }
-
-    @Override
-    public Object getOutputCacheKey(WebSiteRequest req) {
-        return req.getOutputCacheKey();
     }
 }

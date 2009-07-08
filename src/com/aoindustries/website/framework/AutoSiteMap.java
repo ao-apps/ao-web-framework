@@ -18,15 +18,16 @@ import javax.servlet.http.*;
  */
 abstract public class AutoSiteMap extends TreePage {
 
-    public AutoSiteMap() {
+    public AutoSiteMap(LoggerAccessor loggerAccessor) {
+        super(loggerAccessor);
     }
 
     public AutoSiteMap(WebSiteRequest req) {
-	super(req);
+        super(req);
     }
 
-    public AutoSiteMap(Object param) {
-	super(param);
+    public AutoSiteMap(LoggerAccessor loggerAccessor, Object param) {
+        super(loggerAccessor, param);
     }
 
     /**

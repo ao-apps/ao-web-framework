@@ -18,15 +18,16 @@ import javax.servlet.http.*;
  */
 abstract public class ProcessPage extends InputStreamPage {
 
-    public ProcessPage() {
+    public ProcessPage(LoggerAccessor loggerAccessor) {
+        super(loggerAccessor);
     }
 
     public ProcessPage(WebSiteRequest req) {
 	super(req);
     }
 
-    public ProcessPage(Object param) {
-	super(param);
+    public ProcessPage(LoggerAccessor loggerAccessor, Object param) {
+	super(loggerAccessor, param);
     }
 
     public InputStream getInputStream() throws IOException {

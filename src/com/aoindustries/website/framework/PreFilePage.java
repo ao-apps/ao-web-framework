@@ -17,15 +17,16 @@ import javax.servlet.http.*;
  */
 public abstract class PreFilePage extends FilePage {
 
-    public PreFilePage() {
+    public PreFilePage(LoggerAccessor loggerAccessor) {
+        super(loggerAccessor);
     }
 
     public PreFilePage(WebSiteRequest req) {
-	super(req);
+        super(req);
     }
 
-    public PreFilePage(Object param) {
-	super(param);
+    public PreFilePage(LoggerAccessor loggerAccessor, Object param) {
+        super(loggerAccessor, param);
     }
 
     @Override

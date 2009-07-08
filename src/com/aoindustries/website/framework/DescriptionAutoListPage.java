@@ -17,15 +17,16 @@ import javax.servlet.http.*;
  */
 abstract public class DescriptionAutoListPage extends AutoListPage {
 
-    public DescriptionAutoListPage() {
+    public DescriptionAutoListPage(LoggerAccessor loggerAccessor) {
+        super(loggerAccessor);
     }
 
     public DescriptionAutoListPage(WebSiteRequest req) {
-	super(req);
+        super(req);
     }
 
-    public DescriptionAutoListPage(Object param) {
-	super(param);
+    public DescriptionAutoListPage(LoggerAccessor loggerAccessor, Object param) {
+        super(loggerAccessor, param);
     }
 
     /**

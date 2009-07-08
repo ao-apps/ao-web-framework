@@ -5,18 +5,31 @@ package com.aoindustries.website.framework;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.security.*;
-import com.aoindustries.util.*;
+import com.aoindustries.io.BetterByteArrayOutputStream;
+import com.aoindustries.io.ChainWriter;
+import com.aoindustries.security.LoginException;
+import com.aoindustries.util.ErrorPrinter;
+import com.aoindustries.util.SortedArrayList;
+import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.sort.AutoSort;
-import gnu.regexp.*;
-import java.io.*;
-import java.lang.reflect.*;
-import java.sql.*;
-import java.util.*;
+import gnu.regexp.RE;
+import gnu.regexp.REException;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import javax.servlet.*;
-import javax.servlet.http.*;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.logging.Level;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * The main web page provides the overall layout of the site.  The rest of
@@ -76,7 +89,7 @@ abstract public class WebPage extends ErrorReportingServlet {
             reHTMLPattern = new RE("<.*?>");
             //reWordPattern = new RE("(\\w*)");
         } catch (REException e) {
-            log(null, "Unable to load regular expression", e, null);
+            ErrorPrinter.printStackTraces(e);
         }
     }
 
@@ -94,13 +107,16 @@ abstract public class WebPage extends ErrorReportingServlet {
      */
     private Map<Object,OutputCacheEntry> outputCache;
 
-    public WebPage() {
+    public WebPage(LoggerAccessor loggerAccessor) {
+        super(loggerAccessor);
     }
 
     public WebPage(WebSiteRequest req) {
+        super(req.sourcePage.getLoggerAccessor());
     }
 
-    public WebPage(Object param) {
+    public WebPage(LoggerAccessor loggerAccessor, Object param) {
+        super(loggerAccessor);
     }
 
     private void addSearchWords(String words, int weight) {
@@ -323,61 +339,19 @@ abstract public class WebPage extends ErrorReportingServlet {
      * the output if possible.  And third, it will call doGet(ChainWriter,WebSiteRequest,HttpServletResponse) with a stream
      * directly out if the first two actions were not taken.
      *
-     * @see #getOutputCacheKey(WebSiteRequest)
      * @see #doGet(ChainWriter,WebSiteRequest,HttpServletResponse)
      */
     protected void doGet(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
         WebPageLayout layout=getWebPageLayout(req);
 
-        boolean doRegular=true;
-        if(WebSiteFrameworkConfiguration.useWebSiteCaching() && req.getParameter("login_requested")==null && req.getParameter("login_username")==null) {
-            // Try to use the cache if the last modified time is available
-            long pageLastModified=getLastModified(req);
-            if(pageLastModified!=-1) {
-                Object outputCacheKey=getOutputCacheKey(req);
-                if(outputCacheKey!=null) {
-                    OutputCacheEntry existingCache;
-                    synchronized(this) {
-                        if(outputCache==null) {
-                            outputCache=new HashMap<Object,OutputCacheEntry>();
-                            existingCache=null;
-                        } else existingCache=outputCache.get(outputCacheKey);
-
-                        if(existingCache==null || existingCache.lastModified!=pageLastModified) {
-                            ByteArrayOutputStream bout=new ByteArrayOutputStream();
-                            ChainWriter out=new ChainWriter(bout);
-                            try {
-                                layout.startHTML(this, req, resp, out, null);
-                                doGet(out, req, resp);
-                                layout.endHTML(this, req, out);
-                            } finally {
-                                out.flush();
-                                out.close();
-                            }
-                            outputCache.put(outputCacheKey, existingCache=new OutputCacheEntry(outputCacheKey, pageLastModified, bout.toByteArray()));
-                        }
-                    }
-                    OutputStream out=getHTMLOutputStream(req, resp);
-                    try {
-                        out.write(existingCache.bytes);
-                    } finally {
-                        out.flush();
-                        out.close();
-                    }
-                    doRegular=false;
-                }
-            }
-        }
-        if(doRegular) {
-            ChainWriter out=getHTMLChainWriter(req, resp);
-            try {
-                layout.startHTML(this, req, resp, out, null);
-                doGet(out, req, resp);
-                layout.endHTML(this, req, out);
-            } finally {
-                out.flush();
-                out.close();
-            }
+        ChainWriter out=getHTMLChainWriter(req, resp);
+        try {
+            layout.startHTML(this, req, resp, out, null);
+            doGet(out, req, resp);
+            layout.endHTML(this, req, out);
+        } finally {
+            out.flush();
+            out.close();
         }
     }
 
@@ -478,7 +452,7 @@ abstract public class WebPage extends ErrorReportingServlet {
                 List<SearchResult> results=new ArrayList<SearchResult>();
                 if(words.length>0) {
                     // Perform the search
-                    target.search(words, req, results, new BetterByteArrayOutputStream(), new SortedArrayList<WebPage>());
+                    target.search(words, req, resp, results, new BetterByteArrayOutputStream(), new SortedArrayList<WebPage>());
                     AutoSort.sortStatic(results);
                     //StringUtility.sortObjectsAndFloatDescending(results, 1, 5);
                 }
@@ -713,11 +687,11 @@ abstract public class WebPage extends ErrorReportingServlet {
      * direct output into an XML attribute.  This means URL encoded and
      * &amp;amp; separators instead of only &amp;  If this is a
      * javascript: link, then should be escaped via
-     * EncodingUtils.encodeJavaScriptStringInXmlAttribute.
+     * EncodingUtils.encodeJavaScriptStringInXml.
      *
      * @see  #getNavImageAlt
      * @see  #getNavImageSuffix
-     * @see  ChainWriter#encodeJavaScriptStringInXmlAttribute(String,Writer)
+     * @see  ChainWriter#encodeJavaScriptStringInXml(String,Writer)
      */
     public String getNavImageURL(WebSiteRequest req, HttpServletResponse resp, Object params) throws IOException, SQLException {
         return resp.encodeURL(req.getURL(this, params));
@@ -879,6 +853,7 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @see  #isHandler(WebSiteRequest)
      */
     public static WebPage getWebPage(ServletContext context, Class<? extends WebPage> clazz, WebSiteRequest req) throws IOException {
+        if(context==null) throw new IllegalArgumentException("context is null");
         String classname=clazz.getName();
         boolean use_caching=WebSiteFrameworkConfiguration.useWebSiteCaching();
         if(use_caching) {
@@ -906,33 +881,27 @@ abstract public class WebPage extends ErrorReportingServlet {
             }
             return page;
         } catch (ClassNotFoundException e) {
-            log(context, null, e, new Object[] {"classname="+classname, "req="+req});
-            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName()+", classname="+classname+", req="+req);
             ioExc.initCause(e);
             throw ioExc;
         } catch (ClassCastException e) {
-            log(context, null, e, new Object[] {"classname="+classname, "req="+req});
-            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName()+", classname="+classname+", req="+req);
             ioExc.initCause(e);
             throw ioExc;
         } catch (IllegalAccessException e) {
-            log(context, null, e, new Object[] {"classname="+classname, "req="+req});
-            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName()+", classname="+classname+", req="+req);
             ioExc.initCause(e);
             throw ioExc;
         } catch (InstantiationException e) {
-            log(context, null, e, new Object[] {"classname="+classname, "req="+req});
-            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName()+", classname="+classname+", req="+req);
             ioExc.initCause(e);
             throw ioExc;
         } catch (InvocationTargetException e) {
-            log(context, null, e, new Object[] {"classname="+classname, "req="+req});
-            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName()+", classname="+classname+", req="+req);
             ioExc.initCause(e);
             throw ioExc;
         } catch (NoSuchMethodException e) {
-            log(context, null, e, new Object[] {"classname="+classname, "req="+req});
-            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName()+", classname="+classname+", req="+req);
             ioExc.initCause(e);
             throw ioExc;
         }
@@ -993,33 +962,27 @@ abstract public class WebPage extends ErrorReportingServlet {
             }
             return page;
         } catch (ClassNotFoundException e) {
-            log(context, null, e, new Object[] {"classname="+classname, "params="+params});
-            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName()+", classname="+classname+", params="+params);
             ioExc.initCause(e);
             throw ioExc;
         } catch (ClassCastException e) {
-            log(context, null, e, new Object[] {"classname="+classname, "params="+params});
-            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName()+", classname="+classname+", params="+params);
             ioExc.initCause(e);
             throw ioExc;
         } catch (IllegalAccessException e) {
-            log(context, null, e, new Object[] {"classname="+classname, "params="+params});
-            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName()+", classname="+classname+", params="+params);
             ioExc.initCause(e);
             throw ioExc;
         } catch (InstantiationException e) {
-            log(context, null, e, new Object[] {"classname="+classname, "params="+params});
-            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName()+", classname="+classname+", params="+params);
             ioExc.initCause(e);
             throw ioExc;
         } catch (InvocationTargetException e) {
-            log(context, null, e, new Object[] {"classname="+classname, "params="+params});
-            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName()+", classname="+classname+", params="+params);
             ioExc.initCause(e);
             throw ioExc;
         } catch (NoSuchMethodException e) {
-            log(context, null, e, new Object[] {"classname="+classname, "params="+params});
-            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName());
+            IOException ioExc=new IOException("Unable to getWebPage: "+clazz.getName()+", classname="+classname+", params="+params);
             ioExc.initCause(e);
             throw ioExc;
         }
@@ -1148,13 +1111,14 @@ abstract public class WebPage extends ErrorReportingServlet {
      * @see  #standardSearch
      */
     public void search(
-	String[] words,
-	WebSiteRequest req,
-	List<SearchResult> results,
-	BetterByteArrayOutputStream bytes,
+        String[] words,
+        WebSiteRequest req,
+        HttpServletResponse response,
+        List<SearchResult> results,
+        BetterByteArrayOutputStream bytes,
         List<WebPage> finishedPages
     ) throws ServletException, IOException, SQLException {
-        standardSearch(words, req, results, bytes, finishedPages);
+        standardSearch(words, req, response, results, bytes, finishedPages);
     }
 
     /**
@@ -1165,6 +1129,7 @@ abstract public class WebPage extends ErrorReportingServlet {
     final public void standardSearch(
         String[] words,
         WebSiteRequest req,
+        HttpServletResponse response,
         List<SearchResult> results,
         BetterByteArrayOutputStream bytes,
         List<WebPage> finishedPages
@@ -1190,7 +1155,7 @@ abstract public class WebPage extends ErrorReportingServlet {
                 bytes.reset();
                 ChainWriter out = new ChainWriter(bytes);
                 try {
-                    doGet(out, null, null);
+                    doGet(out, null, response);
                 } finally {
                     out.flush();
                     out.close();
@@ -1244,7 +1209,7 @@ abstract public class WebPage extends ErrorReportingServlet {
                             try {
                                 doGet(out, null, null);
                             } catch(NullPointerException err) {
-                                getErrorHandler().reportWarning(err, null);
+                                getLogger().log(Level.WARNING, null, err);
                             } finally {
                                 out.flush();
                                 out.close();
@@ -1332,7 +1297,7 @@ abstract public class WebPage extends ErrorReportingServlet {
             // Search recursively
             WebPage[] myPages = getCachedPages(req);
             int len = myPages.length;
-            for (int c = 0; c < len; c++) myPages[c].search(words, req, results, bytes, finishedPages);
+            for (int c = 0; c < len; c++) myPages[c].search(words, req, response, results, bytes, finishedPages);
         }
     }
 
@@ -1392,18 +1357,6 @@ abstract public class WebPage extends ErrorReportingServlet {
      */
     public String getCopyright(WebSiteRequest req, WebPage requestPage) throws IOException, SQLException {
         return getParent().getCopyright(req, requestPage);
-    }
-    
-    /**
-     * Gets the object that represents the output cache key.  The output cache is used if the returned key is not null,
-     * the last modified time is not <code>-1</code>, and the last modified time of the page is the same as the last
-     * modified time at cache time.
-     *
-     * @see #doGet(WebSiteRequest,HttpServletResponse)
-     * @see #getLastModified(WebSiteRequest)
-     */
-    public Object getOutputCacheKey(WebSiteRequest req) {
-        return null;
     }
     
     /**

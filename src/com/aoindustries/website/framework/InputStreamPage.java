@@ -18,15 +18,16 @@ import javax.servlet.http.*;
  */
 abstract public class InputStreamPage extends WebPage {
 
-    public InputStreamPage() {
+    public InputStreamPage(LoggerAccessor loggerAccessor) {
+        super(loggerAccessor);
     }
 
     public InputStreamPage(WebSiteRequest req) {
-	super(req);
+    	super(req);
     }
 
-    public InputStreamPage(Object param) {
-	super(param);
+    public InputStreamPage(LoggerAccessor loggerAccessor, Object param) {
+        super(loggerAccessor, param);
     }
 
     @Override
