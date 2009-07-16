@@ -24,12 +24,23 @@ public class TextOnlyLayout extends WebPageLayout {
     }
 
     public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, String width, boolean nowrap) {
-        out.print("<table style='border:5px outset #a0a0a0;' cellpadding='0' cellspacing='0'>\n"
+        out.print("<table style='border:5px outset #a0a0a0;");
+        if(width!=null && (width=width.trim()).length()>0) {
+            out.append(" width:");
+            try {
+                int widthInt = Integer.parseInt(width);
+                out.append(Integer.toString(widthInt));
+                out.append("px");
+            } catch(NumberFormatException err) {
+                out.append(width);
+            }
+            out.append(';');
+        }
+        out.print("' cellpadding='0' cellspacing='0'>\n"
                 + "  <tr>\n"
-                + "    <td class='aoLightRow'");
-        if(width!=null) out.print(" width='").print(width).print('\'');
-        if(nowrap) out.print(" style='white-space:nowrap'");
-        out.print(">");
+                + "    <td class='aoLightRow' style='padding:4px;");
+        if(nowrap) out.append(" white-space:nowrap;");
+        out.append("'>");
     }
 
     public void endLightArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out) {
@@ -39,12 +50,23 @@ public class TextOnlyLayout extends WebPageLayout {
     }
 
     public void beginWhiteArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, String width, boolean nowrap) {
-        out.print("<table style='border:5px outset #a0a0a0;' cellpadding='0' cellspacing='0'>\n"
+        out.print("<table style='border:5px outset #a0a0a0;");
+        if(width!=null && (width=width.trim()).length()>0) {
+            out.append(" width:");
+            try {
+                int widthInt = Integer.parseInt(width);
+                out.append(Integer.toString(widthInt));
+                out.append("px");
+            } catch(NumberFormatException err) {
+                out.append(width);
+            }
+            out.append(';');
+        }
+        out.print("' cellpadding='0' cellspacing='0'>\n"
                 + "  <tr>\n"
-                + "    <td class='aoLightRow'");
-        if(width!=null) out.print(" width='").print(width).print('\'');
-        if(nowrap) out.print(" style='white-space:nowrap'");
-        out.print(" bgcolor='white'>");
+                + "    <td class='aoWhiteRow' style='background-color:white; padding:4px;");
+        if(nowrap) out.append(" white-space:nowrap;");
+        out.append("'>");
     }
 
     public void endWhiteArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out) {
