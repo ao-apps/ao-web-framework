@@ -39,7 +39,7 @@ abstract public class AutoListPage extends WebPage {
         layout.startContent(out, req, resp, 1, getPreferredContentWidth(req));
         layout.printContentTitle(out, req, resp, this, 1);
         layout.printContentHorizontalDivider(out, req, resp, 1, false);
-        layout.startContentLine(out, req, resp, 1, null);
+        layout.startContentLine(out, req, resp, 1, null, null);
         printContentStart(out, req, resp);
         try {
             out.print("      <table cellpadding='0' cellspacing='10'>\n");

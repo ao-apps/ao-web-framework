@@ -41,7 +41,7 @@ abstract public class InputStreamPage extends WebPage {
         try {
             layout.printContentTitle(out, req, resp, this, 1);
             layout.printContentHorizontalDivider(out, req, resp, 1, false);
-            layout.startContentLine(out, req, resp, 1, null);
+            layout.startContentLine(out, req, resp, 1, null, null);
             try {
                 InputStream in=getInputStream();
                 try {

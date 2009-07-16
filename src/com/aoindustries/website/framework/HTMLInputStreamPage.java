@@ -91,7 +91,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
                         layout.printContentHorizontalDivider(out, req, resp, 1, false);
                         pos+=32;
                     } else if((pos+18)<len && html.substring(pos, pos+18).equalsIgnoreCase("START_CONTENT_LINE")) {
-                        layout.startContentLine(out, req, resp, 1, null);
+                        layout.startContentLine(out, req, resp, 1, null, null);
                         pos+=18;
                     } else if((pos+10)<len && html.substring(pos, pos+10).equalsIgnoreCase("LINK_CLASS")) {
                         out.print(linkClass==null?"aoLightLink":linkClass);
@@ -160,7 +160,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
                                 if(tag.length()>=tagPart.length()) {
                                     if(tags[c].equalsIgnoreCase(tagPart)) {
                                         if(c==0) layout.printContentHorizontalDivider(out, req, resp, 1, false);
-                                        else if(c==1) layout.startContentLine(out, req, resp, 1, null);
+                                        else if(c==1) layout.startContentLine(out, req, resp, 1, null, null);
                                         else if(c==2) layout.beginLightArea(req, resp, out);
                                         else if(c==3) layout.endContentLine(out, req, resp, 1, false);
                                         else if(c==4) layout.endLightArea(req, resp, out);

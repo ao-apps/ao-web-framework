@@ -307,7 +307,7 @@ abstract public class TreePage extends WebPage {
         layout.startContent(out, req, resp, 1, getPreferredContentWidth(req));
         layout.printContentTitle(out, req, resp, this, 1);
         layout.printContentHorizontalDivider(out, req, resp, 1, false);
-        layout.startContentLine(out, req, resp, 1, null);
+        layout.startContentLine(out, req, resp, 1, null, null);
         try {
             // Get the tree data
             int treeLen = tree.size();
