@@ -5,7 +5,6 @@ package com.aoindustries.website.framework;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.encoding.NewEncodingUtils;
 import com.aoindustries.encoding.TextInJavaScriptEncoder;
 import com.aoindustries.io.ChainWriter;
 import com.aoindustries.util.StringUtility;
@@ -78,7 +77,7 @@ abstract public class WebPageLayout {
         startContent(out, req, resp, 1, 600);
         printContentTitle(out, req, resp, "Search Results", 1);
         printContentHorizontalDivider(out, req, resp, 1, false);
-        startContentLine(out, req, resp, 1, "center");
+        startContentLine(out, req, resp, 1, "center", null);
         beginLightArea(req, resp, out, "300", true);
         out.print("      <form action='' id='search_two' method='post'>\n");
         req.printFormFields(out, 4);
@@ -97,7 +96,7 @@ abstract public class WebPageLayout {
         endLightArea(req, resp, out);
         endContentLine(out, req, resp, 1, false);
         printContentHorizontalDivider(out, req, resp, 1, false);
-        startContentLine(out, req, resp, 1, "center");
+        startContentLine(out, req, resp, 1, "center", null);
         if (results.isEmpty()) {
             if (words.length > 0) {
                 out.print(
@@ -182,12 +181,12 @@ abstract public class WebPageLayout {
     /**
      * Starts one line of content with the initial colspan set to the provided colspan.
      */
-    abstract public void startContentLine(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int colspan, String align) throws IOException, SQLException;
+    abstract public void startContentLine(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int colspan, String align, String width) throws IOException, SQLException;
 
     /**
      * Ends one part of a line and starts the next.
      */
-    abstract public void printContentVerticalDivider(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align) throws IOException, SQLException;
+    abstract public void printContentVerticalDivider(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align, String width) throws IOException, SQLException;
 
     /**
      * Ends one line of content.

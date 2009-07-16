@@ -318,7 +318,7 @@ public class TextOnlyLayout extends WebPageLayout {
      * Prints the title of the page in one row in the content area.
      */
     public void printContentTitle(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) {
-        startContentLine(out, req, resp, contentColumns, "center");
+        startContentLine(out, req, resp, contentColumns, "center", null);
         out.print("<h1>").print(title).print("</h1>\n");
         endContentLine(out, req, resp, 1, false);
     }
@@ -326,9 +326,15 @@ public class TextOnlyLayout extends WebPageLayout {
     /**
      * Starts one line of content with the initial colspan set to the provided colspan.
      */
-    public void startContentLine(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int colspan, String align) {
+    public void startContentLine(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int colspan, String align, String width) {
         out.print("  <tr>\n"
-                + "    <td valign='top'");
+                + "    <td");
+        if(width!=null && width.length()>0) {
+            out.append(" style='width:");
+            out.append(width);
+            out.append('\'');
+        }
+        out.print(" valign='top'");
         if(colspan!=1) out.print(" colspan='").print(colspan).print('\'');
         if(align!=null && !align.equalsIgnoreCase("left")) out.print(" align='").print(align).print('\'');
         out.print('>');
@@ -337,7 +343,7 @@ public class TextOnlyLayout extends WebPageLayout {
     /**
      * Starts one line of content with the initial colspan set to the provided colspan.
      */
-    public void printContentVerticalDivider(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align) {
+    public void printContentVerticalDivider(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align, String width) {
         out.print("    </td>\n");
         switch(direction) {
             case UP_AND_DOWN:
@@ -347,7 +353,13 @@ public class TextOnlyLayout extends WebPageLayout {
                 break;
             default: throw new IllegalArgumentException("Unknown direction: "+direction);
         }
-        out.print("    <td valign='top'");
+        out.print("    <td");
+        if(width!=null && width.length()>0) {
+            out.append(" style='width:");
+            out.append(width);
+            out.append('\'');
+        }
+        out.print(" valign='top'");
         if(colspan!=1) out.print(" colspan='").print(colspan).print('\'');
         if(rowspan!=1) out.print(" rowspan='").print(rowspan).print('\'');
         if(align!=null && !align.equals("left")) out.print(" align='").print(align).print('\'');
