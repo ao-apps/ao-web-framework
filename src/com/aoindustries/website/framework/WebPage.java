@@ -1,7 +1,7 @@
 package com.aoindustries.website.framework;
 
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -683,18 +683,14 @@ abstract public class WebPage extends ErrorReportingServlet {
     }
 
     /**
-     * Gets the URL associated with a nav image.  This should be fully encoded for
-     * direct output into an XML attribute.  This means URL encoded and
-     * &amp;amp; separators instead of only &amp;  If this is a
-     * javascript: link, then should be escaped via
-     * EncodingUtils.encodeJavaScriptStringInXml.
+     * Gets the URL associated with a nav image.
      *
      * @see  #getNavImageAlt
      * @see  #getNavImageSuffix
      * @see  ChainWriter#encodeJavaScriptStringInXml(String,Writer)
      */
     public String getNavImageURL(WebSiteRequest req, HttpServletResponse resp, Object params) throws IOException, SQLException {
-        return resp.encodeURL(req.getURL(this, params));
+        return req.getURL(this, params);
     }
 
     /**

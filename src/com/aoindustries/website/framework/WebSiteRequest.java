@@ -1,7 +1,7 @@
 package com.aoindustries.website.framework;
 
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -238,16 +238,16 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 
     /**
      * Appends the parameters to a URL.
-     * Parameters should already be URL encoded and have &amp; as separator.
+     * Parameters should already be URL encoded and have a single ampersand (&amp;) as separator.
      */
     protected static boolean appendParams(StringBuilder SB, Object optParam, List<String> finishedParams, boolean alreadyAppended) {
         if (optParam != null) {
             if (optParam instanceof String) {
-                List<String> nameValuePairs=StringUtility.splitString((String)optParam, "&amp;");
-                int len=nameValuePairs.size();
+                String[] nameValuePairs=StringUtility.splitString((String)optParam, '&');
+                int len=nameValuePairs.length;
                 for(int c=0;c<len;c++) {
-                    SB.append(alreadyAppended?"&amp;":"?");
-                    String S=nameValuePairs.get(c);
+                    SB.append(alreadyAppended?'&':'?');
+                    String S=nameValuePairs[c];
                     int pos=S.indexOf('=');
                     if(pos==-1) {
                         SB.append(S);
@@ -267,7 +267,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
                 for (int c = 0; c < len; c += 2) {
                     String name=SA[c];
                     if(!finishedParams.contains(name)) {
-                        SB.append(alreadyAppended?"&amp;":"?").append(name).append('=').append(SA[c + 1]);
+                        SB.append(alreadyAppended?'&':'?').append(name).append('=').append(SA[c + 1]);
                         finishedParams.add(name);
                         alreadyAppended=true;
                     }
@@ -279,7 +279,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 
     /**
      * Gets a relative URL from a String containing a classname and optional parameters.
-     * Parameters should already be URL encoded and have &amp; as separator.
+     * Parameters should already be URL encoded and have a single ampersand (&amp;) as separator.
      */
     public String getURL(String classAndParams) throws IOException, SQLException {
         String className, params;
@@ -296,7 +296,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 
     /**
      * Gets a relative URL given its classname and optional parameters.
-     * Parameters should already be URL encoded and have &amp; as separator.
+     * Parameters should already be URL encoded and have a single ampersand (&amp;) as separator.
      */
     public String getURL(String classname, String params) throws IOException, SQLException {
         try {
@@ -311,8 +311,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 
     /**
      * Gets the absolute URL String, optionally with the settings embedded.
-     * (&amp;amp; instead of standalone &amp; as parameter separator)
-     * Parameters should already be URL encoded and have &amp; as separator.
+     * Parameters should already be URL encoded and have a single ampersand (&amp;) as separator.
      */
     public String getURL(String url, boolean useEncryption, Object optParam, boolean keepSettings) throws IOException {
         StringBuilder SB=new StringBuilder();
@@ -365,7 +364,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 
     /**
      * Gets the absolute URL to a web page.
-     * Parameters should already be URL encoded and have &amp; as separator.
+     * Parameters should already be URL encoded and have a single ampersand (&amp;) as separator.
      */
     public String getURL(WebPage page, Object optParam) throws IOException, SQLException {
         return getURL(page, page.useEncryption(), optParam);
@@ -373,7 +372,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 
     /**
      * Gets the absolute URL to a web page.
-     * Parameters should already be URL encoded and have &amp; as separator.
+     * Parameters should already be URL encoded and have a single ampersand (&amp;) as separator.
      */
     public String getURL(WebPage page, boolean useEncryption, Object optParam) throws IOException, SQLException {
         List<String> finishedParams=new SortedArrayList<String>();
@@ -398,7 +397,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 
     /**
      * Gets the absolute URL to a web page.
-     * Parameters should already be URL encoded and have &amp; as separator.
+     * Parameters should already be URL encoded and have a single ampersand (&amp;) as separator.
      */
     public String getURL(Class<? extends WebPage> clazz, Object param) throws IOException, SQLException {
         WebPage page=WebPage.getWebPage(sourcePage.getServletContext(), clazz, param);
@@ -417,7 +416,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
      * @param  optParam       any number of additional parameters.  This parameter can accept several types of
      *                        objects.  The following is a list of supported objects and a brief description of its
      *                        behavior.
-     *                        Parameters should already be URL encoded and have &amp; as separator.
+     *                        Parameters should already be URL encoded and have a single ampersand (&amp;) as separator.
      *                        <ul>
      *                          <li>
      *                            <code>String</code> - appended to the end of the parameters, assumed to be in the
