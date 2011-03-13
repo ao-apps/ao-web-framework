@@ -1,7 +1,7 @@
 package com.aoindustries.website.framework;
 
 /*
- * Copyright 2000-2010 by AO Industries, Inc.,
+ * Copyright 2000-2011 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -11,7 +11,6 @@ import com.aoindustries.security.LoginException;
 import com.aoindustries.util.ErrorPrinter;
 import com.aoindustries.util.SortedArrayList;
 import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.sort.AutoSort;
 import gnu.regexp.RE;
 import gnu.regexp.REException;
 import java.io.File;
@@ -21,6 +20,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -453,7 +453,7 @@ abstract public class WebPage extends ErrorReportingServlet {
                 if(words.length>0) {
                     // Perform the search
                     target.search(words, req, resp, results, new BetterByteArrayOutputStream(), new SortedArrayList<WebPage>());
-                    AutoSort.sortStatic(results);
+                    Collections.sort(results);
                     //StringUtility.sortObjectsAndFloatDescending(results, 1, 5);
                 }
 

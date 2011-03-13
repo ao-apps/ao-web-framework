@@ -1,7 +1,7 @@
 package com.aoindustries.website.framework;
 
 /*
- * Copyright 2004-2010 by AO Industries, Inc.,
+ * Copyright 2004-2011 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
