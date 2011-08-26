@@ -9,7 +9,6 @@ import com.aoindustries.io.*;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
-import javax.servlet.*;
 import javax.servlet.http.*;
 
 /**
@@ -50,6 +49,9 @@ abstract public class FilePage extends WebPage {
         return Math.max(super.getLastModified(req), getFile().lastModified());
     }
 
+    /**
+     * @deprecated  This doesn't do any character set conversion - assumes ISO8859-1.
+     */
     public static void printFile(ChainWriter out, File file) throws IOException {
         InputStream in = new FileInputStream(file);
         try {

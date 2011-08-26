@@ -66,6 +66,10 @@ abstract public class InputStreamPage extends WebPage {
         printStreamStatic(out, in);
     }
 
+    /**
+     * @deprecated  This doesn't do any character conversion - assumes ISO8859-1.
+     */
+    @Deprecated
     public static void printStreamStatic(ChainWriter out, InputStream in) throws IOException {
         try {
             byte[] bytes = BufferManager.getBytes();
