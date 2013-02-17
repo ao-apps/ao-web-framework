@@ -1,10 +1,10 @@
-package com.aoindustries.website.framework;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.website.framework;
+
 import com.aoindustries.io.BetterByteArrayOutputStream;
 import com.aoindustries.io.ChainWriter;
 import com.aoindustries.security.LoginException;
@@ -40,6 +40,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author  AO Industries, Inc.
  */
 abstract public class WebPage extends ErrorReportingServlet {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * An empty array of <code>WebPage</code> objects to be used in returning no web pages.
@@ -93,11 +95,11 @@ abstract public class WebPage extends ErrorReportingServlet {
         }
     }
 
-    private static final Class[] getWebPageRequestParams={
+    private static final Class<?>[] getWebPageRequestParams={
         WebSiteRequest.class
     };
 
-    private static final Class[] getWebPageObjectParams={
+    private static final Class<?>[] getWebPageObjectParams={
         Object.class
     };
 
@@ -1168,19 +1170,19 @@ abstract public class WebPage extends ErrorReportingServlet {
                     String word = words[c];
                     int wordMatch =
                         // Add the keywords with weight 10
-                        StringUtility.countOccurances(keywords, word) * 10
+                        StringUtility.countOccurrences(keywords, word) * 10
 
                         // Add the description with weight 5
-                        +StringUtility.countOccurances(description, word) * 5
+                        +StringUtility.countOccurrences(description, word) * 5
 
                         // Add the title with weight 5
-                        +StringUtility.countOccurances(title, word) * 5
+                        +StringUtility.countOccurrences(title, word) * 5
 
                         // Add the content with weight 1
-                        +StringUtility.countOccurances(content, size, word)
+                        +StringUtility.countOccurrences(content, size, word)
 
                         // Add the author with weight 1
-                        +StringUtility.countOccurances(author, word);
+                        +StringUtility.countOccurrences(author, word);
 
                     if (wordMatch == 0) {
                         totalMatches = 0;
@@ -1256,7 +1258,7 @@ abstract public class WebPage extends ErrorReportingServlet {
                     int wordMatch = 0;
                     for (int d = 0; d < searchWordsSize; d++) {
                         String searchWord = searchWords.get(d);
-                        int count = StringUtility.countOccurances(searchWord, word);
+                        int count = StringUtility.countOccurrences(searchWord, word);
                         if (count > 0) wordMatch += count * searchCounts.get(d)[0];
                     }
 
