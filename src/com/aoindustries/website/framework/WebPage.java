@@ -155,7 +155,7 @@ abstract public class WebPage extends ErrorReportingServlet {
     /**
      * Prints the form that is used to login.
      */
-    public void printLoginForm(WebPage page, LoginException loginException, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+    public void printLoginForm(WebPage page, LoginException loginException, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
         getParent().printLoginForm(page, loginException, req, resp);
     }
 
