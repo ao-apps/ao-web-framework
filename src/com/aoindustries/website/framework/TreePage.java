@@ -1,21 +1,17 @@
+package com.aoindustries.website.framework;
+
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.website.framework;
-
-import com.aoindustries.io.ChainWriter;
-import com.aoindustries.io.IoUtils;
-import com.aoindustries.util.StringUtility;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.sql.SQLException;
-import java.util.List;
+import com.aoindustries.io.*;
+import com.aoindustries.util.*;
+import java.io.*;
+import java.sql.*;
+import java.util.*;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
 
 /**
  * @author  AO Industries, Inc.
@@ -72,7 +68,13 @@ abstract public class TreePage extends WebPage {
                     ByteArrayOutputStream bout=new ByteArrayOutputStream();
                     InputStream in=TreePage.class.getResourceAsStream("images/blank.gif");
                     try {
-                        IoUtils.copy(in, bout);
+                        byte[] buff=BufferManager.getBytes();
+                        try {
+                            int ret;
+                            while((ret=in.read(buff, 0, BufferManager.BUFFER_SIZE))!=-1) bout.write(buff, 0, ret);
+                        } finally {
+                            BufferManager.release(buff);
+                        }
                     } finally {
                         in.close();
                     }
@@ -85,7 +87,13 @@ abstract public class TreePage extends WebPage {
                     ByteArrayOutputStream bout=new ByteArrayOutputStream();
                     InputStream in=TreePage.class.getResourceAsStream("images/tree_"+imageNum+"."+(isSmooth?"jpg":"gif"));
                     try {
-                        IoUtils.copy(in, bout);
+                        byte[] buff=BufferManager.getBytes();
+                        try {
+                            int ret;
+                            while((ret=in.read(buff, 0, BufferManager.BUFFER_SIZE))!=-1) bout.write(buff, 0, ret);
+                        } finally {
+                            BufferManager.release(buff);
+                        }
                     } finally {
                         in.close();
                     }

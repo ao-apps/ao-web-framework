@@ -1,16 +1,14 @@
 package com.aoindustries.website.framework;
 
 /*
- * Copyright 2002-2011 by AO Industries, Inc.,
+ * Copyright 2002-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.IoUtils;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Enumeration;
+import com.aoindustries.util.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 /**
  * @author  AO Industries, Inc.
@@ -83,7 +81,14 @@ public final class WebPageClassLoader extends ClassLoader {
                     try {
                         if(in==null) throw new IllegalArgumentException("Unable to find SystemResource: "+resourceName);
                         bytesOut.reset();
-                        IoUtils.copy(in, bytesOut);
+
+                        byte[] buffer=BufferManager.getBytes();
+                        try {
+                            int ret;
+                            while((ret=in.read(buffer, 0, BufferManager.BUFFER_SIZE))!=-1) bytesOut.write(buffer, 0, ret);
+                        } finally {
+                            BufferManager.release(buffer);
+                        }
                     } finally {
                         if(in!=null) in.close();
                     }

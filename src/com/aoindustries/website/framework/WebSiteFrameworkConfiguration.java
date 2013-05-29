@@ -1,10 +1,11 @@
+package com.aoindustries.website.framework;
+
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.website.framework;
-
+import com.aoindustries.profiler.Profiler;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.util.*;
@@ -16,9 +17,6 @@ import java.util.*;
  * @author  AO Industries, Inc.
  */
 public final class WebSiteFrameworkConfiguration {
-
-    private WebSiteFrameworkConfiguration() {
-    }
 
     private static Properties props;
 
@@ -32,6 +30,9 @@ public final class WebSiteFrameworkConfiguration {
                 in.close();
             }
             props = newProps;
+
+            // Startup the profiling the first time the configuration is accessed
+            Profiler.setProfilerLevel(newProps.getProperty("com.aoindustries.website.profiler.level"));
         }
         return props.getProperty(name);
     }
