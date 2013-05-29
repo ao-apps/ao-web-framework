@@ -1,7 +1,7 @@
 package com.aoindustries.website.framework;
 
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -9,6 +9,7 @@ import com.aoindustries.io.*;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
+import javax.servlet.*;
 import javax.servlet.http.*;
 
 /**
@@ -49,9 +50,6 @@ abstract public class FilePage extends WebPage {
         return Math.max(super.getLastModified(req), getFile().lastModified());
     }
 
-    /**
-     * @deprecated  This doesn't do any character set conversion - assumes ISO8859-1.
-     */
     public static void printFile(ChainWriter out, File file) throws IOException {
         InputStream in = new FileInputStream(file);
         try {

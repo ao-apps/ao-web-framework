@@ -1,7 +1,7 @@
 package com.aoindustries.website.framework;
 
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -66,10 +66,6 @@ abstract public class InputStreamPage extends WebPage {
         printStreamStatic(out, in);
     }
 
-    /**
-     * @deprecated  This doesn't do any character conversion - assumes ISO8859-1.
-     */
-    @Deprecated
     public static void printStreamStatic(ChainWriter out, InputStream in) throws IOException {
         try {
             byte[] bytes = BufferManager.getBytes();

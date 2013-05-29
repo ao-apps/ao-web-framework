@@ -1,7 +1,7 @@
 package com.aoindustries.website.framework;
 
 /*
- * Copyright 2003-2011 by AO Industries, Inc.,
+ * Copyright 2003-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -226,12 +226,7 @@ public class TextOnlyLayout extends WebPageLayout {
                 String navAlt=tpage.getNavImageAlt(req);
                 String navSuffix=tpage.getNavImageSuffix(req);
                 //boolean isSelected=tpage.equals(page);
-                out
-                    .print("          <a href='")
-                    .encodeXmlAttribute(resp.encodeURL(tpage.getNavImageURL(req, resp, null)))
-                    .print("'>")
-                    .encodeHtml(TreePage.replaceHTML(navAlt))
-                ;
+                out.print("          <a href='").print(tpage.getNavImageURL(req, resp, null)).print("'>").encodeHtml(TreePage.replaceHTML(navAlt));
                 if(navSuffix!=null) out.print(" (").encodeHtml(navSuffix).print(')');
                 out.print("</a><br />\n");
             }
@@ -247,15 +242,7 @@ public class TextOnlyLayout extends WebPageLayout {
             for(int c=0;c<commonPages.length;c++) {
                 if(c>0) out.print("          <td align='center' style='width:1%'>|</td>\n");
                 WebPage tpage=commonPages[c];
-                out
-                    .print("          <td style='white-space:nowrap; text-align:center; width:")
-                    .print((101-commonPages.length)/commonPages.length)
-                    .print("%'><a href='")
-                    .encodeXmlAttribute(resp.encodeURL(tpage.getNavImageURL(req, resp, null)))
-                    .print("'>")
-                    .print(tpage.getNavImageAlt(req))
-                    .print("</a></td>\n")
-                ;
+                out.print("          <td style='white-space:nowrap; text-align:center; width:").print((101-commonPages.length)/commonPages.length).print("%'><a href='").print(tpage.getNavImageURL(req, resp, null)).print("'>").print(tpage.getNavImageAlt(req)).print("</a></td>\n");
             }
             out.print("        </tr></table>\n");
         }

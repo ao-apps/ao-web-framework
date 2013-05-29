@@ -1,7 +1,7 @@
 package com.aoindustries.website.framework;
 
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -41,7 +41,6 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
     /**
      * Gets the file that the text should be read from.
      */
-    @Override
     public InputStream getInputStream() throws IOException {
         return getHTMLInputStream(getClass());
     }
@@ -116,11 +115,8 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
     };
 
     /**
-     * @deprecated  This doesn't do any character set conversion - assumes iso8859-1
-     *
      * @see  #printHTML
      */
-    @Deprecated
     public static void printHTMLStream(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, InputStream in, String linkClass) throws IOException, SQLException {
         if(in==null) throw new NullPointerException("in is null");
         if(req==null) {
