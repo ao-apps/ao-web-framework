@@ -22,17 +22,10 @@ public final class WebSiteFrameworkConfiguration {
 
     private static String getProperty(String name) throws IOException {
         if (props == null) {
-            Properties newProps = new Properties();
-            InputStream in = WebSiteFrameworkConfiguration.class.getResourceAsStream("website-framework.properties");
-            try {
-                newProps.load(in);
-            } finally {
-                in.close();
-            }
-            props = newProps;
+			props = PropertiesUtils.loadFromResource(WebSiteFrameworkConfiguration.class, "website-framework.properties");
 
             // Startup the profiling the first time the configuration is accessed
-            Profiler.setProfilerLevel(newProps.getProperty("com.aoindustries.website.profiler.level"));
+            Profiler.setProfilerLevel(props.getProperty("com.aoindustries.website.profiler.level"));
         }
         return props.getProperty(name);
     }

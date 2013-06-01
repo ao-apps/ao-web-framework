@@ -6,7 +6,6 @@ package com.aoindustries.website.framework;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import javax.servlet.http.*;
@@ -119,32 +118,19 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
      */
     public static void printHTMLStream(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, InputStream in, String linkClass) throws IOException, SQLException {
         if(in==null) throw new NullPointerException("in is null");
+		Reader reader = new InputStreamReader(in);
         if(req==null) {
-            byte[] bytes=BufferManager.getBytes();
-            try {
-                char[] chars=BufferManager.getChars();
-                try {
-                    int ret;
-                    while((ret=in.read(bytes, 0, BufferManager.BUFFER_SIZE))!=-1) {
-                        for(int c=0;c<ret;c++) chars[c]=(char)bytes[c];
-                        out.write(chars, 0, ret);
-                    }
-                } finally {
-                    BufferManager.release(chars);
-                }
-            } finally {
-                BufferManager.release(bytes);
-            }
+			IoUtils.copy(reader, out);
         } else {
             StringBuilder buffer=null;
             int ch;
-            while((ch=in.read())!=-1) {
+            while((ch=reader.read())!=-1) {
                 if(ch=='@') {
                     if(buffer==null) buffer=new StringBuilder();
                     // Read until a tag is matched, or until a tag cannot be matched
                     buffer.append('@');
                 Loop:
-                    while((ch=in.read())!=-1) {
+                    while((ch=reader.read())!=-1) {
                         // If @ found, print buffer and reset for next tag
                         if(ch=='@') {
                             out.print(buffer.toString());
@@ -167,7 +153,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
                                         else if(c==5) out.print(linkClass==null?"aoLightLink":linkClass);
                                         else if(c==6) {
                                             // Read up to a ')'
-                                            while((ch=in.read())!=-1) {
+                                            while((ch=reader.read())!=-1) {
                                                 if(ch==')') {
                                                     String className=buffer.toString().substring(5, buffer.length());
                                                     out.print(resp.encodeURL(req.getURL(className)));

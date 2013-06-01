@@ -63,41 +63,25 @@ abstract public class TreePage extends WebPage {
             byte[] bytes;
             if(imageNum==0) {
                 // Load the blank image
-                bytes=blank;
+                bytes = blank;
                 if(bytes==null) {
-                    ByteArrayOutputStream bout=new ByteArrayOutputStream();
                     InputStream in=TreePage.class.getResourceAsStream("images/blank.gif");
                     try {
-                        byte[] buff=BufferManager.getBytes();
-                        try {
-                            int ret;
-                            while((ret=in.read(buff, 0, BufferManager.BUFFER_SIZE))!=-1) bout.write(buff, 0, ret);
-                        } finally {
-                            BufferManager.release(buff);
-                        }
+	                    blank = bytes = IoUtils.readFully(in);
                     } finally {
                         in.close();
                     }
-                    bytes=blank=bout.toByteArray();
                 }
             } else {
                 byte[][] cache=isSmooth?jpgCache:gifCache;
                 bytes=cache[imageNum-1];
                 if(bytes==null) {
-                    ByteArrayOutputStream bout=new ByteArrayOutputStream();
                     InputStream in=TreePage.class.getResourceAsStream("images/tree_"+imageNum+"."+(isSmooth?"jpg":"gif"));
                     try {
-                        byte[] buff=BufferManager.getBytes();
-                        try {
-                            int ret;
-                            while((ret=in.read(buff, 0, BufferManager.BUFFER_SIZE))!=-1) bout.write(buff, 0, ret);
-                        } finally {
-                            BufferManager.release(buff);
-                        }
+	                    cache[imageNum-1] = bytes = IoUtils.readFully(in);
                     } finally {
                         in.close();
                     }
-                    bytes=cache[imageNum-1]=bout.toByteArray();
                 }
             }
             return bytes;

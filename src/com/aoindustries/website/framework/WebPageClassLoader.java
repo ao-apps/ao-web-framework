@@ -5,6 +5,8 @@ package com.aoindustries.website.framework;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.io.BetterByteArrayOutputStream;
+import com.aoindustries.io.IoUtils;
 import com.aoindustries.util.*;
 import java.io.*;
 import java.net.*;
@@ -39,7 +41,7 @@ public final class WebPageClassLoader extends ClassLoader {
     }
 
     // This instance is reused for speed
-    private final ByteArrayOutputStream bytesOut=new ByteArrayOutputStream();
+    private final BetterByteArrayOutputStream bytesOut=new BetterByteArrayOutputStream();
 
     @Override
     protected URL findResource(String name) {
@@ -78,23 +80,15 @@ public final class WebPageClassLoader extends ClassLoader {
                 try {
                     String resourceName=name.replace('.', '/')+".class";
                     InputStream in=getSystemResourceAsStream(resourceName);
+					if(in==null) throw new IllegalArgumentException("Unable to find SystemResource: "+resourceName);
                     try {
-                        if(in==null) throw new IllegalArgumentException("Unable to find SystemResource: "+resourceName);
                         bytesOut.reset();
-
-                        byte[] buffer=BufferManager.getBytes();
-                        try {
-                            int ret;
-                            while((ret=in.read(buffer, 0, BufferManager.BUFFER_SIZE))!=-1) bytesOut.write(buffer, 0, ret);
-                        } finally {
-                            BufferManager.release(buffer);
-                        }
+						IoUtils.copy(in, bytesOut);
                     } finally {
-                        if(in!=null) in.close();
+                        in.close();
                     }
 
-                    byte[] bytes=bytesOut.toByteArray();
-                    c=defineClass(name, bytes, 0, bytes.length);
+                    c=defineClass(name, bytesOut.getInternalByteArray(), 0, bytesOut.size());
                 } catch (IOException err) {
                     throw new ClassNotFoundException("Unable to load class: "+name, err);
                 }

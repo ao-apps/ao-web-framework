@@ -6,7 +6,6 @@ package com.aoindustries.website.framework;
  * All rights reserved.
  */
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 import javax.servlet.http.*;
@@ -67,24 +66,7 @@ abstract public class InputStreamPage extends WebPage {
     }
 
     public static void printStreamStatic(ChainWriter out, InputStream in) throws IOException {
-        try {
-            byte[] bytes = BufferManager.getBytes();
-            try {
-                char[] chars = BufferManager.getChars();
-                try {
-                    int ret;
-                    while ((ret = in.read(bytes, 0, BufferManager.BUFFER_SIZE)) != -1) {
-                        for (int c = 0; c < ret; c++) chars[c] = (char) bytes[c];
-                        out.write(chars, 0, ret);
-                    }
-                } finally {
-                    BufferManager.release(chars);
-                }
-            } finally {
-                BufferManager.release(bytes);
-            }
-        } finally {
-            in.close();
-        }
+		Reader reader = new InputStreamReader(in);
+		IoUtils.copy(reader, out);
     }
 }
