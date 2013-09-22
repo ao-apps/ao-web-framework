@@ -238,16 +238,16 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 
     /**
      * Appends the parameters to a URL.
-     * Parameters should already be URL encoded and have &amp; as separator.
+     * Parameters should already be URL encoded but not XML encoded.
      */
     protected static boolean appendParams(StringBuilder SB, Object optParam, List<String> finishedParams, boolean alreadyAppended) {
         if (optParam != null) {
             if (optParam instanceof String) {
-                List<String> nameValuePairs=StringUtility.splitString((String)optParam, "&amp;");
-                int len=nameValuePairs.size();
-                for(int c=0;c<len;c++) {
-                    SB.append(alreadyAppended?"&amp;":"?");
-                    String S=nameValuePairs.get(c);
+                String[] nameValuePairs=StringUtility.splitString((String)optParam, '&');
+                int len=nameValuePairs.length;
+                for(int i=0;i<len;i++) {
+                    SB.append(alreadyAppended?'&':'?');
+                    String S=nameValuePairs[i];
                     int pos=S.indexOf('=');
                     if(pos==-1) {
                         SB.append(S);
@@ -267,7 +267,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
                 for (int c = 0; c < len; c += 2) {
                     String name=SA[c];
                     if(!finishedParams.contains(name)) {
-                        SB.append(alreadyAppended?"&amp;":"?").append(name).append('=').append(SA[c + 1]);
+                        SB.append(alreadyAppended?'&':'?').append(name).append('=').append(SA[c + 1]);
                         finishedParams.add(name);
                         alreadyAppended=true;
                     }
@@ -311,7 +311,6 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 
     /**
      * Gets the absolute URL String, optionally with the settings embedded.
-     * (&amp;amp; instead of standalone &amp; as parameter separator)
      * Parameters should already be URL encoded and have &amp; as separator.
      */
     public String getURL(String url, boolean useEncryption, Object optParam, boolean keepSettings) throws IOException {

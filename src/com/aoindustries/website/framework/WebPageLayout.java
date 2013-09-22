@@ -1,10 +1,10 @@
-package com.aoindustries.website.framework;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.website.framework;
+
 import com.aoindustries.encoding.TextInJavaScriptEncoder;
 import com.aoindustries.io.ChainWriter;
 import com.aoindustries.util.StringUtility;
@@ -61,9 +61,9 @@ abstract public class WebPageLayout {
      * whether the page is in a frameset or not.
      */
     abstract public void endHTML(
-	WebPage page,
-	WebSiteRequest req,
-	ChainWriter out
+		WebPage page,
+		WebSiteRequest req,
+		ChainWriter out
     ) throws IOException, SQLException;
 
     /**
@@ -128,7 +128,7 @@ abstract public class WebPageLayout {
                 String description=result.getDescription();
                 out.print("    <tr class='").print(rowClass).print("'>\n"
                         + "      <td style='white-space:nowrap; text-align:center;'>").print(Math.round(99 * result.getProbability() / highest)).print("%</td>\n"
-                        + "      <td style='white-space:nowrap'><a class='"+linkClass+"' href='").print(resp.encodeURL(url)).print("'>").print(title.length()==0?"&#160;":title).print("</a></td>\n"
+                        + "      <td style='white-space:nowrap'><a class='"+linkClass+"' href='").encodeXmlAttribute(resp.encodeURL(url)).print("'>").print(title.length()==0?"&#160;":title).print("</a></td>\n"
                         + "      <td style='white-space:nowrap'>&#160;&#160;&#160;</td>\n"
                         + "      <td style='white-space:nowrap'>").print(description.length()==0?"&#160;":description).print("</td>\n"
                         + "    </tr>\n");
@@ -289,11 +289,7 @@ abstract public class WebPageLayout {
                 TextInJavaScriptEncoder.encodeTextInJavaScript(choice, out);
                 out.print("') window.top.location.href='");
                 TextInJavaScriptEncoder.encodeTextInJavaScript(
-                    StringUtility.replace(                                  // Convert XML &amp; to &
-                        resp.encodeURL(req.getURL(page, "layout="+choice)),
-                        "&amp;",
-                        "&"
-                    ),
+					resp.encodeURL(req.getURL(page, "layout="+choice)),
                     out
                 );
                 out.print("';\n");
@@ -315,21 +311,21 @@ abstract public class WebPageLayout {
     }
     
     protected void printJavaScriptIncludes(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, WebPage page) throws IOException, SQLException {
-	Object O = page.getJavaScriptSrc(req);
-	if (O != null) {
+		Object O = page.getJavaScriptSrc(req);
+		if (O != null) {
             if (O instanceof String[]) {
                 String[] SA = (String[]) O;
                 int len = SA.length;
                 for (int c = 0; c < len; c++) {
-                    out.print("    <script type='text/javascript' src='").print(resp.encodeURL(req.getURL(SA[c], req.isSecure(), null, false))).print("'></script>\n");
+                    out.print("    <script type='text/javascript' src='").encodeXmlAttribute(resp.encodeURL(req.getURL(SA[c], req.isSecure(), null, false))).print("'></script>\n");
                 }
             } else if(O instanceof Class) {
-                out.print("    <script type='text/javascript' src='").print(resp.encodeURL(req.getURL(((Class<?>)O).asSubclass(WebPage.class), null))).print("'></script>\n");
+                out.print("    <script type='text/javascript' src='").encodeXmlAttribute(resp.encodeURL(req.getURL(((Class<?>)O).asSubclass(WebPage.class), null))).print("'></script>\n");
             } else if(O instanceof WebPage) {
-                out.print("    <script type='text/javascript' src='").print(resp.encodeURL(req.getURL((WebPage)O, req.isSecure(), null))).print("'></script>\n");
+                out.print("    <script type='text/javascript' src='").encodeXmlAttribute(resp.encodeURL(req.getURL((WebPage)O, req.isSecure(), null))).print("'></script>\n");
             } else {
-                out.print("    <script type='text/javascript' src='").print(resp.encodeURL(req.getURL(O.toString(), req.isSecure(), null, false))).print("'></script>\n");
+                out.print("    <script type='text/javascript' src='").encodeXmlAttribute(resp.encodeURL(req.getURL(O.toString(), req.isSecure(), null, false))).print("'></script>\n");
             }
-	}
+		}
     }
 }

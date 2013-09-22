@@ -1,14 +1,19 @@
-package com.aoindustries.website.framework;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import javax.servlet.http.*;
+package com.aoindustries.website.framework;
+
+import com.aoindustries.io.ChainWriter;
+import com.aoindustries.io.IoUtils;
+import com.aoindustries.util.EncodingUtils;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.sql.SQLException;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Pulls the content from a file with the same name and location as the <code>.class</code>
@@ -47,7 +52,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
     /**
      * Gets the HTML file with the same name as the provided Class.
      */
-    public static InputStream getHTMLInputStream(Class clazz) throws IOException {
+    public static InputStream getHTMLInputStream(Class<?> clazz) throws IOException {
         return HTMLInputStreamPage.class.getResourceAsStream('/'+clazz.getName().replace('.', '/')+".html");
     }
 
@@ -75,7 +80,10 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
                         int endPos=html.indexOf(')', pos+4);
                         if(endPos==-1) throw new IllegalArgumentException("Unable to find closing parenthesis for @URL( substitution, pos="+pos);
                         String className=html.substring(pos+4, endPos);
-                        out.print(resp.encodeURL(req.getURL(className)));
+		                EncodingUtils.encodeXmlAttribute(
+	                        resp.encodeURL(req.getURL(className)),
+							out
+						);
                         pos=endPos+1;
                     } else if((pos+16)<len && html.substring(pos, pos+16).equalsIgnoreCase("BEGIN_LIGHT_AREA")) {
                         layout.beginLightArea(req, resp, out);
@@ -156,7 +164,10 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
                                             while((ch=reader.read())!=-1) {
                                                 if(ch==')') {
                                                     String className=buffer.toString().substring(5, buffer.length());
-                                                    out.print(resp.encodeURL(req.getURL(className)));
+									                EncodingUtils.encodeXmlAttribute(
+	                                                    resp.encodeURL(req.getURL(className)),
+														out
+													);
                                                     buffer.setLength(0);
                                                     break;
                                                 } else buffer.append((char)ch);

@@ -210,9 +210,7 @@ abstract public class TreePage extends WebPage {
                     }
                     String href;
                     if (pos == (path[pathLen-1].length()==0?(pathLen-2):(pathLen-1)) && (href = tree.get(c).getUrl()) != null) {
-                        out.print("<a href='");
-                        out.print(resp.encodeURL(href));
-                        out.print("'>").print(replaced).print("</a>");
+                        out.print("<a href='").encodeXmlAttribute(resp.encodeURL(href)).print("'>").print(replaced).print("</a>");
                     } else out.print(replaced);
                     String S;
                     if (replaced.length()>0 && (pos < (pathLen - 1) || ((S = tree.get(c).getPath()).length() > 0 && S.charAt(S.length() - 1) == '/')))
@@ -389,7 +387,7 @@ abstract public class TreePage extends WebPage {
                                         } else break;
                                     }
                                 }
-                                out.print("<img src='").print(resp.encodeURL(req.getURL(this, "image_num="+(hasMore?1:0)))).print("' style='border:0px; display:inline; vertical-align:bottom;' width='"+IMAGE_WIDTH+"' height='"+IMAGE_HEIGHT+"' alt='' />");
+                                out.print("<img src='").encodeXmlAttribute(resp.encodeURL(req.getURL(this, "image_num="+(hasMore?1:0)))).print("' style='border:0px; display:inline; vertical-align:bottom;' width='"+IMAGE_WIDTH+"' height='"+IMAGE_HEIGHT+"' alt='' />");
                             } else break;
                         }
 
@@ -433,7 +431,7 @@ abstract public class TreePage extends WebPage {
                                         .print(c)
                                         .print(");'><img alt='").print(opened[c] ? "Close" : "Open")
                                         .print("' src='")
-                                        .print(
+                                        .encodeXmlAttribute(
                                             resp.encodeURL(
                                                 req.getURL(
                                                     this,
@@ -448,7 +446,7 @@ abstract public class TreePage extends WebPage {
                                 } else {
                                     out
                                         .print("<img src='")
-                                        .print(
+                                        .encodeXmlAttribute(
                                             resp.encodeURL(
                                                 req.getURL(
                                                     this,
@@ -457,7 +455,7 @@ abstract public class TreePage extends WebPage {
                                             )
                                         ).print("' style='vertical-align:bottom; border:0px; display:inline;' width='"+IMAGE_WIDTH+"' height='"+IMAGE_HEIGHT+"' alt='' />");
                                 }
-                                out.print("<img src='").print(resp.encodeURL(req.getURL(this, "image_num=0"))).print("' style='vertical-align:bottom; border:0px; display:inline;' width='4' height='"+IMAGE_HEIGHT+"' alt='' /></td><td style='white-space:nowrap'>");
+                                out.print("<img src='").encodeXmlAttribute(resp.encodeURL(req.getURL(this, "image_num=0"))).print("' style='vertical-align:bottom; border:0px; display:inline;' width='4' height='"+IMAGE_HEIGHT+"' alt='' /></td><td style='white-space:nowrap'>");
                             }
 
                             boolean useCodeFont=useCodeFont(req);
@@ -469,13 +467,13 @@ abstract public class TreePage extends WebPage {
                                     || (pos==(pathLen-1) && path[pathLen-1].length()>0)
                                 ) && (href = tree.get(c).getUrl()) != null
                             ) {
-                                out.print("<a class='aoLightLink' href='").print(resp.encodeURL(href)).print("'>").print(path[pos]).print("</a>");
+                                out.print("<a class='aoLightLink' href='").encodeXmlAttribute(resp.encodeURL(href)).print("'>").print(path[pos]).print("</a>");
                             } else if(path[pos].length()>0) out.print(path[pos]);
                             if(useCodeFont) out.print("</code>");
                         }
 
                         out.print("</td></tr></table></td>\n"
-                                + "      <td style='white-space:nowrap; width:20px'><img src='").print(resp.encodeURL(req.getURL(this, "image_num=0"))).print("' style='vertical-align:bottom; border:0px; display:inline;' width='20' height='1' alt='' /></td>\n"
+                                + "      <td style='white-space:nowrap; width:20px'><img src='").encodeXmlAttribute(resp.encodeURL(req.getURL(this, "image_num=0"))).print("' style='vertical-align:bottom; border:0px; display:inline;' width='20' height='1' alt='' /></td>\n"
                                 + "      <td style='white-space:nowrap'>");
                         String description=tree.get(c).getDescription();
                         if(description!=null) out.print(description);
