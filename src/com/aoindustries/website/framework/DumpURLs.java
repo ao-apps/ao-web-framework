@@ -1,16 +1,18 @@
-package com.aoindustries.website.framework;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
-import javax.servlet.http.*;
+package com.aoindustries.website.framework;
+
+import com.aoindustries.io.AoByteArrayOutputStream;
+import com.aoindustries.io.ChainWriter;
+import com.aoindustries.util.SortedArrayList;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Generates a list of all URLs in the site.  This is useful for adding this site to
@@ -46,10 +48,12 @@ abstract public class DumpURLs extends WebPage {
         out.print("</pre>\n");
     }
 
+	@Override
     public String getDescription() {
         return "Lists all of the URLs in the site, useful for adding to search engines.";
     }
 
+	@Override
     public String getKeywords() {
         return "search, engine, URL, list, add, hit, hits, adding";
     }
@@ -57,6 +61,7 @@ abstract public class DumpURLs extends WebPage {
     /**
      * The last modified time is -1 to always reload the list.
      */
+	@Override
     public long getLastModified(WebSiteRequest req) throws IOException, SQLException {
         return -1;
     }
@@ -64,20 +69,22 @@ abstract public class DumpURLs extends WebPage {
     /**
      * Do not include this in the search results.
      */
-    public void search(String[] words, WebSiteRequest req, ArrayList results, BetterByteArrayOutputStream bytes, SortedArrayList finishedPages) {
+    public void search(String[] words, WebSiteRequest req, ArrayList results, AoByteArrayOutputStream bytes, SortedArrayList finishedPages) {
     }
 
+	@Override
     public long getSearchLastModified() throws IOException, SQLException {
         return getClassLastModified();
     }
 
+	@Override
     public String getTitle() {
         return "List URLs";
     }
 
     private void printURLs(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, WebPage page, List<WebPage> finishedPages) throws IOException, SQLException {
         if(!finishedPages.contains(page)) {
-            out.print("<a class='aoLightLink' href='").encodeXmlAttribute(resp.encodeURL(req.getURL(page))).print("'>").encodeHtml(req.getURL(page, page.useEncryption(), null)).print("</a>\n");
+            out.print("<a class='aoLightLink' href='").encodeXmlAttribute(resp.encodeURL(req.getURL(page))).print("'>").encodeXhtml(req.getURL(page, page.useEncryption(), null)).print("</a>\n");
 
             finishedPages.add(page);
 

@@ -5,7 +5,7 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.io.BetterByteArrayOutputStream;
+import com.aoindustries.io.AoByteArrayOutputStream;
 import com.aoindustries.io.ChainWriter;
 import com.aoindustries.security.LoginException;
 import com.aoindustries.util.ErrorPrinter;
@@ -454,7 +454,7 @@ abstract public class WebPage extends ErrorReportingServlet {
                 List<SearchResult> results=new ArrayList<SearchResult>();
                 if(words.length>0) {
                     // Perform the search
-                    target.search(words, req, resp, results, new BetterByteArrayOutputStream(), new SortedArrayList<WebPage>());
+                    target.search(words, req, resp, results, new AoByteArrayOutputStream(), new SortedArrayList<WebPage>());
                     Collections.sort(results);
                     //StringUtility.sortObjectsAndFloatDescending(results, 1, 5);
                 }
@@ -1112,7 +1112,7 @@ abstract public class WebPage extends ErrorReportingServlet {
         WebSiteRequest req,
         HttpServletResponse response,
         List<SearchResult> results,
-        BetterByteArrayOutputStream bytes,
+        AoByteArrayOutputStream bytes,
         List<WebPage> finishedPages
     ) throws ServletException, IOException, SQLException {
         standardSearch(words, req, response, results, bytes, finishedPages);
@@ -1128,7 +1128,7 @@ abstract public class WebPage extends ErrorReportingServlet {
         WebSiteRequest req,
         HttpServletResponse response,
         List<SearchResult> results,
-        BetterByteArrayOutputStream bytes,
+        AoByteArrayOutputStream bytes,
         List<WebPage> finishedPages
     ) throws ServletException, IOException, SQLException {
         if(!finishedPages.contains(this)) {

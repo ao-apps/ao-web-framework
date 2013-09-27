@@ -1,15 +1,16 @@
-package com.aoindustries.website.framework;
-
 /*
- * Copyright 2002-2009 by AO Industries, Inc.,
+ * Copyright 2002-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.BetterByteArrayOutputStream;
+package com.aoindustries.website.framework;
+
+import com.aoindustries.io.AoByteArrayOutputStream;
 import com.aoindustries.io.IoUtils;
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Enumeration;
 
 /**
  * @author  AO Industries, Inc.
@@ -40,7 +41,7 @@ public final class WebPageClassLoader extends ClassLoader {
     }
 
     // This instance is reused for speed
-    private final BetterByteArrayOutputStream bytesOut=new BetterByteArrayOutputStream();
+    private final AoByteArrayOutputStream bytesOut=new AoByteArrayOutputStream();
 
     @Override
     protected URL findResource(String name) {

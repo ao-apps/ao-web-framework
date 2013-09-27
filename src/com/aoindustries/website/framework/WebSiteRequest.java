@@ -1,10 +1,10 @@
-package com.aoindustries.website.framework;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.website.framework;
+
 import com.aoindustries.io.ChainWriter;
 import com.aoindustries.security.LoginException;
 import com.aoindustries.util.SortedArrayList;
@@ -243,11 +243,11 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
     protected static boolean appendParams(StringBuilder SB, Object optParam, List<String> finishedParams, boolean alreadyAppended) {
         if (optParam != null) {
             if (optParam instanceof String) {
-                String[] nameValuePairs=StringUtility.splitString((String)optParam, '&');
-                int len=nameValuePairs.length;
+                List<String> nameValuePairs=StringUtility.splitString((String)optParam, '&');
+                int len=nameValuePairs.size();
                 for(int i=0;i<len;i++) {
                     SB.append(alreadyAppended?'&':'?');
-                    String S=nameValuePairs[i];
+                    String S=nameValuePairs.get(i);
                     int pos=S.indexOf('=');
                     if(pos==-1) {
                         SB.append(S);

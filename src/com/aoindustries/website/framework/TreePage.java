@@ -1,17 +1,20 @@
-package com.aoindustries.website.framework;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+package com.aoindustries.website.framework;
+
+import com.aoindustries.io.ChainWriter;
+import com.aoindustries.io.IoUtils;
+import com.aoindustries.util.StringUtility;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.SQLException;
+import java.util.List;
 import javax.servlet.ServletException;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author  AO Industries, Inc.
@@ -499,7 +502,8 @@ abstract public class TreePage extends WebPage {
         int treeLen = tree.size();
         String[][] paths=new String[treeLen][];
         for (int c = 0; c < treeLen; c++) {
-            paths[c] = StringUtility.splitString(tree.get(c).getPath(), '/');
+			List<String> split = StringUtility.splitString(tree.get(c).getPath(), '/');
+            paths[c] = split.toArray(new String[split.size()]);
         }
         return paths;
     }

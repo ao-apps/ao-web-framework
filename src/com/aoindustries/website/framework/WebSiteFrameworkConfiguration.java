@@ -1,14 +1,17 @@
-package com.aoindustries.website.framework;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.website.framework;
+
 import com.aoindustries.profiler.Profiler;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.util.*;
+import com.aoindustries.util.PropertiesUtils;
+import com.aoindustries.util.StringUtility;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * The configuration parameters for the web site are stored in a properties file.
@@ -18,7 +21,9 @@ import java.util.*;
  */
 public final class WebSiteFrameworkConfiguration {
 
-    private static Properties props;
+	private WebSiteFrameworkConfiguration() {}
+
+	private static Properties props;
 
     private static String getProperty(String name) throws IOException {
         if (props == null) {
@@ -39,11 +44,13 @@ public final class WebSiteFrameworkConfiguration {
     }
 
     public static String[] getStaticClassPrefixes() throws IOException {
-        return StringUtility.splitString(getProperty("com.aoindustries.website.framework.classloader.static"), ',');
+		List<String> split = StringUtility.splitString(getProperty("com.aoindustries.website.framework.classloader.static"), ',');
+        return split.toArray(new String[split.size()]);
     }
 
     public static String[] getDynamicClassPrefixes() throws IOException {
-        return StringUtility.splitString(getProperty("com.aoindustries.website.framework.classloader.dynamic"), ',');
+		List<String> split = StringUtility.splitString(getProperty("com.aoindustries.website.framework.classloader.dynamic"), ',');
+        return split.toArray(new String[split.size()]);
     }
 
     public static File getFileUploadDirectory() throws IOException {
