@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 by AO Industries, Inc.,
+ * Copyright 2000-2014 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -7,6 +7,7 @@ package com.aoindustries.website.framework;
 
 import com.aoindustries.io.ChainWriter;
 import com.aoindustries.io.IoUtils;
+import com.aoindustries.util.AoArrays;
 import com.aoindustries.util.StringUtility;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +22,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 abstract public class TreePage extends WebPage {
 
-    /**
+	private static final long serialVersionUID = 1L;
+
+	/**
      * The color of the lines.
      */
     public static final int TREE_LINE_COLOR=0xa8a8a8;
@@ -160,8 +163,7 @@ abstract public class TreePage extends WebPage {
 
             // Get the widest of the lines
             int longest=0;
-            for (int c=0; c<paths.length; c++) {
-                String[] path = paths[c];
+            for(String path[] : paths) {
                 int width=0;
                 for (int d=0; d<path.length; d++) {
                     if(d>0) width+=3;
@@ -173,7 +175,7 @@ abstract public class TreePage extends WebPage {
 
             out.print("<pre>\n");
 
-            String[] last = new String[0];
+            String[] last = AoArrays.EMPTY_STRING_ARRAY;
             for (int c = 0; c < treeLen; c++) {
                 int width = 0;
                 String[] path = paths[c];
@@ -186,12 +188,11 @@ abstract public class TreePage extends WebPage {
                             boolean hasMore = false;
                             for (int d = c + 1; d < treeLen; d++) {
                                 int end = pos;
-                            Loop :
                                 for (int e = 0; e < end; e++) {
                                     if (paths[d][e].equals(path[e])) {
                                         if (e == (end - 1) && !paths[d][end].equals(path[end])) {
                                             hasMore = true;
-                                            break Loop;
+                                            break;
                                         }
                                     } else break;
                                 }
@@ -337,7 +338,7 @@ abstract public class TreePage extends WebPage {
             // Display the tree in a table with links for opening/closing the different parts
             out.print("  <table cellspacing='0' cellpadding='0'>\n");
 
-            String[] last = new String[0];
+            String[] last = AoArrays.EMPTY_STRING_ARRAY;
             for (int c = 0; c < treeLen; c++) {
                 String[] path = paths[c];
                 int pathLen = path.length;
@@ -380,12 +381,11 @@ abstract public class TreePage extends WebPage {
                                 boolean hasMore = false;
                                 for (int d = c + 1; d < treeLen; d++) {
                                     int end = pos;
-                                Loop :
                                     for (int e = 0; e < end; e++) {
                                         if (paths[d][e].equals(path[e])) {
                                             if (e == (end - 1) && !paths[d][end].equals(path[end])) {
                                                 hasMore = true;
-                                                break Loop;
+                                                break;
                                             }
                                         } else break;
                                     }
@@ -417,11 +417,11 @@ abstract public class TreePage extends WebPage {
                                 boolean hasMore = false;
                                 for (int d = c; d < treeLen; d++) {
                                     int end = pos;
-                                    Loop3 : for (int e = 0; e < end; e++) {
+                                    for (int e = 0; e < end; e++) {
                                         if (paths[d][e].equals(path[e])) {
                                             if (e == (end - 1) && !paths[d][end].equals(path[end])) {
                                                 hasMore = true;
-                                                break Loop3;
+                                                break;
                                             }
                                         } else break;
                                     }
