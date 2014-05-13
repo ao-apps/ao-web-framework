@@ -1,11 +1,12 @@
 /*
- * Copyright 2000-2013 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2014 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.website.framework;
 
 import com.aoindustries.io.ChainWriter;
+import com.aoindustries.io.FileUtils;
 import com.aoindustries.security.LoginException;
 import com.aoindustries.util.SortedArrayList;
 import com.aoindustries.util.StringUtility;
@@ -123,8 +124,19 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
                                                 long timeSince=System.currentTimeMillis()-uf.getLastAccessed();
                                                 if(timeSince<0 || timeSince>=((long)60*60*1000)) {
                                                     File file=uf.getStorageFile();
-                                                    if(file.exists() && !file.delete()) {
-                                                        loggerAccessor.getLogger(servletContext, getClass().getName()).log(Level.SEVERE, "file.getPath()="+file.getPath(), new IOException("Unable to delete file"));
+                                                    if(file.exists()) {
+														try {
+															FileUtils.delete(file);
+														} catch(IOException e) {
+	                                                        loggerAccessor.getLogger(
+																servletContext,
+																getClass().getName()
+															).log(
+																Level.SEVERE,
+																"file.getPath()="+file.getPath(),
+																e
+															);
+														}
                                                     }
                                                     I.remove();
                                                 }
@@ -147,8 +159,19 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
                                                             break;
                                                         }
                                                     }
-                                                    if(!found && !file.delete()) {
-                                                        loggerAccessor.getLogger(servletContext, getClass().getName()).log(Level.SEVERE, "file.getPath()="+file.getPath(), new IOException("Unable to delete file"));
+                                                    if(!found) {
+														try {
+															FileUtils.delete(file);
+														} catch(IOException e) {
+	                                                        loggerAccessor.getLogger(
+																servletContext,
+																getClass().getName()
+															).log(
+																Level.SEVERE,
+																"file.getPath()="+file.getPath(),
+																e
+															);
+														}
                                                     }
                                                 }
                                             }
@@ -229,7 +252,9 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
                     while(E.hasMoreElements()) {
                         String filename=(String)E.nextElement();
                         File file=mreq.getFile(filename);
-                        if(file!=null && file.exists() && !file.delete()) throw new IOException("Unable to delete file: "+file.getPath());
+                        if(file!=null && file.exists()) {
+							FileUtils.delete(file);
+						}
                     }
                 }
             }
@@ -303,9 +328,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
             Class<? extends WebPage> clazz=Class.forName(classname).asSubclass(WebPage.class);
             return getURL(clazz, params);
         } catch(ClassNotFoundException err) {
-            IOException ioErr=new IOException("Unable to load class: "+classname);
-            ioErr.initCause(err);
-            throw ioErr;
+            throw new IOException("Unable to load class: "+classname, err);
         }
     }
 
