@@ -1,14 +1,16 @@
-package com.aoindustries.website.framework;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2009, 2015 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import javax.servlet.http.*;
+package com.aoindustries.website.framework;
+
+import com.aoindustries.io.ChainWriter;
+import com.aoindustries.io.FileUtils;
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Pulls information from a file to be used as the content.
@@ -16,6 +18,8 @@ import javax.servlet.http.*;
  * @author  AO Industries, Inc.
  */
 abstract public class FilePage extends WebPage {
+
+	private static final long serialVersionUID = 1L;
 
 	public FilePage(LoggerAccessor loggerAccessor) {
 		super(loggerAccessor);
@@ -49,11 +53,6 @@ abstract public class FilePage extends WebPage {
 	}
 
 	public static void printFile(ChainWriter out, File file) throws IOException {
-		Reader in = new FileReader(file);
-		try {
-			IoUtils.copy(in, out);
-		} finally {
-			in.close();
-		}
+		FileUtils.copy(file, out);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2015 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -25,51 +25,43 @@ public final class WebSiteFrameworkConfiguration {
 
 	private static Properties props;
 
-    private static String getProperty(String name) throws IOException {
-        if (props == null) {
+	private static String getProperty(String name) throws IOException {
+		if (props == null) {
 			props = PropertiesUtils.loadFromResource(WebSiteFrameworkConfiguration.class, "website-framework.properties");
 
-            // Startup the profiling the first time the configuration is accessed
-            Profiler.setProfilerLevel(props.getProperty("com.aoindustries.website.profiler.level"));
-        }
-        return props.getProperty(name);
-    }
-    
-    public static String getServletDirectory() throws IOException {
-        return getProperty("com.aoindustries.website.framework.directory.servlet");
-    }
+			// Startup the profiling the first time the configuration is accessed
+			Profiler.setProfilerLevel(props.getProperty("com.aoindustries.website.profiler.level"));
+		}
+		return props.getProperty(name);
+	}
 
-    public static boolean useWebSiteCaching() throws IOException {
-        return "true".equals(getProperty("com.aoindustries.website.framework.use_website_caching"));
-    }
+	public static String getServletDirectory() throws IOException {
+		return getProperty("com.aoindustries.website.framework.directory.servlet");
+	}
 
-    public static String[] getStaticClassPrefixes() throws IOException {
+	public static boolean useWebSiteCaching() throws IOException {
+		return "true".equals(getProperty("com.aoindustries.website.framework.use_website_caching"));
+	}
+
+	public static String[] getStaticClassPrefixes() throws IOException {
 		List<String> split = StringUtility.splitString(getProperty("com.aoindustries.website.framework.classloader.static"), ',');
-        return split.toArray(new String[split.size()]);
-    }
+		return split.toArray(new String[split.size()]);
+	}
 
-    public static String[] getDynamicClassPrefixes() throws IOException {
+	public static String[] getDynamicClassPrefixes() throws IOException {
 		List<String> split = StringUtility.splitString(getProperty("com.aoindustries.website.framework.classloader.dynamic"), ',');
-        return split.toArray(new String[split.size()]);
-    }
+		return split.toArray(new String[split.size()]);
+	}
 
-    public static File getFileUploadDirectory() throws IOException {
-        return new File(getProperty("com.aoindustries.website.framework.file_upload.directory"));
-    }
+	public static File getFileUploadDirectory() throws IOException {
+		return new File(getProperty("com.aoindustries.website.framework.file_upload.directory"));
+	}
 
-    public static int getMaxFileUploadSize() throws IOException {
-        return Integer.parseInt(getProperty("com.aoindustries.website.framework.file_upload.max_size"));
-    }
+	public static int getMaxFileUploadSize() throws IOException {
+		return Integer.parseInt(getProperty("com.aoindustries.website.framework.file_upload.max_size"));
+	}
 
-    public static String getHttpBase() throws IOException {
-        return getProperty("com.aoindustries.website.framework.http.base");
-    }
-
-    public static String getHttpsBase() throws IOException {
-        return getProperty("com.aoindustries.website.framework.https.base");
-    }
-    
-    public static boolean getEnforceSecureMode() throws IOException {
-        return !"false".equals(getProperty("com.aoindustries.website.framework.enforce_secure_mode"));
-    }
+	public static String getBase() throws IOException {
+		return getProperty("com.aoindustries.website.framework.base");
+	}
 }

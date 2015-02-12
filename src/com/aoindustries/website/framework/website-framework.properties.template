@@ -2,9 +2,7 @@
 com.aoindustries.website.profiler.level=slow
 
 # Base URLs
-com.aoindustries.website.framework.http.base=<http_url_prefix>
-com.aoindustries.website.framework.https.base=<https_url_prefix>
-com.aoindustries.website.framework.enforce_secure_mode=true
+com.aoindustries.website.framework.base=<url_prefix>
 
 # File upload settings
 com.aoindustries.website.framework.file_upload.directory=<upload_directory>

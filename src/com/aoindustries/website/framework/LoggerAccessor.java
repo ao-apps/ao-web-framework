@@ -1,10 +1,10 @@
-package com.aoindustries.website.framework;
-
 /*
- * Copyright 2009 by AO Industries, Inc.,
+ * Copyright 2009, 2015 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.website.framework;
+
 import java.util.logging.Logger;
 import javax.servlet.ServletContext;
 
@@ -15,5 +15,5 @@ import javax.servlet.ServletContext;
  */
 public interface LoggerAccessor {
 
-    Logger getLogger(ServletContext servletContext, String name);
+	Logger getLogger(ServletContext servletContext, String name);
 }

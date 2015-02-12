@@ -1,10 +1,9 @@
-package com.aoindustries.website.framework;
-
 /*
- * Copyright 2006-2009 by AO Industries, Inc.,
+ * Copyright 2006-2009, 2015 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.website.framework;
 
 /**
  * Automatically generates a list of all pages.
@@ -13,47 +12,48 @@ package com.aoindustries.website.framework;
  */
 public class SearchResult implements Comparable<SearchResult> {
 
-    private String url;
-    private float probability;
-    private String title;
-    private String description;
-    private String author;
+	private final String url;
+	private final float probability;
+	private final String title;
+	private final String description;
+	private final String author;
 
-    public SearchResult(
-        String url,
-        float probability,
-        String title,
-        String description,
-        String author
-    ) {
-        this.url=url;
-        this.probability=probability;
-        this.title=title;
-        this.description=description;
-        this.author=author;
-    }
+	public SearchResult(
+		String url,
+		float probability,
+		String title,
+		String description,
+		String author
+	) {
+		this.url=url;
+		this.probability=probability;
+		this.title=title;
+		this.description=description;
+		this.author=author;
+	}
 
-    public String getUrl() {
-        return url;
-    }
+	public String getUrl() {
+		return url;
+	}
 
-    public float getProbability() {
-        return probability;
-    }
+	public float getProbability() {
+		return probability;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public String getAuthor() {
-        return author;
-    }
-    
-    public int compareTo(SearchResult other) {
-        return Float.compare(other.probability, probability);
-    }
+	public String getAuthor() {
+		return author;
+	}
+
+	@Override
+	public int compareTo(SearchResult other) {
+		return Float.compare(other.probability, probability);
+	}
 }

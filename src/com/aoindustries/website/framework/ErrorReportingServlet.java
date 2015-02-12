@@ -1,15 +1,15 @@
-package com.aoindustries.website.framework;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2009, 2015 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.util.WrappedException;
+package com.aoindustries.website.framework;
+
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -25,222 +25,199 @@ import javax.servlet.http.HttpServletResponse;
  */
 public abstract class ErrorReportingServlet extends HttpServlet {
 
-    /**
-     * The response buffer is set to this size.
-     */
-    public static final int BUFFER_SIZE = 256 * 1024;
-    
-    /**
-     * The time that the servlet environment started.
-     */
-    private static long uptime=System.currentTimeMillis();
-    
-    /**
-     * Gets the time the servlet environment was loaded.
-     */
-    public static long getUptime() {
-        return uptime;
-    }
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * The GET requests are counted in a thread safe way.
-     */
-    private static final Object getLock=new Object();
-    private static long getCount=0;
+	/**
+	 * The response buffer is set to this size.
+	 */
+	public static final int BUFFER_SIZE = 256 * 1024;
 
-    /**
-     * The POST requests are counted in a thread safe way.
-     */
-    private static final Object postLock=new Object();
-    private static long postCount=0;
+	/**
+	 * The time that the servlet environment started.
+	 */
+	private static final long uptime = System.currentTimeMillis();
 
-    /**
-     * The getLastModified calls are counted in a thread safe way.
-     */
-    private static final Object lastModifiedLock=new Object();
-    private static long lastModifiedCount=0;
+	/**
+	 * Gets the time the servlet environment was loaded.
+	 */
+	public static long getUptime() {
+		return uptime;
+	}
 
-    private final LoggerAccessor loggerAccessor;
+	/**
+	 * The GET requests are counted in a thread safe way.
+	 */
+	private static final AtomicLong getCount = new AtomicLong();
 
-    protected ErrorReportingServlet(LoggerAccessor loggerAccessor) {
-        this.loggerAccessor = loggerAccessor;
-    }
+	/**
+	 * The POST requests are counted in a thread safe way.
+	 */
+	private static final AtomicLong postCount = new AtomicLong();
 
-    /**
-     * Gets the loggerAccess for this page.
-     */
-    protected LoggerAccessor getLoggerAccessor() {
-        return loggerAccessor;
-    }
+	/**
+	 * The getLastModified calls are counted in a thread safe way.
+	 */
+	private static final AtomicLong lastModifiedCount = new AtomicLong();
 
-    /**
-     * Gets the logger for this servlet.
-     */
-    public Logger getLogger() {
-        return getLogger(getClass());
-    }
+	private final LoggerAccessor loggerAccessor;
 
-    /**
-     * Gets the logger for the provided class.
-     */
-    protected Logger getLogger(Class clazz) {
-        return getLogger(clazz.getName());
-    }
+	protected ErrorReportingServlet(LoggerAccessor loggerAccessor) {
+		this.loggerAccessor = loggerAccessor;
+	}
 
-    /**
-     * Gets the provided named logger.
-     */
-    protected Logger getLogger(String name) {
-        return loggerAccessor.getLogger(getServletContext(), name);
-    }
+	/**
+	 * Gets the loggerAccess for this page.
+	 */
+	protected LoggerAccessor getLoggerAccessor() {
+		return loggerAccessor;
+	}
 
-    /**
-     * Any error that occurs during a <code>doGet</code> is caught and reported here.
-     */
-    @Override
-    final protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setBufferSize(BUFFER_SIZE);
-        synchronized (getLock) {
-            getCount++;
-        }
-        try {
-            reportingDoGet(req, resp);
-        } catch (ThreadDeath t) {
-            throw t;
-        } catch (RuntimeException e) {
-            getLogger().log(Level.SEVERE, null, e);
-            throw e;
-        } catch (ServletException e) {
-            getLogger().log(Level.SEVERE, null, e);
-            throw e;
-        } catch (IOException e) {
-            getLogger().log(Level.SEVERE, null, e);
-            throw e;
-        } catch (Throwable t) {
-            getLogger().log(Level.SEVERE, null, t);
-        }
-    }
+	/**
+	 * Gets the logger for this servlet.
+	 */
+	public Logger getLogger() {
+		return getLogger(getClass());
+	}
 
-    /**
-     * Any error that occurs during a <code>doPost</code> is caught and reported here.
-     */
-    @Override
-    final protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setBufferSize(BUFFER_SIZE);
-        synchronized (postLock) {
-            postCount++;
-        }
-        try {
-            reportingDoPost(req, resp);
-        } catch (ThreadDeath t) {
-            throw t;
-        } catch (RuntimeException e) {
-            getLogger().log(Level.SEVERE, null, e);
-            throw e;
-        } catch (ServletException e) {
-            getLogger().log(Level.SEVERE, null, e);
-            throw e;
-        } catch (IOException e) {
-            getLogger().log(Level.SEVERE, null, e);
-            throw e;
-        } catch (Throwable t) {
-            getLogger().log(Level.SEVERE, null, t);
-        }
-    }
+	/**
+	 * Gets the logger for the provided class.
+	 */
+	protected Logger getLogger(Class<?> clazz) {
+		return getLogger(clazz.getName());
+	}
 
-    /**
-     * Gets the number of GET requests that have been placed.
-     */
-    public static long getGetCount() {
-        synchronized (getLock) {
-            return getCount;
-        }
-    }
+	/**
+	 * Gets the provided named logger.
+	 */
+	protected Logger getLogger(String name) {
+		return loggerAccessor.getLogger(getServletContext(), name);
+	}
 
-    /**
-     * Any error that occurs during a <code>getLastModified</code> call is caught here.
-     */
-    @Override
-    final protected long getLastModified(HttpServletRequest req) {
-        synchronized (lastModifiedLock) {
-            lastModifiedCount++;
-        }
-        try {
-            return reportingGetLastModified(req);
-        } catch (RuntimeException err) {
-            getLogger().log(Level.SEVERE, null, err);
-            throw err;
-        } catch (ThreadDeath err) {
-            throw err;
-        } catch (Throwable err) {
-            getLogger().log(Level.SEVERE, null, err);
-            throw new WrappedException(err, new Object[] {"req="+req});
-        }
-    }
+	/**
+	 * Any error that occurs during a <code>doGet</code> is caught and reported here.
+	 */
+	@Override
+	final protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		resp.setBufferSize(BUFFER_SIZE);
+		getCount.incrementAndGet();
+		try {
+			reportingDoGet(req, resp);
+		} catch (ThreadDeath t) {
+			throw t;
+		} catch (RuntimeException | ServletException | IOException e) {
+			getLogger().log(Level.SEVERE, null, e);
+			throw e;
+		} catch (SQLException t) {
+			getLogger().log(Level.SEVERE, null, t);
+			throw new ServletException(t);
+		}
+	}
 
-    /**
-     * Gets the number of calls to <code>getLastModified</code>.
-     */
-    public static long getLastModifiedCount() {
-        synchronized (lastModifiedLock) {
-            return lastModifiedCount;
-        }
-    }
+	/**
+	 * Any error that occurs during a <code>doPost</code> is caught and reported here.
+	 */
+	@Override
+	final protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		resp.setBufferSize(BUFFER_SIZE);
+		postCount.incrementAndGet();
+		try {
+			reportingDoPost(req, resp);
+		} catch (ThreadDeath t) {
+			throw t;
+		} catch (RuntimeException | ServletException | IOException e) {
+			getLogger().log(Level.SEVERE, null, e);
+			throw e;
+		} catch (SQLException t) {
+			getLogger().log(Level.SEVERE, null, t);
+			throw new ServletException(t);
+		}
+	}
 
-    /**
-     * Gets the number of POST requests that have been made.
-     */
-    public static long getPostCount() {
-        synchronized(postLock) {
-            return postCount;
-        }
-    }
+	/**
+	 * Gets the number of GET requests that have been placed.
+	 */
+	public static long getGetCount() {
+		return getCount.get();
+	}
 
-    /**
-     * @see javax.servlet.http.HttpServlet#doGet(HttpServletRequest,HttpServletResponse)
-     */
-    protected void reportingDoGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, SQLException, IOException {
-        super.doGet(req, resp);
-    }
+	/**
+	 * Any error that occurs during a <code>getLastModified</code> call is caught here.
+	 */
+	@Override
+	final protected long getLastModified(HttpServletRequest req) {
+		lastModifiedCount.incrementAndGet();
+		try {
+			return reportingGetLastModified(req);
+		} catch (ThreadDeath err) {
+			throw err;
+		} catch (RuntimeException err) {
+			getLogger().log(Level.SEVERE, null, err);
+			throw err;
+		} catch (IOException | SQLException err) {
+			getLogger().log(Level.SEVERE, null, err);
+			throw new RuntimeException(err);
+		}
+	}
 
-    /**
-     * @see javax.servlet.http.HttpServlet#doPost(HttpServletRequest,HttpServletResponse)
-     */
-    protected void reportingDoPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, SQLException, IOException {
-        super.doPost(req, resp);
-    }
+	/**
+	 * Gets the number of calls to <code>getLastModified</code>.
+	 */
+	public static long getLastModifiedCount() {
+		return lastModifiedCount.get();
+	}
 
-    /**
-     * @see javax.servlet.http.HttpServlet#getLastModified(HttpServletRequest)
-     */
-    protected long reportingGetLastModified(HttpServletRequest req) throws IOException, SQLException {
-        return super.getLastModified(req);
-    }
+	/**
+	 * Gets the number of POST requests that have been made.
+	 */
+	public static long getPostCount() {
+		return postCount.get();
+	}
 
-    /**
-     * @deprecated  Please call logger directly for accurate class and method
-     */
-    @Override
-    @Deprecated
-    final public void log(String message) {
-        getLogger().log(Level.SEVERE, message);
-    }
+	/**
+	 * @see javax.servlet.http.HttpServlet#doGet(HttpServletRequest,HttpServletResponse)
+	 */
+	protected void reportingDoGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, SQLException, IOException {
+		super.doGet(req, resp);
+	}
 
-    /**
-     * @deprecated  Please call logger directly for accurate class and method
-     */
-    @Override
-    @Deprecated
-    final public void log(String message, Throwable err) {
-        getLogger().log(Level.SEVERE, message, err);
-    }
+	/**
+	 * @see javax.servlet.http.HttpServlet#doPost(HttpServletRequest,HttpServletResponse)
+	 */
+	protected void reportingDoPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, SQLException, IOException {
+		super.doPost(req, resp);
+	}
 
-    private static final Random random = new SecureRandom();
+	/**
+	 * @see javax.servlet.http.HttpServlet#getLastModified(HttpServletRequest)
+	 */
+	protected long reportingGetLastModified(HttpServletRequest req) throws IOException, SQLException {
+		return super.getLastModified(req);
+	}
 
-    /**
-     * @see  WebSiteRequest#getRandom()
-     */
-    static Random getRandom() {
-        return random;
-    }
+	/**
+	 * @deprecated  Please call logger directly for accurate class and method
+	 */
+	@Override
+	@Deprecated
+	final public void log(String message) {
+		getLogger().log(Level.SEVERE, message);
+	}
+
+	/**
+	 * @deprecated  Please call logger directly for accurate class and method
+	 */
+	@Override
+	@Deprecated
+	final public void log(String message, Throwable err) {
+		getLogger().log(Level.SEVERE, message, err);
+	}
+
+	private static final Random random = new SecureRandom();
+
+	/**
+	 * @see  WebSiteRequest#getRandom()
+	 */
+	static Random getRandom() {
+		return random;
+	}
 }
