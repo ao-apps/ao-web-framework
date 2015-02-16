@@ -5,7 +5,7 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.io.ChainWriter;
+import com.aoindustries.encoding.ChainWriter;
 import com.aoindustries.io.IoUtils;
 import com.aoindustries.util.AoArrays;
 import com.aoindustries.util.StringUtility;

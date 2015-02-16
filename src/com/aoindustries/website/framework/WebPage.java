@@ -6,7 +6,7 @@
 package com.aoindustries.website.framework;
 
 import com.aoindustries.io.AoByteArrayOutputStream;
-import com.aoindustries.io.ChainWriter;
+import com.aoindustries.encoding.ChainWriter;
 import com.aoindustries.security.LoginException;
 import com.aoindustries.util.ErrorPrinter;
 import com.aoindustries.util.SortedArrayList;

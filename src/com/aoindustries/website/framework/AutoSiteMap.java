@@ -5,7 +5,7 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.io.ChainWriter;
+import com.aoindustries.encoding.ChainWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;

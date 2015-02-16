@@ -5,7 +5,7 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.io.ChainWriter;
+import com.aoindustries.encoding.ChainWriter;
 import com.aoindustries.io.IoUtils;
 import java.io.IOException;
 import java.io.InputStream;
