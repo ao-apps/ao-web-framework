@@ -1,6 +1,3 @@
-# Profiler setting
-com.aoindustries.website.profiler.level=slow
-
 # Base URLs
 com.aoindustries.website.framework.base=<url_prefix>
 

@@ -5,7 +5,6 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.profiler.Profiler;
 import com.aoindustries.util.PropertiesUtils;
 import com.aoindustries.util.StringUtility;
 import java.io.File;
@@ -28,9 +27,6 @@ public final class WebSiteFrameworkConfiguration {
 	private static String getProperty(String name) throws IOException {
 		if (props == null) {
 			props = PropertiesUtils.loadFromResource(WebSiteFrameworkConfiguration.class, "website-framework.properties");
-
-			// Startup the profiling the first time the configuration is accessed
-			Profiler.setProfilerLevel(props.getProperty("com.aoindustries.website.profiler.level"));
 		}
 		return props.getProperty(name);
 	}
