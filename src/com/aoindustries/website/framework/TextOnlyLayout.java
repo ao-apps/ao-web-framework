@@ -1,5 +1,5 @@
 /*
- * Copyright 2003-2013, 2015 by AO Industries, Inc.,
+ * Copyright 2003-2013, 2015, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -100,7 +100,7 @@ public class TextOnlyLayout extends WebPageLayout {
 		boolean isOkResponseStatus;
 		{
 			Integer responseStatus = (Integer)req.getAttribute(HTTP_SERVLET_RESPONSE_STATUS);
-			isOkResponseStatus = responseStatus==null || responseStatus.intValue()==HttpServletResponse.SC_OK;
+			isOkResponseStatus = responseStatus==null || responseStatus==HttpServletResponse.SC_OK;
 		}
 
 		out.print("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n"
@@ -125,7 +125,7 @@ public class TextOnlyLayout extends WebPageLayout {
 			out.encodeXhtml(parent.getTitle());
 		}
 		out.print("</title>\n"
-				+ "    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />\n"
+				+ "    <meta http-equiv='Content-Type' content='text/html; charset=").encodeXmlAttribute(resp.getCharacterEncoding()).print("' />\n"
 				+ "    <meta name='keywords' content='").encodeXmlAttribute(page.getKeywords()).print("' />\n"
 				+ "    <meta name='description' content='").encodeXmlAttribute(page.getDescription()).print("' />\n"
 				+ "    <meta name='abstract' content='").encodeXmlAttribute(page.getDescription()).print("' />\n");
@@ -277,7 +277,7 @@ public class TextOnlyLayout extends WebPageLayout {
 					+ "      try {\n"
 					+ "        var pageTracker = _gat._getTracker(\""); out.print(googleAnalyticsNewTrackingCode); out.print("\");\n");
 			Integer responseStatus = (Integer)req.getAttribute(HTTP_SERVLET_RESPONSE_STATUS);
-			if(responseStatus==null || responseStatus.intValue()==HttpServletResponse.SC_OK) {
+			if(responseStatus==null || responseStatus==HttpServletResponse.SC_OK) {
 				out.print("        pageTracker._trackPageview();\n");
 			} else {
 				out.print("        pageTracker._trackPageview(\"/");
