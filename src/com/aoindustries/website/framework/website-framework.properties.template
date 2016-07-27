@@ -17,9 +17,3 @@ com.aoindustries.website.framework.classloader.dynamic=com.aoindustries.website.
 
 # Write to System.err in addition to calling the regular log methods
 com.aoindustries.website.framework.log_to_system_err=true
-
-# The people responsible for system reliability
-com.aoindustries.website.framework.error.email.to=aoserv@aoindustries.com
-com.aoindustries.website.framework.error.email.from=aoweb@<hostname>
-com.aoindustries.website.framework.error.email.subject=Website Error
-com.aoindustries.website.framework.error.smtp.server=<smtp_server>
