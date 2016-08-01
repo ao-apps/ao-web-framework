@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013, 2014, 2015 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2014, 2015, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -87,7 +87,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 		synchronized(uploadedFiles) {
 			while(true) {
 				long id=random.nextLong()&0x7fffffffffffffffL;
-				Long ID=Long.valueOf(id);
+				Long ID=id;
 				if(!uploadedFiles.containsKey(ID)) {
 					uploadedFiles.put(ID, null);
 					return id;
@@ -99,7 +99,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	private static Thread uploadedFileCleanup;
 	private static void addUploadedFile(UploadedFile uf, final ServletContext servletContext, final LoggerAccessor loggerAccessor) {
 		synchronized(uploadedFiles) {
-			uploadedFiles.put(Long.valueOf(uf.getID()), uf);
+			uploadedFiles.put(uf.getID(), uf);
 
 			if(uploadedFileCleanup==null) {
 				uploadedFileCleanup=new Thread() {
@@ -337,7 +337,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 * Parameters should already be URL encoded and have &amp; as separator.
 	 */
 	public String getURL(String url, Object optParam, boolean keepSettings) throws IOException {
-		String lowerUrl = url.toLowerCase(Locale.ENGLISH);
+		String lowerUrl = url.toLowerCase(Locale.ROOT);
 		StringBuilder SB=new StringBuilder();
 		if(!lowerUrl.startsWith("http:") && !lowerUrl.startsWith("https:")) {
 			SB.append(WebSiteFrameworkConfiguration.getBase());
@@ -393,7 +393,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 		List<String> finishedParams=new SortedArrayList<>();
 		StringBuilder SB = new StringBuilder();
 		String path = page.getURLPath();
-		String lowerPath = path.toLowerCase(Locale.ENGLISH);
+		String lowerPath = path.toLowerCase(Locale.ROOT);
 		if(!lowerPath.startsWith("http:") && !lowerPath.startsWith("https:")) {
 			SB.append(WebSiteFrameworkConfiguration.getBase());
 		}
@@ -449,7 +449,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	public boolean isLynx() {
 		if(!isLynxDone) {
 			String agent = req.getHeader("user-agent");
-			isLynx=agent != null && agent.toLowerCase().indexOf("lynx") != -1;
+			isLynx=agent != null && agent.toLowerCase(Locale.ROOT).contains("lynx");
 			isLynxDone=true;
 		}
 		return isLynx;
@@ -473,7 +473,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	public boolean isLinux() {
 		if(!isLinuxDone) {
 			String agent = req.getHeader("user-agent");
-			isLinux=agent == null || agent.toLowerCase().indexOf("linux") != -1;
+			isLinux=agent == null || agent.toLowerCase(Locale.ROOT).contains("linux");
 			isLinuxDone=true;
 		}
 		return isLinux;
@@ -481,7 +481,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 
 	@Override
 	public boolean isSecure() {
-		return req.isSecure() || req.getServerPort()==443 || req.getRequestURI().indexOf("/https/")!=-1;
+		return req.isSecure() || req.getServerPort()==443 || req.getRequestURI().contains("/https/");
 	}
 
 	/**
