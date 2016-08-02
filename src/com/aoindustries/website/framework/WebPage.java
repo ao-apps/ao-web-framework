@@ -1265,7 +1265,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * // TODO: Use dcterms:
 	 *          http://stackoverflow.com/questions/6665312/is-the-copyright-meta-tag-valid-in-html5
 	 *          https://wiki.whatwg.org/wiki/MetaExtensions
-	 *          http://dublincore.org/documents/dcmi-terms/#terms-valid
+	 *          http://dublincore.org/documents/dcmi-terms/
 	 */
 	public String getCopyright(WebSiteRequest req, WebPage requestPage) throws IOException, SQLException {
 		return getParent().getCopyright(req, requestPage);
