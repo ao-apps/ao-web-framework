@@ -1261,6 +1261,11 @@ abstract public class WebPage extends ErrorReportingServlet {
 
 	/**
 	 * Gets the copyright information for this page.  Defaults to the copyright of the parent page.
+	 *
+	 * // TODO: Use dcterms:
+	 *          http://stackoverflow.com/questions/6665312/is-the-copyright-meta-tag-valid-in-html5
+	 *          https://wiki.whatwg.org/wiki/MetaExtensions
+	 *          http://dublincore.org/documents/dcmi-terms/#terms-valid
 	 */
 	public String getCopyright(WebSiteRequest req, WebPage requestPage) throws IOException, SQLException {
 		return getParent().getCopyright(req, requestPage);
