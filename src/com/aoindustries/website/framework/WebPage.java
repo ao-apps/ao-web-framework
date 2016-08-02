@@ -1,16 +1,16 @@
 /*
- * Copyright 2000-2013, 2015 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2015, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.io.AoByteArrayOutputStream;
 import com.aoindustries.encoding.ChainWriter;
+import com.aoindustries.io.AoByteArrayOutputStream;
 import com.aoindustries.security.LoginException;
-import com.aoindustries.util.ErrorPrinter;
 import com.aoindustries.util.SortedArrayList;
 import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.WrappedException;
 import gnu.regexp.RE;
 import gnu.regexp.REException;
 import java.io.File;
@@ -84,14 +84,14 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 */
 	private final List<int[]> searchCounts=new ArrayList<>();
 
-	public static RE reHTMLPattern;
+	public static final RE reHTMLPattern;
 	//private static RE reWordPattern;
 	static {
 		try {
 			reHTMLPattern = new RE("<.*?>");
 			//reWordPattern = new RE("(\\w*)");
 		} catch (REException e) {
-			ErrorPrinter.printStackTraces(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -425,7 +425,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 				List<SearchResult> results=new ArrayList<>();
 				if(words.length>0) {
 					// Perform the search
-					target.search(words, req, resp, results, new AoByteArrayOutputStream(), new SortedArrayList<WebPage>());
+					target.search(words, req, resp, results, new AoByteArrayOutputStream(), new SortedArrayList<>());
 					Collections.sort(results);
 					//StringUtility.sortObjectsAndFloatDescending(results, 1, 5);
 				}
@@ -935,7 +935,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 					webPageClassLoader==null
 					|| (
 						modified!=null
-						&& modified.longValue()!=lastModified
+						&& modified!=lastModified
 					)
 				) {
 					webPageClassLoader=new WebPageClassLoader();
@@ -944,7 +944,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 				}
 				Class<? extends WebPage> clazz=webPageClassLoader.loadClass(className).asSubclass(WebPage.class);
 				if(modified==null) {
-					classnameCache.put(className, Long.valueOf(lastModified));
+					classnameCache.put(className, lastModified);
 				}
 				return clazz;
 			}
