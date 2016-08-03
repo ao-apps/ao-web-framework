@@ -29,7 +29,7 @@ public class RedirectWebPage extends WebPage {
 	/**
 	 * Performs a redirect.
 	 *
-	 * @param  path  the path relative to the top of the application, without a preceeding slash (/)
+	 * @param  path  the context-relative path, with a preceeding slash (/)
 	 */
 	public RedirectWebPage(LoggerAccessor logAccessor, ServletContext context, WebPage parent, String path, String description, String keywords, String navImageAlt, String title) {
 		super(logAccessor);
@@ -56,12 +56,12 @@ public class RedirectWebPage extends WebPage {
 	public String getRedirectURL(WebSiteRequest req) throws IOException {
 		String lowerPath = path.toLowerCase();
 		if(lowerPath.startsWith("http:") || lowerPath.startsWith("https:")) return path;
-		return '/' + path;
+		return path;
 	}
 
 	@Override
 	public String getURLPath() {
-		return '/' + path;
+		return path;
 	}
 
 	@Override

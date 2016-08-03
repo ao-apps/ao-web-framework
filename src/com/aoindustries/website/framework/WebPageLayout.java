@@ -314,14 +314,14 @@ abstract public class WebPageLayout {
 				String[] SA = (String[]) O;
 				int len = SA.length;
 				for (int c = 0; c < len; c++) {
-					out.print("    <script type='text/javascript' src='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL(SA[c], null, false))).print("'></script>\n");
+					out.print("    <script type='text/javascript' src='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL('/'+SA[c], null, false))).print("'></script>\n");
 				}
 			} else if(O instanceof Class) {
 				out.print("    <script type='text/javascript' src='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL(((Class<?>)O).asSubclass(WebPage.class), null))).print("'></script>\n");
 			} else if(O instanceof WebPage) {
 				out.print("    <script type='text/javascript' src='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL((WebPage)O))).print("'></script>\n");
 			} else {
-				out.print("    <script type='text/javascript' src='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL(O.toString(), null, false))).print("'></script>\n");
+				out.print("    <script type='text/javascript' src='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL('/'+O.toString(), null, false))).print("'></script>\n");
 			}
 		}
 	}

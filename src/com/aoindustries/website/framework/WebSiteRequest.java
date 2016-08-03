@@ -28,7 +28,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
-import javafx.scene.control.Skin;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -336,10 +335,12 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	/**
 	 * Gets the context-relative URL, optionally with the settings embedded.
 	 * Parameters should already be URL encoded but not XML encoded.
+	 * 
+	 * @param  url  the context-relative URL
 	 */
 	public String getURL(String url, Object optParam, boolean keepSettings) throws IOException {
 		StringBuilder SB=new StringBuilder();
-		SB.append('/').append(url);
+		SB.append(url);
 		List<String> finishedParams=new SortedArrayList<>();
 		boolean alreadyAppended=appendParams(SB, optParam, finishedParams, false);
 		if(keepSettings) appendSettings(finishedParams, alreadyAppended, SB);
@@ -414,7 +415,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	/**
 	 * Gets the URL String with the given parameters embedded, keeping the current settings.
 	 *
-	 * @param  url            the URL from the top of the webapp, without any beginning slash
+	 * @param  url            the context-relative URL, with a beginning slash
 	 * @param  optParam       any number of additional parameters.  This parameter can accept several types of
 	 *                        objects.  The following is a list of supported objects and a brief description of its
 	 *                        behavior.
