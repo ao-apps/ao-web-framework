@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013, 2015 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2015, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -82,7 +82,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 						int endPos=html.indexOf(')', pos+4);
 						if(endPos==-1) throw new IllegalArgumentException("Unable to find closing parenthesis for @URL( substitution, pos="+pos);
 						String className=html.substring(pos+4, endPos);
-						out.encodeXmlAttribute(resp.encodeURL(req.getURL(className)));
+						out.encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL(className)));
 						pos=endPos+1;
 					} else if((pos+16)<len && html.substring(pos, pos+16).equalsIgnoreCase("BEGIN_LIGHT_AREA")) {
 						layout.beginLightArea(req, resp, out);
@@ -163,7 +163,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 											while((ch=reader.read())!=-1) {
 												if(ch==')') {
 													String className=buffer.toString().substring(5, buffer.length());
-													out.encodeXmlAttribute(resp.encodeURL(req.getURL(className)));
+													out.encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL(className)));
 													buffer.setLength(0);
 													break;
 												} else buffer.append((char)ch);

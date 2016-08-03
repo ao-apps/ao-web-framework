@@ -8,6 +8,7 @@ package com.aoindustries.website.framework;
 import com.aoindustries.encoding.ChainWriter;
 import com.aoindustries.io.AoByteArrayOutputStream;
 import com.aoindustries.security.LoginException;
+import com.aoindustries.servlet.http.ServletUtil;
 import com.aoindustries.util.SortedArrayList;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
@@ -310,7 +311,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 		if(!alreadyDone) {
 			String redirect=page.getRedirectURL(req);
 			if(redirect!=null) {
-				resp.sendRedirect(resp.encodeRedirectURL(redirect));
+				ServletUtil.sendRedirect(req, resp, redirect, HttpServletResponse.SC_MOVED_TEMPORARILY);
 			} else {
 				page.doGet(req, resp);
 			}
@@ -390,8 +391,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 		}
 		if(!alreadyDone) {
 			String redirect=page.getRedirectURL(req);
-			if(redirect!=null) resp.sendRedirect(resp.encodeRedirectURL(redirect));
-			else {
+			if(redirect!=null) {
+				ServletUtil.sendRedirect(req, resp, redirect, HttpServletResponse.SC_MOVED_TEMPORARILY);
+			} else {
 				if(isLogout || (req.getParameter("login_username")!=null && req.getParameter("login_password")!=null)) page.doGet(req, resp);
 				else page.doPostWithSearch(req, resp);
 			}
@@ -653,7 +655,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see  #getNavImageSuffix
 	 */
 	public String getNavImageURL(WebSiteRequest req, HttpServletResponse resp, Object params) throws IOException, SQLException {
-		return resp.encodeURL(req.getURL(this, params));
+		return resp.encodeURL(req.getContextPath()+req.getURL(this, params));
 	}
 
 	/**
@@ -746,12 +748,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 	public abstract WebPage getParent() throws IOException, SQLException;
 
 	/**
-	 * Gets the URL to direct to.  Redirection happens before specific frameset actions,
-	 * thus allowing one to redirect various frames to different places.
+	 * Gets the absolute or context-relative URL to direct to.
+	 * Redirection happens before specific frameset actions thus allowing one to redirect various frames to different places.
 	 *
-	 * TODO: allow relative urls and make absolute after response encodeRedirectUrl
-	 *
-	 * @return  the relative or absolute URL to redirect to or <code>null</code> for
+	 * @return  the context-relative or absolute URL to redirect to or <code>null</code> for
 	 *          no redirect.
 	 */
 	public String getRedirectURL(WebSiteRequest req) throws IOException, SQLException {
@@ -1199,7 +1199,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 				;
 				results.add(
 					new SearchResult(
-						req.getURL(this),
+						req.getContextPath()+req.getURL(this),
 						probability,
 						title == null ? getTitle() : title,
 						description == null ? getDescription() : description,
@@ -1274,10 +1274,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
-	 * Gets the path of for the URL relative to the top of the site.
+	 * Gets the context-relative path for the URL
 	 */
 	public String getURLPath() throws IOException, SQLException {
-		return generateURLPath(this);
+		return '/'+generateURLPath(this);
 	}
 
 	/**
@@ -1293,6 +1293,6 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * Gets the URL pattern for this page as used in <code>web.xml</code>.
 	 */
 	public String getURLPattern() throws IOException, SQLException {
-		return "/"+getURLPath();
+		return getURLPath();
 	}
 }

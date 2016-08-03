@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013, 2014, 2015 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2014, 2015, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -108,7 +108,7 @@ abstract public class TreePage extends WebPage {
 			try {
 				int imageNum=Integer.parseInt(S);
 				if(imageNum<0 || imageNum>9) {
-					req.setAttribute(TextOnlyLayout.HTTP_SERVLET_RESPONSE_STATUS, Integer.valueOf(HttpServletResponse.SC_NOT_FOUND));
+					req.setAttribute(TextOnlyLayout.HTTP_SERVLET_RESPONSE_STATUS, HttpServletResponse.SC_NOT_FOUND);
 					resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unable to find image number "+imageNum);
 				} else {
 					boolean useSmooth=useSmoothOutline(req);
@@ -123,7 +123,7 @@ abstract public class TreePage extends WebPage {
 					}
 				}
 			} catch(NumberFormatException err) {
-				req.setAttribute(TextOnlyLayout.HTTP_SERVLET_RESPONSE_STATUS, Integer.valueOf(HttpServletResponse.SC_BAD_REQUEST));
+				req.setAttribute(TextOnlyLayout.HTTP_SERVLET_RESPONSE_STATUS, HttpServletResponse.SC_BAD_REQUEST);
 				resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unable to parse image_num");
 			}
 		}
@@ -384,7 +384,7 @@ abstract public class TreePage extends WebPage {
 										} else break;
 									}
 								}
-								out.print("<img src='").encodeXmlAttribute(resp.encodeURL(req.getURL(this, "image_num="+(hasMore?1:0)))).print("' style='border:0px; display:inline; vertical-align:bottom;' width='"+IMAGE_WIDTH+"' height='"+IMAGE_HEIGHT+"' alt='' />");
+								out.print("<img src='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL(this, "image_num="+(hasMore?1:0)))).print("' style='border:0px; display:inline; vertical-align:bottom;' width='"+IMAGE_WIDTH+"' height='"+IMAGE_HEIGHT+"' alt='' />");
 							} else break;
 						}
 
@@ -430,7 +430,7 @@ abstract public class TreePage extends WebPage {
 										.print("' src='")
 										.encodeXmlAttribute(
 											resp.encodeURL(
-												req.getURL(
+												req.getContextPath()+req.getURL(
 													this,
 													"image_num="+(
 														opened[c]
@@ -445,14 +445,14 @@ abstract public class TreePage extends WebPage {
 										.print("<img src='")
 										.encodeXmlAttribute(
 											resp.encodeURL(
-												req.getURL(
+												req.getContextPath()+req.getURL(
 													this,
 													"image_num="+(hasMore ? 2 : 3)
 												)
 											)
 										).print("' style='vertical-align:bottom; border:0px; display:inline;' width='"+IMAGE_WIDTH+"' height='"+IMAGE_HEIGHT+"' alt='' />");
 								}
-								out.print("<img src='").encodeXmlAttribute(resp.encodeURL(req.getURL(this, "image_num=0"))).print("' style='vertical-align:bottom; border:0px; display:inline;' width='4' height='"+IMAGE_HEIGHT+"' alt='' /></td><td style='white-space:nowrap'>");
+								out.print("<img src='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL(this, "image_num=0"))).print("' style='vertical-align:bottom; border:0px; display:inline;' width='4' height='"+IMAGE_HEIGHT+"' alt='' /></td><td style='white-space:nowrap'>");
 							}
 
 							boolean useCodeFont=useCodeFont(req);
@@ -470,7 +470,7 @@ abstract public class TreePage extends WebPage {
 						}
 
 						out.print("</td></tr></table></td>\n"
-								+ "      <td style='white-space:nowrap; width:20px'><img src='").encodeXmlAttribute(resp.encodeURL(req.getURL(this, "image_num=0"))).print("' style='vertical-align:bottom; border:0px; display:inline;' width='20' height='1' alt='' /></td>\n"
+								+ "      <td style='white-space:nowrap; width:20px'><img src='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL(this, "image_num=0"))).print("' style='vertical-align:bottom; border:0px; display:inline;' width='20' height='1' alt='' /></td>\n"
 								+ "      <td style='white-space:nowrap'>");
 						String description=tree.get(c).getDescription();
 						if(description!=null) out.print(description);

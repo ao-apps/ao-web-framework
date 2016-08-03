@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
+import javafx.scene.control.Skin;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -304,7 +305,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 
 	/**
 	 * Gets a relative URL from a String containing a classname and optional parameters.
-	 * Parameters should already be URL encoded and have &amp; as separator.
+	 * Parameters should already be URL encoded but not XML encoded.
 	 */
 	public String getURL(String classAndParams) throws IOException, SQLException {
 		String className, params;
@@ -321,7 +322,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 
 	/**
 	 * Gets a relative URL given its classname and optional parameters.
-	 * Parameters should already be URL encoded and have &amp; as separator.
+	 * Parameters should already be URL encoded but not XML encoded.
 	 */
 	public String getURL(String classname, String params) throws IOException, SQLException {
 		try {
@@ -333,16 +334,12 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	}
 
 	/**
-	 * Gets the absolute URL String, optionally with the settings embedded.
-	 * Parameters should already be URL encoded and have &amp; as separator.
+	 * Gets the context-relative URL, optionally with the settings embedded.
+	 * Parameters should already be URL encoded but not XML encoded.
 	 */
 	public String getURL(String url, Object optParam, boolean keepSettings) throws IOException {
-		String lowerUrl = url.toLowerCase(Locale.ROOT);
 		StringBuilder SB=new StringBuilder();
-		if(!lowerUrl.startsWith("http:") && !lowerUrl.startsWith("https:")) {
-			SB.append(WebSiteFrameworkConfiguration.getBase());
-		}
-		SB.append(url);
+		SB.append('/').append(url);
 		List<String> finishedParams=new SortedArrayList<>();
 		boolean alreadyAppended=appendParams(SB, optParam, finishedParams, false);
 		if(keepSettings) appendSettings(finishedParams, alreadyAppended, SB);
@@ -379,25 +376,20 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	}
 
 	/**
-	 * Gets the absolute URL to a web page.
+	 * Gets the context-relative URL to a web page.
 	 */
 	public String getURL(WebPage page) throws IOException, SQLException {
 		return getURL(page, (Object)null);
 	}
 
 	/**
-	 * Gets the absolute URL to a web page.
-	 * Parameters should already be URL encoded and have &amp; as separator.
+	 * Gets the context-relative URL to a web page.
+	 * Parameters should already be URL encoded but not yet XML encoded.
 	 */
 	public String getURL(WebPage page, Object optParam) throws IOException, SQLException {
 		List<String> finishedParams=new SortedArrayList<>();
 		StringBuilder SB = new StringBuilder();
-		String path = page.getURLPath();
-		String lowerPath = path.toLowerCase(Locale.ROOT);
-		if(!lowerPath.startsWith("http:") && !lowerPath.startsWith("https:")) {
-			SB.append(WebSiteFrameworkConfiguration.getBase());
-		}
-		SB.append(path);
+		SB.append(page.getURLPath());
 		boolean alreadyAppended=appendParams(SB, optParam, finishedParams, false);
 		alreadyAppended=appendParams(SB, page.getURLParams(this), finishedParams, alreadyAppended);
 
@@ -407,8 +399,8 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	}
 
 	/**
-	 * Gets the absolute URL to a web page.
-	 * Parameters should already be URL encoded and have &amp; as separator.
+	 * Gets the context-relative URL to a web page.
+	 * Parameters should already be URL encoded but not yet XML encoded.
 	 */
 	public String getURL(Class<? extends WebPage> clazz, Object param) throws IOException, SQLException {
 		WebPage page=WebPage.getWebPage(sourcePage.getServletContext(), clazz, param);
@@ -426,7 +418,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 * @param  optParam       any number of additional parameters.  This parameter can accept several types of
 	 *                        objects.  The following is a list of supported objects and a brief description of its
 	 *                        behavior.
-	 *                        Parameters should already be URL encoded and have &amp; as separator.
+	 *                        Parameters should already be URL encoded but not yet XML encoded.
 	 *                        <ul>
 	 *                          <li>
 	 *                            <code>String</code> - appended to the end of the parameters, assumed to be in the

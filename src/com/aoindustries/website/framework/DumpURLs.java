@@ -1,12 +1,12 @@
 /*
- * Copyright 2000-2013, 2015 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2015, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.io.AoByteArrayOutputStream;
 import com.aoindustries.encoding.ChainWriter;
+import com.aoindustries.io.AoByteArrayOutputStream;
 import com.aoindustries.util.SortedArrayList;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -45,7 +45,7 @@ abstract public class DumpURLs extends WebPage {
 				+ "search engines:\n"
 				+ "<pre>\n");
 		WebPage page = getRootPage();
-		printURLs(req, resp, out, page, new SortedArrayList<WebPage>());
+		printURLs(req, resp, out, page, new SortedArrayList<>());
 		out.print("</pre>\n");
 	}
 
@@ -70,16 +70,16 @@ abstract public class DumpURLs extends WebPage {
 	/**
 	 * Do not include this in the search results.
 	 */
-    @Override
-    public void search(
-        String[] words,
-        WebSiteRequest req,
-        HttpServletResponse response,
-        List<SearchResult> results,
-        AoByteArrayOutputStream bytes,
-        List<WebPage> finishedPages
-    ) {
-    }
+	@Override
+	public void search(
+		String[] words,
+		WebSiteRequest req,
+		HttpServletResponse response,
+		List<SearchResult> results,
+		AoByteArrayOutputStream bytes,
+		List<WebPage> finishedPages
+	) {
+	}
 
 	@Override
 	public long getSearchLastModified() throws IOException, SQLException {
@@ -93,7 +93,7 @@ abstract public class DumpURLs extends WebPage {
 
 	private void printURLs(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, WebPage page, List<WebPage> finishedPages) throws IOException, SQLException {
 		if(!finishedPages.contains(page)) {
-			out.print("<a class='aoLightLink' href='").encodeXmlAttribute(resp.encodeURL(req.getURL(page))).print("'>").encodeXhtml(req.getURL(page)).print("</a>\n");
+			out.print("<a class='aoLightLink' href='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL(page))).print("'>").encodeXhtml(req.getContextPath()+req.getURL(page)).print("</a>\n");
 
 			finishedPages.add(page);
 

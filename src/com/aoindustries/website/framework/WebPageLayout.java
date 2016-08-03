@@ -1,12 +1,12 @@
 /*
- * Copyright 2000-2013, 2015 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2015, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.encoding.TextInJavaScriptEncoder;
 import com.aoindustries.encoding.ChainWriter;
+import com.aoindustries.encoding.TextInJavaScriptEncoder;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -287,7 +287,7 @@ abstract public class WebPageLayout {
 				TextInJavaScriptEncoder.encodeTextInJavaScript(choice, out);
 				out.print("') window.top.location.href='");
 				TextInJavaScriptEncoder.encodeTextInJavaScript(
-					resp.encodeURL(req.getURL(page, "layout="+choice)),
+					resp.encodeURL(req.getContextPath()+req.getURL(page, "layout="+choice)),
 					out
 				);
 				out.print("';\n");
@@ -314,14 +314,14 @@ abstract public class WebPageLayout {
 				String[] SA = (String[]) O;
 				int len = SA.length;
 				for (int c = 0; c < len; c++) {
-					out.print("    <script type='text/javascript' src='").encodeXmlAttribute(resp.encodeURL(req.getURL(SA[c], null, false))).print("'></script>\n");
+					out.print("    <script type='text/javascript' src='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL(SA[c], null, false))).print("'></script>\n");
 				}
 			} else if(O instanceof Class) {
-				out.print("    <script type='text/javascript' src='").encodeXmlAttribute(resp.encodeURL(req.getURL(((Class<?>)O).asSubclass(WebPage.class), null))).print("'></script>\n");
+				out.print("    <script type='text/javascript' src='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL(((Class<?>)O).asSubclass(WebPage.class), null))).print("'></script>\n");
 			} else if(O instanceof WebPage) {
-				out.print("    <script type='text/javascript' src='").encodeXmlAttribute(resp.encodeURL(req.getURL((WebPage)O))).print("'></script>\n");
+				out.print("    <script type='text/javascript' src='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL((WebPage)O))).print("'></script>\n");
 			} else {
-				out.print("    <script type='text/javascript' src='").encodeXmlAttribute(resp.encodeURL(req.getURL(O.toString(), null, false))).print("'></script>\n");
+				out.print("    <script type='text/javascript' src='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL(O.toString(), null, false))).print("'></script>\n");
 			}
 		}
 	}

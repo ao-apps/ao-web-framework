@@ -1,6 +1,3 @@
-# Base URLs
-com.aoindustries.website.framework.base=<url_prefix>
-
 # File upload settings
 com.aoindustries.website.framework.file_upload.directory=<upload_directory>
 com.aoindustries.website.framework.file_upload.max_size=1073741824

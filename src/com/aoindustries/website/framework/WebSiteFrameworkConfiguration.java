@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013, 2015 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2015, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -55,10 +55,5 @@ public final class WebSiteFrameworkConfiguration {
 
 	public static int getMaxFileUploadSize() throws IOException {
 		return Integer.parseInt(getProperty("com.aoindustries.website.framework.file_upload.max_size"));
-	}
-
-	// TODO: No longer have trailing slash in base, better don't use base at all
-	public static String getBase() throws IOException {
-		return getProperty("com.aoindustries.website.framework.base");
 	}
 }

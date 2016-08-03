@@ -1,5 +1,5 @@
 /*
- * Copyright 2007-2009, 2015 by AO Industries, Inc.,
+ * Copyright 2007-2009, 2015, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -56,12 +56,12 @@ public class RedirectWebPage extends WebPage {
 	public String getRedirectURL(WebSiteRequest req) throws IOException {
 		String lowerPath = path.toLowerCase();
 		if(lowerPath.startsWith("http:") || lowerPath.startsWith("https:")) return path;
-		return WebSiteFrameworkConfiguration.getBase() + path;
+		return '/' + path;
 	}
 
 	@Override
 	public String getURLPath() {
-		return path;
+		return '/' + path;
 	}
 
 	@Override
