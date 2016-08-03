@@ -311,7 +311,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 		if(!alreadyDone) {
 			String redirect=page.getRedirectURL(req);
 			if(redirect!=null) {
-				ServletUtil.sendRedirect(req, resp, redirect, HttpServletResponse.SC_MOVED_TEMPORARILY);
+				ServletUtil.sendRedirect(req, resp, redirect, page.getRedirectType());
 			} else {
 				page.doGet(req, resp);
 			}
@@ -392,7 +392,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 		if(!alreadyDone) {
 			String redirect=page.getRedirectURL(req);
 			if(redirect!=null) {
-				ServletUtil.sendRedirect(req, resp, redirect, HttpServletResponse.SC_MOVED_TEMPORARILY);
+				ServletUtil.sendRedirect(req, resp, redirect, page.getRedirectType());
 			} else {
 				if(isLogout || (req.getParameter("login_username")!=null && req.getParameter("login_password")!=null)) page.doGet(req, resp);
 				else page.doPostWithSearch(req, resp);
@@ -756,6 +756,13 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 */
 	public String getRedirectURL(WebSiteRequest req) throws IOException, SQLException {
 		return null;
+	}
+
+	/**
+	 * Gets the redirect type, defaults to 302 (temporary).
+	 */
+	public int getRedirectType() {
+		return HttpServletResponse.SC_MOVED_TEMPORARILY;
 	}
 
 	/**

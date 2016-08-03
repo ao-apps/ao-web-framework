@@ -21,6 +21,7 @@ public class RedirectWebPage extends WebPage {
 
 	private final WebPage parent;
 	private final String path;
+	private final int redirectType;
 	private final String description;
 	private final String keywords;
 	private final String navImageAlt;
@@ -31,11 +32,12 @@ public class RedirectWebPage extends WebPage {
 	 *
 	 * @param  path  the context-relative path, with a preceeding slash (/)
 	 */
-	public RedirectWebPage(LoggerAccessor logAccessor, ServletContext context, WebPage parent, String path, String description, String keywords, String navImageAlt, String title) {
+	public RedirectWebPage(LoggerAccessor logAccessor, ServletContext context, WebPage parent, String path, int redirectType, String description, String keywords, String navImageAlt, String title) {
 		super(logAccessor);
 		setServletContext(context);
 		this.parent = parent;
 		this.path = path;
+		this.redirectType = redirectType;
 		this.description = description;
 		this.keywords = keywords;
 		this.navImageAlt = navImageAlt;
@@ -57,6 +59,11 @@ public class RedirectWebPage extends WebPage {
 		String lowerPath = path.toLowerCase();
 		if(lowerPath.startsWith("http:") || lowerPath.startsWith("https:")) return path;
 		return path;
+	}
+
+	@Override
+	public int getRedirectType() {
+		return redirectType;
 	}
 
 	@Override
