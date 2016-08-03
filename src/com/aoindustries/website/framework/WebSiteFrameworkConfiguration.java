@@ -57,6 +57,7 @@ public final class WebSiteFrameworkConfiguration {
 		return Integer.parseInt(getProperty("com.aoindustries.website.framework.file_upload.max_size"));
 	}
 
+	// TODO: No longer have trailing slash in base, better don't use base at all
 	public static String getBase() throws IOException {
 		return getProperty("com.aoindustries.website.framework.base");
 	}

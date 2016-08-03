@@ -749,6 +749,8 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * Gets the URL to direct to.  Redirection happens before specific frameset actions,
 	 * thus allowing one to redirect various frames to different places.
 	 *
+	 * TODO: allow relative urls and make absolute after response encodeRedirectUrl
+	 *
 	 * @return  the relative or absolute URL to redirect to or <code>null</code> for
 	 *          no redirect.
 	 */
