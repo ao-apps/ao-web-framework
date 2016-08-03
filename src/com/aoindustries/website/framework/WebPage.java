@@ -335,7 +335,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 		try {
 			layout.startHTML(this, req, resp, out, null);
 			doGet(out, req, resp);
-			layout.endHTML(this, req, out);
+			layout.endHTML(this, req, resp, out);
 		} finally {
 			out.flush();
 			out.close();
@@ -434,7 +434,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 
 				layout.printSearchOutput(this, out, req, resp, query, entire_site, results, words);
 
-				layout.endHTML(this, req, out);
+				layout.endHTML(this, req, resp, out);
 			}
 		} else {
 			doPost(req, resp);
@@ -460,7 +460,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 
 			doPost(out, req, resp);
 
-			layout.endHTML(this, req, out);
+			layout.endHTML(this, req, resp, out);
 		} finally {
 			out.flush();
 			out.close();
@@ -1269,8 +1269,8 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *          https://wiki.whatwg.org/wiki/MetaExtensions
 	 *          http://dublincore.org/documents/dcmi-terms/
 	 */
-	public String getCopyright(WebSiteRequest req, WebPage requestPage) throws IOException, SQLException {
-		return getParent().getCopyright(req, requestPage);
+	public String getCopyright(WebSiteRequest req, HttpServletResponse resp, WebPage requestPage) throws IOException, SQLException {
+		return getParent().getCopyright(req, resp, requestPage);
 	}
 
 	/**

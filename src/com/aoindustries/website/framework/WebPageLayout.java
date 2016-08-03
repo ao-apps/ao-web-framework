@@ -62,6 +62,7 @@ abstract public class WebPageLayout {
 	abstract public void endHTML(
 		WebPage page,
 		WebSiteRequest req,
+		HttpServletResponse resp,
 		ChainWriter out
 	) throws IOException, SQLException;
 

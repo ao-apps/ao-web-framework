@@ -129,7 +129,7 @@ public class TextOnlyLayout extends WebPageLayout {
 				+ "    <meta name='keywords' content='").encodeXmlAttribute(page.getKeywords()).print("' />\n"
 				+ "    <meta name='description' content='").encodeXmlAttribute(page.getDescription()).print("' />\n"
 				+ "    <meta name='abstract' content='").encodeXmlAttribute(page.getDescription()).print("' />\n");
-		String copyright = page.getCopyright(req, page);
+		String copyright = page.getCopyright(req, resp, page);
 		if(copyright!=null && copyright.length()>0) {
 			out.print("    <meta name='copyright' content='").encodeXmlAttribute(copyright).print("' />\n");
 		}
@@ -265,6 +265,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	public void endHTML(
 		WebPage page,
 		WebSiteRequest req,
+		HttpServletResponse resp,
 		ChainWriter out
 	) throws IOException, SQLException {
 		out.print("        </td>\n"
@@ -421,7 +422,7 @@ public class TextOnlyLayout extends WebPageLayout {
 		out.print("  <tr><td");
 		if(totalColumns!=1) out.print(" colspan='").print(totalColumns).print('\'');
 		out.print("><hr /></td></tr>\n");
-		String copyright=page.getCopyright(req, page);
+		String copyright=page.getCopyright(req, resp, page);
 		if(copyright!=null && copyright.length()>0) {
 			out.print("  <tr><td");
 			if(totalColumns!=1) out.print(" colspan='").print(totalColumns).print('\'');

@@ -259,7 +259,7 @@ abstract public class TreePage extends WebPage {
 			// Print the new table
 			handleRequest(out, req, resp, tree, scrollToX, scrollToY, opened);
 
-			layout.endHTML(this, req, out);
+			layout.endHTML(this, req, resp, out);
 		} finally {
 			out.flush();
 			out.close();
