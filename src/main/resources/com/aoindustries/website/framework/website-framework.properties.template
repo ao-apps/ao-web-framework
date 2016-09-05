@@ -1,0 +1,39 @@
+#
+# aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
+# Copyright (C) 2000-2009, 2015, 2016  AO Industries, Inc.
+#     support@aoindustries.com
+#     7262 Bull Pen Cir
+#     Mobile, AL 36695
+#
+# This file is part of aoweb-framework.
+#
+# aoweb-framework is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# aoweb-framework is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with aoweb-framework.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+# File upload settings
+com.aoindustries.website.framework.file_upload.directory=<upload_directory>
+com.aoindustries.website.framework.file_upload.max_size=1073741824
+
+# Dynamic classloading
+com.aoindustries.website.framework.use_website_caching=<false for development or true for production>
+com.aoindustries.website.framework.directory.servlet=<directory containing source code for development>
+
+# Prefixes that will not by dynamically loaded when use_website_caching is false
+com.aoindustries.website.framework.classloader.static=com.aoindustries.website.framework.,com.aoindustries.website.WebSiteConfiguration,com.aoindustries.website.db.WebSiteDatabase,com.aoindustries.website.AOWebSiteRequest,com.aoindustries.website.BusinessAdministratorConfiguration,com.aoindustries.website.BusinessAdministratorUser,com.aoindustries.website.BusinessAdministratorRequest,com.aoindustries.website.clientarea.webmail.AttachmentCacheEntry,com.aoindustries.website.clientarea.webmail.AttachmentRequest,com.aoindustries.website.clientarea.webmail.LinuxServerAccountRequest,com.aoindustries.website.clientarea.webmail.LinuxServerAccountUser,com.aoindustries.website.clientarea.webmail.MessageComparator,com.aoindustries.website.clientarea.accounting.DecryptionCacheEntry,com.aoindustries.website.clientarea.accounting.Encryption,com.aoindustries.website.clientarea.accounting.CreditCardValidator
+
+# Prefixes that will be dynamically loaded
+com.aoindustries.website.framework.classloader.dynamic=com.aoindustries.website.
+
+# Write to System.err in addition to calling the regular log methods
+com.aoindustries.website.framework.log_to_system_err=true
