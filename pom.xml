@@ -36,6 +36,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 	<name>AOWeb Framework</name>
 	<url>https://www.aoindustries.com/docs/aoweb-framework/</url>
 	<description>Legacy servlet-based web framework, superfast and capable but tedious to use.</description>
+	<inceptionYear>2000</inceptionYear>
 
 	<licenses>
 		<license>
@@ -43,6 +44,11 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 			<url>https://www.gnu.org/licenses/lgpl-3.0.txt</url>
 		</license>
 	</licenses>
+
+	<organization>
+		<name>AO Industries, Inc.</name>
+		<url>https://www.aoindustries.com/</url>
+	</organization>
 
 	<developers>
 		<developer>
