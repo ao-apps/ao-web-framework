@@ -25,7 +25,6 @@ package com.aoindustries.website.framework;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.sql.SQLException;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -229,12 +228,12 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 		getLogger().log(Level.SEVERE, message, err);
 	}
 
-	private static final Random random = new SecureRandom();
+	private static final SecureRandom secureRandom = new SecureRandom();
 
 	/**
 	 * @see  WebSiteRequest#getRandom()
 	 */
-	static Random getRandom() {
-		return random;
+	static SecureRandom getRandom() {
+		return secureRandom;
 	}
 }

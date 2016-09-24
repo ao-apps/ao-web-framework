@@ -60,7 +60,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	/**
 	 * Gets the random number generator used for this request.
 	 */
-	public Random getRandom() throws IOException {
+	public Random getRandom() {
 		return ErrorReportingServlet.getRandom();
 	}
 
