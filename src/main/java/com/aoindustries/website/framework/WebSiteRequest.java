@@ -70,7 +70,8 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 		else return filename.substring(pos+1);
 	}
 
-	private static final Object mimeTypeLock=new Object();
+	private static class MimeTypeLock {}
+	private static final MimeTypeLock mimeTypeLock=new MimeTypeLock();
 	private static Map<String,String> mimeTypes;
 	private static String getContentType(MultipartRequest mreq, String filename) throws IOException {
 		synchronized(mimeTypeLock) {

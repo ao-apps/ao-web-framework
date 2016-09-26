@@ -37,7 +37,8 @@ final public class UploadedFile {
 	final private long create_time;
 	final private WebSiteUser owner;
 	final private String contentType;
-	final private Object lastAccessLock=new Object();
+	private static class LastAccessLock {}
+	final private LastAccessLock lastAccessLock=new LastAccessLock();
 	private long lastAccessed;
 
 	UploadedFile(String filename, File storageFile, WebSiteUser owner, String contentType) {
