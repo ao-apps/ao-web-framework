@@ -196,12 +196,18 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 								}
 							} catch(ThreadDeath TD) {
 								throw TD;
-							} catch(RuntimeException | InterruptedException | IOException T) {
+							} catch(InterruptedException err) {
+								loggerAccessor.getLogger(servletContext, getClass().getName()).log(Level.WARNING, null, err);
+								// Restore the interrupted status
+								Thread.currentThread().interrupt();
+							} catch(RuntimeException | IOException T) {
 								loggerAccessor.getLogger(servletContext, getClass().getName()).log(Level.SEVERE, null, T);
 								try {
 									sleep(60*1000);
 								} catch(InterruptedException err) {
 									loggerAccessor.getLogger(servletContext, getClass().getName()).log(Level.WARNING, null, err);
+									// Restore the interrupted status
+									Thread.currentThread().interrupt();
 								}
 							}
 						}
