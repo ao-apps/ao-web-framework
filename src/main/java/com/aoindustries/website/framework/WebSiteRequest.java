@@ -32,6 +32,7 @@ import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.FileRenamePolicy;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
@@ -56,6 +57,27 @@ import javax.servlet.http.HttpServletResponse;
  * @author  AO Industries, Inc.
  */
 public class WebSiteRequest extends HttpServletRequestWrapper implements FileRenamePolicy {
+
+	private static final int MAX_UPLOAD_SIZE = 1073741824;
+
+	/**
+	 * Gets the upload directory.
+	 */
+	private static File getFileUploadDirectory(ServletContext servletContext) throws FileNotFoundException {
+		File uploadDir = new File(
+			(File)servletContext.getAttribute(ServletContext.TEMPDIR),
+			"uploads"
+		);
+		if(
+			!uploadDir.exists()
+			&& !uploadDir.mkdirs()
+			// Check exists again, another thread may have created it and interfered with mkdirs
+			&& !uploadDir.exists()
+		) {
+			throw new FileNotFoundException(uploadDir.getPath());
+		}
+		return uploadDir;
+	}
 
 	/**
 	 * Gets the random number generator used for this request.
@@ -159,7 +181,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 											}
 										}
 										// Delete the files that do not have an uploadedFile entry and are at least two hours old
-										File dir=WebSiteFrameworkConfiguration.getFileUploadDirectory();
+										File dir=getFileUploadDirectory(servletContext);
 										String[] list=dir.list();
 										if(list!=null) {
 											for(String filename : list) {
@@ -240,7 +262,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 		if (contentType!=null && contentType.length()>=19 && contentType.substring(0,19).equals("multipart/form-data")) {
 			boolean keepFiles=false;
 			try {
-				mreq = new MultipartRequest(req, WebSiteFrameworkConfiguration.getFileUploadDirectory().getPath(), WebSiteFrameworkConfiguration.getMaxFileUploadSize(), this);
+				mreq = new MultipartRequest(req, getFileUploadDirectory(getServletContext()).getPath(), MAX_UPLOAD_SIZE, this);
 				try {
 					// Determine the authentication info
 					WebSiteUser user=getWebSiteUser(null);
@@ -390,7 +412,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	@Override
 	@SuppressWarnings("unchecked")
 	public Enumeration<String> getParameterNames() {
-		if (mreq==null) return (Enumeration<String>)req.getParameterNames();
+		if (mreq==null) return req.getParameterNames();
 		return (Enumeration<String>)mreq.getParameterNames();
 	}
 
@@ -557,7 +579,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	public File rename(File file) {
 		try {
 			while(true) {
-				File newFile=new File(WebSiteFrameworkConfiguration.getFileUploadDirectory(), String.valueOf(getNextID()));
+				File newFile=new File(getFileUploadDirectory(getServletContext()), String.valueOf(getNextID()));
 				if(!newFile.exists()) return newFile;
 			}
 		} catch(IOException err) {
