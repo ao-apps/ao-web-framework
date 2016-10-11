@@ -226,13 +226,13 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see  ErrorReportingServlet#getUptime()
 	 */
 	protected final long getClassLastModified() throws IOException, SQLException {
-		String dir=WebSiteFrameworkConfiguration.getServletDirectory();
+		String dir=getServletContext().getRealPath("/WEB-INF/classes");
 		if(dir!=null && dir.length()>0) {
 			// Try to get from the class file
 			long lastMod=new File(dir, getClass().getName().replace('.', File.separatorChar) + ".class").lastModified();
 			if(lastMod!=0 && lastMod!=-1) return lastMod;
 		}
-		return getClassLoaderUptime();
+		return getUptime();
 	}
 
 	/**
@@ -752,11 +752,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see  #getWebPages(WebSiteRequest)
 	 */
 	synchronized public WebPage[] getCachedPages(WebSiteRequest req) throws IOException, SQLException {
-		if(WebSiteFrameworkConfiguration.useWebSiteCaching()) {
-			WebPage[] myPages=this.pages;
-			if(myPages==null) myPages=this.pages=getWebPages(req);
-			return myPages;
-		} else return getWebPages(req);
+		WebPage[] myPages=this.pages;
+		if(myPages==null) myPages=this.pages=getWebPages(req);
+		return myPages;
 	}
 
 	/**
@@ -838,10 +836,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see  #isHandler(WebSiteRequest)
 	 */
 	public static WebPage getWebPage(ServletContext context, Class<? extends WebPage> clazz, WebSiteRequest req) throws IOException {
-		if(context==null) throw new IllegalArgumentException("context is null");
-		String classname=clazz.getName();
-		boolean use_caching=WebSiteFrameworkConfiguration.useWebSiteCaching();
-		if(use_caching) {
+		synchronized(webPageCache) {
+			if(context==null) throw new IllegalArgumentException("context is null");
+			String classname=clazz.getName();
 			// First look for a match in the cache
 			List<WebPage> list=webPageCache.get(classname);
 			if(list!=null) {
@@ -851,22 +848,18 @@ abstract public class WebPage extends ErrorReportingServlet {
 					if(page.getClass()==clazz && page.isHandler(req)) return page;
 				}
 			}
-		}
 
-		// Make a new instance and store in cache
-		try {
-			if(!use_caching) clazz=loadClass(classname);
-			Constructor<? extends WebPage> con=clazz.getConstructor(getWebPageRequestParams);
-			WebPage page=con.newInstance(new Object[] {req});
-			page.setServletContext(context);
-			if(use_caching) {
-				List<WebPage> list=webPageCache.get(classname);
+			// Make a new instance and store in cache
+			try {
+				Constructor<? extends WebPage> con=clazz.getConstructor(getWebPageRequestParams);
+				WebPage page=con.newInstance(new Object[] {req});
+				page.setServletContext(context);
 				if(list==null) webPageCache.put(classname, list=new ArrayList<>());
 				list.add(page);
+				return page;
+			} catch (ClassCastException | IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+				throw new IOException("Unable to getWebPage: "+clazz.getName()+", classname="+classname+", req="+req, e);
 			}
-			return page;
-		} catch (ClassNotFoundException | ClassCastException | IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-			throw new IOException("Unable to getWebPage: "+clazz.getName()+", classname="+classname+", req="+req, e);
 		}
 	}
 
@@ -897,9 +890,8 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see  #isHandler(Object)
 	 */
 	public static WebPage getWebPage(ServletContext context, Class<? extends WebPage> clazz, Object params) throws IOException {
-		String classname=clazz.getName();
-		boolean use_caching=WebSiteFrameworkConfiguration.useWebSiteCaching();
-		if(use_caching) {
+		synchronized(webPageCache) {
+			String classname=clazz.getName();
 			// First look for a match in the cache
 			List<WebPage> list=webPageCache.get(classname);
 			if(list!=null) {
@@ -910,73 +902,26 @@ abstract public class WebPage extends ErrorReportingServlet {
 					if(page.getClass()==clazz && page.isHandler(params)) return page;
 				}
 			}
-		}
 
-		// Make a new instance and store in cache
-		try {
-			if(!use_caching) clazz=loadClass(classname);
-			Constructor<? extends WebPage> con=clazz.getConstructor(getWebPageObjectParams);
-			WebPage page=con.newInstance(new Object[] {params});
-			page.setServletContext(context);
-			if(use_caching) {
-				List<WebPage> list=webPageCache.get(classname);
+			// Make a new instance and store in cache
+			try {
+				Constructor<? extends WebPage> con=clazz.getConstructor(getWebPageObjectParams);
+				WebPage page=con.newInstance(new Object[] {params});
+				page.setServletContext(context);
 				if(list==null) webPageCache.put(classname, list=new ArrayList<>());
 				list.add(page);
+				return page;
+			} catch (ClassCastException | IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+				throw new IOException("Unable to getWebPage: "+clazz.getName()+", classname="+classname+", params="+params, e);
 			}
-			return page;
-		} catch (ClassNotFoundException | ClassCastException | IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-			throw new IOException("Unable to getWebPage: "+clazz.getName()+", classname="+classname+", params="+params, e);
 		}
 	}
-
-	/**
-	 * Gets the time that the classloader was instantiated.  This will indicate
-	 * the modified time of classes that are dynamically loaded.
-	 */
-	public static long getClassLoaderUptime() {
-		WebPageClassLoader loader=webPageClassLoader;
-		if(loader!=null) return WebPageClassLoader.getUptime();
-		return getUptime();
-	}
-
-	private static WebPageClassLoader webPageClassLoader;
-	private static Map<String,Long> classnameCache=new HashMap<>();
 
 	/**
 	 * Dynamically loads new classes based on the source .class file's modified time.
 	 */
-	synchronized public static Class<? extends WebPage> loadClass(String className) throws ClassNotFoundException {
-		try {
-			if(WebSiteFrameworkConfiguration.useWebSiteCaching()) {
-				return Class.forName(className).asSubclass(WebPage.class);
-			} else {
-				// Find the directory to work in
-				File dir=new File(WebSiteFrameworkConfiguration.getServletDirectory());
-				File file=new File(dir, className.replace('.', '/') + ".class");
-				long lastModified=file.lastModified();
-
-				// Look in the cache for an existing class
-				Long modified=classnameCache.get(className);
-				if(
-					webPageClassLoader==null
-					|| (
-						modified!=null
-						&& modified!=lastModified
-					)
-				) {
-					webPageClassLoader=new WebPageClassLoader();
-					classnameCache.clear();
-					modified=null;
-				}
-				Class<? extends WebPage> clazz=webPageClassLoader.loadClass(className).asSubclass(WebPage.class);
-				if(modified==null) {
-					classnameCache.put(className, lastModified);
-				}
-				return clazz;
-			}
-		} catch(IOException err) {
-			throw new ClassNotFoundException("Unable to loadClass: "+className, err);
-		}
+	public static Class<? extends WebPage> loadClass(String className) throws ClassNotFoundException {
+		return Class.forName(className).asSubclass(WebPage.class);
 	}
 
 	/**

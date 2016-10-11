@@ -155,7 +155,7 @@ abstract public class TreePage extends WebPage {
 	public long getLastModified(WebSiteRequest req) {
 		if(req==null) return -1;
 		String S=req.getParameter("image_num");
-		return S==null?-1:getClassLoaderUptime();
+		return S==null?-1:getUptime();
 	}
 
 	@Override
