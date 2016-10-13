@@ -10,13 +10,13 @@ https://www.aoindustries.com/aoweb-framework/
 ## Github
 https://github.com/aoindustries/aoweb-framework
 ## The Central Repository
-http://search.maven.org/#search|ga|1|g%3A%22com.aoindustries%22%20AND%20a%3A%22aoweb-framework%22
+http://search.maven.org/#search|gav|1|g:%22com.aoindustries%22%20AND%20a:%22aoweb-framework%22
 ## Contact Us
 For questions or support, please contact:
 
     AO Industries, Inc.
     7262 Bull Pen Cir
-    Mobile, AL 36695
+    Mobile, AL 36695, USA
 
     Email: support@aoindustries.com
-    Phone: (251)607-9556
+    Phone: +1(251)607-9556
