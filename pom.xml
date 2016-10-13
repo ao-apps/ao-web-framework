@@ -34,7 +34,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 	<packaging>jar</packaging>
 
 	<name>AOWeb Framework</name>
-	<url>https://www.aoindustries.com/docs/aoweb-framework/</url>
+	<url>https://www.aoindustries.com/aoweb-framework/</url>
 	<description>Legacy servlet-based web framework, superfast and capable but tedious to use.</description>
 	<inceptionYear>2000</inceptionYear>
 
@@ -244,8 +244,8 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 							<links>
 								<link>http://docs.oracle.com/javaee/6/api/</link>
 								<link>http://www.servlets.com/cos/javadoc/</link>
-								<link>https://www.aoindustries.com/docs/ao-encoding/</link>
-								<link>https://www.aoindustries.com/docs/aocode-public/</link>
+								<link>https://www.aoindustries.com/ao-encoding/apidocs/</link>
+								<link>https://www.aoindustries.com/aocode-public/apidocs/</link>
 							</links>
 						</configuration>
 						<executions>
