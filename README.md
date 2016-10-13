@@ -7,7 +7,7 @@ since 1999, we have been moving away from it to more developer-friendly
 systems.  This is not recommended for newer projects, as other alternatives
 exist, such as [SemanticCMS Core](https://semanticcms.com/core/).
 
-## Resources
+## Project Links
 * [Project Home](https://www.aoindustries.com/aoweb-framework/)
 * [API Docs](https://www.aoindustries.com/aoweb-framework/apidocs/)
 * [Maven Central Repository](http://search.maven.org/#search|gav|1|g:%22com.aoindustries%22%20AND%20a:%22aoweb-framework%22)
