@@ -5,7 +5,7 @@ Legacy servlet-based web framework, superfast and capable but tedious to use.
 This is a legacy servlet-based web framework.  Although it has served us well
 since 1999, we have been moving away from it to more developer-friendly
 systems.  This is not recommended for newer projects, as other alternatives
-exist, such as [SemanticCMS](https://semanticcms.com/).
+exist, such as [SemanticCMS Core](https://semanticcms.com/core/).
 
 ## Resources
 * [Project Home](https://www.aoindustries.com/aoweb-framework/)
