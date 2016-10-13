@@ -17,6 +17,6 @@ exist, such as [SemanticCMS Core](https://semanticcms.com/core/).
 For questions or support, please [contact us](https://www.aoindustries.com/contact):
 
 Email: [support@aoindustries.com](mailto:support@aoindustries.com)  
-Phone: [1-800-519-9541](tel:1-800-519-9541)  
-Phone: [+1-251-607-9556](tel:+1-251-607-9556)  
+Phone: <a href="tel:1-800-519-9541">1-800-519-9541</a>  
+Phone: <a href="tel:+1-251-607-9556">+1-251-607-9556</a>  
 Web: https://www.aoindustries.com/contact
