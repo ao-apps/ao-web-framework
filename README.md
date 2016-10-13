@@ -18,4 +18,4 @@ For questions or support, please [contact us](https://www.aoindustries.com/conta
 
 Email: [support@aoindustries.com](mailto:support@aoindustries.com)  
 Phone: [+1-251-607-9556](tel:+1-251-607-9556)  
-Web: https://www.aoindustries.com/contact.do
+Web: https://www.aoindustries.com/contact
