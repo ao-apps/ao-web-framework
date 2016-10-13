@@ -9,8 +9,8 @@ exist, such as [SemanticCMS](https://semanticcms.com/).
 
 ## Resources
 * [Project Home](https://www.aoindustries.com/aoweb-framework/)
-* [Maven Central Repository](http://search.maven.org/#search|gav|1|g:%22com.aoindustries%22%20AND%20a:%22aoweb-framework%22)
 * [API Docs](https://www.aoindustries.com/aoweb-framework/apidocs/)
+* [Maven Central Repository](http://search.maven.org/#search|gav|1|g:%22com.aoindustries%22%20AND%20a:%22aoweb-framework%22)
 * [GitHub](https://github.com/aoindustries/aoweb-framework)
 
 ## Contact Us
