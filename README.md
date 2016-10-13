@@ -21,4 +21,4 @@ AO Industries, Inc.
 Mobile, AL 36695, USA  
   
 Email: [support@aoindustries.com](mailto:support@aoindustries.com)  
-Phone: [+1(251)607-9556](tel:+1-251-607-9556)
+Phone: [+1-251-607-9556](tel:+1-251-607-9556)
