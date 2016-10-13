@@ -1,4 +1,4 @@
-# <img src="ao-logo.png" alt="AO Logo" width="28" height="32">](https://www.aoindustries.com/) [AOWeb Framework](https://www.aoindustries.com/aoweb-framework/)
+# [<img src="ao-logo.png" alt="AO Logo" width="35" height="40">](https://www.aoindustries.com/) [AOWeb Framework](https://www.aoindustries.com/aoweb-framework/)
 Legacy servlet-based web framework, superfast and capable but tedious to use.
 
 ## Summary
