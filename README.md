@@ -14,7 +14,7 @@ exist, such as [SemanticCMS](https://semanticcms.com/).
 * [GitHub](https://github.com/aoindustries/aoweb-framework)
 
 ## Contact Us
-For questions or support, please [contact us](https://www.aoindustries.com/contact.do):
+For questions or support, please [contact us](https://www.aoindustries.com/contact):
 
 Email: [support@aoindustries.com](mailto:support@aoindustries.com)  
 Phone: [+1-251-607-9556](tel:+1-251-607-9556)  
