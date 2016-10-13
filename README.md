@@ -1,3 +1,5 @@
+[![AO Logo](/ao-logo.png)](https://www.aoindustries.com/)
+Format: ![Alt Text](url)
 # [AOWeb Framework](https://www.aoindustries.com/aoweb-framework/)
 Legacy servlet-based web framework, superfast and capable but tedious to use.
 
