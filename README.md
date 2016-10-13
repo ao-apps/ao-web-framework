@@ -16,10 +16,6 @@ exist, such as [SemanticCMS](https://semanticcms.com/).
 ## Contact Us
 For questions or support, please [contact us](https://www.aoindustries.com/contact.do):
 
-AO Industries, Inc.  
-7262 Bull Pen Cir  
-Mobile, AL 36695, USA  
-  
+Web: https://www.aoindustries.com/contact.do  
 Email: [support@aoindustries.com](mailto:support@aoindustries.com)  
-Phone: [+1-251-607-9556](tel:+1-251-607-9556)  
-Web: https://www.aoindustries.com/contact.do
+Phone: [+1-251-607-9556](tel:+1-251-607-9556)
