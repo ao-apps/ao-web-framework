@@ -1,5 +1,4 @@
-[![AO Logo](/ao-logo.png)](https://www.aoindustries.com/)
-Format: ![Alt Text](url)
+[<img style="float:right" src="ao-logo.png" width="105" height="120" alt="AO Logo" />](https://www.aoindustries.com/)
 # [AOWeb Framework](https://www.aoindustries.com/aoweb-framework/)
 Legacy servlet-based web framework, superfast and capable but tedious to use.
 
