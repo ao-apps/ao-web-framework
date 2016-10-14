@@ -296,12 +296,12 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		<dependency>
 			<groupId>com.aoindustries</groupId>
 			<artifactId>ao-encoding</artifactId>
-			<version>1.4.0</version>
+			<version>1.4.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.aoindustries</groupId>
 			<artifactId>aocode-public</artifactId>
-			<version>1.8.0</version>
+			<version>1.8.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
