@@ -130,6 +130,9 @@ public class TextOnlyLayout extends WebPageLayout {
 		// Default style language
 		out.print("<meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n"
 				+ "    <title>");
+		// No more page stack, just show current page only
+		out.encodeXhtml(page.getTitle());
+		/*
 		List<WebPage> parents=new ArrayList<>();
 		WebPage parent=page;
 		while(parent!=null) {
@@ -141,6 +144,7 @@ public class TextOnlyLayout extends WebPageLayout {
 			parent=parents.get(c);
 			out.encodeXhtml(parent.getTitle());
 		}
+		*/
 		out.print("</title>\n"
 				+ "    <meta http-equiv='Content-Type' content='text/html; charset=").encodeXmlAttribute(resp.getCharacterEncoding()).print("' />\n"
 				+ "    <meta name='keywords' content='").encodeXmlAttribute(page.getKeywords()).print("' />\n"
@@ -211,8 +215,9 @@ public class TextOnlyLayout extends WebPageLayout {
 				+ "          <hr />\n"
 				+ "          <b>Current Location</b><br />\n"
 				+ "          <div style='white-space:nowrap'>\n");
-		parents.clear();
-		parent=page;
+		List<WebPage> parents=new ArrayList<>();
+		//parents.clear();
+		WebPage parent=page;
 		while(parent!=null) {
 			if(parent.showInLocationPath(req)) parents.add(parent);
 			parent=parent.getParent();
