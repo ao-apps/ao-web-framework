@@ -30,7 +30,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 
 	<groupId>com.aoindustries</groupId>
 	<artifactId>aoweb-framework</artifactId>
-	<version>1.2.1-SNAPSHOT</version>
+	<version>1.2.1</version>
 	<packaging>jar</packaging>
 
 	<name>AOWeb Framework</name>
@@ -63,7 +63,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		<connection>scm:git:git://github.com/aoindustries/aoweb-framework.git</connection>
 		<developerConnection>scm:git:git@github.com:aoindustries/aoweb-framework.git</developerConnection>
 		<url>http://github.com/aoindustries/aoweb-framework</url>
-		<tag>HEAD</tag>
+		<tag>aoweb-framework-1.2.1</tag>
 	</scm>
 
 	<repositories>
