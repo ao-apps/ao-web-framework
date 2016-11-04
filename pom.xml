@@ -44,7 +44,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 	</properties>
 
 	<name>AOWeb Framework</name>
-	<url>https://www.aoindustries.com${bookPath}/</url><!-- Can't inherit due to multi-module -->
+	<url>https://aoindustries.com${bookPath}/</url><!-- Can't inherit due to multi-module -->
 	<description>Legacy servlet-based web framework, superfast and capable but tedious to use.</description>
 	<inceptionYear>2000</inceptionYear>
 
@@ -84,8 +84,8 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 							<links>
 								<link>https://docs.oracle.com/javaee/6/api/</link>
 								<link>http://www.servlets.com/cos/javadoc/</link>
-								<link>https://www.aoindustries.com/ao-encoding/apidocs/</link>
-								<link>https://www.aoindustries.com/aocode-public/apidocs/</link>
+								<link>https://aoindustries.com/ao-encoding/apidocs/</link>
+								<link>https://aoindustries.com/aocode-public/apidocs/</link>
 							</links>
 						</configuration>
 					</plugin>
