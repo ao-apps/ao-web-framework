@@ -73,23 +73,25 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 	</build>
 
 	<profiles>
-		<profile> 
+		<profile>
 			<id>release</id>
 			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<configuration>
-							<links>
-								<link>https://docs.oracle.com/javaee/6/api/</link>
-								<link>http://www.servlets.com/cos/javadoc/</link>
-								<link>https://aoindustries.com/ao-encoding/apidocs/</link>
-								<link>https://aoindustries.com/aocode-public/apidocs/</link>
-							</links>
-						</configuration>
-					</plugin>
-				</plugins>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-javadoc-plugin</artifactId>
+							<configuration>
+								<links>
+									<link>https://docs.oracle.com/javaee/6/api/</link>
+									<link>http://www.servlets.com/cos/javadoc/</link>
+									<link>https://aoindustries.com/ao-encoding/apidocs/</link>
+									<link>https://aoindustries.com/aocode-public/apidocs/</link>
+								</links>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
 			</build>
 		</profile>
 	</profiles>
