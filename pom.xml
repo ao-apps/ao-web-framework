@@ -44,7 +44,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 	</properties>
 
 	<name>AOWeb Framework</name>
-	<url>https://aoindustries.com${bookPath}/</url><!-- Can't inherit due to multi-module -->
+	<url>https://aoindustries.com/${project.artifactId}/</url>
 	<description>Legacy servlet-based web framework, superfast and capable but tedious to use.</description>
 	<inceptionYear>2000</inceptionYear>
 
