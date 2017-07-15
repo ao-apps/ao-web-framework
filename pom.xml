@@ -83,7 +83,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 							<artifactId>maven-javadoc-plugin</artifactId>
 							<configuration>
 								<links>
-									<link>https://docs.oracle.com/javaee/6/api/</link>
+									<link>${javac.link.javaeeApi.6}</link>
 									<link>http://www.servlets.com/cos/javadoc/</link>
 									<link>https://aoindustries.com/ao-encoding/apidocs/</link>
 									<link>https://aoindustries.com/ao-lang/apidocs/</link>
