@@ -40,6 +40,8 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		<!-- These values are copied from the project being documented -->
 		<documented.groupId>com.aoindustries</documented.groupId>
 		<documented.artifactId>aoweb-framework</documented.artifactId>
+		<documented.javaVersion>1.8</documented.javaVersion>
+		<documented.javac.link.javaApi>${javac.link.javaApi.jdk18}</documented.javac.link.javaApi>
 		<documented.name>AOWeb Framework</documented.name>
 		<documented.url>https://aoindustries.com/${documented.artifactId}/</documented.url>
 		<documented.description>Legacy servlet-based web framework, superfast and capable but tedious to use.</documented.description>
@@ -99,6 +101,11 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 					<artifactId>jstl-api</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.aoindustries</groupId>
+			<artifactId>ao-badges</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.aoindustries</groupId>
