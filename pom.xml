@@ -64,6 +64,12 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 				<version>2.4</version>
 				<configuration>
 					<excludes>
+						<!-- Stay on Java EE Web API 6 -->
+						<exclude>javax.servlet:javax.servlet-api</exclude>
+						<exclude>javax.el:javax.el-api</exclude>
+						<exclude>javax.servlet.jsp:javax.servlet.jsp-api</exclude>
+						<exclude>javax.servlet:jstl</exclude>
+						<exclude>org.glassfish.web:jstl-impl</exclude>
 						<!-- Versions are out of order by Maven rules, and no new versions will be released -->
 						<exclude>com.servlets:cos</exclude>
 					</excludes>
