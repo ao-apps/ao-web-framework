@@ -37,7 +37,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T22:08:31-0500"
-		dateModified="2017-07-20T09:01:05-0500"
+		dateModified="2017-08-09T04:28:48-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoweb-framework:pom.version}" />
@@ -52,7 +52,14 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 				groupId="@{documented.groupId}"
 				artifactId="@{documented.artifactId}"
 				scmUrl="@{documented.scm.url}"
-			/>
+			>
+				<ul>
+					<li>
+						Removed uses of <ao:a rel="nofollow" href="@{javac.link.javaApi}java/io/File#deleteOnExit--">File.deleteOnExit()</ao:a>
+						to avoid a <ao:a href="https://bugs.openjdk.java.net/browse/JDK-4872014">JDK memory leak</ao:a> in long-running applications.
+					</li>
+				</ul>
+			</changelog:release>
 		</c:if>
 
 		<changelog:release

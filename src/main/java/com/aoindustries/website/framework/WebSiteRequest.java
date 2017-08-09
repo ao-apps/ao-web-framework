@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2014, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2014, 2015, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -276,7 +276,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 							String filename=E.nextElement();
 							File file=mreq.getFile(filename);
 							if(file!=null) {
-								file.deleteOnExit();
+								// Not necessary since there is a clean-up thread: file.deleteOnExit(); // JDK implementation builds an ever-growing set
 								UploadedFile uf=new UploadedFile(
 									mreq.getOriginalFileName(filename),
 									file,
