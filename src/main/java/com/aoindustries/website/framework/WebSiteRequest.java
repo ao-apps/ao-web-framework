@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2014, 2015, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2014, 2015, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -220,16 +220,12 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 								throw TD;
 							} catch(InterruptedException err) {
 								loggerAccessor.getLogger(servletContext, getClass().getName()).log(Level.WARNING, null, err);
-								// Restore the interrupted status
-								Thread.currentThread().interrupt();
 							} catch(RuntimeException | IOException T) {
 								loggerAccessor.getLogger(servletContext, getClass().getName()).log(Level.SEVERE, null, T);
 								try {
 									sleep(60*1000);
 								} catch(InterruptedException err) {
 									loggerAccessor.getLogger(servletContext, getClass().getName()).log(Level.WARNING, null, err);
-									// Restore the interrupted status
-									Thread.currentThread().interrupt();
 								}
 							}
 						}
