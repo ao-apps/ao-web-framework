@@ -1,4 +1,4 @@
-# [<img src="ao-logo.png" alt="AO Logo" width="35" height="40">](https://aoindustries.com/) [AOWeb Framework](https://aoindustries.com/aoweb-framework/)
+# [<img src="ao-logo.png" alt="AO Logo" width="35" height="40">](https://github.com/aoindustries) [AOWeb Framework](https://github.com/aoindustries/aoweb-framework)
 <p>
 	<a href="https://aoindustries.com/life-cycle#project-current-stable">
 		<img src="https://aoindustries.com/ao-badges/project-current-stable.svg" alt="project: current stable" />
@@ -30,7 +30,7 @@ Legacy servlet-based web framework, superfast and capable but tedious to use.
 This is a legacy servlet-based web framework.  Although it has served us well
 since 1999, we have been moving away from it to more developer-friendly
 systems.  This is not recommended for newer projects, as other alternatives
-exist, such as [SemanticCMS Core](https://semanticcms.com/core/).
+exist, such as [SemanticCMS Core](https://github.com/aoindustries/semanticcms-core).
 
 ## Project Links
 * [Project Home](https://aoindustries.com/aoweb-framework/)
