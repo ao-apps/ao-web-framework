@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
-Copyright (C) 2016, 2017, 2018  AO Industries, Inc.
+Copyright (C) 2016, 2017, 2018, 2019  AO Industries, Inc.
     support@aoindustries.com
     7262 Bull Pen Cir
     Mobile, AL 36695
@@ -34,9 +34,9 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 
 	<properties>
 		<javaVersion>1.8</javaVersion>
-		<compiler.bootclasspath>${bootclasspath.jdk18}</compiler.bootclasspath>
-		<javac.bootclasspath>${bootclasspath.jdk18}</javac.bootclasspath>
-		<javac.link.javaApi>${javac.link.javaApi.jdk18}</javac.link.javaApi>
+		<compiler.bootclasspath>${bootclasspath.jdk8}</compiler.bootclasspath>
+		<javac.bootclasspath>${bootclasspath.jdk8}</javac.bootclasspath>
+		<javac.link.javaApi>${javac.link.javaApi.jdk8}</javac.link.javaApi>
 	</properties>
 
 	<name>AOWeb Framework</name>
