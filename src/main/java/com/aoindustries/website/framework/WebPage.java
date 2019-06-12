@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2015, 2016, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -222,7 +222,6 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * Gets the last modified time of the java class file.  If the class file is
 	 * unavailable, it defaults to the time the servlets were loaded.
 	 *
-	 * @see  WebSiteFrameworkConfiguration#getServletDirectory
 	 * @see  ErrorReportingServlet#getUptime()
 	 */
 	protected final long getClassLastModified() throws IOException, SQLException {
@@ -748,7 +747,6 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @return a <code>WebPage[]</code> of all of the lower-level pages
 	 *
-	 * @see  WebSiteFrameworkConfiguration#useWebSiteCaching
 	 * @see  #getWebPages(WebSiteRequest)
 	 */
 	synchronized public WebPage[] getCachedPages(WebSiteRequest req) throws IOException, SQLException {
@@ -832,7 +830,6 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @exception  IllegalArgumentException if unable to create the instance
 	 *
-	 * @see  WebSiteFrameworkConfiguration#useWebSiteCaching()
 	 * @see  #isHandler(WebSiteRequest)
 	 */
 	public static WebPage getWebPage(ServletContext context, Class<? extends WebPage> clazz, WebSiteRequest req) throws IOException {
@@ -886,7 +883,6 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @exception  IllegalArgumentException if unable to create the instance
 	 *
-	 * @see  WebSiteFrameworkConfiguration#useWebSiteCaching()
 	 * @see  #isHandler(Object)
 	 */
 	public static WebPage getWebPage(ServletContext context, Class<? extends WebPage> clazz, Object params) throws IOException {
