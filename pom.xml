@@ -58,12 +58,6 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 				<groupId>org.codehaus.mojo</groupId><artifactId>versions-maven-plugin</artifactId>
 				<configuration>
 					<excludes>
-						<!-- Stay on Java EE Web API 6 -->
-						<exclude>javax.servlet:javax.servlet-api</exclude>
-						<exclude>javax.el:javax.el-api</exclude>
-						<exclude>javax.servlet.jsp:javax.servlet.jsp-api</exclude>
-						<exclude>javax.servlet:jstl</exclude>
-						<exclude>org.glassfish.web:jstl-impl</exclude>
 						<!-- Versions are out of order by Maven rules, and no new versions will be released -->
 						<exclude>com.servlets:cos</exclude>
 					</excludes>
@@ -102,8 +96,9 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		<dependencies>
 			<!-- Java EE -->
 			<dependency>
-				<groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId><version>3.0.1</version>
-				<scope>provided</scope>
+				<groupId>com.aoindustries</groupId><artifactId>javaee-web-api-bom</artifactId><version>6.0.0-SNAPSHOT</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 			<!-- Direct -->
 			<dependency>

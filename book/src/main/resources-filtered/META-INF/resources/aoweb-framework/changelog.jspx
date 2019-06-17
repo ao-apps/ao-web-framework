@@ -36,7 +36,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T22:08:31-0500"
-		dateModified="2019-06-03T22:54:34-0500"
+		dateModified="2019-06-17T11:02:47-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoweb-framework:pom.version}" />
@@ -59,6 +59,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 							<li>This project's managed dependencies may also be imported by other projects.</li>
 						</ol>
 					</li>
+					<li>No longer excluding Java EE Web API 6 from <ao:a href="https://www.mojohaus.org/versions-maven-plugin/examples/advancing-dependency-versions.html#Controlling_which_dependencies_are_processed">version updates</ao:a>.</li>
 				</ul>
 			</changelog:release>
 		</c:if>
