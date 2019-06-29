@@ -108,7 +108,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 				<groupId>com.aoindustries</groupId><artifactId>ao-lang</artifactId><version>2.1.0-POST-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>com.aoindustries</groupId><artifactId>aocode-public</artifactId><version>2.1.0-POST-SNAPSHOT</version>
+				<groupId>com.aoindustries</groupId><artifactId>aocode-public</artifactId><version>2.1.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>com.servlets</groupId><artifactId>cos</artifactId><version>05Nov2002</version>
