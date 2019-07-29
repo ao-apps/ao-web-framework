@@ -91,7 +91,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	/**
 	 * A fast pseudo-random number generated seeded by secure random.
 	 */
-	public static Random getFastRandom() {
+	public Random getFastRandom() {
 		return ErrorReportingServlet.getFastRandom();
 	}
 
