@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2009, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2015, 2016, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,7 @@
  */
 package com.aoindustries.website.framework;
 
+import com.aoindustries.security.Identifier;
 import java.io.File;
 
 /**
@@ -31,7 +32,7 @@ import java.io.File;
  */
 final public class UploadedFile {
 
-	final private long id;
+	final private Identifier id;
 	final private String filename;
 	final private File storageFile;
 	final private long create_time;
@@ -42,7 +43,7 @@ final public class UploadedFile {
 	private long lastAccessed;
 
 	UploadedFile(String filename, File storageFile, WebSiteUser owner, String contentType) {
-		this.id=Long.parseLong(storageFile.getName());
+		this.id = new Identifier(storageFile.getName());
 		this.filename=filename;
 		this.storageFile=storageFile;
 		this.create_time=this.lastAccessed=System.currentTimeMillis();
@@ -50,7 +51,7 @@ final public class UploadedFile {
 		this.contentType=contentType;
 	}
 
-	public long getID() {
+	public Identifier getID() {
 		synchronized(lastAccessLock) {lastAccessed=System.currentTimeMillis();}
 		return id;
 	}
