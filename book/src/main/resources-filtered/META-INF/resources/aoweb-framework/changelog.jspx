@@ -36,7 +36,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T22:08:31-0500"
-		dateModified="2019-06-21T20:35:01-0500"
+		dateModified="2019-07-29T05:23:14-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoweb-framework:pom.version}" />
@@ -51,7 +51,15 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 				groupId="@{documented.groupId}"
 				artifactId="@{documented.artifactId}"
 				scmUrl="@{documented.scm.url}"
-			/>
+			>
+				<ul>
+					<li>
+						Split <code>getRandom()</code> into both <code>getSecureRandom()</code> and <code>getFastRandom()</code>,
+						then selected the appropriate method for each place random is used.
+					</li>
+					<li>Upload file ids changed from 31-bit <code>long</code> to 128-bit <code>Identifier</code>.</li>
+				</ul>
+			</changelog:release>
 		</c:if>
 
 		<changelog:release

@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2014, 2015, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2014, 2015, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -24,6 +24,7 @@ package com.aoindustries.website.framework;
 
 import com.aoindustries.encoding.ChainWriter;
 import com.aoindustries.io.FileUtils;
+import com.aoindustries.security.Identifier;
 import com.aoindustries.security.LoginException;
 import com.aoindustries.util.SortedArrayList;
 import com.aoindustries.util.StringUtility;
@@ -35,6 +36,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -82,8 +84,15 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	/**
 	 * Gets the random number generator used for this request.
 	 */
-	public Random getRandom() {
-		return ErrorReportingServlet.getRandom();
+	public SecureRandom getSecureRandom() {
+		return ErrorReportingServlet.getSecureRandom();
+	}
+
+	/**
+	 * A fast pseudo-random number generated seeded by secure random.
+	 */
+	public static Random getFastRandom() {
+		return ErrorReportingServlet.getFastRandom();
 	}
 
 	private static String getExtension(String filename) {
@@ -121,15 +130,13 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 		}
 	}
 
-	private static final Map<Long,UploadedFile> uploadedFiles=new HashMap<>();
-	private long getNextID() throws IOException {
-		Random random=getRandom();
+	private static final Map<Identifier,UploadedFile> uploadedFiles = new HashMap<>();
+	private Identifier getNextID() throws IOException {
 		synchronized(uploadedFiles) {
 			while(true) {
-				long id=random.nextLong()&0x7fffffffffffffffL;
-				Long ID=id;
-				if(!uploadedFiles.containsKey(ID)) {
-					uploadedFiles.put(ID, null);
+				Identifier id = new Identifier(getSecureRandom());
+				if(!uploadedFiles.containsKey(id)) {
+					uploadedFiles.put(id, null);
 					return id;
 				}
 			}
@@ -152,10 +159,10 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 
 									// Remove the expired entries
 									synchronized(uploadedFiles) {
-										Iterator<Long> I=uploadedFiles.keySet().iterator();
+										Iterator<Identifier> I = uploadedFiles.keySet().iterator();
 										while(I.hasNext()) {
-											Long ID=I.next();
-											UploadedFile uf=uploadedFiles.get(ID);
+											Identifier id = I.next();
+											UploadedFile uf=uploadedFiles.get(id);
 											if(uf==null) {
 												I.remove();
 											} else {

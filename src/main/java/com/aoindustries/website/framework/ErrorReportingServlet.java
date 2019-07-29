@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2009, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2015, 2016, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,9 +22,11 @@
  */
 package com.aoindustries.website.framework;
 
+import com.aoindustries.io.IoUtils;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.sql.SQLException;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -233,7 +235,15 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 	/**
 	 * @see  WebSiteRequest#getRandom()
 	 */
-	static SecureRandom getRandom() {
+	static SecureRandom getSecureRandom() {
 		return secureRandom;
+	}
+
+	/**
+	 * A fast pseudo-random number generated seeded by secure random.
+	 */
+	private static final Random fastRandom = new Random(IoUtils.bufferToLong(secureRandom.generateSeed(8)));
+	static Random getFastRandom() {
+		return fastRandom;
 	}
 }
