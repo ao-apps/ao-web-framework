@@ -555,9 +555,9 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 *
 	 * @exception  SecurityException  if the ID is not assigned to the person logged in
 	 */
-	public static UploadedFile getUploadedFile(WebSiteUser owner, long id, ServletContext context, LoggerAccessor loggerAccessor) throws SecurityException {
+	public static UploadedFile getUploadedFile(WebSiteUser owner, Identifier id, ServletContext context, LoggerAccessor loggerAccessor) throws SecurityException {
 		synchronized(uploadedFiles) {
-			UploadedFile uf=uploadedFiles.get(Long.valueOf(id));
+			UploadedFile uf=uploadedFiles.get(id);
 			if(uf!=null) {
 				if(uf.getOwner().equals(owner)) return uf;
 				else {
