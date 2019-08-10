@@ -22,6 +22,7 @@
  */
 package com.aoindustries.website.framework;
 
+import com.aoindustries.net.UrlUtils;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.servlet.ServletContext;
@@ -73,8 +74,8 @@ public class RedirectWebPage extends WebPage {
 
 	@Override
 	public String getRedirectURL(WebSiteRequest req) throws IOException {
-		String lowerPath = path.toLowerCase();
-		if(lowerPath.startsWith("http:") || lowerPath.startsWith("https:")) return path;
+		// TODO: These both return path, what was the intent here?
+		if(UrlUtils.isScheme(path, "http") || UrlUtils.isScheme(path, "https")) return path;
 		return path;
 	}
 
