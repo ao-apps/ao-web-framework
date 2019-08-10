@@ -36,7 +36,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T22:08:31-0500"
-		dateModified="2019-07-29T05:23:14-0500"
+		dateModified="2019-08-10T06:25:30-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoweb-framework:pom.version}" />
@@ -58,6 +58,11 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 						then selected the appropriate method for each place random is used.
 					</li>
 					<li>Upload file ids changed from 31-bit <code>long</code> to 128-bit <code>Identifier</code>.</li>
+					<li>
+						Case-insensitive matching of URL schemes.  Previously, URL schemes were matched case-sensitive,
+						while the spec is case-insensitive.  This has been OK given we only use lower-case schemes within our
+						code and tools, but this is now a correct implementation.
+					</li>
 				</ul>
 			</changelog:release>
 		</c:if>
