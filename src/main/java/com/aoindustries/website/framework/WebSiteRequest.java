@@ -24,8 +24,10 @@ package com.aoindustries.website.framework;
 
 import com.aoindustries.encoding.ChainWriter;
 import com.aoindustries.io.FileUtils;
+import com.aoindustries.net.URIParser;
 import com.aoindustries.security.Identifier;
 import com.aoindustries.security.LoginException;
+import com.aoindustries.servlet.ServletUtil;
 import com.aoindustries.util.SortedArrayList;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
@@ -352,24 +354,43 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	}
 
 	/**
-	 * Gets a relative URL from a String containing a classname and optional parameters.
+	 * Gets a context-relative URL from a String containing a classname and optional parameters.
 	 * Parameters should already be URL encoded but not XML encoded.
 	 */
 	public String getURL(String classAndParams) throws IOException, SQLException {
 		String className, params;
-		int pos=classAndParams.indexOf('?');
-		if(pos==-1) {
-			className=classAndParams;
-			params=null;
+		// Find first of '?' or '#'
+		// TODO: Use SplitUrl, manage anchor
+		int pos = URIParser.getPathEnd(classAndParams);
+		if(pos == -1) {
+			className = classAndParams;
+			params = null;
 		} else {
-			className=classAndParams.substring(0, pos);
-			params=classAndParams.substring(pos+1);
+			className = classAndParams.substring(0, pos);
+			params = classAndParams.substring(pos + 1);
 		}
 		return getURL(className, params);
 	}
 
 	/**
-	 * Gets a relative URL given its classname and optional parameters.
+	 * {@linkplain #getURL(java.lang.String) Gets the URL}, including:
+	 * <ol>
+	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
+	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
+	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
+	 * </ol>
+	 */
+	public String getEncodedURL(String classAndParams, HttpServletResponse resp) throws IOException, SQLException {
+		return resp.encodeURL(
+			ServletUtil.encodeURI(
+				getContextPath() + getURL(classAndParams),
+				resp
+			)
+		);
+	}
+
+	/**
+	 * Gets a context-relative URL given its classname and optional parameters.
 	 * Parameters should already be URL encoded but not XML encoded.
 	 */
 	public String getURL(String classname, String params) throws IOException, SQLException {
@@ -379,6 +400,23 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 		} catch(ClassNotFoundException err) {
 			throw new IOException("Unable to load class: "+classname, err);
 		}
+	}
+
+	/**
+	 * {@linkplain #getURL(java.lang.String, java.lang.String) Gets the URL}, including:
+	 * <ol>
+	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
+	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
+	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
+	 * </ol>
+	 */
+	public String getEncodedURL(String classname, String params, HttpServletResponse resp) throws IOException, SQLException {
+		return resp.encodeURL(
+			ServletUtil.encodeURI(
+				getContextPath() + getURL(classname, params),
+				resp
+			)
+		);
 	}
 
 	/**
@@ -394,6 +432,23 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 		boolean alreadyAppended=appendParams(SB, optParam, finishedParams, false);
 		if(keepSettings) appendSettings(finishedParams, alreadyAppended, SB);
 		return SB.toString();
+	}
+
+	/**
+	 * {@linkplain #getURL(java.lang.String, java.lang.Object, boolean) Gets the URL}, including:
+	 * <ol>
+	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
+	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
+	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
+	 * </ol>
+	 */
+	public String getEncodedURL(String url, Object optParam, boolean keepSettings, HttpServletResponse resp) throws IOException {
+		return resp.encodeURL(
+			ServletUtil.encodeURI(
+				getContextPath() + getURL(url, optParam, keepSettings),
+				resp
+			)
+		);
 	}
 
 	protected boolean appendSettings(List<String> finishedParams, boolean alreadyAppended, StringBuilder SB) {
@@ -433,6 +488,23 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	}
 
 	/**
+	 * {@linkplain #getURL(com.aoindustries.website.framework.WebPage) Gets the URL}, including:
+	 * <ol>
+	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
+	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
+	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
+	 * </ol>
+	 */
+	public String getEncodedURL(WebPage page, HttpServletResponse resp) throws IOException, SQLException {
+		return resp.encodeURL(
+			ServletUtil.encodeURI(
+				getContextPath() + getURL(page),
+				resp
+			)
+		);
+	}
+
+	/**
 	 * Gets the context-relative URL to a web page.
 	 * Parameters should already be URL encoded but not yet XML encoded.
 	 */
@@ -449,16 +521,69 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	}
 
 	/**
+	 * {@linkplain #getURL(com.aoindustries.website.framework.WebPage, java.lang.Object) Gets the URL}, including:
+	 * <ol>
+	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
+	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
+	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
+	 * </ol>
+	 */
+	public String getEncodedURL(WebPage page, Object optParam, HttpServletResponse resp) throws IOException, SQLException {
+		return resp.encodeURL(
+			ServletUtil.encodeURI(
+				getContextPath() + getURL(page, optParam),
+				resp
+			)
+		);
+	}
+
+	/**
 	 * Gets the context-relative URL to a web page.
 	 * Parameters should already be URL encoded but not yet XML encoded.
 	 */
 	public String getURL(Class<? extends WebPage> clazz, Object param) throws IOException, SQLException {
-		WebPage page=WebPage.getWebPage(sourcePage.getServletContext(), clazz, param);
-		return getURL(page, param);
+		return getURL(
+			WebPage.getWebPage(sourcePage.getServletContext(), clazz, param),
+			param
+		);
+	}
+
+	/**
+	 * {@linkplain #getURL(java.lang.Class, java.lang.Object) Gets the URL}, including:
+	 * <ol>
+	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
+	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
+	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
+	 * </ol>
+	 */
+	public String getEncodedURL(Class<? extends WebPage> clazz, Object param, HttpServletResponse resp) throws IOException, SQLException {
+		return resp.encodeURL(
+			ServletUtil.encodeURI(
+				getContextPath() + getURL(clazz, param),
+				resp
+			)
+		);
 	}
 
 	public String getURL(Class<? extends WebPage> clazz) throws IOException, SQLException {
 		return getURL(clazz, (Object)null);
+	}
+
+	/**
+	 * {@linkplain #getURL(java.lang.Class) Gets the URL}, including:
+	 * <ol>
+	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
+	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
+	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
+	 * </ol>
+	 */
+	public String getEncodedURL(Class<? extends WebPage> clazz, HttpServletResponse resp) throws IOException, SQLException {
+		return resp.encodeURL(
+			ServletUtil.encodeURI(
+				getContextPath() + getURL(clazz),
+				resp
+			)
+		);
 	}
 
 	/**
@@ -483,6 +608,23 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 */
 	public String getURL(String url, Object optParam) throws IOException {
 		return getURL(url, optParam, true);
+	}
+
+	/**
+	 * {@linkplain #getURL(java.lang.String, java.lang.Object) Gets the URL}, including:
+	 * <ol>
+	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
+	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
+	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
+	 * </ol>
+	 */
+	public String getEncodedURL(String url, Object optParam, HttpServletResponse resp) throws IOException {
+		return resp.encodeURL(
+			ServletUtil.encodeURI(
+				getContextPath() + getURL(url, optParam),
+				resp
+			)
+		);
 	}
 
 	/**

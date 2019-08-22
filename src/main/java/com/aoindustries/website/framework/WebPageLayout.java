@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2015, 2016, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -24,6 +24,7 @@ package com.aoindustries.website.framework;
 
 import com.aoindustries.encoding.ChainWriter;
 import com.aoindustries.encoding.TextInJavaScriptEncoder;
+import com.aoindustries.net.URIEncoder;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -145,7 +146,7 @@ abstract public class WebPageLayout {
 				String description=result.getDescription();
 				out.print("    <tr class='").print(rowClass).print("'>\n"
 						+ "      <td style='white-space:nowrap; text-align:center;'>").print(Math.round(99 * result.getProbability() / highest)).print("%</td>\n"
-						+ "      <td style='white-space:nowrap'><a class='"+linkClass+"' href='").encodeXmlAttribute(resp.encodeURL(url)).print("'>").print(title.length()==0?"&#160;":title).print("</a></td>\n"
+						+ "      <td style='white-space:nowrap'><a class='"+linkClass+"' href='").encodeXmlAttribute(resp.encodeURL(URIEncoder.encodeURI(req.getContextPath() + url))).print("'>").print(title.length()==0?"&#160;":title).print("</a></td>\n"
 						+ "      <td style='white-space:nowrap'>&#160;&#160;&#160;</td>\n"
 						+ "      <td style='white-space:nowrap'>").print(description.length()==0?"&#160;":description).print("</td>\n"
 						+ "    </tr>\n");
@@ -305,7 +306,7 @@ abstract public class WebPageLayout {
 				TextInJavaScriptEncoder.encodeTextInJavaScript(choice, out);
 				out.print("') window.top.location.href='");
 				TextInJavaScriptEncoder.encodeTextInJavaScript(
-					resp.encodeURL(req.getContextPath()+req.getURL(page, "layout="+choice)),
+					req.getEncodedURL(page, "layout="+choice, resp),
 					out
 				);
 				out.print("';\n");
@@ -332,14 +333,14 @@ abstract public class WebPageLayout {
 				String[] SA = (String[]) O;
 				int len = SA.length;
 				for (int c = 0; c < len; c++) {
-					out.print("    <script type='text/javascript' src='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL('/'+SA[c], null, false))).print("'></script>\n");
+					out.print("    <script type='text/javascript' src='").encodeXmlAttribute(req.getEncodedURL('/'+SA[c], null, false, resp)).print("'></script>\n");
 				}
 			} else if(O instanceof Class) {
-				out.print("    <script type='text/javascript' src='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL(((Class<?>)O).asSubclass(WebPage.class), null))).print("'></script>\n");
+				out.print("    <script type='text/javascript' src='").encodeXmlAttribute(req.getEncodedURL(((Class<?>)O).asSubclass(WebPage.class), null, resp)).print("'></script>\n");
 			} else if(O instanceof WebPage) {
-				out.print("    <script type='text/javascript' src='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL((WebPage)O))).print("'></script>\n");
+				out.print("    <script type='text/javascript' src='").encodeXmlAttribute(req.getEncodedURL((WebPage)O, resp)).print("'></script>\n");
 			} else {
-				out.print("    <script type='text/javascript' src='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL('/'+O.toString(), null, false))).print("'></script>\n");
+				out.print("    <script type='text/javascript' src='").encodeXmlAttribute(req.getEncodedURL('/'+O.toString(), null, false, resp)).print("'></script>\n");
 			}
 		}
 	}

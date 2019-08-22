@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2007-2009, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2007-2009, 2015, 2016, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,7 +22,7 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.net.UrlUtils;
+import com.aoindustries.net.URIParser;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.servlet.ServletContext;
@@ -75,7 +75,7 @@ public class RedirectWebPage extends WebPage {
 	@Override
 	public String getRedirectURL(WebSiteRequest req) throws IOException {
 		// TODO: These both return path, what was the intent here?
-		if(UrlUtils.isScheme(path, "http") || UrlUtils.isScheme(path, "https")) return path;
+		if(URIParser.isScheme(path, "http") || URIParser.isScheme(path, "https")) return path;
 		return path;
 	}
 

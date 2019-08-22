@@ -25,7 +25,7 @@ package com.aoindustries.website.framework;
 import com.aoindustries.encoding.ChainWriter;
 import com.aoindustries.io.AoByteArrayOutputStream;
 import com.aoindustries.security.LoginException;
-import com.aoindustries.servlet.http.ServletUtil;
+import com.aoindustries.servlet.http.HttpServletUtil;
 import com.aoindustries.util.SortedArrayList;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -327,7 +328,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 		if(!alreadyDone) {
 			String redirect=page.getRedirectURL(req);
 			if(redirect!=null) {
-				ServletUtil.sendRedirect(req, resp, redirect, page.getRedirectType());
+				HttpServletUtil.sendRedirect(req, resp, redirect, page.getRedirectType());
 			} else {
 				page.doGet(req, resp);
 			}
@@ -408,7 +409,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 		if(!alreadyDone) {
 			String redirect=page.getRedirectURL(req);
 			if(redirect!=null) {
-				ServletUtil.sendRedirect(req, resp, redirect, page.getRedirectType());
+				HttpServletUtil.sendRedirect(req, resp, redirect, page.getRedirectType());
 			} else {
 				if(isLogout || (req.getParameter("login_username")!=null && req.getParameter("login_password")!=null)) page.doGet(req, resp);
 				else page.doPostWithSearch(req, resp);
@@ -588,13 +589,13 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
-	 * Sets the content type, encoding to UTF-8, sets the additional headers, then returns the <code>ChainWriter</code>.
+	 * Sets the content type, encoding to {@link StandardCharsets#UTF_8}, sets the additional headers, then returns the {@link ChainWriter}.
 	 *
 	 * @see  #getAdditionalHeaders
 	 */
 	protected final ChainWriter getHTMLChainWriter(WebSiteRequest req, HttpServletResponse resp) throws IOException {
 		resp.setContentType("text/html");
-		resp.setCharacterEncoding("UTF-8");
+		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		String[] headers=getAdditionalHeaders(req);
 		if(headers!=null) {
 			int len=headers.length;
@@ -604,13 +605,13 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
-	 * Sets the content type, encoding to UTF-8, sets the additional headers, then returns the <code>OutputStream</code>.
+	 * Sets the content type, encoding to {@link StandardCharsets#UTF_8}, sets the additional headers, then returns the {@link OutputStream}.
 	 *
 	 * @see  #getAdditionalHeaders
 	 */
 	protected final OutputStream getHTMLOutputStream(WebSiteRequest req, HttpServletResponse resp) throws IOException {
 		resp.setContentType("text/html");
-		resp.setCharacterEncoding("UTF-8");
+		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		String[] headers=getAdditionalHeaders(req);
 		if(headers!=null) {
 			int len=headers.length;
@@ -665,13 +666,13 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
-	 * Gets the URL associated with a nav image.
+	 * Gets the URL associated with a nav image, fully encoded.
 	 *
 	 * @see  #getNavImageAlt
 	 * @see  #getNavImageSuffix
 	 */
 	public String getNavImageURL(WebSiteRequest req, HttpServletResponse resp, Object params) throws IOException, SQLException {
-		return resp.encodeURL(req.getContextPath()+req.getURL(this, params));
+		return req.getEncodedURL(this, params, resp);
 	}
 
 	/**
@@ -1164,7 +1165,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 				;
 				results.add(
 					new SearchResult(
-						req.getContextPath()+req.getURL(this),
+						req.getURL(this),
 						probability,
 						title == null ? getTitle() : title,
 						description == null ? getDescription() : description,

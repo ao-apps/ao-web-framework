@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2009, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2015, 2016, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -88,7 +88,7 @@ abstract public class AutoListPage extends WebPage {
 		for (int c = 0; c < len; c++) {
 			WebPage page = pages[c];
 			out.print("  <tr>\n"
-					+ "    <td style='white-space:nowrap'><a class='aoLightLink' href='").encodeXmlAttribute(req==null?"":resp.encodeURL(req.getContextPath()+req.getURL(page))).print("'>").encodeXhtml(page.getShortTitle()).print("</a>\n"
+					+ "    <td style='white-space:nowrap'><a class='aoLightLink' href='").encodeXmlAttribute(req==null?"":req.getEncodedURL(page, resp)).print("'>").encodeXhtml(page.getShortTitle()).print("</a>\n"
 					+ "    </td>\n"
 					+ "    <td style='width:12px; white-space:nowrap'>&#160;</td>\n"
 					+ "    <td style='white-space:nowrap'>").encodeXhtml(page.getDescription()).print("</td>\n"

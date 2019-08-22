@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2015, 2016, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -110,7 +110,7 @@ abstract public class DumpURLs extends WebPage {
 
 	private void printURLs(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, WebPage page, List<WebPage> finishedPages) throws IOException, SQLException {
 		if(!finishedPages.contains(page)) {
-			out.print("<a class='aoLightLink' href='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL(page))).print("'>").encodeXhtml(req.getContextPath()+req.getURL(page)).print("</a>\n");
+			out.print("<a class='aoLightLink' href='").encodeXmlAttribute(req.getEncodedURL(page, resp)).print("'>").encodeXhtml(req.getURL(page)).print("</a>\n");
 
 			finishedPages.add(page);
 
