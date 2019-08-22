@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2015, 2016, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -99,7 +99,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 						int endPos=html.indexOf(')', pos+4);
 						if(endPos==-1) throw new IllegalArgumentException("Unable to find closing parenthesis for @URL( substitution, pos="+pos);
 						String className=html.substring(pos+4, endPos);
-						out.encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL(className)));
+						out.encodeXmlAttribute(req.getEncodedURL(className, resp));
 						pos=endPos+1;
 					} else if((pos+16)<len && html.substring(pos, pos+16).equalsIgnoreCase("BEGIN_LIGHT_AREA")) {
 						layout.beginLightArea(req, resp, out);
@@ -180,7 +180,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 											while((ch=reader.read())!=-1) {
 												if(ch==')') {
 													String className=buffer.toString().substring(5, buffer.length());
-													out.encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL(className)));
+													out.encodeXmlAttribute(req.getEncodedURL(className, resp));
 													buffer.setLength(0);
 													break;
 												} else buffer.append((char)ch);

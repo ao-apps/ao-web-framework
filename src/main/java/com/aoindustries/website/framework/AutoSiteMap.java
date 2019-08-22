@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2009, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2015, 2016, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -62,7 +62,7 @@ abstract public class AutoSiteMap extends TreePage {
 			data.add(
 				new TreePageData(
 					len>0 ? (path+'/') : path,
-					req.getContextPath()+req.getURL(page),
+					req.getURL(page),
 					page.getDescription()
 				)
 			);

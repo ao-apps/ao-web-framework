@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2003-2013, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2015, 2016, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -158,8 +158,8 @@ public class TextOnlyLayout extends WebPageLayout {
 		if(author!=null && author.length()>0) {
 			out.print("    <meta name='author' content='").encodeXmlAttribute(author).print("' />\n");
 		}
-		out.print("    <link rel='stylesheet' href='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL("/layout/text/global.css", null, false))).print("' type='text/css' />\n"
-				+ "    <script type='text/javascript' src='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL("/global.js", null, false))).print("'></script>\n");
+		out.print("    <link rel='stylesheet' href='").encodeXmlAttribute(req.getEncodedURL("/layout/text/global.css", null, false, resp)).print("' type='text/css' />\n"
+				+ "    <script type='text/javascript' src='").encodeXmlAttribute(req.getEncodedURL("/global.js", null, false, resp)).print("'></script>\n");
 		String googleAnalyticsNewTrackingCode = getGoogleAnalyticsNewTrackingCode();
 		if(googleAnalyticsNewTrackingCode!=null) {
 			out.print("    <script type='text/javascript' src='").print(req.isSecure() ? "https://ssl.google-analytics.com/ga.js" : "http://www.google-analytics.com/ga.js").print("'></script>\n");
@@ -193,12 +193,12 @@ public class TextOnlyLayout extends WebPageLayout {
 		boolean isLoggedIn=req.isLoggedIn();
 		if(isLoggedIn) {
 			out.print("          <hr />\n"
-					+ "          Logout: <form style='display:inline;' id='logout_form' method='post' action='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL(page))).print("'><div style='display:inline;'>");
+					+ "          Logout: <form style='display:inline;' id='logout_form' method='post' action='").encodeXmlAttribute(req.getEncodedURL(page, resp)).print("'><div style='display:inline;'>");
 			req.printFormFields(out, 2);
 			out.print("<input type='hidden' name='logout_requested' value='true' /><input type='submit' value='Logout' /></div></form>\n");
 		} else {
 			out.print("          <hr />\n"
-					+ "          Login: <form style='display:inline;' id='login_form' method='post' action='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL(page))).print("'><div style='display:inline;'>");
+					+ "          Login: <form style='display:inline;' id='login_form' method='post' action='").encodeXmlAttribute(req.getEncodedURL(page, resp)).print("'><div style='display:inline;'>");
 			req.printFormFields(out, 2);
 			out.print("<input type='hidden' name='login_requested' value='true' /><input type='submit' value='Login' /></div></form>\n");
 		}
@@ -206,7 +206,7 @@ public class TextOnlyLayout extends WebPageLayout {
 				+ "          <div style='white-space:nowrap'>\n");
 		if(getLayoutChoices().length>=2) out.print("Layout: ");
 		if(printWebPageLayoutSelector(page, out, req, resp)) out.print("<br />\n"
-				+ "            Search: <form id='search_site' style='display:inline;' method='post' action='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL(page))).print("'><div style='display:inline;'>\n"
+				+ "            Search: <form id='search_site' style='display:inline;' method='post' action='").encodeXmlAttribute(req.getEncodedURL(page, resp)).print("'><div style='display:inline;'>\n"
 				+ "              <input type='hidden' name='search_target' value='entire_site' />\n");
 		req.printFormFields(out, 3);
 		out.print("              <input type='text' name='search_query' size='12' maxlength='255' />\n"
@@ -226,7 +226,7 @@ public class TextOnlyLayout extends WebPageLayout {
 			parent=parents.get(c);
 			String navAlt=parent.getNavImageAlt(req);
 			String navSuffix=parent.getNavImageSuffix(req);
-			out.print("            <a href='").encodeXmlAttribute(resp.encodeURL(req.getContextPath()+req.getURL(parent))).print("'>").print(TreePage.replaceHTML(navAlt));
+			out.print("            <a href='").encodeXmlAttribute(req.getEncodedURL(parent, resp)).print("'>").print(TreePage.replaceHTML(navAlt));
 			if(navSuffix!=null) out.print(" (").encodeXhtml(navSuffix).print(')');
 			out.print("</a><br />\n");
 		}
