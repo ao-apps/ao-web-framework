@@ -333,14 +333,14 @@ abstract public class WebPageLayout {
 				String[] SA = (String[]) O;
 				int len = SA.length;
 				for (int c = 0; c < len; c++) {
-					out.print("    <script type='text/javascript' src='").encodeXmlAttribute(req.getEncodedURLContextPath('/'+SA[c], null, false, resp)).print("'></script>\n");
+					out.print("    <script type='text/javascript' src='").encodeXmlAttribute(req.getEncodedURLForPath('/'+SA[c], null, false, resp)).print("'></script>\n");
 				}
 			} else if(O instanceof Class) {
 				out.print("    <script type='text/javascript' src='").encodeXmlAttribute(req.getEncodedURL(((Class<?>)O).asSubclass(WebPage.class), null, resp)).print("'></script>\n");
 			} else if(O instanceof WebPage) {
 				out.print("    <script type='text/javascript' src='").encodeXmlAttribute(req.getEncodedURL((WebPage)O, resp)).print("'></script>\n");
 			} else {
-				out.print("    <script type='text/javascript' src='").encodeXmlAttribute(req.getEncodedURLContextPath('/'+O.toString(), null, false, resp)).print("'></script>\n");
+				out.print("    <script type='text/javascript' src='").encodeXmlAttribute(req.getEncodedURLForPath('/'+O.toString(), null, false, resp)).print("'></script>\n");
 			}
 		}
 	}

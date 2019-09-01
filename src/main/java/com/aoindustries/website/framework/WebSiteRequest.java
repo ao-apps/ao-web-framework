@@ -425,7 +425,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 * 
 	 * @param  path  the context-relative path
 	 */
-	public String getURLContextPath(String path, Object optParam, boolean keepSettings) throws IOException {
+	public String getURLForPath(String path, Object optParam, boolean keepSettings) throws IOException {
 		StringBuilder SB=new StringBuilder();
 		SB.append(path);
 		List<String> finishedParams=new SortedArrayList<>();
@@ -435,17 +435,17 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	}
 
 	/**
-	 * {@linkplain #getURLContextPath(java.lang.String, java.lang.Object, boolean) Gets the URL}, including:
+	 * {@linkplain #getURLForPath(java.lang.String, java.lang.Object, boolean) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
 	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 */
-	public String getEncodedURLContextPath(String path, Object optParam, boolean keepSettings, HttpServletResponse resp) throws IOException {
+	public String getEncodedURLForPath(String path, Object optParam, boolean keepSettings, HttpServletResponse resp) throws IOException {
 		return resp.encodeURL(
 			ServletUtil.encodeURI(
-				getContextPath() + getURLContextPath(path, optParam, keepSettings),
+				getContextPath() + getURLForPath(path, optParam, keepSettings),
 				resp
 			)
 		);
@@ -606,22 +606,22 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 *                        </ul>
 	 * @exception  IllegalArgumentException  if <code>optParam</code> is not a supported object
 	 */
-	public String getURLContextPath(String path, Object optParam) throws IOException {
-		return getURLContextPath(path, optParam, true);
+	public String getURLForPath(String path, Object optParam) throws IOException {
+		return getURLForPath(path, optParam, true);
 	}
 
 	/**
-	 * {@linkplain #getURLContextPath(java.lang.String, java.lang.Object) Gets the URL}, including:
+	 * {@linkplain #getURLForPath(java.lang.String, java.lang.Object) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
 	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 */
-	public String getEncodedURLContextPath(String path, Object optParam, HttpServletResponse resp) throws IOException {
+	public String getEncodedURLForPath(String path, Object optParam, HttpServletResponse resp) throws IOException {
 		return resp.encodeURL(
 			ServletUtil.encodeURI(
-				getContextPath() + getURLContextPath(path, optParam),
+				getContextPath() + getURLForPath(path, optParam),
 				resp
 			)
 		);
