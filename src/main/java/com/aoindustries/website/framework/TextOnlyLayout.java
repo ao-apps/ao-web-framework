@@ -158,8 +158,8 @@ public class TextOnlyLayout extends WebPageLayout {
 		if(author!=null && author.length()>0) {
 			out.print("    <meta name='author' content='").encodeXmlAttribute(author).print("' />\n");
 		}
-		out.print("    <link rel='stylesheet' href='").encodeXmlAttribute(req.getEncodedURL("/layout/text/global.css", null, false, resp)).print("' type='text/css' />\n"
-				+ "    <script type='text/javascript' src='").encodeXmlAttribute(req.getEncodedURL("/global.js", null, false, resp)).print("'></script>\n");
+		out.print("    <link rel='stylesheet' href='").encodeXmlAttribute(req.getEncodedURLForContextURL("/layout/text/global.css", null, false, resp)).print("' type='text/css' />\n"
+				+ "    <script type='text/javascript' src='").encodeXmlAttribute(req.getEncodedURLForContextURL("/global.js", null, false, resp)).print("'></script>\n");
 		String googleAnalyticsNewTrackingCode = getGoogleAnalyticsNewTrackingCode();
 		if(googleAnalyticsNewTrackingCode!=null) {
 			out.print("    <script type='text/javascript' src='").print(req.isSecure() ? "https://ssl.google-analytics.com/ga.js" : "http://www.google-analytics.com/ga.js").print("'></script>\n");

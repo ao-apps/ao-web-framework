@@ -357,7 +357,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 * Gets a context-relative URL from a String containing a classname and optional parameters.
 	 * Parameters should already be URL encoded but not XML encoded.
 	 */
-	public String getURL(String classAndParams) throws IOException, SQLException {
+	public String getURLForClass(String classAndParams) throws IOException, SQLException {
 		String className, params;
 		// Find first of '?' or '#'
 		// TODO: Use SplitUrl, manage anchor
@@ -369,21 +369,21 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 			className = classAndParams.substring(0, pos);
 			params = classAndParams.substring(pos + 1);
 		}
-		return getURL(className, params);
+		return getURLForClass(className, params);
 	}
 
 	/**
-	 * {@linkplain #getURL(java.lang.String) Gets the URL}, including:
+	 * {@linkplain #getURLForClass(java.lang.String) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
 	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 */
-	public String getEncodedURL(String classAndParams, HttpServletResponse resp) throws IOException, SQLException {
+	public String getEncodedURLForClass(String classAndParams, HttpServletResponse resp) throws IOException, SQLException {
 		return resp.encodeURL(
 			ServletUtil.encodeURI(
-				getContextPath() + getURL(classAndParams),
+				getContextPath() + getURLForClass(classAndParams),
 				resp
 			)
 		);
@@ -393,7 +393,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 * Gets a context-relative URL given its classname and optional parameters.
 	 * Parameters should already be URL encoded but not XML encoded.
 	 */
-	public String getURL(String classname, String params) throws IOException, SQLException {
+	public String getURLForClass(String classname, String params) throws IOException, SQLException {
 		try {
 			Class<? extends WebPage> clazz=Class.forName(classname).asSubclass(WebPage.class);
 			return getURL(clazz, params);
@@ -403,17 +403,17 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	}
 
 	/**
-	 * {@linkplain #getURL(java.lang.String, java.lang.String) Gets the URL}, including:
+	 * {@linkplain #getURLForClass(java.lang.String, java.lang.String) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
 	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 */
-	public String getEncodedURL(String classname, String params, HttpServletResponse resp) throws IOException, SQLException {
+	public String getEncodedURLForClass(String classname, String params, HttpServletResponse resp) throws IOException, SQLException {
 		return resp.encodeURL(
 			ServletUtil.encodeURI(
-				getContextPath() + getURL(classname, params),
+				getContextPath() + getURLForClass(classname, params),
 				resp
 			)
 		);
@@ -425,7 +425,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 * 
 	 * @param  url  the context-relative URL
 	 */
-	public String getURL(String url, Object optParam, boolean keepSettings) throws IOException {
+	public String getURLForContextURL(String url, Object optParam, boolean keepSettings) throws IOException {
 		StringBuilder SB=new StringBuilder();
 		SB.append(url);
 		List<String> finishedParams=new SortedArrayList<>();
@@ -435,17 +435,17 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	}
 
 	/**
-	 * {@linkplain #getURL(java.lang.String, java.lang.Object, boolean) Gets the URL}, including:
+	 * {@linkplain #getURLForContextURL(java.lang.String, java.lang.Object, boolean) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
 	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 */
-	public String getEncodedURL(String url, Object optParam, boolean keepSettings, HttpServletResponse resp) throws IOException {
+	public String getEncodedURLForContextURL(String url, Object optParam, boolean keepSettings, HttpServletResponse resp) throws IOException {
 		return resp.encodeURL(
 			ServletUtil.encodeURI(
-				getContextPath() + getURL(url, optParam, keepSettings),
+				getContextPath() + getURLForContextURL(url, optParam, keepSettings),
 				resp
 			)
 		);
@@ -606,22 +606,22 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 *                        </ul>
 	 * @exception  IllegalArgumentException  if <code>optParam</code> is not a supported object
 	 */
-	public String getURL(String url, Object optParam) throws IOException {
-		return getURL(url, optParam, true);
+	public String getURLForContextURL(String url, Object optParam) throws IOException {
+		return getURLForContextURL(url, optParam, true);
 	}
 
 	/**
-	 * {@linkplain #getURL(java.lang.String, java.lang.Object) Gets the URL}, including:
+	 * {@linkplain #getURLForContextURL(java.lang.String, java.lang.Object) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
 	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 */
-	public String getEncodedURL(String url, Object optParam, HttpServletResponse resp) throws IOException {
+	public String getEncodedURLForContextURL(String url, Object optParam, HttpServletResponse resp) throws IOException {
 		return resp.encodeURL(
 			ServletUtil.encodeURI(
-				getContextPath() + getURL(url, optParam),
+				getContextPath() + getURLForContextURL(url, optParam),
 				resp
 			)
 		);
