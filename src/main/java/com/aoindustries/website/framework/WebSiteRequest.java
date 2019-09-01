@@ -423,11 +423,11 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 * Gets the context-relative URL, optionally with the settings embedded.
 	 * Parameters should already be URL encoded but not XML encoded.
 	 * 
-	 * @param  url  the context-relative URL
+	 * @param  path  the context-relative path
 	 */
-	public String getURLForContextURL(String url, Object optParam, boolean keepSettings) throws IOException {
+	public String getURLContextPath(String path, Object optParam, boolean keepSettings) throws IOException {
 		StringBuilder SB=new StringBuilder();
-		SB.append(url);
+		SB.append(path);
 		List<String> finishedParams=new SortedArrayList<>();
 		boolean alreadyAppended=appendParams(SB, optParam, finishedParams, false);
 		if(keepSettings) appendSettings(finishedParams, alreadyAppended, SB);
@@ -435,17 +435,17 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	}
 
 	/**
-	 * {@linkplain #getURLForContextURL(java.lang.String, java.lang.Object, boolean) Gets the URL}, including:
+	 * {@linkplain #getURLContextPath(java.lang.String, java.lang.Object, boolean) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
 	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 */
-	public String getEncodedURLForContextURL(String url, Object optParam, boolean keepSettings, HttpServletResponse resp) throws IOException {
+	public String getEncodedURLContextPath(String path, Object optParam, boolean keepSettings, HttpServletResponse resp) throws IOException {
 		return resp.encodeURL(
 			ServletUtil.encodeURI(
-				getContextPath() + getURLForContextURL(url, optParam, keepSettings),
+				getContextPath() + getURLContextPath(path, optParam, keepSettings),
 				resp
 			)
 		);
@@ -589,7 +589,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	/**
 	 * Gets the URL String with the given parameters embedded, keeping the current settings.
 	 *
-	 * @param  url            the context-relative URL, with a beginning slash
+	 * @param  path            the context-relative URL, with a beginning slash
 	 * @param  optParam       any number of additional parameters.  This parameter can accept several types of
 	 *                        objects.  The following is a list of supported objects and a brief description of its
 	 *                        behavior.
@@ -606,22 +606,22 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 *                        </ul>
 	 * @exception  IllegalArgumentException  if <code>optParam</code> is not a supported object
 	 */
-	public String getURLForContextURL(String url, Object optParam) throws IOException {
-		return getURLForContextURL(url, optParam, true);
+	public String getURLContextPath(String path, Object optParam) throws IOException {
+		return getURLContextPath(path, optParam, true);
 	}
 
 	/**
-	 * {@linkplain #getURLForContextURL(java.lang.String, java.lang.Object) Gets the URL}, including:
+	 * {@linkplain #getURLContextPath(java.lang.String, java.lang.Object) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
 	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 */
-	public String getEncodedURLForContextURL(String url, Object optParam, HttpServletResponse resp) throws IOException {
+	public String getEncodedURLContextPath(String path, Object optParam, HttpServletResponse resp) throws IOException {
 		return resp.encodeURL(
 			ServletUtil.encodeURI(
-				getContextPath() + getURLForContextURL(url, optParam),
+				getContextPath() + getURLContextPath(path, optParam),
 				resp
 			)
 		);
