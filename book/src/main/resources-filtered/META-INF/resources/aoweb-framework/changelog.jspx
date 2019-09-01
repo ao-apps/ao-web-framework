@@ -36,7 +36,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T22:08:31-0500"
-		dateModified="2019-09-01T18:39:36-0500"
+		dateModified="2019-09-01T18:45:22-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoweb-framework:pom.version}" />
@@ -73,7 +73,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 					<li>
 						Split <code>WebSiteRequest.getURL(String, …)</code> into
 						<code>WebSiteRequest.getURLForClass(String, …)</code> and
-						<code>WebSiteRequest.getURLForContextPath(String, …)</code>
+						<code>WebSiteRequest.getURLForPath(String, …)</code>
 						to avoid ambiguity.
 					</li>
 				</ul>
