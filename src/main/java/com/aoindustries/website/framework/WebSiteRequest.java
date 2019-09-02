@@ -362,7 +362,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 		// Find first of '?' or '#'
 		// TODO: Use SplitUrl, manage anchor
 		int pos = URIParser.getPathEnd(classAndParams);
-		if(pos == -1) {
+		if(pos >= classAndParams.length()) {
 			className = classAndParams;
 			params = null;
 		} else {
