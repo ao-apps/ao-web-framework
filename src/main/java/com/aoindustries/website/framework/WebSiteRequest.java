@@ -24,10 +24,10 @@ package com.aoindustries.website.framework;
 
 import com.aoindustries.encoding.ChainWriter;
 import com.aoindustries.io.FileUtils;
+import com.aoindustries.net.URIEncoder;
 import com.aoindustries.net.URIParser;
 import com.aoindustries.security.Identifier;
 import com.aoindustries.security.LoginException;
-import com.aoindustries.servlet.ServletUtil;
 import com.aoindustries.util.SortedArrayList;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
@@ -264,7 +264,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 		this.sourcePage=sourcePage;
 		this.req=req;
 		String contentType=req.getHeader("Content-Type");
-		if (contentType!=null && contentType.length()>=19 && contentType.substring(0,19).equals("multipart/form-data")) {
+		if (contentType!=null && contentType.length()>=19 && contentType.substring(0,19).equalsIgnoreCase("multipart/form-data")) {
 			boolean keepFiles=false;
 			try {
 				mreq = new MultipartRequest(req, getFileUploadDirectory(getServletContext()).getPath(), MAX_UPLOAD_SIZE, this);
@@ -382,9 +382,8 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 */
 	public String getEncodedURLForClass(String classAndParams, HttpServletResponse resp) throws IOException, SQLException {
 		return resp.encodeURL(
-			ServletUtil.encodeURI(
-				getContextPath() + getURLForClass(classAndParams),
-				resp
+			URIEncoder.encodeURI(
+				getContextPath() + getURLForClass(classAndParams)
 			)
 		);
 	}
@@ -412,9 +411,8 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 */
 	public String getEncodedURLForClass(String classname, String params, HttpServletResponse resp) throws IOException, SQLException {
 		return resp.encodeURL(
-			ServletUtil.encodeURI(
-				getContextPath() + getURLForClass(classname, params),
-				resp
+			URIEncoder.encodeURI(
+				getContextPath() + getURLForClass(classname, params)
 			)
 		);
 	}
@@ -444,9 +442,8 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 */
 	public String getEncodedURLForPath(String path, Object optParam, boolean keepSettings, HttpServletResponse resp) throws IOException {
 		return resp.encodeURL(
-			ServletUtil.encodeURI(
-				getContextPath() + getURLForPath(path, optParam, keepSettings),
-				resp
+			URIEncoder.encodeURI(
+				getContextPath() + getURLForPath(path, optParam, keepSettings)
 			)
 		);
 	}
@@ -497,9 +494,8 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 */
 	public String getEncodedURL(WebPage page, HttpServletResponse resp) throws IOException, SQLException {
 		return resp.encodeURL(
-			ServletUtil.encodeURI(
-				getContextPath() + getURL(page),
-				resp
+			URIEncoder.encodeURI(
+				getContextPath() + getURL(page)
 			)
 		);
 	}
@@ -530,9 +526,8 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 */
 	public String getEncodedURL(WebPage page, Object optParam, HttpServletResponse resp) throws IOException, SQLException {
 		return resp.encodeURL(
-			ServletUtil.encodeURI(
-				getContextPath() + getURL(page, optParam),
-				resp
+			URIEncoder.encodeURI(
+				getContextPath() + getURL(page, optParam)
 			)
 		);
 	}
@@ -558,9 +553,8 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 */
 	public String getEncodedURL(Class<? extends WebPage> clazz, Object param, HttpServletResponse resp) throws IOException, SQLException {
 		return resp.encodeURL(
-			ServletUtil.encodeURI(
-				getContextPath() + getURL(clazz, param),
-				resp
+			URIEncoder.encodeURI(
+				getContextPath() + getURL(clazz, param)
 			)
 		);
 	}
@@ -579,9 +573,8 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 */
 	public String getEncodedURL(Class<? extends WebPage> clazz, HttpServletResponse resp) throws IOException, SQLException {
 		return resp.encodeURL(
-			ServletUtil.encodeURI(
-				getContextPath() + getURL(clazz),
-				resp
+			URIEncoder.encodeURI(
+				getContextPath() + getURL(clazz)
 			)
 		);
 	}
@@ -620,9 +613,8 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 */
 	public String getEncodedURLForPath(String path, Object optParam, HttpServletResponse resp) throws IOException {
 		return resp.encodeURL(
-			ServletUtil.encodeURI(
-				getContextPath() + getURLForPath(path, optParam),
-				resp
+			URIEncoder.encodeURI(
+				getContextPath() + getURLForPath(path, optParam)
 			)
 		);
 	}
