@@ -226,7 +226,13 @@ abstract public class TreePage extends WebPage {
 					}
 					String href;
 					if (pos == (path[pathLen-1].length()==0?(pathLen-2):(pathLen-1)) && (href = tree.get(c).getUrl()) != null) {
-						out.print("<a href='").encodeXmlAttribute(resp.encodeURL(URIEncoder.encodeURI(req.getContextPath() + href))).print("'>").print(replaced).print("</a>");
+						out.print("<a href='").encodeXmlAttribute(
+							resp.encodeURL(
+								URIEncoder.encodeURI(
+									req.getContextPath() + href
+								)
+							)
+						).print("'>").print(replaced).print("</a>");
 					} else out.print(replaced);
 					String S;
 					if (replaced.length()>0 && (pos < (pathLen - 1) || ((S = tree.get(c).getPath()).length() > 0 && S.charAt(S.length() - 1) == '/')))
@@ -480,7 +486,13 @@ abstract public class TreePage extends WebPage {
 									|| (pos==(pathLen-1) && path[pathLen-1].length()>0)
 								) && (href = tree.get(c).getUrl()) != null
 							) {
-								out.print("<a class='aoLightLink' href='").encodeXmlAttribute(resp.encodeURL(URIEncoder.encodeURI(req.getContextPath() + href))).print("'>").print(path[pos]).print("</a>");
+								out.print("<a class='aoLightLink' href='").encodeXmlAttribute(
+									resp.encodeURL(
+										URIEncoder.encodeURI(
+											req.getContextPath() + href
+										)
+									)
+								).print("'>").print(path[pos]).print("</a>");
 							} else if(path[pos].length()>0) out.print(path[pos]);
 							if(useCodeFont) out.print("</code>");
 						}
