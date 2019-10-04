@@ -146,7 +146,14 @@ abstract public class WebPageLayout {
 				String description=result.getDescription();
 				out.print("    <tr class='").print(rowClass).print("'>\n"
 						+ "      <td style='white-space:nowrap; text-align:center;'>").print(Math.round(99 * result.getProbability() / highest)).print("%</td>\n"
-						+ "      <td style='white-space:nowrap'><a class='"+linkClass+"' href='").encodeXmlAttribute(resp.encodeURL(URIEncoder.encodeURI(req.getContextPath() + url))).print("'>").print(title.length()==0?"&#160;":title).print("</a></td>\n"
+						+ "      <td style='white-space:nowrap'><a class='"+linkClass+"' href='")
+					.encodeXmlAttribute(
+						resp.encodeURL(
+							URIEncoder.encodeURI(
+								req.getContextPath() + url
+							)
+						)
+					).print("'>").print(title.length()==0?"&#160;":title).print("</a></td>\n"
 						+ "      <td style='white-space:nowrap'>&#160;&#160;&#160;</td>\n"
 						+ "      <td style='white-space:nowrap'>").print(description.length()==0?"&#160;":description).print("</td>\n"
 						+ "    </tr>\n");
