@@ -36,7 +36,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T22:08:31-0500"
-		dateModified="2019-09-01T18:45:22-0500"
+		dateModified="2019-10-06T17:06:17-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoweb-framework:pom.version}" />
@@ -76,6 +76,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 						<code>WebSiteRequest.getURLForPath(String, …)</code>
 						to avoid ambiguity.
 					</li>
+					<li>Updated bundled <code>mime.types</code> to current version from Debian 8.11.</li>
 				</ul>
 			</changelog:release>
 		</c:if>
