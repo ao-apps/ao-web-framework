@@ -162,6 +162,7 @@ public class TextOnlyLayout extends WebPageLayout {
 				+ "    <script type='text/javascript' src='").encodeXmlAttribute(req.getEncodedURLForPath("/global.js", null, false, resp)).print("'></script>\n");
 		String googleAnalyticsNewTrackingCode = getGoogleAnalyticsNewTrackingCode();
 		if(googleAnalyticsNewTrackingCode!=null) {
+			// TODO: Global site tag (gtag.js) once HTML 5
 			out.print("    <script type='text/javascript' src='").print(req.isSecure() ? "https://ssl.google-analytics.com/ga.js" : "http://www.google-analytics.com/ga.js").print("'></script>\n");
 		}
 
@@ -295,6 +296,7 @@ public class TextOnlyLayout extends WebPageLayout {
 				+ "    </table>\n");
 		String googleAnalyticsNewTrackingCode = getGoogleAnalyticsNewTrackingCode();
 		if(googleAnalyticsNewTrackingCode!=null) {
+			// TODO: Global site tag (gtag.js) once HTML 5
 			out.print("    <script type=\"text/javascript\">\n"
 					+ "      // <![CDATA[\n"
 					+ "      try {\n"
