@@ -24,8 +24,10 @@ package com.aoindustries.website.framework;
 
 import com.aoindustries.encoding.ChainWriter;
 import com.aoindustries.io.AoByteArrayOutputStream;
+import com.aoindustries.net.EmptyURIParameters;
 import com.aoindustries.security.LoginException;
 import com.aoindustries.servlet.http.HttpServletUtil;
+import com.aoindustries.servlet.http.LastModifiedServlet;
 import com.aoindustries.util.SortedArrayList;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
@@ -328,7 +330,17 @@ abstract public class WebPage extends ErrorReportingServlet {
 		if(!alreadyDone) {
 			String redirect=page.getRedirectURL(req);
 			if(redirect!=null) {
-				HttpServletUtil.sendRedirect(req, resp, redirect, false, page.getRedirectType());
+				HttpServletUtil.sendRedirect(
+					req.getServletContext(),
+					req,
+					resp,
+					redirect,
+					EmptyURIParameters.getInstance(),
+					false,
+					false,
+					LastModifiedServlet.AddLastModifiedWhen.FALSE,
+					page.getRedirectType()
+				);
 			} else {
 				page.doGet(req, resp);
 			}
@@ -409,7 +421,17 @@ abstract public class WebPage extends ErrorReportingServlet {
 		if(!alreadyDone) {
 			String redirect=page.getRedirectURL(req);
 			if(redirect!=null) {
-				HttpServletUtil.sendRedirect(req, resp, redirect, false, page.getRedirectType());
+				HttpServletUtil.sendRedirect(
+					req.getServletContext(),
+					req,
+					resp,
+					redirect,
+					EmptyURIParameters.getInstance(),
+					false,
+					false,
+					LastModifiedServlet.AddLastModifiedWhen.FALSE,
+					page.getRedirectType()
+				);
 			} else {
 				if(isLogout || (req.getParameter("login_username")!=null && req.getParameter("login_password")!=null)) page.doGet(req, resp);
 				else page.doPostWithSearch(req, resp);
