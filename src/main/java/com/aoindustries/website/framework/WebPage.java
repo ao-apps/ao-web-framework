@@ -336,7 +336,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 					resp,
 					redirect,
 					EmptyURIParameters.getInstance(),
-					false,
+					true,
 					false,
 					LastModifiedServlet.AddLastModifiedWhen.FALSE,
 					page.getRedirectType()
@@ -427,7 +427,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 					resp,
 					redirect,
 					EmptyURIParameters.getInstance(),
-					false,
+					true,
 					false,
 					LastModifiedServlet.AddLastModifiedWhen.FALSE,
 					page.getRedirectType()
