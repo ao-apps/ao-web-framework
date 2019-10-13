@@ -354,36 +354,32 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	}
 
 	/**
-	 * Gets a context-relative URL from a String containing a classname and optional parameters.
+	 * Gets a context-relative URL given its classname and optional parameters/fragment.
 	 * Parameters should already be URL encoded but not XML encoded.
 	 */
-	public String getURLForClass(String classAndParams) throws IOException, SQLException {
-		String className, params;
-		// Find first of '?' or '#'
-		// TODO: Use SplitUrl, manage anchor
-		int pos = URIParser.getPathEnd(classAndParams);
-		if(pos >= classAndParams.length()) {
-			className = classAndParams;
-			params = null;
-		} else {
-			className = classAndParams.substring(0, pos);
-			params = classAndParams.substring(pos + 1);
+	public String getURLForClass(String classname, String params, String fragment) throws IOException, SQLException {
+		try {
+			Class<? extends WebPage> clazz=Class.forName(classname).asSubclass(WebPage.class);
+			String url = getURL(clazz, params);
+			if(fragment != null) url += fragment;
+			return url;
+		} catch(ClassNotFoundException err) {
+			throw new IOException("Unable to load class: "+classname, err);
 		}
-		return getURLForClass(className, params);
 	}
 
 	/**
-	 * {@linkplain #getURLForClass(java.lang.String) Gets the URL}, including:
+	 * {@linkplain #getURLForClass(java.lang.String, java.lang.String, java.lang.String) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
 	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 */
-	public String getEncodedURLForClass(String classAndParams, HttpServletResponse resp) throws IOException, SQLException {
+	public String getEncodedURLForClass(String classname, String params, String fragment, HttpServletResponse resp) throws IOException, SQLException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
-				getContextPath() + getURLForClass(classAndParams)
+				getContextPath() + getURLForClass(classname, params, fragment)
 			)
 		);
 	}
@@ -393,12 +389,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 * Parameters should already be URL encoded but not XML encoded.
 	 */
 	public String getURLForClass(String classname, String params) throws IOException, SQLException {
-		try {
-			Class<? extends WebPage> clazz=Class.forName(classname).asSubclass(WebPage.class);
-			return getURL(clazz, params);
-		} catch(ClassNotFoundException err) {
-			throw new IOException("Unable to load class: "+classname, err);
-		}
+		return getURLForClass(classname, params, null);
 	}
 
 	/**
@@ -413,6 +404,53 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
 				getContextPath() + getURLForClass(classname, params)
+			)
+		);
+	}
+
+	/**
+	 * Gets a context-relative URL from a String containing a classname and optional parameters/fragment.
+	 * Parameters and fragment should already be URL encoded but not XML encoded.
+	 */
+	public String getURLForClass(String classAndParamsFragment) throws IOException, SQLException {
+		String className, params, fragment;
+		int pos = URIParser.getPathEnd(classAndParamsFragment);
+		if(pos >= classAndParamsFragment.length()) {
+			className = classAndParamsFragment;
+			params = null;
+			fragment = null;
+		} else {
+			className = classAndParamsFragment.substring(0, pos);
+			if(classAndParamsFragment.charAt(pos) == '?') {
+				int hashPos = classAndParamsFragment.indexOf('#', pos + 1);
+				if(hashPos == -1) {
+					params = classAndParamsFragment.substring(pos + 1);
+					fragment = null;
+				} else {
+					params = classAndParamsFragment.substring(pos + 1, hashPos);
+					fragment = classAndParamsFragment.substring(hashPos + 1);
+				}
+			} else {
+				assert classAndParamsFragment.charAt(pos) == '#';
+				params = null;
+				fragment = classAndParamsFragment.substring(pos + 1);
+			}
+		}
+		return getURLForClass(className, params, fragment);
+	}
+
+	/**
+	 * {@linkplain #getURLForClass(java.lang.String) Gets the URL}, including:
+	 * <ol>
+	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
+	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
+	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
+	 * </ol>
+	 */
+	public String getEncodedURLForClass(String classAndParamsFragment, HttpServletResponse resp) throws IOException, SQLException {
+		return resp.encodeURL(
+			URIEncoder.encodeURI(
+				getContextPath() + getURLForClass(classAndParamsFragment)
 			)
 		);
 	}
