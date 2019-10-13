@@ -36,7 +36,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T22:08:31-0500"
-		dateModified="2019-10-12T19:43:17-0500"
+		dateModified="2019-10-12T19:50:22-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoweb-framework:pom.version}" />
@@ -51,36 +51,45 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 				groupId="@{documented.groupId}"
 				artifactId="@{documented.artifactId}"
 				scmUrl="@{documented.scm.url}"
-			>
-				<ul>
-					<li>
-						Split <code>getRandom()</code> into both <code>getSecureRandom()</code> and <code>getFastRandom()</code>,
-						then selected the appropriate method for each place random is used.
-					</li>
-					<li>Upload file ids changed from 31-bit <code>long</code> to 128-bit <code>Identifier</code>.</li>
-					<li>
-						Case-insensitive matching of URL schemes.  Previously, URL schemes were matched case-sensitive,
-						while the spec is case-insensitive.  This has been OK given we only use lower-case schemes within our
-						code and tools, but this is now a correct implementation.
-					</li>
-					<li>New <code>WebSiteRequest.getEncodedURL(…)</code> methods that:
-						<ol>
-							<li>Include <code>HttpServletRequest.getContextPath()</code> as a prefix</li>
-							<li>Encoded to ASCII-only <ao:a href="https://tools.ietf.org/html/rfc3986">RFC 3986</ao:a> format</li>
-							<li>Response encode via <code>HttpServletResponse.encodeURL(String)</code></li>
-						</ol>
-					</li>
-					<li>
-						Split <code>WebSiteRequest.getURL(String, …)</code> into
-						<code>WebSiteRequest.getURLForClass(String, …)</code> and
-						<code>WebSiteRequest.getURLForPath(String, …)</code>
-						to avoid ambiguity.
-					</li>
-					<li>Updated bundled <code>mime.types</code> to current version from Debian 8.11.</li>
-					<li>Added <code>#fragment</code> support to <code>WebSiteRequest.getURLForClass(String, …)</code>.</li>
-				</ul>
-			</changelog:release>
+			/>
 		</c:if>
+
+		<changelog:release
+			projectName="@{documented.name}"
+			version="2.0.0"
+			datePublished="2019-10-12T19:50:22-0500"
+			groupId="@{documented.groupId}"
+			artifactId="@{documented.artifactId}"
+			scmUrl="@{documented.scm.url}"
+		>
+			<ul>
+				<li>
+					Split <code>getRandom()</code> into both <code>getSecureRandom()</code> and <code>getFastRandom()</code>,
+					then selected the appropriate method for each place random is used.
+				</li>
+				<li>Upload file ids changed from 31-bit <code>long</code> to 128-bit <code>Identifier</code>.</li>
+				<li>
+					Case-insensitive matching of URL schemes.  Previously, URL schemes were matched case-sensitive,
+					while the spec is case-insensitive.  This has been OK given we only use lower-case schemes within our
+					code and tools, but this is now a correct implementation.
+				</li>
+				<li>New <code>WebSiteRequest.getEncodedURL(…)</code> methods that:
+					<ol>
+						<li>Include <code>HttpServletRequest.getContextPath()</code> as a prefix</li>
+						<li>Encoded to ASCII-only <ao:a href="https://tools.ietf.org/html/rfc3986">RFC 3986</ao:a> format</li>
+						<li>Response encode via <code>HttpServletResponse.encodeURL(String)</code></li>
+					</ol>
+				</li>
+				<li>
+					Split <code>WebSiteRequest.getURL(String, …)</code> into
+					<code>WebSiteRequest.getURLForClass(String, …)</code> and
+					<code>WebSiteRequest.getURLForPath(String, …)</code>
+					to avoid ambiguity.
+				</li>
+				<li>Updated bundled <code>mime.types</code> to current version from Debian 8.11.</li>
+				<li>Added <code>#fragment</code> support to <code>WebSiteRequest.getURLForClass(String, …)</code>.</li>
+			</ul>
+		</changelog:release>
 
 		<changelog:release
 			projectName="@{documented.name}"
