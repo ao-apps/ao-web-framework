@@ -36,7 +36,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T22:08:31-0500"
-		dateModified="2019-10-12T19:50:22-0500"
+		dateModified="2019-10-20T02:06:35-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoweb-framework:pom.version}" />
@@ -51,7 +51,13 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 				groupId="@{documented.groupId}"
 				artifactId="@{documented.artifactId}"
 				scmUrl="@{documented.scm.url}"
-			/>
+			>
+		>
+			<ul>
+				<li>
+					Registering doctype with new methods <code>Html.DocType.set(…)</code> and <code>Html.DocType.get(…)</code>.
+				</li>
+			</ul>
 		</c:if>
 
 		<changelog:release

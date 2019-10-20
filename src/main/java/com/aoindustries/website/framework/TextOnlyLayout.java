@@ -23,6 +23,7 @@
 package com.aoindustries.website.framework;
 
 import com.aoindustries.encoding.ChainWriter;
+import com.aoindustries.servlet.http.Html;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -120,6 +121,7 @@ public class TextOnlyLayout extends WebPageLayout {
 			isOkResponseStatus = responseStatus==null || responseStatus==HttpServletResponse.SC_OK;
 		}
 
+		Html.DocType.set(req, Html.DocType.strict);
 		out.print("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n"
 				+ "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\">\n"
 				+ "  <head>\n");
