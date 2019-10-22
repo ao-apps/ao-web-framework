@@ -23,6 +23,8 @@
 package com.aoindustries.website.framework;
 
 import com.aoindustries.encoding.ChainWriter;
+import com.aoindustries.encoding.MediaWriter;
+import com.aoindustries.html.Html;
 import com.aoindustries.io.IoUtils;
 import com.aoindustries.net.URIEncoder;
 import com.aoindustries.util.AoArrays;
@@ -121,8 +123,9 @@ abstract public class TreePage extends WebPage {
 	@Override
 	public void doGet(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
 		String S=req.getParameter("image_num");
-		if(S==null) super.doGet(req, resp);
-		else {
+		if(S == null) {
+			super.doGet(req, resp);
+		} else {
 			try {
 				int imageNum=Integer.parseInt(S);
 				if(imageNum<0 || imageNum>9) {
@@ -132,12 +135,9 @@ abstract public class TreePage extends WebPage {
 					boolean useSmooth=useSmoothOutline(req);
 					resp.setContentType(imageNum==0?"image/gif":useSmooth?"image/jpeg":"image/gif");
 					byte[] bytes=getImageBytes(imageNum, useSmooth);
-					OutputStream out=resp.getOutputStream();
-					try {
+					try (OutputStream out = resp.getOutputStream()) {
 						out.write(bytes);
-					} finally {
-						out.flush();
-						out.close();
+						out.flush(); // TODO: Review all uses of flush/close
 					}
 				}
 			} catch(NumberFormatException err) {
@@ -161,9 +161,10 @@ abstract public class TreePage extends WebPage {
 
 	@Override
 	public void doGet(
-		ChainWriter out,
 		WebSiteRequest req,
-		HttpServletResponse resp
+		HttpServletResponse resp,
+		ChainWriter out,
+		WebPageLayout layout
 	) throws IOException, SQLException {
 		List<? extends TreePageData> tree = getTree(req);
 		String mode;
@@ -252,11 +253,12 @@ abstract public class TreePage extends WebPage {
 		} else handleRequest(out, req, resp, tree, -1, -1, null);
 	}
 
+	// TODO: Override different method that already does everything before the layout
 	@Override
-	protected void doPost(
+	public void doPost(
 		WebSiteRequest req,
 		HttpServletResponse resp
-	) throws IOException, SQLException {
+	) throws ServletException, IOException, SQLException {
 		List<? extends TreePageData> tree = getTree(req);
 
 		// Get the scroll to position
@@ -313,6 +315,8 @@ abstract public class TreePage extends WebPage {
 		layout.printContentHorizontalDivider(out, req, resp, 1, false);
 		layout.startContentLine(out, req, resp, 1, null, null);
 		try {
+			Html html = getHtml(req, out);
+
 			// Get the tree data
 			int treeLen = tree.size();
 
@@ -326,9 +330,8 @@ abstract public class TreePage extends WebPage {
 			}
 
 			// Write the javascript that controls the form
-			out.print("<script type='text/javascript'>\n"
-					+ "  // <![CDATA[\n"
-					+ "  function openNode(index) {\n"
+			try (MediaWriter script = html.script().out()) {
+				script.write("  function openNode(index) {\n"
 					+ "    eval('document.forms[\"tree_form\"].opened_'+index+'.value=\"true\";');\n"
 					+ "    document.forms[\"tree_form\"].scroll_to_x.value=getPageXOffset(window);\n"
 					+ "    document.forms[\"tree_form\"].scroll_to_y.value=getPageYOffset(window);\n"
@@ -340,9 +343,9 @@ abstract public class TreePage extends WebPage {
 					+ "    document.forms[\"tree_form\"].scroll_to_x.value=getPageXOffset(window);\n"
 					+ "    document.forms[\"tree_form\"].scroll_to_y.value=getPageYOffset(window);\n"
 					+ "    document.forms[\"tree_form\"].submit();\n"
-					+ "  }\n"
-					+ "  // ]]>\n"
-					+ "</script>\n");
+					+ "  }\n");
+			}
+			html.nl();
 
 			// Write the form containing the current settings
 			out.print("<form action='' id='tree_form' method='post'><div>\n");

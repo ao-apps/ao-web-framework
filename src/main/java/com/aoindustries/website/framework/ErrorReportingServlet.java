@@ -36,11 +36,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Any error occuring during servlet execution is reported to <code>System.err</code>.
- * Also keeps track of hit stastistics for doGet, doPost, and getLastModified methods.
+ * Any error occurring during servlet execution is reported to <code>System.err</code>.
+ * Also keeps track of hit statistics for doGet, doPost, and getLastModified methods.
  *
  * @author  AO Industries, Inc.
  */
+// TODO: Get rid of this.  Handle statistics in a request listener
 public abstract class ErrorReportingServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -48,6 +49,7 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 	/**
 	 * The response buffer is set to this size.
 	 */
+	// TODO: Compare to JSP page settings.
 	public static final int BUFFER_SIZE = 256 * 1024;
 
 	/**

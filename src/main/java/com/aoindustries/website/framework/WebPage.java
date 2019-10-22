@@ -23,9 +23,15 @@
 package com.aoindustries.website.framework;
 
 import com.aoindustries.encoding.ChainWriter;
+import com.aoindustries.html.Doctype;
+import com.aoindustries.html.Html;
+import com.aoindustries.html.Serialization;
+import com.aoindustries.html.servlet.DoctypeEE;
+import com.aoindustries.html.servlet.SerializationEE;
 import com.aoindustries.io.AoByteArrayOutputStream;
 import com.aoindustries.net.EmptyURIParameters;
 import com.aoindustries.security.LoginException;
+import com.aoindustries.servlet.ServletUtil;
 import com.aoindustries.servlet.http.HttpServletUtil;
 import com.aoindustries.servlet.http.LastModifiedServlet;
 import com.aoindustries.util.SortedArrayList;
@@ -38,7 +44,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +54,7 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -187,35 +193,56 @@ abstract public class WebPage extends ErrorReportingServlet {
 		getParent().printUnauthorizedPage(page, req, resp);
 	}
 
+	// <editor-fold defaultstate="collapsed" desc="getLastModified() Requests">
+	
 	/**
-	 * First, resolves correct instance of <code>WebPage</code>.  Then, if security mode
-	 * mismatches, authentication failed, or the page is a redirect, returns <code>-1</code>
-	 * for unknown.  Otherwise, call <code>getLastModified(WebSiteRequest)</code>
+	 * The main entry point for <code>getLastModified()</code> requests.
+	 * Prepares the request and performs initial actions:
+	 * <ol>
+	 *   <li>Wraps the request in {@link WebSiteRequest}
+	 *       via {@link #getWebSiteRequest(javax.servlet.http.HttpServletRequest)}.</li>
+	 *   <li>Resolves the current instance of {@link WebPage}
+	 *       via {@link #getWebPage(java.lang.Class, com.aoindustries.website.framework.WebSiteRequest)}.</li>
+	 *   <li>Handles any login request (parameter "login_requested"="true")
+	 *       by returning {@code -1} for unknown.</li>
+	 *   <li>Resolves the current {@link WebSiteUser}
+	 *       via {@link WebSiteRequest#getWebSiteUser(javax.servlet.http.HttpServletResponse)} (if any).
+	 *       When {@linkplain LoginException login required and failed},
+	 *       returns {@code -1} for unknown.</li>
+	 *   <li>Ensures the {@linkplain WebPage#canAccess(com.aoindustries.website.framework.WebSiteUser) user can access the page},
+	 *       returns {@code -1} for unknown
+	 *       when not authorized.</li>
+	 *   <li>If {@linkplain #getRedirectURL(com.aoindustries.website.framework.WebSiteRequest) is a redirect},
+	 *       returns {@code -1} for unknown.</li>
+	 *   <li>Finally, dispatches the request to {@link #getLastModified(com.aoindustries.website.framework.WebSiteRequest)}.</li>
+	 * </ol>
 	 *
-	 * @see  #getLastModified(WebSiteRequest)
+	 * @see #getLastModified(com.aoindustries.website.framework.WebSiteRequest)
 	 */
 	@Override
-	final public long reportingGetLastModified(HttpServletRequest httpReq) throws IOException, SQLException {
-		WebSiteRequest req=getWebSiteRequest(httpReq);
-		Class<? extends WebPage> thisClass = getClass();
-		WebPage page=getWebPage(thisClass, req);
+	final protected long reportingGetLastModified(HttpServletRequest httpReq) throws IOException, SQLException {
+		WebSiteRequest req = getWebSiteRequest(httpReq);
+		WebPage page = getWebPage(getClass(), req);
 
-		// Check authentication first
+		if("true".equals(req.getParameter("login_requested"))) {
+			return -1;
+		}
+		WebSiteUser user;
 		try {
-			WebSiteUser user=req.getWebSiteUser(null);
-			if(!page.canAccess(user)) return -1;
+			user = req.getWebSiteUser(null);
 		} catch(LoginException err) {
 			return -1;
 		}
+		if(!page.canAccess(user)) return -1;
 
 		// If redirected
-		if(page.getRedirectURL(req)!=null) return -1;
+		if(page.getRedirectURL(req) != null) return -1;
 
 		return page.getLastModified(req);
 	}
 
 	/**
-	 * The <code>getLastModified</code> defaults to <code>-1</code>.
+	 * The <code>getLastModified</code> defaults to {@code -1}.
 	 */
 	public long getLastModified(WebSiteRequest req) throws IOException, SQLException {
 		return -1;
@@ -227,7 +254,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @see  ErrorReportingServlet#getUptime()
 	 */
-	protected final long getClassLastModified() throws IOException, SQLException {
+	final protected long getClassLastModified() throws IOException, SQLException {
 		String dir=getServletContext().getRealPath("/WEB-INF/classes");
 		if(dir!=null && dir.length()>0) {
 			// Try to get from the class file
@@ -295,185 +322,342 @@ abstract public class WebPage extends ErrorReportingServlet {
 		return getLastModified(null);
 	}
 
+	// </editor-fold>
+
 	/**
-	 * First, resolves correct instance of <code>WebPage</code>.  Next, handles security
-	 * mode, authentication check, and redirects.  Anything left goes on to <code>doGet</code>.
+	 * Gets the {@link Serialization} to use for this page.
 	 *
-	 * @see  #doGet(WebSiteRequest,HttpServletResponse)
+	 * @param req  {@code null} during search
+	 *
+	 * @see Serialization#getDefault(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
+	 */
+	protected Serialization getSerialization(WebSiteRequest req) {
+		return (req == null) ? Serialization.XML : SerializationEE.getDefault(req.getServletContext(), req);
+	}
+
+	/**
+	 * Gets the {@link Doctype} to use for this page.
+	 *
+	 * @param req  {@code null} during search
+	 *
+	 * @see Doctype#getDefault(javax.servlet.ServletContext)
+	 */
+	protected Doctype getDoctype(WebSiteRequest req) {
+		return Doctype.HTML5;
+	}
+
+	/**
+	 * Gets the default HTML writer for this page.
+	 *
+	 * @see #getSerialization(com.aoindustries.website.framework.WebSiteRequest)
+	 * @see #getDoctype(com.aoindustries.website.framework.WebSiteRequest)
+	 */
+	public Html getHtml(WebSiteRequest req, ChainWriter out) {
+		return new Html(
+			getSerialization(req),
+			getDoctype(req),
+			out.getPrintWriter()
+		);
+	}
+
+	// <editor-fold defaultstate="collapsed" desc="GET Requests">
+
+	/**
+	 * The main entry point for <code>GET</code> requests.
+	 * Prepares the request and performs initial actions:
+	 * <ol>
+	 *   <li>Wraps the request in {@link WebSiteRequest}
+	 *       via {@link #getWebSiteRequest(javax.servlet.http.HttpServletRequest)}.</li>
+	 *   <li>Resolves the current instance of {@link WebPage}
+	 *       via {@link #getWebPage(java.lang.Class, com.aoindustries.website.framework.WebSiteRequest)}.</li>
+	 *   <li>Handles any logout request (parameter "logout_request"="true")
+	 *       via {@link WebSiteRequest#logout()}.</li>
+	 *   <li>Handles any login request (parameter "login_requested"="true")
+	 *       by invoking {@link WebPage#printLoginForm(com.aoindustries.website.framework.WebPage, com.aoindustries.security.LoginException, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
+	 *       and stops here.</li>
+	 *   <li>Resolves the current {@link WebSiteUser}
+	 *       via {@link WebSiteRequest#getWebSiteUser(javax.servlet.http.HttpServletResponse)} (if any).
+	 *       When {@linkplain LoginException login required and failed},
+	 *       invokes {@link WebPage#printLoginForm(com.aoindustries.website.framework.WebPage, com.aoindustries.security.LoginException, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
+	 *       and stops here.</li>
+	 *   <li>Ensures the {@linkplain WebPage#canAccess(com.aoindustries.website.framework.WebSiteUser) user can access the page},
+	 *       invokes {@link WebPage#printUnauthorizedPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
+	 *       when not authorized and stops here.</li>
+	 *   <li>If {@linkplain #getRedirectURL(com.aoindustries.website.framework.WebSiteRequest) is a redirect},
+	 *       {@linkplain HttpServletUtil#sendRedirect(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.String, com.aoindustries.net.URIParameters, boolean, boolean, com.aoindustries.servlet.http.LastModifiedServlet.AddLastModifiedWhen, int) sends the redirect}
+	 *       of the {@linkplain #getRedirectType() correct type} and stops here.</li>
+	 *   <li>Finally, dispatches the request to {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}.</li>
+	 * </ol>
+	 *
+	 * @see #doGet(WebSiteRequest,HttpServletResponse)
 	 */
 	@Override
 	final protected void reportingDoGet(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException, IOException, SQLException {
-		WebSiteRequest req=getWebSiteRequest(httpReq);
-		WebPage page=getWebPage(getClass(), req);
+		WebSiteRequest req = getWebSiteRequest(httpReq);
+		WebPage page = getWebPage(getClass(), req);
 		// Logout when requested
-		boolean isLogout="true".equals(req.getParameter("logout_requested"));
+		boolean isLogout = "true".equals(req.getParameter("logout_requested")); // TODO: No magic value here, constant where best
 		if(isLogout) req.logout(resp);
 
-		// Check authentication first and return HTTP error code
-		boolean alreadyDone=false;
 		if("true".equals(req.getParameter("login_requested"))) {
+			// TODO: ROBOTS header on "login_requested"
 			page.printLoginForm(page, new LoginException("Please Login"), req, resp);
-			alreadyDone = true;
+			return;
 		}
-		if(!alreadyDone) {
+		WebSiteUser user;
+		try {
+			user = req.getWebSiteUser(resp);
+		} catch(LoginException err) {
+			page.printLoginForm(page, err, req, resp);
+			return;
+		}
+		if(!page.canAccess(user)) {
+			page.printUnauthorizedPage(page, req, resp);
+			return;
+		}
+		String redirect = page.getRedirectURL(req);
+		if(redirect != null) {
+			HttpServletUtil.sendRedirect(
+				req.getServletContext(),
+				req,
+				resp,
+				redirect,
+				EmptyURIParameters.getInstance(),
+				true,
+				false,
+				LastModifiedServlet.AddLastModifiedWhen.FALSE,
+				page.getRedirectType()
+			);
+			return;
+		}
+		page.doGet(req, resp);
+	}
+
+	/**
+	 * Prepares the request then invokes {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter)}.
+	 * To not have these steps automatically applied, override this method.
+	 * By the time this method is called, security checks, authentication, and redirects have been done.
+	 * <ol>
+	 *   <li>Sets the {@linkplain Serialization serialization}.</li>
+	 *   <li>Sets the {@linkplain Doctype DOCTYPE}.</li>
+	 *   <li>Gets the {@linkplain #getHTMLChainWriter(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse) response writer}.</li>
+	 *   <li>Invokes {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter)}.</li>
+	 * </ol>
+	 *
+	 * @see #reportingDoGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 * @see #getSerialization(com.aoindustries.website.framework.WebSiteRequest)
+	 * @see #getDoctype(com.aoindustries.website.framework.WebSiteRequest)
+	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter)
+	 */
+	public void doGet(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+		Serialization serialization = getSerialization(req);
+		Serialization oldSerialization = SerializationEE.replace(req, serialization);
+		try {
+			Doctype oldDoctype = DoctypeEE.replace(req, getDoctype(req));
 			try {
-				WebSiteUser user=req.getWebSiteUser(resp);
-				if(!page.canAccess(user)) {
-					page.printUnauthorizedPage(page, req, resp);
-					alreadyDone=true;
+				try (ChainWriter out = getHTMLChainWriter(req, resp)) {
+					doGet(req, resp, out);
+					out.flush();
 				}
-			} catch(LoginException err) {
-				page.printLoginForm(page, err, req, resp);
-				alreadyDone=true;
+			} finally {
+				DoctypeEE.set(req, oldDoctype);
 			}
-		}
-		if(!alreadyDone) {
-			String redirect=page.getRedirectURL(req);
-			if(redirect!=null) {
-				HttpServletUtil.sendRedirect(
-					req.getServletContext(),
-					req,
-					resp,
-					redirect,
-					EmptyURIParameters.getInstance(),
-					true,
-					false,
-					LastModifiedServlet.AddLastModifiedWhen.FALSE,
-					page.getRedirectType()
-				);
-			} else {
-				page.doGet(req, resp);
-			}
+		} finally {
+			SerializationEE.set(req, oldSerialization);
 		}
 	}
 
 	/**
-	 * The layout is automatically applied to the page, then <code>doGet</code> is called.  To not have this automatically applied,
-	 * override this method.  By the time this method is called, security checks, authentication, and redirects have been done.<br />
-	 * <br />
-	 * The first thing this method does is print the frameset if needed.  Second, it uses the output cache to quickly print
-	 * the output if possible.  And third, it will call doGet(ChainWriter,WebSiteRequest,HttpServletResponse) with a stream
-	 * directly out if the first two actions were not taken.
+	 * The layout is automatically applied to the page, then {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter, com.aoindustries.website.framework.WebPageLayout)}
+	 * is called.  To not have the layout automatically applied, override this method.
+	 * By the time this method is called, security checks, authentication, redirects, doctype, and serialization have been done.
 	 *
-	 * @see #doGet(ChainWriter,WebSiteRequest,HttpServletResponse)
+	 * @param  req   the {@link WebSiteRequest} for this request, or {@code null} when searching
+	 * @param  resp  the {@link HttpServletResponse} for this request, or {@code null} when searching
+	 * @param  out   the {@link ChainWriter} to send output to
+	 *
+	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
+	 * @see #getWebPageLayout(com.aoindustries.website.framework.WebSiteRequest)
+	 * @see WebPageLayout#startHTML(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter, java.lang.String)
+	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter, com.aoindustries.website.framework.WebPageLayout)
+	 * @see WebPageLayout#endHTML(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter)
 	 */
-	protected void doGet(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
-		WebPageLayout layout=getWebPageLayout(req);
+	// TODO: We could have a NullHtmlWriter that does not write any HTML tags or attributes, but just the text body.
+	// TODO: Then there could be a search-specific request object, instead of null, which is used during searches.
+	// TODO: This NullHtmlWriter could wrap something that skips HTML tags (in case of direct writes - is possible through Html abstraction)
+	// TODO: Finally, this could all go to a writer that builds word indexes on-the-fly.
+	// TODO: This could support deferred attributes (at least in a servlet context), to avoid processing attributes that will be discarded
+	public void doGet(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		ChainWriter out
+	) throws ServletException, IOException, SQLException {
+		WebPageLayout layout = getWebPageLayout(req);
+		layout.startHTML(this, req, resp, out, null);
+		doGet(req, resp, out, layout);
+		layout.endHTML(this, req, resp, out);
+	}
 
-		ChainWriter out=getHTMLChainWriter(req, resp);
-		try {
-			layout.startHTML(this, req, resp, out, null);
-			doGet(out, req, resp);
-			layout.endHTML(this, req, resp, out);
-		} finally {
-			out.flush();
-			out.close();
-		}
+	final public void doGet(ChainWriter out, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+		throw new AssertionError("TODO: Delete this method after all subclasses upgraded");
 	}
 
 	/**
 	 * By default, GET provides no content.
 	 *
-	 * @param  out   the <code>ChainWriter</code> to send output to
-	 * @param  req   the current <code>WebSiteRequest</code>
-	 * @param  resp  the <code>HttpServletResponse</code> for this request, is <code>null</code> when searching
+	 * @param  req     the {@link WebSiteRequest} for this request, or {@code null} when searching
+	 * @param  resp    the {@link HttpServletResponse} for this request, or {@code null} when searching
+	 * @param  out     the {@link ChainWriter} to send output to
+	 * @param  layout  the {@link WebPageLayout} that has been applied
+	 *
+	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter)
 	 */
 	public void doGet(
-		ChainWriter out,
 		WebSiteRequest req,
-		HttpServletResponse resp
+		HttpServletResponse resp,
+		ChainWriter out,
+		WebPageLayout layout
 	) throws ServletException, IOException, SQLException {
 	}
 
+	// </editor-fold>
+
+	// <editor-fold defaultstate="collapsed" desc="POST Requests">
+
 	/**
-	 * First, resolves correct instance of <code>WebPage</code>.  Then, handles
-	 * security mode, authentication check, and redirects.  Anything left goes
-	 * on to <code>doPostWithSearch</code>.
+	 * The main entry point for <code>GET</code> requests.
+	 * Prepares the request and performs initial actions:
+	 * <ol>
+	 *   <li>Wraps the request in {@link WebSiteRequest}
+	 *       via {@link #getWebSiteRequest(javax.servlet.http.HttpServletRequest)}.</li>
+	 *   <li>Resolves the current instance of {@link WebPage}
+	 *       via {@link #getWebPage(java.lang.Class, com.aoindustries.website.framework.WebSiteRequest)}.</li>
+	 *   <li>Handles any logout request (parameter "logout_request"="true")
+	 *       via {@link WebSiteRequest#logout()}.</li>
+	 *   <li>Handles any login request (parameter "login_requested"="true")
+	 *       by invoking {@link WebPage#printLoginForm(com.aoindustries.website.framework.WebPage, com.aoindustries.security.LoginException, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
+	 *       and stops here.</li>
+	 *   <li>Resolves the current {@link WebSiteUser}
+	 *       via {@link WebSiteRequest#getWebSiteUser(javax.servlet.http.HttpServletResponse)} (if any).
+	 *       When {@linkplain LoginException login required and failed},
+	 *       invokes {@link WebPage#printLoginForm(com.aoindustries.website.framework.WebPage, com.aoindustries.security.LoginException, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
+	 *       and stops here.</li>
+	 *   <li>Ensures the {@linkplain WebPage#canAccess(com.aoindustries.website.framework.WebSiteUser) user can access the page},
+	 *       invokes {@link WebPage#printUnauthorizedPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
+	 *       when not authorized and stops here.</li>
+	 *   <li>If {@linkplain #getRedirectURL(com.aoindustries.website.framework.WebSiteRequest) is a redirect},
+	 *       {@linkplain HttpServletUtil#sendRedirect(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.String, com.aoindustries.net.URIParameters, boolean, boolean, com.aoindustries.servlet.http.LastModifiedServlet.AddLastModifiedWhen, int) sends the redirect}
+	 *       of the {@linkplain #getRedirectType() correct type} and stops here.</li>
+	 *   <li>Avoid unexpected POST action after a (re)login: If has parameteter "login_requested"="true"
+	 *       or both "login_username" and "login_password" parameters, dispatch to
+	 *       {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
+	 *       and stop here.</li>
+	 *   <li>Finally, dispatches the request to {@link #doPostWithSearch(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}.</li>
+	 * </ol>
 	 *
-	 * @see  #doPostWithSearch(WebSiteRequest,HttpServletResponse)
+	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
+	 * @see #doPostWithSearch(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
-	protected final void reportingDoPost(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException, IOException, SQLException {
-		WebSiteRequest req=getWebSiteRequest(httpReq);
-		WebPage page=getWebPage(getClass(), req);
+	final protected void reportingDoPost(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+		WebSiteRequest req = getWebSiteRequest(httpReq);
+		WebPage page = getWebPage(getClass(), req);
 		// Logout when requested
-		boolean isLogout="true".equals(req.getParameter("logout_requested"));
+		boolean isLogout = "true".equals(req.getParameter("logout_requested")); // TODO: No magic value here, constant where best
 		if(isLogout) req.logout(resp);
 
-		// Check authentication first and return HTTP error code
-		boolean alreadyDone=false;
 		if("true".equals(req.getParameter("login_requested"))) {
 			page.printLoginForm(page, new LoginException("Please Login"), req, resp);
-			alreadyDone = true;
+			return;
 		}
-		if(!alreadyDone) {
-			try {
-				WebSiteUser user=req.getWebSiteUser(resp);
-				if(!page.canAccess(user)) {
-					page.printUnauthorizedPage(page, req, resp);
-					alreadyDone=true;
-				}
-			} catch(LoginException err) {
-				page.printLoginForm(page, err, req, resp);
-				alreadyDone=true;
-			}
+		WebSiteUser user;
+		try {
+			user = req.getWebSiteUser(resp);
+		} catch(LoginException err) {
+			page.printLoginForm(page, err, req, resp);
+			return;
 		}
-		if(!alreadyDone) {
-			String redirect=page.getRedirectURL(req);
-			if(redirect!=null) {
-				HttpServletUtil.sendRedirect(
-					req.getServletContext(),
-					req,
-					resp,
-					redirect,
-					EmptyURIParameters.getInstance(),
-					true,
-					false,
-					LastModifiedServlet.AddLastModifiedWhen.FALSE,
-					page.getRedirectType()
-				);
-			} else {
-				if(isLogout || (req.getParameter("login_username")!=null && req.getParameter("login_password")!=null)) page.doGet(req, resp);
-				else page.doPostWithSearch(req, resp);
-			}
+		if(!page.canAccess(user)) {
+			page.printUnauthorizedPage(page, req, resp);
+			return;
+		}
+		String redirect = page.getRedirectURL(req);
+		if(redirect != null) {
+			HttpServletUtil.sendRedirect(
+				req.getServletContext(),
+				req,
+				resp,
+				redirect,
+				EmptyURIParameters.getInstance(),
+				true,
+				false,
+				LastModifiedServlet.AddLastModifiedWhen.FALSE,
+				page.getRedirectType()
+			);
+			return;
+		}
+		if(
+			isLogout
+			|| (
+				req.getParameter("login_username") != null // TODO: No magic values
+				&& req.getParameter("login_password") != null // TODO: No magic values
+			)
+		) {
+			page.doGet(req, resp);
+		} else {
+			page.doPostWithSearch(req, resp);
 		}
 	}
 
 	/**
-	 * Handles any search posts, sends everything else on to <code>doPost(WebSiteRequest,HttpServletResponse)</code>.
+	 * Handles any search posts, sends everything else on to {@link #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}.
 	 * The search assumes the search parameters of <code>search_query</code> and <code>search_target</code>.  Both
 	 * these values must be present for a search to be performed.  Search target may be either <code>"this_area"</code>
 	 * or <code>"entire_site"</code>, defaulting to <code>"area"</code> for any other value.
 	 *
-	 * @see  #doPost(WebSiteRequest,HttpServletResponse)
+	 * @see #reportingDoPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 * @see #doPost(WebSiteRequest,HttpServletResponse)
 	 */
 	protected void doPostWithSearch(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
-		String query=req.getParameter("search_query");
-		String searchTarget=req.getParameter("search_target");
-		WebPageLayout layout=getWebPageLayout(req);
-		if(query!=null && searchTarget!=null) {
-			try (ChainWriter out = getHTMLChainWriter(req, resp)) {
-				layout.startHTML(this, req, resp, out, "document.forms['search_two'].search_query.select(); document.forms['search_two'].search_query.focus();");
-				boolean entire_site=searchTarget.equals("entire_site");
-				WebPage target = entire_site ? getRootPage() : this;
+		String query = req.getParameter("search_query");
+		String searchTarget = req.getParameter("search_target");
+		if(query != null && searchTarget != null) {
+			Serialization serialization = getSerialization(req);
+			Serialization oldSerialization = SerializationEE.replace(req, serialization);
+			try {
+				Doctype oldDoctype = DoctypeEE.replace(req, getDoctype(req));
+				try {
+					try (ChainWriter out = getHTMLChainWriter(req, resp)) {
+						WebPageLayout layout = getWebPageLayout(req);
+						layout.startHTML(this, req, resp, out, "document.forms.search_two.search_query.select(); document.forms.search_two.search_query.focus();");
 
-				// If the target contains no pages, use its parent
-				if(target.getCachedPages(req).length==0) target=target.getParent();
+						boolean entire_site = searchTarget.equals("entire_site");
+						WebPage target = entire_site ? getRootPage() : this;
 
-				// Get the list of words to search for
-				String[] words=StringUtility.splitString(query.replace('.', ' '));
+						// If the target contains no pages, use its parent
+						if(target.getCachedPages(req).length==0) target=target.getParent();
 
-				List<SearchResult> results=new ArrayList<>();
-				if(words.length>0) {
-					// Perform the search
-					target.search(words, req, resp, results, new AoByteArrayOutputStream(), new SortedArrayList<>());
-					Collections.sort(results);
-					//StringUtility.sortObjectsAndFloatDescending(results, 1, 5);
+						// Get the list of words to search for
+						String[] words=StringUtility.splitString(query.replace('.', ' '));
+
+						List<SearchResult> results=new ArrayList<>();
+						if(words.length>0) {
+							// Perform the search
+							target.search(words, req, resp, results, new AoByteArrayOutputStream(), new SortedArrayList<>());
+							Collections.sort(results);
+							//StringUtility.sortObjectsAndFloatDescending(results, 1, 5);
+						}
+
+						layout.printSearchOutput(this, out, req, resp, query, entire_site, results, words);
+
+						layout.endHTML(this, req, resp, out);
+						out.flush();
+					}
+				} finally {
+					DoctypeEE.set(req, oldDoctype);
 				}
-
-				layout.printSearchOutput(this, out, req, resp, query, entire_site, results, words);
-
-				layout.endHTML(this, req, resp, out);
+			} finally {
+				SerializationEE.set(req, oldSerialization);
 			}
 		} else {
 			doPost(req, resp);
@@ -481,48 +665,90 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
-	 * By default, a post request is just sets up the content beginning and calls <code>doPost</code>
+	 * Prepares the request then invokes {@link #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter)}.
+	 * To not have these steps automatically applied, override this method.
+	 * By the time this method is called, security checks, authentication, and redirects have been done.
+	 * <ol>
+	 *   <li>Sets the {@linkplain Serialization serialization}.</li>
+	 *   <li>Sets the {@linkplain Doctype DOCTYPE}.</li>
+	 *   <li>Gets the {@linkplain #getHTMLChainWriter(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse) response writer}.</li>
+	 *   <li>Invokes {@link #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter)}.</li>
+	 * </ol>
 	 *
-	 * @param  req       the current <code>WebSiteRequest</code>
-	 * @param  resp      the <code>HttpServletResponse</code> for this request
-	 *
-	 * @see  #doPost(ChainWriter,WebSiteRequest,HttpServletResponse)
+	 * @see #doPostWithSearch(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
+	 * @see #getSerialization(com.aoindustries.website.framework.WebSiteRequest)
+	 * @see #getDoctype(com.aoindustries.website.framework.WebSiteRequest)
+	 * @see #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter)
 	 */
-	protected void doPost(
-		WebSiteRequest req,
-		HttpServletResponse resp
-	) throws ServletException, IOException, SQLException {
-		ChainWriter out=getHTMLChainWriter(req, resp);
+	public void doPost(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+		Serialization serialization = getSerialization(req);
+		Serialization oldSerialization = SerializationEE.replace(req, serialization);
 		try {
-			WebPageLayout layout=getWebPageLayout(req);
-			layout.startHTML(this, req, resp, out, null);
-
-			doPost(out, req, resp);
-
-			layout.endHTML(this, req, resp, out);
+			Doctype oldDoctype = DoctypeEE.replace(req, getDoctype(req));
+			try {
+				try (ChainWriter out = getHTMLChainWriter(req, resp)) {
+					doPost(req, resp, out);
+					out.flush();
+				}
+			} finally {
+				DoctypeEE.set(req, oldDoctype);
+			}
 		} finally {
-			out.flush();
-			out.close();
+			SerializationEE.set(req, oldSerialization);
 		}
 	}
 
-	/**
-	 * By default, a post request just calls <code>doGet</code>
-	 *
-	 * @param  out  the <code>ChainWriter</code> to write to
-	 * @param  req  the current <code>WebSiteRequest</code>
-	 * @param  resp  the <code>HttpServletResponse</code> for this request
-	 *
-	 * @see  #doGet(ChainWriter,WebSiteRequest,HttpServletResponse)
-	 */
-	protected void doPost(
-		ChainWriter out,
-		WebSiteRequest req,
-		HttpServletResponse resp
-	) throws ServletException, IOException, SQLException {
-		doGet(out, req, resp);
+	final public void doPost(ChainWriter out, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+		throw new AssertionError("TODO: Delete this method after all subclasses upgraded");
 	}
 
+	/**
+	 * The layout is automatically applied to the page, then {@link #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter, com.aoindustries.website.framework.WebPageLayout)}
+	 * is called.  To not have the layout automatically applied, override this method.
+	 * By the time this method is called, security checks, authentication, redirects, doctype, and serialization have been done.
+	 *
+	 * @param  req   the {@link WebSiteRequest} for this request, or {@code null} when searching
+	 * @param  resp  the {@link HttpServletResponse} for this request, or {@code null} when searching
+	 * @param  out   the {@link ChainWriter} to send output to
+	 *
+	 * @see #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
+	 * @see #getWebPageLayout(com.aoindustries.website.framework.WebSiteRequest)
+	 * @see WebPageLayout#startHTML(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter, java.lang.String)
+	 * @see #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter, com.aoindustries.website.framework.WebPageLayout)
+	 * @see WebPageLayout#endHTML(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter)
+	 */
+	public void doPost(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		ChainWriter out
+	) throws ServletException, IOException, SQLException {
+		WebPageLayout layout = getWebPageLayout(req);
+		layout.startHTML(this, req, resp, out, null);
+		doPost(req, resp, out, layout);
+		layout.endHTML(this, req, resp, out);
+	}
+
+	/**
+	 * By default, a POST request just calls {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter, com.aoindustries.website.framework.WebPageLayout)}.
+	 *
+	 * @param  req     the current {@link WebSiteRequest}
+	 * @param  resp    the {@link HttpServletResponse} for this request
+	 * @param  out     the {@link ChainWriter} to send output to
+	 * @param  layout  the {@link WebPageLayout} that has been applied
+	 *
+	 * @see #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter)
+	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter, com.aoindustries.website.framework.WebPageLayout)
+	 */
+	public void doPost(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		ChainWriter out,
+		WebPageLayout layout
+	) throws ServletException, IOException, SQLException {
+		doGet(req, resp, out, layout);
+	}
+
+	// </editor-fold>
 
 	/**
 	 * Determines if this page equals another page.
@@ -561,6 +787,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	/**
 	 * Gets additional headers for this page.  The format must be in a String[] of name/value pairs, two elements each, name and then value.
 	 */
+	// TODO: Return a Map<String,? extend Iterable<String>> ?
 	public String[] getAdditionalHeaders(WebSiteRequest req) {
 		return null;
 	}
@@ -611,33 +838,74 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
-	 * Sets the content type, encoding to {@link StandardCharsets#UTF_8}, sets the additional headers, then returns the {@link ChainWriter}.
+	 * Prepares for output and returns the {@link ChainWriter}.
+	 * <ol>
+	 *   <li>{@linkplain ServletResponse#resetBuffer() clears the output buffer}.</li>
+	 *   <li>Sets the {@linkplain ServletResponse#setContentType(java.lang.String) response content type}.</li>
+	 *   <li>Sets the {@linkplain ServletResponse#setCharacterEncoding(java.lang.String) response character encoding}
+	 *       to {@linkplain Html#ENCODING the default <code>UTF-8</code>}.</li>
+	 *   <li>Sets any {@linkplain #getAdditionalHeaders(com.aoindustries.website.framework.WebSiteRequest) additional headers}.</li>
+	 * </ol>
+	 * <p>
+	 * Both the {@link Serialization} and {@link Doctype} may have been set
+	 * on the request, and these must be considered in the content type.
+	 * </p>
 	 *
-	 * @see  #getAdditionalHeaders
+	 * @see Serialization#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
+	 * @see Doctype#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
+	 * @see #getAdditionalHeaders(com.aoindustries.website.framework.WebSiteRequest)
 	 */
-	protected final ChainWriter getHTMLChainWriter(WebSiteRequest req, HttpServletResponse resp) throws IOException {
-		resp.setContentType("text/html");
-		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
-		String[] headers=getAdditionalHeaders(req);
-		if(headers!=null) {
-			int len=headers.length;
-			for(int c=0; c<len; c+=2) resp.setHeader(headers[c], headers[c+1]);
+	protected ChainWriter getHTMLChainWriter(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// Clear the output buffer
+		resp.resetBuffer();
+		// Set the content type
+		ServletUtil.setContentType(
+			resp,
+			SerializationEE.get(req.getServletContext(), req).getContentType(),
+			Html.ENCODING
+		);
+		// Set additional headers
+		String[] headers = getAdditionalHeaders(req);
+		if(headers != null) {
+			int len = headers.length;
+			for(int c=0; c<len; c += 2) resp.setHeader(headers[c], headers[c + 1]);
 		}
 		return new ChainWriter(resp.getWriter());
 	}
 
 	/**
-	 * Sets the content type, encoding to {@link StandardCharsets#UTF_8}, sets the additional headers, then returns the {@link OutputStream}.
+	 * Prepares for output and returns the {@link OutputStream}.
+	 * <ol>
+	 *   <li>{@linkplain ServletResponse#resetBuffer() clears the output buffer}.</li>
+	 *   <li>Sets the {@linkplain ServletResponse#setContentType(java.lang.String) response content type}.</li>
+	 *   <li>Sets the {@linkplain ServletResponse#setCharacterEncoding(java.lang.String) response character encoding}
+	 *       to {@linkplain Html#ENCODING the default <code>UTF-8</code>}.</li>
+	 *   <li>Sets any {@linkplain #getAdditionalHeaders(com.aoindustries.website.framework.WebSiteRequest) additional headers}.</li>
+	 * </ol>
+	 * <p>
+	 * Both the {@link Serialization} and {@link Doctype} may have been set
+	 * on the request, and these must be considered in the content type.
+	 * </p>
 	 *
-	 * @see  #getAdditionalHeaders
+	 * @see Serialization#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
+	 * @see Doctype#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
+	 * @see #getAdditionalHeaders(com.aoindustries.website.framework.WebSiteRequest)
 	 */
-	protected final OutputStream getHTMLOutputStream(WebSiteRequest req, HttpServletResponse resp) throws IOException {
-		resp.setContentType("text/html");
-		resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
-		String[] headers=getAdditionalHeaders(req);
-		if(headers!=null) {
-			int len=headers.length;
-			for(int c=0; c<len; c+=2) resp.setHeader(headers[c], headers[c+1]);
+	protected OutputStream getHTMLOutputStream(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// Clear the output buffer
+		resp.resetBuffer();
+		// Set the content type
+		ServletUtil.setContentType(
+			resp,
+			// TODO: request-only variant
+			SerializationEE.get(req.getServletContext(), req).getContentType(),
+			Html.ENCODING
+		);
+		// Set additional headers
+		String[] headers = getAdditionalHeaders(req);
+		if(headers != null) {
+			int len = headers.length;
+			for(int c=0; c<len; c += 2) resp.setHeader(headers[c], headers[c + 1]);
 		}
 		return resp.getOutputStream();
 	}
@@ -658,6 +926,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	/**
 	 * Gets the keywords for this page.  By default, the keywords of the parent page are used.
 	 */
+	// TODO: Is it correct to use keywords of parent?
 	public String getKeywords() throws IOException, SQLException {
 		return getParent().getKeywords();
 	}
@@ -667,9 +936,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @return  the alt text of the navigation image
 	 *
-	 * @see  #getShortTitle
-	 * @see  #getNavImageSuffix
-	 * @see  #getNavImageURL
+	 * @see #getShortTitle()
+	 * @see #getNavImageSuffix(com.aoindustries.website.framework.WebSiteRequest)
+	 * @see #getNavImageURL(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, java.lang.Object)
 	 */
 	public String getNavImageAlt(WebSiteRequest req) throws IOException, SQLException {
 		return getShortTitle();
@@ -680,8 +949,8 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * image is not large enough to hold both <code>getNavImageAlt</code> and <code>getNavImageSuffix</code>,
 	 * the beginning is truncated and <code>...</code> appended so that both fit the image.
 	 *
-	 * @see  #getNavImageAlt
-	 * @see  #getNavImageURL
+	 * @see #getNavImageAlt(com.aoindustries.website.framework.WebSiteRequest)
+	 * @see #getNavImageURL(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, java.lang.Object)
 	 */
 	public String getNavImageSuffix(WebSiteRequest req) throws IOException, SQLException {
 		return null;
@@ -690,8 +959,8 @@ abstract public class WebPage extends ErrorReportingServlet {
 	/**
 	 * Gets the URL associated with a nav image, fully encoded.
 	 *
-	 * @see  #getNavImageAlt
-	 * @see  #getNavImageSuffix
+	 * @see #getNavImageAlt(com.aoindustries.website.framework.WebSiteRequest)
+	 * @see #getNavImageSuffix(com.aoindustries.website.framework.WebSiteRequest)
 	 */
 	public String getNavImageURL(WebSiteRequest req, HttpServletResponse resp, Object params) throws IOException, SQLException {
 		return req.getEncodedURL(this, params, resp);
@@ -944,12 +1213,22 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
-	 * Gets the current layout for this page.  By default, takes the layout
-	 * of the parent page.
+	 * Gets the current layout for this page.
+	 * When req is null, should return {@link SearchLayout} or equivalent.
+	 * <p>
+	 * This default implementation returns {@link SearchLayout#getInstance()} for
+	 * a search request (req is null), or inherits the layout of the
+	 * {@linkplain #getParent() parent}.
+	 * </p>
+	 *
+	 * @param  req  the {@link WebSiteRequest} for this request, or {@code null} when searching
 	 *
 	 * @return  the <code>WebPageLayout</code>
 	 */
+	// TODO: Review uses, should be much fewer now (only from this class?)
 	public WebPageLayout getWebPageLayout(WebSiteRequest req) throws IOException, SQLException {
+		// Search index building
+		if(req == null) return SearchLayout.getInstance();
 		return getParent().getWebPageLayout(req);
 	}
 
@@ -1058,12 +1337,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 
 				// Get the HTML content
 				bytes.reset();
-				ChainWriter out = new ChainWriter(bytes);
-				try {
-					doGet(out, null, response);
-				} finally {
+				try (ChainWriter out = new ChainWriter(bytes)) {
+					doGet(null, null, out);
 					out.flush();
-					out.close();
 				}
 				byte[] content = bytes.getInternalByteArray();
 				size = bytes.size();
@@ -1110,14 +1386,11 @@ abstract public class WebPage extends ErrorReportingServlet {
 
 							// Get the HTML content
 							bytes.reset();
-							ChainWriter out = new ChainWriter(bytes);
-							try {
-								doGet(out, null, null);
+							try (ChainWriter out = new ChainWriter(bytes)) {
+								doGet(null, null, out);
+								out.flush();
 							} catch(NullPointerException err) {
 								getLogger().log(Level.WARNING, null, err);
-							} finally {
-								out.flush();
-								out.close();
 							}
 							byte[] bcontent = bytes.getInternalByteArray();
 							size = bytes.size();

@@ -50,11 +50,11 @@ abstract public class AutoListPage extends WebPage {
 
 	@Override
 	public void doGet(
-		ChainWriter out,
 		WebSiteRequest req,
-		HttpServletResponse resp
+		HttpServletResponse resp,
+		ChainWriter out,
+		WebPageLayout layout
 	) throws IOException, SQLException {
-		WebPageLayout layout=getWebPageLayout(req);
 		layout.startContent(out, req, resp, 1, getPreferredContentWidth(req));
 		layout.printContentTitle(out, req, resp, this, 1);
 		layout.printContentHorizontalDivider(out, req, resp, 1, false);
@@ -64,7 +64,7 @@ abstract public class AutoListPage extends WebPage {
 			out.print("      <table cellpadding='0' cellspacing='10'>\n");
 			printPageList(out, req, resp, this, layout);
 			out.print("      </table>\n");
-		} finally {
+		} finally { // TODO: Remove all these finallys?  Or add back to startHtml/endHtml
 			layout.endContentLine(out, req, resp, 1, false);
 			layout.endContent(this, out, req, resp, 1);
 		}

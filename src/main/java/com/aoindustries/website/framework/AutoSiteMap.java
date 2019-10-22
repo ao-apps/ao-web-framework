@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -71,15 +72,15 @@ abstract public class AutoSiteMap extends TreePage {
 	}
 
 	/**
-	 * The content of this page will not be included in the interal search engine.
+	 * The content of this page will not be included in the internal search engine.
 	 */
 	@Override
 	public void doGet(
-		ChainWriter out,
 		WebSiteRequest req,
-		HttpServletResponse resp
-	) throws IOException, SQLException {
-		if(req!=null) super.doGet(out, req, resp);
+		HttpServletResponse resp,
+		ChainWriter out
+	) throws ServletException, IOException, SQLException {
+		if(req != null) super.doGet(req, resp, out); // TODO: A search layout that does almost nothing
 	}
 
 	@Override

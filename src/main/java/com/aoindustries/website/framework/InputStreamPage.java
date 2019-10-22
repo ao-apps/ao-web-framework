@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2009, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2015, 2016, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -53,17 +53,19 @@ abstract public class InputStreamPage extends WebPage {
 
 	@Override
 	public void doGet(
-		ChainWriter out,
 		WebSiteRequest req,
-		HttpServletResponse resp
+		HttpServletResponse resp,
+		ChainWriter out,
+		WebPageLayout layout
 	) throws IOException, SQLException {
-		WebPageLayout layout=getWebPageLayout(req);
 		layout.startContent(out, req, resp, 1, getPreferredContentWidth(req));
 		try {
 			layout.printContentTitle(out, req, resp, this, 1);
 			layout.printContentHorizontalDivider(out, req, resp, 1, false);
 			layout.startContentLine(out, req, resp, 1, null, null);
 			try {
+				// TODO: getEncoding (getCharacterEncoding) method on WebPage, with default Html.Encoding
+				// TODO: Encoding here, read as Reader
 				try (InputStream in = getInputStream()) {
 					printStream(out, req, resp, in);
 				}

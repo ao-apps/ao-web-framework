@@ -22,11 +22,13 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.net.URIParser;
+import com.aoindustries.encoding.ChainWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Redirects to the configured URL.
@@ -72,10 +74,60 @@ public class RedirectWebPage extends WebPage {
 		return parent;
 	}
 
+	/**
+	 * Never do GET, redirect-only.
+	 */
 	@Override
-	public String getRedirectURL(WebSiteRequest req) throws IOException {
-		// TODO: These both return path, what was the intent here?
-		if(URIParser.isScheme(path, "http") || URIParser.isScheme(path, "https")) return path;
+	final public void doGet(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		ChainWriter out
+	) throws ServletException, IOException, SQLException {
+		// resp null during search
+		if(resp != null) resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+	}
+
+	/**
+	 * Never do GET, redirect-only.
+	 */
+	@Override
+	final public void doGet(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		ChainWriter out,
+		WebPageLayout layout
+	) throws ServletException, IOException, SQLException {
+		// resp null during search
+		if(resp != null) resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+	}
+
+	/**
+	 * Never do POST, redirect-only.
+	 */
+	@Override
+	final public void doPost(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		ChainWriter out
+	) throws ServletException, IOException, SQLException {
+		resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+	}
+
+	/**
+	 * Never do POST, redirect-only.
+	 */
+	@Override
+	final public void doPost(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		ChainWriter out,
+		WebPageLayout layout
+	) throws ServletException, IOException, SQLException {
+		resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+	}
+
+	@Override
+	public String getRedirectURL(WebSiteRequest req) throws IOException, SQLException {
 		return path;
 	}
 

@@ -54,9 +54,10 @@ abstract public class DumpURLs extends WebPage {
 
 	@Override
 	public void doGet(
-		ChainWriter out,
 		WebSiteRequest req,
-		HttpServletResponse resp
+		HttpServletResponse resp,
+		ChainWriter out,
+		WebPageLayout layout
 	) throws IOException, SQLException {
 		out.print("The following is a list of all unique servlet URLs in the site and may be used to add this site to\n"
 				+ "search engines:\n"
