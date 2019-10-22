@@ -23,7 +23,10 @@
 package com.aoindustries.website.framework;
 
 import com.aoindustries.encoding.ChainWriter;
+import com.aoindustries.encoding.MediaWriter;
 import com.aoindustries.encoding.TextInJavaScriptEncoder;
+import com.aoindustries.html.Html;
+import com.aoindustries.html.Input;
 import com.aoindustries.net.URIEncoder;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -56,26 +59,41 @@ abstract public class WebPageLayout {
 
 	/**
 	 * Gets the names of every supported layout.  The layout at index 0 is the default.
+	 * Is an empty array during a search.
 	 */
 	final public String[] getLayoutChoices() {
 		return layoutChoices;
 	}
 
 	/**
-	 * Writes all of the HTML preceeding the content of the page,
+	 * Writes all of the HTML preceding the content of the page,
 	 * whether the page is in a frameset or not.
+	 * <p>
+	 * Both the {@link Serialization} and {@link Doctype} may have been set
+	 * on the request, and these must be considered in the HTML generation.
+	 * </p>
+	 *
+	 * @see Serialization#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
+	 * @see Doctype#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
 	 */
 	abstract public void startHTML(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		ChainWriter out,
-		String onload
+		String onload // TODO: Make onload script always encoded into body tag
 	) throws IOException, SQLException;
 
 	/**
 	 * Writes all of the HTML following the content of the page,
 	 * whether the page is in a frameset or not.
+	 * <p>
+	 * Both the {@link Serialization} and {@link Doctype} may have been set
+	 * on the request, and these must be considered in the HTML generation.
+	 * </p>
+	 *
+	 * @see Serialization#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
+	 * @see Doctype#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
 	 */
 	abstract public void endHTML(
 		WebPage page,
@@ -89,25 +107,40 @@ abstract public class WebPageLayout {
 	 * additional search form named <code>"search_two"</code>, with two fields named
 	 * <code>"search_query"</code> and <code>"search_target"</code>.
 	 *
-	 * @see  WebPage#doPostWithSearch(WebSiteRequest,HttpServletResponse)
+	 * <p>
+	 * Both the {@link Serialization} and {@link Doctype} may have been set
+	 * on the request, and these must be considered in the HTML generation.
+	 * </p>
+	 *
+	 * @see Serialization#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
+	 * @see Doctype#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
+	 *
+	 * @see WebPage#doPostWithSearch(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	public void printSearchOutput(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) throws IOException, SQLException {
+		Html html = page.getHtml(req, out);
 		startContent(out, req, resp, 1, 600);
 		printContentTitle(out, req, resp, "Search Results", 1);
 		printContentHorizontalDivider(out, req, resp, 1, false);
 		startContentLine(out, req, resp, 1, "center", null);
-		beginLightArea(req, resp, out, "300", true);
-		out.print("      <form action='' id='search_two' method='post'>\n");
+		beginLightArea(req, resp, out, null, "300", true);
+		out.print("      <form action=\"\" id=\"search_two\" method=\"post\">\n");
 		req.printFormFields(out, 4);
-		out.print("        <table cellspacing='0' cellpadding='0'><tr><td style='white-space:nowrap'>\n"
-				+ "          Word(s) to search for: <input type='text' size='24' name='search_query' value='").encodeXmlAttribute(query).print("' /><br />\n"
-				+ "          Search Location: <input type='radio' name='search_target' value='entire_site'");
-		if(isEntireSite) out.print(" checked='checked'");
-		out.print(" /> Entire Site&#160;&#160;&#160;<input type='radio' name='search_target' value='this_area'");
-		if(!isEntireSite) out.print(" checked='checked'");
-		out.print(" /> This Area<br />\n"
-				+ "          <br />\n"
-				+ "          <div style='text-align:center'><input type='submit' class='ao_button' value=' Search ' /></div>\n"
+		out.print("        <table cellspacing=\"0\" cellpadding=\"0\"><tr><td style=\"white-space:nowrap\">\n"
+				+ "          Word(s) to search for: <input type=\"text\" size=\"24\" name=\"search_query\" value=\"").encodeXmlAttribute(query).print('"');
+		html.selfClose().br__().nl();
+		out.print("          Search Location: ");
+		html.input(Input.Type.RADIO).name("search_target").value("entire_site").checked(isEntireSite).__();
+		out.print(" Entire Site&#160;&#160;&#160;");
+		html.input(Input.Type.RADIO).name("search_target").value("this_area").checked(!isEntireSite).__();
+		// TODO: html.text methods (or innerText / innerHTML?)
+		out.print(" This Area");
+		html.br__().nl();
+			out.print("          ");
+			html.br__().nl();
+			out.print("          <div style=\"text-align:center\">");
+			html.input(Input.Type.SUBMIT).clazz("ao_button").value(" Search ").__();
+			out.print("</div>\n"
 				+ "        </td></tr></table>\n"
 				+ "      </form>\n"
 		);
@@ -123,12 +156,12 @@ abstract public class WebPageLayout {
 			}
 		} else {
 			beginLightArea(req, resp, out);
-			out.print("  <table cellspacing='0' cellpadding='0' class='aoLightRow'>\n"
+			out.print("  <table cellspacing=\"0\" cellpadding=\"0\" class=\"aoLightRow\">\n"
 					+ "    <tr>\n"
-					+ "      <th style='white-space:nowrap'>% Match</th>\n"
-					+ "      <th style='white-space:nowrap'>Title</th>\n"
-					+ "      <th style='white-space:nowrap'>&#160;</th>\n"
-					+ "      <th style='white-space:nowrap'>Description</th>\n"
+					+ "      <th style=\"white-space:nowrap\">% Match</th>\n"
+					+ "      <th style=\"white-space:nowrap\">Title</th>\n"
+					+ "      <th style=\"white-space:nowrap\">&#160;</th>\n"
+					+ "      <th style=\"white-space:nowrap\">Description</th>\n"
 					+ "    </tr>\n"
 			);
 
@@ -144,18 +177,18 @@ abstract public class WebPageLayout {
 				String url=result.getUrl();
 				String title=result.getTitle();
 				String description=result.getDescription();
-				out.print("    <tr class='").print(rowClass).print("'>\n"
-						+ "      <td style='white-space:nowrap; text-align:center;'>").print(Math.round(99 * result.getProbability() / highest)).print("%</td>\n"
-						+ "      <td style='white-space:nowrap'><a class='"+linkClass+"' href='")
+				out.print("    <tr class=\"").print(rowClass).print("\">\n"
+						+ "      <td style=\"white-space:nowrap; text-align:center\">").print(Math.round(99 * result.getProbability() / highest)).print("%</td>\n"
+						+ "      <td style=\"white-space:nowrap; text-align:left\"><a class=\""+linkClass+"\" href=\"")
 					.encodeXmlAttribute(
 						resp.encodeURL(
 							URIEncoder.encodeURI(
 								req.getContextPath() + url
 							)
 						)
-					).print("'>").print(title.length()==0?"&#160;":title).print("</a></td>\n"
-						+ "      <td style='white-space:nowrap'>&#160;&#160;&#160;</td>\n"
-						+ "      <td style='white-space:nowrap'>").print(description.length()==0?"&#160;":description).print("</td>\n"
+					).print("\">").print(title.length()==0?"&#160;":title).print("</a></td>\n"
+						+ "      <td style=\"white-space:nowrap\">&#160;&#160;&#160;</td>\n"
+						+ "      <td style=\"white-space:nowrap; text-align:left\">").print(description.length()==0?"&#160;":description).print("</td>\n"
 						+ "    </tr>\n");
 			}
 			out.print(
@@ -269,13 +302,13 @@ abstract public class WebPageLayout {
 	 * Begins a lighter colored area of the site.
 	 */
 	final public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out) throws IOException {
-		beginLightArea(req, resp, out, null, false);
+		beginLightArea(req, resp, out, null, null, false);
 	}
 
 	/**
 	 * Begins a lighter colored area of the site.
 	 */
-	abstract public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, String width, boolean nowrap) throws IOException;
+	abstract public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, String align, String width, boolean nowrap) throws IOException;
 
 	/**
 	 * Ends a lighter area of the site.
@@ -286,13 +319,13 @@ abstract public class WebPageLayout {
 	 * Begins an area with a white background.
 	 */
 	final public void beginWhiteArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out) throws IOException {
-		beginWhiteArea(req, resp, out, null, false);
+		beginWhiteArea(req, resp, out, null, null, false);
 	}
 
 	/**
 	 * Begins a lighter colored area of the site.
 	 */
-	abstract public void beginWhiteArea(WebSiteRequest req, HttpServletResponse response, ChainWriter out, String width, boolean nowrap) throws IOException;
+	abstract public void beginWhiteArea(WebSiteRequest req, HttpServletResponse response, ChainWriter out, String align, String width, boolean nowrap) throws IOException;
 
 	/**
 	 * Ends a lighter area of the site.
@@ -306,29 +339,30 @@ abstract public class WebPageLayout {
 
 	public boolean printWebPageLayoutSelector(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		if(layoutChoices.length>=2) {
-			out.print("<script type='text/javascript'>\n"
-					+ "  function selectLayout(layout) {\n");
-			for(String choice : layoutChoices) {
-				out.print("    if(layout=='");
-				TextInJavaScriptEncoder.encodeTextInJavaScript(choice, out);
-				out.print("') window.top.location.href='");
-				TextInJavaScriptEncoder.encodeTextInJavaScript(
-					req.getEncodedURL(page, "layout="+choice, resp),
-					out
-				);
-				out.print("';\n");
+			Html html = page.getHtml(req, out);
+			try (MediaWriter script = html.script().out()) {
+				script.write("  function selectLayout(layout) {\n");
+				for(String choice : layoutChoices) {
+					script.write("    if(layout==\"");
+					TextInJavaScriptEncoder.encodeTextInJavaScript(choice, script);
+					script.write("\") window.top.location.href=\"");
+					TextInJavaScriptEncoder.encodeTextInJavaScript(
+						req.getEncodedURL(page, "layout="+choice, resp),
+						script
+					);
+					script.write("\";\n");
+				}
+				script.write("  }\n");
 			}
-			out.print("  }\n"
-					+ "</script>\n"
-					+ "<form action='#' style='display:inline;'><div style='display:inline;'>\n"
-					+ "  <select name='layout_selector' onchange='selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);'>\n");
+			html.nl();
+			out.print("<form action=\"#\" style=\"display:inline\"><div style=\"display:inline\">\n"
+				+ "  <select name=\"layout_selector\" onchange=\"selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);\">\n");
 			for(String choice : layoutChoices) {
-				out.print("    <option value='").encodeXmlAttribute(choice).print('\'');
-				if(choice.equalsIgnoreCase(getName())) out.print(" selected='selected'");
-				out.print('>').encodeXhtml(choice).print("</option>\n");
+				out.print("    ");
+				html.option().value(choice).selected(choice.equalsIgnoreCase(getName())).innerText(choice).nl();
 			}
 			out.print("  </select>\n"
-					+ "</div></form>\n");
+				+ "</div></form>\n");
 			return true;
 		} else return false;
 	}
@@ -336,18 +370,23 @@ abstract public class WebPageLayout {
 	protected void printJavaScriptIncludes(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, WebPage page) throws IOException, SQLException {
 		Object O = page.getJavaScriptSrc(req);
 		if (O != null) {
+			Html html = page.getHtml(req, out);
 			if (O instanceof String[]) {
 				String[] SA = (String[]) O;
 				int len = SA.length;
 				for (int c = 0; c < len; c++) {
-					out.print("    <script type='text/javascript' src='").encodeXmlAttribute(req.getEncodedURLForPath('/'+SA[c], null, false, resp)).print("'></script>\n");
+					out.write("    ");
+					html.script().src(req.getEncodedURLForPath('/'+SA[c], null, false, resp)).__().nl();
 				}
 			} else if(O instanceof Class) {
-				out.print("    <script type='text/javascript' src='").encodeXmlAttribute(req.getEncodedURL(((Class<?>)O).asSubclass(WebPage.class), null, resp)).print("'></script>\n");
+				out.write("    ");
+				html.script().src(req.getEncodedURL(((Class<?>)O).asSubclass(WebPage.class), null, resp)).__().nl();
 			} else if(O instanceof WebPage) {
-				out.print("    <script type='text/javascript' src='").encodeXmlAttribute(req.getEncodedURL((WebPage)O, resp)).print("'></script>\n");
+				out.write("    ");
+				html.script().src(req.getEncodedURL((WebPage)O, resp)).__().nl();
 			} else {
-				out.print("    <script type='text/javascript' src='").encodeXmlAttribute(req.getEncodedURLForPath('/'+O.toString(), null, false, resp)).print("'></script>\n");
+				out.write("    ");
+				html.script().src(req.getEncodedURLForPath('/'+O.toString(), null, false, resp)).__().nl();
 			}
 		}
 	}
