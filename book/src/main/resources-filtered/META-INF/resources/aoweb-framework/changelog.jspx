@@ -36,7 +36,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T22:08:31-0500"
-		dateModified="2019-10-27T16:59:13-0500"
+		dateModified="2019-10-29T03:35:08-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoweb-framework:pom.version}" />
@@ -56,6 +56,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 					<li>Registering serialization (HTML/XHTML) with new methods <code>Serialization.set(…)</code> and <code>Serialization.get(…)</code>.</li>
 					<li>Registering doctype with new methods <code>Doctype.set(…)</code> and <code>Doctype.get(…)</code>.</li>
 					<li>Refactored <code>WebPage.doGet(…)</code> and <code>WebPage.doPost(…)</code> methods for more meaningful parameter order.</li>
+					<li>Added <code><![CDATA[&lt;link rel="author" href="…" /&gt;]]></code> support.</li>
 				</ul>
 			</changelog:release>
 		</c:if>
