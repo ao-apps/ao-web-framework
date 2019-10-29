@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2006-2009, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2015, 2016, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -34,19 +34,22 @@ public class SearchResult implements Comparable<SearchResult> {
 	private final String title;
 	private final String description;
 	private final String author;
+	private final String authorHref;
 
 	public SearchResult(
 		String url,
 		float probability,
 		String title,
 		String description,
-		String author
+		String author,
+		String authorHref
 	) {
-		this.url=url;
-		this.probability=probability;
-		this.title=title;
-		this.description=description;
-		this.author=author;
+		this.url = url;
+		this.probability = probability;
+		this.title = title;
+		this.description = description;
+		this.author = author;
+		this.authorHref = authorHref;
 	}
 
 	public String getUrl() {
@@ -67,6 +70,10 @@ public class SearchResult implements Comparable<SearchResult> {
 
 	public String getAuthor() {
 		return author;
+	}
+
+	public String getAuthorHref() {
+		return authorHref;
 	}
 
 	@Override

@@ -800,6 +800,13 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
+	 * Gets the URL for the author of this page.  By default, the URL of the author of the parent page is used.
+	 */
+	public String getAuthorHref(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+		return getParent().getAuthorHref(req, resp);
+	}
+
+	/**
 	 * Gets the preferred width of this content in pixels or <code>-1</code> for no preference.
 	 * It is up to the <code>WebPageLayout</code> to make use of this value.  The preferred width
 	 * defaults to the preferred width of the parent page.
@@ -1322,6 +1329,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 			String title = null;
 			String description = null;
 			String author = null;
+			String authorHref = null;
 
 			// The counted matches will go here
 			int totalMatches = 0;
@@ -1333,6 +1341,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 				title = getTitle();
 				description = getDescription();
 				author = getAuthor();
+				authorHref = getAuthorHref(req, response);
 				String keywords = getKeywords();
 
 				// Get the HTML content
@@ -1382,6 +1391,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 							title = getTitle();
 							description = getDescription();
 							author = getAuthor();
+							authorHref = getAuthorHref(req, response);
 							String keywords = getKeywords();
 
 							// Get the HTML content
@@ -1464,7 +1474,8 @@ abstract public class WebPage extends ErrorReportingServlet {
 						probability,
 						title == null ? getTitle() : title,
 						description == null ? getDescription() : description,
-						author == null ? getAuthor() : author
+						author == null ? getAuthor() : author,
+						authorHref == null ? getAuthorHref(req, response) : authorHref
 					)
 				);
 			}

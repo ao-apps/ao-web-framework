@@ -26,6 +26,7 @@ import com.aoindustries.encoding.ChainWriter;
 import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
 import com.aoindustries.html.Doctype;
 import com.aoindustries.html.Html;
+import com.aoindustries.html.Link;
 import com.aoindustries.html.servlet.HtmlEE;
 import com.aoindustries.html.util.GoogleAnalytics;
 import static com.aoindustries.taglib.AttributeUtils.appendWidthStyle;
@@ -160,7 +161,25 @@ public class TextOnlyLayout extends WebPageLayout {
 		} else {
 			GoogleAnalytics.writeAnalyticsJs(html, trackingId);
 		}
-		// TODO: Canonical?
+		// Mobile support
+		out.print("    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"");
+		html.selfClose().nl();
+		out.print("    <meta name=\"apple-mobile-web-app-capable\" content=\"yes\"");
+		html.selfClose().nl();
+		out.print("    <meta name=\"apple-mobile-web-app-status-bar-style\" content=\"black\"");
+		html.selfClose().nl();
+		// Authors
+		// TODO: dcterms copyright
+		String author = page.getAuthor();
+		if(author != null && (author = author.trim()).length() > 0) {
+			out.print("    <meta name=\"author\" content=\"").encodeXmlAttribute(author).print('"');
+			html.selfClose().nl();
+		}
+		String authorHref = page.getAuthorHref(req, resp);
+		if(authorHref != null && (authorHref = authorHref.trim()).length() > 0) {
+			out.print("    ");
+			html.link().rel(Link.Rel.AUTHOR).href(authorHref).__().nl();
+		}
 		// TODO: Review HTML 4/HTML 5 differences from here
 		out.print("    <title>");
 		// No more page stack, just show current page only
@@ -194,16 +213,11 @@ public class TextOnlyLayout extends WebPageLayout {
 			html.selfClose();
 			out.print('\n');
 		}
-		String author = page.getAuthor();
-		if(author!=null && author.length()>0) {
-			out.print("    <meta name=\"author\" content=\"").encodeXmlAttribute(author).print('"');
-			html.selfClose();
-			out.print('\n');
-		}
 		out.print("    <link rel=\"stylesheet\" href=\"").encodeXmlAttribute(req.getEncodedURLForPath("/layout/text/global.css", null, false, resp)).print("\" type=\"text/css\"");// TODO: Include type in HTML5?
 		html.selfClose().nl();
 		html.script().src(req.getEncodedURLForPath("/global.js", null, false, resp)).__().nl();
 		printJavaScriptIncludes(req, resp, out, page);
+		// TODO: Canonical?
 		out.print("  </head>\n"
 				+ "  <body\n");
 		int color=getBackgroundColor(req);
