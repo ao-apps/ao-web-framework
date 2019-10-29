@@ -180,7 +180,6 @@ public class TextOnlyLayout extends WebPageLayout {
 			out.print("    ");
 			html.link().rel(Link.Rel.AUTHOR).href(authorHref).__().nl();
 		}
-		// TODO: Review HTML 4/HTML 5 differences from here
 		out.print("    <title>");
 		// No more page stack, just show current page only
 		out.encodeXhtml(page.getTitle());
@@ -198,15 +197,17 @@ public class TextOnlyLayout extends WebPageLayout {
 		}
 		*/
 		out.print("</title>\n");
-		out.print("    <meta name=\"keywords\" content=\"").encodeXmlAttribute(page.getKeywords()).print('"');
-		html.selfClose();
-		out.print("\n"
-				+ "    <meta name=\"description\" content=\"").encodeXmlAttribute(page.getDescription()).print('"');
-		html.selfClose();
-		out.print("\n"
-				+ "    <meta name=\"abstract\" content=\"").encodeXmlAttribute(page.getDescription()).print('"');
-		html.selfClose();
-		out.print('\n');
+		String description = page.getDescription();
+		if(description != null && (description = description.trim()).length() > 0) {
+			out.print("    <meta name=\"description\" content=\"").encodeXmlAttribute(description).print('"');
+			html.selfClose().nl();
+		}
+		String keywords = page.getKeywords();
+		if(keywords != null && (keywords = keywords.trim()).length() > 0) {
+			out.print("    <meta name=\"keywords\" content=\"").encodeXmlAttribute(keywords).print('"');
+			html.selfClose().nl();
+		}
+		// TODO: Review HTML 4/HTML 5 differences from here
 		String copyright = page.getCopyright(req, resp, page);
 		if(copyright!=null && copyright.length()>0) {
 			out.print("    <meta name=\"copyright\" content=\"").encodeXmlAttribute(copyright).print('"');
