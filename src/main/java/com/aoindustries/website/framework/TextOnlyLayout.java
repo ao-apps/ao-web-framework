@@ -26,6 +26,7 @@ import com.aoindustries.encoding.ChainWriter;
 import com.aoindustries.encoding.MediaWriter;
 import static com.aoindustries.encoding.TextInJavaScriptEncoder.encodeTextInJavaScript;
 import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
+import com.aoindustries.html.Doctype;
 import com.aoindustries.html.Html;
 import com.aoindustries.html.servlet.HtmlEE;
 import static com.aoindustries.taglib.AttributeUtils.appendWidthStyle;
@@ -136,15 +137,24 @@ public class TextOnlyLayout extends WebPageLayout {
 		// If this is not the default layout, then robots noindex
 		if(!isOkResponseStatus || !getName().equals(getLayoutChoices()[0])) {
 			out.print("    <meta name=\"ROBOTS\" content=\"NOINDEX, NOFOLLOW\"");
-			html.selfClose();
-			out.print('\n');
+			html.selfClose().nl();
 		}
-		// Default style language
+		if(html.doctype == Doctype.HTML5) {
+			out.print("    <meta charset=\"");
+			out.encodeXmlAttribute(resp.getCharacterEncoding());
+			out.print('"');
+			html.selfClose().nl();
+		} else {
+			out.print("    <meta http-equiv=\"Content-Type\" content=\"").encodeXmlAttribute(resp.getContentType()).print('"');
+			html.selfClose().nl();
+			// Default style language
+			out.print("    <meta http-equiv=\"Content-Style-Type\" content=\"text/css\"");
+			html.selfClose().nl();
+			out.print("    <meta http-equiv=\"Content-Script-Type\" content=\"text/javascript\"");
+			html.selfClose().nl();
+		}
 		// TODO: Review HTML 4/HTML 5 differences from here
-		out.print("<meta http-equiv=\"Content-Style-Type\" content=\"text/css\"");
-		html.selfClose();
-		out.print("\n"
-				+ "    <title>");
+		out.print("    <title>");
 		// No more page stack, just show current page only
 		out.encodeXhtml(page.getTitle());
 		/*
@@ -160,11 +170,8 @@ public class TextOnlyLayout extends WebPageLayout {
 			out.encodeXhtml(parent.getTitle());
 		}
 		*/
-		out.print("</title>\n"
-				+ "    <meta http-equiv=\"Content-Type\" content=\"").encodeXmlAttribute(resp.getContentType()).print('"');
-		html.selfClose();
-		out.print("\n"
-				+ "    <meta name=\"keywords\" content=\"").encodeXmlAttribute(page.getKeywords()).print('"');
+		out.print("</title>\n");
+		out.print("    <meta name=\"keywords\" content=\"").encodeXmlAttribute(page.getKeywords()).print('"');
 		html.selfClose();
 		out.print("\n"
 				+ "    <meta name=\"description\" content=\"").encodeXmlAttribute(page.getDescription()).print('"');
