@@ -23,12 +23,11 @@
 package com.aoindustries.website.framework;
 
 import com.aoindustries.encoding.ChainWriter;
-import com.aoindustries.encoding.MediaWriter;
-import static com.aoindustries.encoding.TextInJavaScriptEncoder.encodeTextInJavaScript;
 import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
 import com.aoindustries.html.Doctype;
 import com.aoindustries.html.Html;
 import com.aoindustries.html.servlet.HtmlEE;
+import com.aoindustries.html.util.GoogleAnalytics;
 import static com.aoindustries.taglib.AttributeUtils.appendWidthStyle;
 import static com.aoindustries.taglib.AttributeUtils.trimNullIfEmpty;
 import com.aoindustries.taglib.HtmlTag;
@@ -36,6 +35,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -126,6 +126,8 @@ public class TextOnlyLayout extends WebPageLayout {
 			Integer responseStatus = (Integer)req.getAttribute(HTTP_SERVLET_RESPONSE_STATUS);
 			isOkResponseStatus = responseStatus==null || responseStatus==HttpServletResponse.SC_OK;
 		}
+		ServletContext servletContext = req.getServletContext();
+		String trackingId = getGoogleAnalyticsNewTrackingCode(servletContext);
 		// Write doctype
 		Html html = page.getHtml(req, out);
 		html.xmlDeclaration(resp.getCharacterEncoding());
@@ -153,6 +155,12 @@ public class TextOnlyLayout extends WebPageLayout {
 			out.print("    <meta http-equiv=\"Content-Script-Type\" content=\"text/javascript\"");
 			html.selfClose().nl();
 		}
+		if(html.doctype == Doctype.HTML5) {
+			GoogleAnalytics.writeGlobalSiteTag(html, trackingId);
+		} else {
+			GoogleAnalytics.writeAnalyticsJs(html, trackingId);
+		}
+		// TODO: Canonical?
 		// TODO: Review HTML 4/HTML 5 differences from here
 		out.print("    <title>");
 		// No more page stack, just show current page only
@@ -195,12 +203,6 @@ public class TextOnlyLayout extends WebPageLayout {
 		out.print("    <link rel=\"stylesheet\" href=\"").encodeXmlAttribute(req.getEncodedURLForPath("/layout/text/global.css", null, false, resp)).print("\" type=\"text/css\"");// TODO: Include type in HTML5?
 		html.selfClose().nl();
 		html.script().src(req.getEncodedURLForPath("/global.js", null, false, resp)).__().nl();
-		String googleAnalyticsNewTrackingCode = getGoogleAnalyticsNewTrackingCode();
-		if(googleAnalyticsNewTrackingCode!=null) {
-			// TODO: Global site tag (gtag.js) once HTML 5
-			html.script().src(req.isSecure() ? "https://ssl.google-analytics.com/ga.js" : "http://www.google-analytics.com/ga.js").__().nl();
-		}
-
 		printJavaScriptIncludes(req, resp, out, page);
 		out.print("  </head>\n"
 				+ "  <body\n");
@@ -355,7 +357,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	 * Gets the Google Analytics New Tracking Code (ga.js) or <code>null</code>
 	 * if unavailable.
 	 */
-	public String getGoogleAnalyticsNewTrackingCode() {
+	public String getGoogleAnalyticsNewTrackingCode(ServletContext servletContext) {
 		return null;
 	}
 
@@ -368,31 +370,8 @@ public class TextOnlyLayout extends WebPageLayout {
 	) throws IOException, SQLException {
 		out.print("        </td>\n"
 				+ "      </tr>\n"
-				+ "    </table>\n");
-		String googleAnalyticsNewTrackingCode = getGoogleAnalyticsNewTrackingCode();
-		if(googleAnalyticsNewTrackingCode!=null) {
-			Html html = page.getHtml(req, out);
-			// TODO: Global site tag (gtag.js) once HTML 5
-			// TODO: Indent "    "
-			try (MediaWriter scriptOut = html.script().out()) {
-				scriptOut.write("      try {\n"
-						+ "        var pageTracker = _gat._getTracker(\"");
-				encodeTextInJavaScript(googleAnalyticsNewTrackingCode, scriptOut);
-				scriptOut.write("\");\n");
-				Integer responseStatus = (Integer)req.getAttribute(HTTP_SERVLET_RESPONSE_STATUS);
-				if(responseStatus==null || responseStatus==HttpServletResponse.SC_OK) {
-					scriptOut.write("        pageTracker._trackPageview();\n");
-				} else {
-					scriptOut.write("        pageTracker._trackPageview(\"/");
-					scriptOut.write(responseStatus.toString());
-					scriptOut.write(".html?page=\"+document.location.pathname+document.location.search+\"&from=\"+document.referrer);\n");
-				}
-				out.print("      } catch(err) {\n"
-						+ "      }\n");
-			}
-			html.nl();
-		}
-		out.print("  </body>\n");
+				+ "    </table>\n"
+				+ "  </body>\n");
 		HtmlTag.endHtmlTag(out);
 		out.write('\n');
 	}
