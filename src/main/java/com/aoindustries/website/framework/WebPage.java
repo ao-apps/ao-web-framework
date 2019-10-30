@@ -332,7 +332,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see Serialization#getDefault(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
 	 */
 	protected Serialization getSerialization(WebSiteRequest req) {
-		return (req == null) ? Serialization.XML : SerializationEE.getDefault(req.getServletContext(), req);
+		return (req == null) ? Serialization.XML : SerializationEE.getDefault(getServletContext(), req);
 	}
 
 	/**
