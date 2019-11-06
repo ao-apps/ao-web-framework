@@ -26,7 +26,6 @@ import com.aoindustries.encoding.ChainWriter;
 import com.aoindustries.encoding.MediaWriter;
 import com.aoindustries.encoding.TextInJavaScriptEncoder;
 import com.aoindustries.html.Html;
-import com.aoindustries.html.Input;
 import com.aoindustries.net.URIEncoder;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -130,16 +129,16 @@ abstract public class WebPageLayout {
 				+ "          Word(s) to search for: <input type=\"text\" size=\"24\" name=\"search_query\" value=\"").encodeXmlAttribute(query).print('"');
 		html.selfClose().br__().nl();
 		out.print("          Search Location: ");
-		html.input(Input.Type.RADIO).name("search_target").value("entire_site").checked(isEntireSite).__();
+		html.input.radio().name("search_target").value("entire_site").checked(isEntireSite).__();
 		out.print(" Entire Site&#160;&#160;&#160;");
-		html.input(Input.Type.RADIO).name("search_target").value("this_area").checked(!isEntireSite).__();
+		html.input.radio().name("search_target").value("this_area").checked(!isEntireSite).__();
 		// TODO: html.text methods (or innerText / innerHTML?)
 		out.print(" This Area");
 		html.br__().nl();
 			out.print("          ");
 			html.br__().nl();
 			out.print("          <div style=\"text-align:center\">");
-			html.input(Input.Type.SUBMIT).clazz("ao_button").value(" Search ").__();
+			html.input.submit().clazz("ao_button").value(" Search ").__();
 			out.print("</div>\n"
 				+ "        </td></tr></table>\n"
 				+ "      </form>\n"
