@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2014, 2015, 2016, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2014, 2015, 2016, 2019, 2020 AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -330,7 +330,7 @@ abstract public class TreePage extends WebPage {
 			}
 
 			// Write the javascript that controls the form
-			try (MediaWriter script = html.script().out()) {
+			try (MediaWriter script = html.script().out__()) {
 				script.write("  function openNode(index) {\n"
 					+ "    eval('document.forms[\"tree_form\"].opened_'+index+'.value=\"true\";');\n"
 					+ "    document.forms[\"tree_form\"].scroll_to_x.value=getPageXOffset(window);\n"

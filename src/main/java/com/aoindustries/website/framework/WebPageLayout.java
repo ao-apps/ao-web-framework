@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2015, 2016, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2015, 2016, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -339,7 +339,7 @@ abstract public class WebPageLayout {
 	public boolean printWebPageLayoutSelector(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		if(layoutChoices.length>=2) {
 			Html html = page.getHtml(req, out);
-			try (MediaWriter script = html.script().out()) {
+			try (MediaWriter script = html.script().out__()) {
 				script.write("  function selectLayout(layout) {\n");
 				for(String choice : layoutChoices) {
 					script.write("    if(layout==\"");
@@ -358,7 +358,7 @@ abstract public class WebPageLayout {
 				+ "  <select name=\"layout_selector\" onchange=\"selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);\">\n");
 			for(String choice : layoutChoices) {
 				out.print("    ");
-				html.option().value(choice).selected(choice.equalsIgnoreCase(getName())).innerText(choice).nl();
+				html.option().value(choice).selected(choice.equalsIgnoreCase(getName())).text__(choice).nl();
 			}
 			out.print("  </select>\n"
 				+ "</div></form>\n");
