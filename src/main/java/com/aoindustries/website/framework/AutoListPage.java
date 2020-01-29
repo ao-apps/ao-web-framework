@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2009, 2015, 2016, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2015, 2016, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -35,6 +35,11 @@ import javax.servlet.http.HttpServletResponse;
 abstract public class AutoListPage extends WebPage {
 
 	private static final long serialVersionUID = 1L;
+
+	/**
+	 * The number of columns in each row.
+	 */
+	public static final int NUM_COLS = 3;
 
 	public AutoListPage(LoggerAccessor loggerAccessor) {
 		super(loggerAccessor);
