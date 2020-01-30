@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2015, 2016, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2015, 2016, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -340,7 +340,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @param req  {@code null} during search
 	 *
-	 * @see Doctype#getDefault(javax.servlet.ServletContext)
+	 * @see DoctypeEE#getDefault(javax.servlet.ServletContext)
 	 */
 	protected Doctype getDoctype(WebSiteRequest req) {
 		return Doctype.HTML5;
@@ -858,8 +858,8 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * on the request, and these must be considered in the content type.
 	 * </p>
 	 *
-	 * @see Serialization#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
-	 * @see Doctype#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
+	 * @see SerializationEE#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
+	 * @see DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
 	 * @see #getAdditionalHeaders(com.aoindustries.website.framework.WebSiteRequest)
 	 */
 	protected ChainWriter getHTMLChainWriter(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -894,8 +894,8 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * on the request, and these must be considered in the content type.
 	 * </p>
 	 *
-	 * @see Serialization#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
-	 * @see Doctype#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
+	 * @see SerializationEE#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
+	 * @see DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
 	 * @see #getAdditionalHeaders(com.aoindustries.website.framework.WebSiteRequest)
 	 */
 	protected OutputStream getHTMLOutputStream(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
