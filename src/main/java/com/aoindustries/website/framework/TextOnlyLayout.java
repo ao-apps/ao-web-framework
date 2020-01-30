@@ -193,7 +193,7 @@ public class TextOnlyLayout extends WebPageLayout {
 		for(int c=(parents.size()-1);c>=0;c--) {
 			if(c<(parents.size()-1)) out.print(" - ");
 			parent=parents.get(c);
-			out.encodeXhtml(parent.getTitle());
+			out.encodeXhtml(parent.getShortTitle());
 		}
 		*/
 		out.print("</title>\n");
@@ -301,7 +301,7 @@ public class TextOnlyLayout extends WebPageLayout {
 			parent=parents.get(c);
 			String navAlt=parent.getNavImageAlt(req);
 			String navSuffix=parent.getNavImageSuffix(req);
-			out.print("            <a href=\"").encodeXmlAttribute(req.getEncodedURL(parent, resp)).print("\">").print(TreePage.replaceHTML(navAlt));
+			out.print("            <a href=\"").encodeXmlAttribute(req.getEncodedURL(parent, resp)).print("\">").encodeXhtml(TreePage.replaceHTML(navAlt));
 			if(navSuffix!=null) out.print(" (").encodeXhtml(navSuffix).print(')');
 			out.print("</a>");
 			html.br__().nl();
