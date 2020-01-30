@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2003-2013, 2015, 2016, 2019  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2015, 2016, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -246,11 +246,10 @@ public class TextOnlyLayout extends WebPageLayout {
 		printLogo(page, out, req, resp);
 		boolean isLoggedIn=req.isLoggedIn();
 		if(isLoggedIn) {
-			out.print("          <hr");
-		html.selfClose();
-		out.print("\n"
+			out.print("          ");
+			html.hr__().nl();
 			// TODO: Is it POST or post?
-					+ "          Logout: <form style=\"display:inline\" id=\"logout_form\" method=\"post\" action=\"").encodeXmlAttribute(req.getEncodedURL(page, resp)).print("\"><div style=\"display:inline\">");
+			out.print("          Logout: <form style=\"display:inline\" id=\"logout_form\" method=\"post\" action=\"").encodeXmlAttribute(req.getEncodedURL(page, resp)).print("\"><div style=\"display:inline\">");
 			req.printFormFields(out, 2);
 			out.print("<input type=\"hidden\" name=\"logout_requested\" value=\"true\"");
 			html.selfClose();
@@ -258,10 +257,9 @@ public class TextOnlyLayout extends WebPageLayout {
 			html.selfClose();
 			out.print("</div></form>\n");
 		} else {
-			out.print("          <hr");
-			html.selfClose();
-			out.print("\n"
-					+ "          Login: <form style=\"display:inline\" id=\"login_form\" method=\"post\" action=\"").encodeXmlAttribute(req.getEncodedURL(page, resp)).print("\"><div style=\"display:inline\">");
+			out.print("          ");
+			html.hr__().nl();
+			out.print("          Login: <form style=\"display:inline\" id=\"login_form\" method=\"post\" action=\"").encodeXmlAttribute(req.getEncodedURL(page, resp)).print("\"><div style=\"display:inline\">");
 			req.printFormFields(out, 2);
 			out.print("<input type=\"hidden\" name=\"login_requested\" value=\"true\"");
 			html.selfClose();
@@ -269,16 +267,13 @@ public class TextOnlyLayout extends WebPageLayout {
 			html.selfClose();
 			out.print("</div></form>\n");
 		}
-		out.print("          <hr");
-		html.selfClose();
-		out.print("\n"
-				+ "          <div style=\"white-space:nowrap\">\n");
+		out.print("          ");
+		html.hr__().nl();
+		out.print("          <div style=\"white-space:nowrap\">\n");
 		if(getLayoutChoices().length>=2) out.print("Layout: ");
 		if(printWebPageLayoutSelector(page, out, req, resp)) {
-			out.print("<br");
-			html.selfClose();
-			out.print("\n"
-				+ "            Search: <form id=\"search_site\" style=\"display:inline\" method=\"post\" action=\"").encodeXmlAttribute(req.getEncodedURL(page, resp)).print("\"><div style=\"display:inline\">\n"
+			html.br__().nl();
+			out.print("            Search: <form id=\"search_site\" style=\"display:inline\" method=\"post\" action=\"").encodeXmlAttribute(req.getEncodedURL(page, resp)).print("\"><div style=\"display:inline\">\n"
 				+ "              <input type=\"hidden\" name=\"search_target\" value=\"entire_site\"");
 			html.selfClose();
 			out.print("\n");
@@ -287,17 +282,14 @@ public class TextOnlyLayout extends WebPageLayout {
 		out.print("              <input type=\"text\" name=\"search_query\" size=\"12\" maxlength=\"255\"");
 		html.selfClose();
 		out.print("\n"
-				+ "            </div></form><br");
-		html.selfClose();
-		out.print("\n"
-				+ "          </div>\n"
-				+ "          <hr");
-		html.selfClose();
-		out.print("\n"
-				+ "          <b>Current Location</b><br");
-		html.selfClose();
-		out.print("\n"
-				+ "          <div style=\"white-space:nowrap\">\n");
+				+ "            </div></form>");
+		html.br__().nl();
+		out.print("          </div>\n"
+				+ "          ");
+		html.hr__().nl();
+		out.print("          <b>Current Location</b>");
+		html.br__().nl();
+		out.print("          <div style=\"white-space:nowrap\">\n");
 		List<WebPage> parents=new ArrayList<>();
 		//parents.clear();
 		WebPage parent=page;
@@ -311,18 +303,15 @@ public class TextOnlyLayout extends WebPageLayout {
 			String navSuffix=parent.getNavImageSuffix(req);
 			out.print("            <a href=\"").encodeXmlAttribute(req.getEncodedURL(parent, resp)).print("\">").print(TreePage.replaceHTML(navAlt));
 			if(navSuffix!=null) out.print(" (").encodeXhtml(navSuffix).print(')');
-			out.print("</a><br");
-			html.selfClose();
-			out.print('\n');
+			out.print("</a>");
+			html.br__().nl();
 		}
 		out.print("          </div>\n"
-				+ "          <hr");
-		html.selfClose();
-		out.print("\n"
-				+ "          <b>Related Pages</b><br");
-		html.selfClose();
-		out.print("\n"
-				+ "          <div style=\"white-space:nowrap\">\n");
+				+ "          ");
+		html.hr__().nl();
+		out.print("          <b>Related Pages</b>");
+		html.br__().nl();
+		out.print("          <div style=\"white-space:nowrap\">\n");
 		WebPage[] pages=page.getCachedPages(req);
 		parent=page;
 		if(pages.length==0) {
@@ -344,15 +333,13 @@ public class TextOnlyLayout extends WebPageLayout {
 				//boolean isSelected=tpage.equals(page);
 				out.print("          <a href=\"").encodeXmlAttribute(tpage.getNavImageURL(req, resp, null)).print("\">").encodeXhtml(TreePage.replaceHTML(navAlt));
 				if(navSuffix!=null) out.print(" (").encodeXhtml(navSuffix).print(')');
-				out.print("</a><br");
-				html.selfClose();
-				out.print("\n");
+				out.print("</a>");
+				html.br__().nl();
 			}
 		}
 		out.print("          </div>\n"
-				+ "          <hr");
-		html.selfClose();
-		out.print("\n");
+				+ "          ");
+		html.hr__().nl();
 		printBelowRelatedPages(out, req);
 		out.print("        </td>\n"
 				+ "        <td valign=\"top\">");
@@ -543,8 +530,8 @@ public class TextOnlyLayout extends WebPageLayout {
 		}
 		out.print("  <tr><td");
 		if(totalColumns!=1) out.print(" colspan=\"").print(totalColumns).print('"');
-		out.print("><hr");
-		html.selfClose();
+		out.print('>');
+		html.hr__();
 		out.print("</td></tr>\n");
 		String copyright=page.getCopyright(req, resp, page);
 		if(copyright!=null && copyright.length()>0) {
