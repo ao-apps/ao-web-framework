@@ -66,9 +66,11 @@ abstract public class AutoListPage extends WebPage {
 		layout.startContentLine(out, req, resp, 1, null, null);
 		printContentStart(out, req, resp);
 		try {
-			out.print("      <table cellpadding='0' cellspacing='10'>\n");
+			out.print("<table cellpadding='0' cellspacing='10'>\n"
+					+ "  <tbody>\n");
 			printPageList(out, req, resp, this, layout);
-			out.print("      </table>\n");
+			out.print("  </tbody>\n"
+					+ "</table>\n");
 		} finally { // TODO: Remove all these finallys?  Or add back to startHtml/endHtml
 			layout.endContentLine(out, req, resp, 1, false);
 			layout.endContent(this, out, req, resp, 1);
@@ -92,12 +94,12 @@ abstract public class AutoListPage extends WebPage {
 		int len = pages.length;
 		for (int c = 0; c < len; c++) {
 			WebPage page = pages[c];
-			out.print("  <tr>\n"
-					+ "    <td style='white-space:nowrap'><a class='aoLightLink' href='").encodeXmlAttribute(req==null?"":req.getEncodedURL(page, resp)).print("'>").encodeXhtml(page.getShortTitle()).print("</a>\n"
-					+ "    </td>\n"
-					+ "    <td style='width:12px; white-space:nowrap'>&#160;</td>\n"
-					+ "    <td style='white-space:nowrap'>").encodeXhtml(page.getDescription()).print("</td>\n"
-					+ "  </tr>\n");
+			out.print("    <tr>\n"
+					+ "      <td style='white-space:nowrap'><a class='aoLightLink' href='").encodeXmlAttribute(req==null?"":req.getEncodedURL(page, resp)).print("'>").encodeXhtml(page.getShortTitle()).print("</a>\n"
+					+ "      </td>\n"
+					+ "      <td style='width:12px; white-space:nowrap'>&#160;</td>\n"
+					+ "      <td style='white-space:nowrap'>").encodeXhtml(page.getDescription()).print("</td>\n"
+					+ "    </tr>\n");
 		}
 	}
 
