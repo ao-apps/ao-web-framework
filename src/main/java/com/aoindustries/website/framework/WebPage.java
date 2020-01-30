@@ -329,7 +329,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @param req  {@code null} during search
 	 *
-	 * @see Serialization#getDefault(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
+	 * @see SerializationEE#getDefault(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
 	 */
 	protected Serialization getSerialization(WebSiteRequest req) {
 		return (req == null) ? Serialization.XML : SerializationEE.getDefault(getServletContext(), req);
