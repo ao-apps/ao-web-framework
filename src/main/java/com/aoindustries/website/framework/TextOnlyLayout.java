@@ -23,6 +23,7 @@
 package com.aoindustries.website.framework;
 
 import com.aoindustries.encoding.ChainWriter;
+import static com.aoindustries.encoding.JavaScriptInXhtmlAttributeEncoder.encodeJavaScriptInXhtmlAttribute;
 import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
 import com.aoindustries.html.Doctype;
 import com.aoindustries.html.Html;
@@ -231,15 +232,14 @@ public class TextOnlyLayout extends WebPageLayout {
 		if(color!=-1) out.print("    vlink=\"").writeHtmlColor(color).print("\"\n");
 		color=getActiveLinkColor(req);
 		if(color!=-1) out.print("    alink=\"").writeHtmlColor(color).print("\"\n");
-		out.print("    onload=\"");
 		// TODO: These onloads should be merged?
 		if (onload == null) onload = page.getOnloadScript(req);
 		if (onload != null) {
-			// TODO: out.print(' ');
-			encodeTextInXhtmlAttribute(onload, out);
+			out.print("    onload=\"");
+			encodeJavaScriptInXhtmlAttribute(onload, out);
+			out.print("\"\n");
 		}
-		out.print("\"\n"
-				+ "  >\n"
+		out.print("  >\n"
 				+ "    <table cellspacing=\"10\" cellpadding=\"0\">\n");
 		out.print("      <tr>\n"
 				+ "        <td valign=\"top\">\n");
