@@ -84,7 +84,7 @@ abstract public class WebPageLayout {
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		ChainWriter out,
-		String onload // TODO: Make onload script always encoded into body tag
+		String onload
 	) throws IOException, SQLException;
 
 	/**
