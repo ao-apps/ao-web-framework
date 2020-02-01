@@ -128,10 +128,10 @@ abstract public class WebPageLayout {
 		startContentLine(out, req, resp, 1, "center", null);
 		beginLightArea(req, resp, out, null, "300", true);
 		out.print("      <form action=\"\" id=\"search_two\" method=\"post\">\n");
-		req.printFormFields(out, 4);
+		req.printFormFields(html);
 		out.print("        <table cellspacing=\"0\" cellpadding=\"0\"><tr><td style=\"white-space:nowrap\">\n"
-				+ "          Word(s) to search for: <input type=\"text\" size=\"24\" name=\"search_query\" value=\"").encodeXmlAttribute(query).print('"');
-		html.selfClose().br__().nl();
+				+ "          Word(s) to search for: ");
+		html.input.text().size(24).name("search_query").value(query).__().br__().nl();
 		out.print("          Search Location: ");
 		html.input.radio().name("search_target").value("entire_site").checked(isEntireSite).__();
 		out.print(" Entire Site&#160;&#160;&#160;");

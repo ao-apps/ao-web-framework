@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2014, 2015, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,7 +22,7 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.encoding.ChainWriter;
+import com.aoindustries.html.Html;
 import com.aoindustries.io.FileUtils;
 import com.aoindustries.net.URIEncoder;
 import com.aoindustries.net.URIParser;
@@ -701,16 +701,15 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	/**
 	 * Prints the hidden variables that contain all of the current settings.
 	 */
-	public void printFormFields(ChainWriter out, int indent) throws IOException {
-		if("true".equals(req.getParameter("search_engine"))) printHiddenField(out, indent, "search_engine", "true");
+	public void printFormFields(Html html) throws IOException {
+		if("true".equals(req.getParameter("search_engine"))) printHiddenField(html, "search_engine", "true");
 	}
 
 	/**
 	 * Prints the hidden variables that contain all of the current settings.
 	 */
-	protected static void printHiddenField(ChainWriter out, int indent, String name, String value) throws IOException {
-		for(int c=0;c<indent;c++) out.print("  ");
-		out.print("<input type='hidden' name='").encodeXmlAttribute(name).print("' value='").encodeXmlAttribute(value).print("' />\n");
+	protected static void printHiddenField(Html html, String name, String value) throws IOException {
+		html.input.hidden().name(name).value(value).__().nl();
 	}
 
 	public List<UploadedFile> getUploadedFiles() {

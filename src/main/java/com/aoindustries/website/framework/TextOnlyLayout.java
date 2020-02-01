@@ -250,21 +250,17 @@ public class TextOnlyLayout extends WebPageLayout {
 			html.hr__().nl();
 			// TODO: Is it POST or post?
 			out.print("          Logout: <form style=\"display:inline\" id=\"logout_form\" method=\"post\" action=\"").encodeXmlAttribute(req.getEncodedURL(page, resp)).print("\"><div style=\"display:inline\">");
-			req.printFormFields(out, 2);
-			out.print("<input type=\"hidden\" name=\"logout_requested\" value=\"true\"");
-			html.selfClose();
-			out.print("<input type=\"submit\" value=\"Logout\"");
-			html.selfClose();
+			req.printFormFields(html);
+			html.input.hidden().name("logout_requested").value(true).__();
+			html.input.submit__("Logout");
 			out.print("</div></form>\n");
 		} else {
 			out.print("          ");
 			html.hr__().nl();
 			out.print("          Login: <form style=\"display:inline\" id=\"login_form\" method=\"post\" action=\"").encodeXmlAttribute(req.getEncodedURL(page, resp)).print("\"><div style=\"display:inline\">");
-			req.printFormFields(out, 2);
-			out.print("<input type=\"hidden\" name=\"login_requested\" value=\"true\"");
-			html.selfClose();
-			out.print("<input type=\"submit\" value=\"Login\"");
-			html.selfClose();
+			req.printFormFields(html);
+			html.input.hidden().name("login_requested").value(true).__();
+			html.input.submit__("Login");
 			out.print("</div></form>\n");
 		}
 		out.print("          ");
@@ -274,15 +270,13 @@ public class TextOnlyLayout extends WebPageLayout {
 		if(printWebPageLayoutSelector(page, out, req, resp)) {
 			html.br__().nl();
 			out.print("            Search: <form id=\"search_site\" style=\"display:inline\" method=\"post\" action=\"").encodeXmlAttribute(req.getEncodedURL(page, resp)).print("\"><div style=\"display:inline\">\n"
-				+ "              <input type=\"hidden\" name=\"search_target\" value=\"entire_site\"");
-			html.selfClose();
-			out.print("\n");
+				+ "              ");
+			html.input.hidden().name("search_target").value("entire_site").__().nl();
 		}
-		req.printFormFields(out, 3);
-		out.print("              <input type=\"text\" name=\"search_query\" size=\"12\" maxlength=\"255\"");
-		html.selfClose();
-		out.print("\n"
-				+ "            </div></form>");
+		req.printFormFields(html);
+		out.print("              ");
+		html.input.text().name("search_query").size(12).maxlength(255).__().nl();
+		out.print("            </div></form>");
 		html.br__().nl();
 		out.print("          </div>\n"
 				+ "          ");
