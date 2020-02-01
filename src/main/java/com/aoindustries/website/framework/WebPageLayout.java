@@ -23,7 +23,6 @@
 package com.aoindustries.website.framework;
 
 import com.aoindustries.encoding.ChainWriter;
-import com.aoindustries.encoding.MediaWriter;
 import com.aoindustries.encoding.TextInJavaScriptEncoder;
 import com.aoindustries.html.Doctype;
 import com.aoindustries.html.Html;
@@ -343,10 +342,10 @@ abstract public class WebPageLayout {
 	public boolean printWebPageLayoutSelector(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		if(layoutChoices.length>=2) {
 			Html html = page.getHtml(req, out);
-			try (MediaWriter script = html.script().out__()) {
-				script.write("  function selectLayout(layout) {\n");
+			html.script().out(script -> {
+				script.write("function selectLayout(layout) {\n");
 				for(String choice : layoutChoices) {
-					script.write("    if(layout==\"");
+					script.write("  if(layout==\"");
 					TextInJavaScriptEncoder.encodeTextInJavaScript(choice, script);
 					script.write("\") window.top.location.href=\"");
 					TextInJavaScriptEncoder.encodeTextInJavaScript(
@@ -355,9 +354,8 @@ abstract public class WebPageLayout {
 					);
 					script.write("\";\n");
 				}
-				script.write("  }\n");
-			}
-			html.nl();
+				script.write('}');
+			}).__().nl();
 			out.print("<form action=\"#\" style=\"display:inline\"><div style=\"display:inline\">\n"
 				+ "  <select name=\"layout_selector\" onchange=\"selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);\">\n");
 			for(String choice : layoutChoices) {
