@@ -349,11 +349,14 @@ abstract public class TreePage extends WebPage {
 
 			// Write the form containing the current settings
 			out.print("<form action='' id='tree_form' method='post'><div>\n");
-			req.printFormFields(out, 1);
-			out.print("  <input type='hidden' name='scroll_to_x' value='").print(scrollToX).print("' />\n"
-					+ "  <input type='hidden' name='scroll_to_y' value='").print(scrollToY).print("' />\n");
+			req.printFormFields(html);
+			out.print("  ");
+			html.input.hidden().name("scroll_to_x").value(scrollToX).__().nl();
+			out.print("  ");
+			html.input.hidden().name("scroll_to_y").value(scrollToY).__().nl();
 			for(int c=0; c<treeLen; c++) {
-				out.print("  <input type='hidden' name='opened_").print(c).print("' value='").print(opened[c]).print("' />\n");
+				out.print("  ");
+				html.input.hidden().name("opened_" + c).value(opened[c]).__().nl();
 			}
 
 			// Display the tree in a table with links for opening/closing the different parts
