@@ -215,9 +215,9 @@ public class TextOnlyLayout extends WebPageLayout {
 			html.selfClose();
 			out.print('\n');
 		}
-		out.print("    <link rel=\"stylesheet\" href=\"").encodeXmlAttribute(req.getEncodedURLForPath("/layout/text/global.css", null, false, resp)).print("\" type=\"text/css\"");// TODO: Include type in HTML5?
-		html.selfClose().nl();
-		html.script().src(req.getEncodedURLForPath("/global.js", null, false, resp)).__().nl();
+		out.print("    ");
+		html.link().rel(Link.Rel.STYLESHEET).href(req.getEncodedURLForPath("/layout/text/global.css", null, false, resp)).__().nl()
+			.script().src(req.getEncodedURLForPath("/global.js", null, false, resp)).__().nl();
 		printJavaScriptIncludes(req, resp, out, page);
 		// TODO: Canonical?
 		out.print("  </head>\n"
