@@ -414,7 +414,13 @@ abstract public class TreePage extends WebPage {
 										} else break;
 									}
 								}
-								out.print("<img src='").encodeXmlAttribute(req.getEncodedURL(this, "image_num="+(hasMore?1:0), resp)).print("' style='border:0px; display:inline; vertical-align:bottom;' width='"+IMAGE_WIDTH+"' height='"+IMAGE_HEIGHT+"' alt='' />");
+								html.img()
+									.src(req.getEncodedURL(this, "image_num=" + (hasMore ? 1 : 0), resp))
+									.style("border:0px; display:inline; vertical-align:bottom")
+									.width(IMAGE_WIDTH)
+									.height(IMAGE_HEIGHT)
+									.alt("")
+									.__();
 							} else break;
 						}
 
@@ -456,31 +462,46 @@ abstract public class TreePage extends WebPage {
 										.print("<a href='javascript:")
 										.print(opened[c] ? "closeNode(" : "openNode(")
 										.print(c)
-										.print(");'><img alt='").print(opened[c] ? "Close" : "Open")
-										.print("' src='")
-										.encodeXmlAttribute(
+										.print(");'>");
+									html.img()
+										.alt(opened[c] ? "Close" : "Open")
+										.src(
 											req.getEncodedURL(
 												this,
-												"image_num="+(
+												"image_num=" + (
 													opened[c]
 													? (hasMore ? 4 : (c > 0 ? 5 : 9))
 													: (hasMore ? 6 : (c > 0 ? 7 : 8))
 												),
 												resp
 											)
-										).print("' style='vertical-align:bottom; border:0px; display:inline;' width='"+IMAGE_WIDTH+"' height='"+IMAGE_HEIGHT+"' /></a>");
+										).style("vertical-align:bottom; border:0px; display:inline")
+										.width(IMAGE_WIDTH)
+										.height(IMAGE_HEIGHT)
+										.__();
+									out.print("</a>");
 								} else {
-									out
-										.print("<img src='")
-										.encodeXmlAttribute(
+									html.img()
+										.src(
 											req.getEncodedURL(
 												this,
-												"image_num="+(hasMore ? 2 : 3),
+												"image_num=" + (hasMore ? 2 : 3),
 												resp
 											)
-										).print("' style='vertical-align:bottom; border:0px; display:inline;' width='"+IMAGE_WIDTH+"' height='"+IMAGE_HEIGHT+"' alt='' />");
+										).style("vertical-align:bottom; border:0px; display:inline")
+										.width(IMAGE_WIDTH)
+										.height(IMAGE_HEIGHT)
+										.alt("")
+										.__();
 								}
-								out.print("<img src='").encodeXmlAttribute(req.getEncodedURL(this, "image_num=0", resp)).print("' style='vertical-align:bottom; border:0px; display:inline;' width='4' height='"+IMAGE_HEIGHT+"' alt='' /></td><td style='white-space:nowrap'>");
+								html.img()
+									.src(req.getEncodedURL(this, "image_num=0", resp))
+									.style("vertical-align:bottom; border:0px; display:inline")
+									.width(4)
+									.height(IMAGE_HEIGHT)
+									.alt("")
+									.__();
+								out.print("</td><td style='white-space:nowrap'>");
 							}
 
 							boolean useCodeFont=useCodeFont(req);
@@ -504,7 +525,15 @@ abstract public class TreePage extends WebPage {
 						}
 
 						out.print("</td></tr></table></td>\n"
-								+ "      <td style='white-space:nowrap; width:20px'><img src='").encodeXmlAttribute(req.getEncodedURL(this, "image_num=0", resp)).print("' style='vertical-align:bottom; border:0px; display:inline;' width='20' height='1' alt='' /></td>\n"
+								+ "      <td style='white-space:nowrap; width:20px'>");
+						html.img()
+							.src(req.getEncodedURL(this, "image_num=0", resp))
+							.style("vertical-align:bottom; border:0px; display:inline")
+							.width(20)
+							.height(1)
+							.alt("")
+							.__();
+						out.print("</td>\n"
 								+ "      <td style='white-space:nowrap'>");
 						String description=tree.get(c).getDescription();
 						if(description!=null) out.print(description);
