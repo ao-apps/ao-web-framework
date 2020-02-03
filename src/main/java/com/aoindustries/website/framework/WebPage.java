@@ -400,7 +400,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 		if(isLogout) req.logout(resp);
 
 		if("true".equals(req.getParameter("login_requested"))) {
-			// TODO: ROBOTS header on "login_requested"
+			// TODO: robots header on "login_requested"
 			page.printLoginForm(page, new LoginException("Please Login"), req, resp);
 			return;
 		}
