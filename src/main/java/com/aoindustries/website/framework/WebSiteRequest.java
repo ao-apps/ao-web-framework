@@ -263,7 +263,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 		super(req);
 		this.sourcePage=sourcePage;
 		this.req=req;
-		String contentType=req.getHeader("Content-Type");
+		String contentType=req.getHeader("content-type");
 		if (contentType!=null && contentType.length()>=19 && contentType.substring(0,19).equalsIgnoreCase("multipart/form-data")) {
 			boolean keepFiles=false;
 			try {

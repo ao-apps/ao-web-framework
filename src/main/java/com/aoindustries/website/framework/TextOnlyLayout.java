@@ -28,6 +28,9 @@ import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextIn
 import com.aoindustries.html.Doctype;
 import com.aoindustries.html.Html;
 import com.aoindustries.html.Link;
+import com.aoindustries.html.Meta;
+import com.aoindustries.html.Script;
+import com.aoindustries.html.Style;
 import com.aoindustries.html.servlet.HtmlEE;
 import com.aoindustries.html.util.GoogleAnalytics;
 import static com.aoindustries.taglib.AttributeUtils.appendWidthStyle;
@@ -140,22 +143,20 @@ public class TextOnlyLayout extends WebPageLayout {
 				+ "  <head>\n");
 		// If this is not the default layout, then robots noindex
 		if(!isOkResponseStatus || !getName().equals(getLayoutChoices()[0])) {
-			out.print("    <meta name=\"ROBOTS\" content=\"NOINDEX, NOFOLLOW\"");
-			html.selfClose().nl();
+			out.print("    ");
+			html.meta(Meta.Name.ROBOTS).content("noindex, nofollow").__().nl();
 		}
 		if(html.doctype == Doctype.HTML5) {
-			out.print("    <meta charset=\"");
-			out.encodeXmlAttribute(resp.getCharacterEncoding());
-			out.print('"');
-			html.selfClose().nl();
+			out.print("    ");
+			html.meta().charset(resp.getCharacterEncoding()).__().nl();
 		} else {
-			out.print("    <meta http-equiv=\"Content-Type\" content=\"").encodeXmlAttribute(resp.getContentType()).print('"');
-			html.selfClose().nl();
+			out.print("    ");
+			html.meta(Meta.HttpEquiv.CONTENT_TYPE).content(resp.getContentType()).__().nl();
 			// Default style language
-			out.print("    <meta http-equiv=\"Content-Style-Type\" content=\"text/css\"");
-			html.selfClose().nl();
-			out.print("    <meta http-equiv=\"Content-Script-Type\" content=\"text/javascript\"");
-			html.selfClose().nl();
+			out.print("    ");
+			html.meta(Meta.HttpEquiv.CONTENT_STYLE_TYPE).content(Style.Type.TEXT_CSS).__().nl();
+			out.print("    ");
+			html.meta(Meta.HttpEquiv.CONTENT_SCRIPT_TYPE).content(Script.Type.TEXT_JAVASCRIPT).__().nl();
 		}
 		if(html.doctype == Doctype.HTML5) {
 			GoogleAnalytics.writeGlobalSiteTag(html, trackingId);
@@ -163,23 +164,25 @@ public class TextOnlyLayout extends WebPageLayout {
 			GoogleAnalytics.writeAnalyticsJs(html, trackingId);
 		}
 		// Mobile support
-		out.print("    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"");
-		html.selfClose().nl();
-		out.print("    <meta name=\"apple-mobile-web-app-capable\" content=\"yes\"");
-		html.selfClose().nl();
-		out.print("    <meta name=\"apple-mobile-web-app-status-bar-style\" content=\"black\"");
-		html.selfClose().nl();
+		out.print("    ");
+		html.meta(Meta.Name.VIEWPORT).content("width=device-width, initial-scale=1.0").__().nl();
+		out.print("    ");
+		// TODO: This is probably only appropriate for single-page applications!
+		// TODO: See https://medium.com/@firt/dont-use-ios-web-app-meta-tag-irresponsibly-in-your-progressive-web-apps-85d70f4438cb
+		html.meta(Meta.Name.APPLE_MOBILE_WEB_APP_CAPABLE).content("yes").__().nl();
+		out.print("    ");
+		html.meta(Meta.Name.APPLE_MOBILE_WEB_APP_STATUS_BAR_STYLE).content("black").__().nl();
 		// Authors
 		// TODO: dcterms copyright
 		String author = page.getAuthor();
 		if(author != null && (author = author.trim()).length() > 0) {
-			out.print("    <meta name=\"author\" content=\"").encodeXmlAttribute(author).print('"');
-			html.selfClose().nl();
+			out.print("    ");
+			html.meta(Meta.Name.AUTHOR).content(author).__().nl();
 		}
 		String authorHref = page.getAuthorHref(req, resp);
 		if(authorHref != null && (authorHref = authorHref.trim()).length() > 0) {
 			out.print("    ");
-			html.link().rel(Link.Rel.AUTHOR).href(authorHref).__().nl();
+			html.link(Link.Rel.AUTHOR).href(authorHref).__().nl();
 		}
 		out.print("    <title>");
 		// No more page stack, just show current page only
@@ -200,23 +203,23 @@ public class TextOnlyLayout extends WebPageLayout {
 		out.print("</title>\n");
 		String description = page.getDescription();
 		if(description != null && (description = description.trim()).length() > 0) {
-			out.print("    <meta name=\"description\" content=\"").encodeXmlAttribute(description).print('"');
-			html.selfClose().nl();
+			out.print("    ");
+			html.meta(Meta.Name.DESCRIPTION).content(description).__().nl();
 		}
 		String keywords = page.getKeywords();
 		if(keywords != null && (keywords = keywords.trim()).length() > 0) {
-			out.print("    <meta name=\"keywords\" content=\"").encodeXmlAttribute(keywords).print('"');
-			html.selfClose().nl();
+			out.print("    ");
+			html.meta(Meta.Name.KEYWORDS).content(keywords).__().nl();
 		}
 		// TODO: Review HTML 4/HTML 5 differences from here
 		String copyright = page.getCopyright(req, resp, page);
 		if(copyright!=null && copyright.length()>0) {
-			out.print("    <meta name=\"copyright\" content=\"").encodeXmlAttribute(copyright).print('"');
-			html.selfClose();
-			out.print('\n');
+			out.print("    ");
+			// TODO: Dublin Core: https://stackoverflow.com/questions/6665312/is-the-copyright-meta-tag-valid-in-html5
+			html.meta().name("copyright").content(copyright).__().nl();
 		}
 		out.print("    ");
-		html.link().rel(Link.Rel.STYLESHEET).href(req.getEncodedURLForPath("/layout/text/global.css", null, false, resp)).__().nl()
+		html.link(Link.Rel.STYLESHEET).href(req.getEncodedURLForPath("/layout/text/global.css", null, false, resp)).__().nl()
 			.script().src(req.getEncodedURLForPath("/global.js", null, false, resp)).__().nl();
 		printJavaScriptIncludes(req, resp, out, page);
 		// TODO: Canonical?
