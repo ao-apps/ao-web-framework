@@ -23,11 +23,12 @@
 package com.aoindustries.website.framework;
 
 import com.aoindustries.encoding.ChainWriter;
-import com.aoindustries.html.Doctype;
+import com.aoindustries.encoding.Doctype;
+import com.aoindustries.encoding.EncodingContext;
+import com.aoindustries.encoding.Serialization;
+import com.aoindustries.encoding.servlet.DoctypeEE;
+import com.aoindustries.encoding.servlet.SerializationEE;
 import com.aoindustries.html.Html;
-import com.aoindustries.html.Serialization;
-import com.aoindustries.html.servlet.DoctypeEE;
-import com.aoindustries.html.servlet.SerializationEE;
 import com.aoindustries.io.AoByteArrayOutputStream;
 import com.aoindustries.net.EmptyURIParameters;
 import com.aoindustries.security.LoginException;
@@ -329,10 +330,11 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @param req  {@code null} during search
 	 *
+	 * @see EncodingContext#DEFAULT_SERIALIZATION
 	 * @see SerializationEE#getDefault(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
 	 */
 	protected Serialization getSerialization(WebSiteRequest req) {
-		return (req == null) ? Serialization.XML : SerializationEE.getDefault(getServletContext(), req);
+		return (req == null) ? EncodingContext.DEFAULT_SERIALIZATION : SerializationEE.getDefault(getServletContext(), req);
 	}
 
 	/**
@@ -340,10 +342,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @param req  {@code null} during search
 	 *
-	 * @see DoctypeEE#getDefault(javax.servlet.ServletContext)
+	 * @see EncodingContext#DEFAULT_DOCTYPE
 	 */
 	protected Doctype getDoctype(WebSiteRequest req) {
-		return Doctype.HTML5;
+		return EncodingContext.DEFAULT_DOCTYPE;
 	}
 
 	/**
