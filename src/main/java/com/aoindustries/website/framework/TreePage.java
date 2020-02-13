@@ -25,6 +25,7 @@ package com.aoindustries.website.framework;
 import com.aoindustries.encoding.ChainWriter;
 import com.aoindustries.encoding.MediaWriter;
 import com.aoindustries.html.Html;
+import com.aoindustries.io.ContentType;
 import com.aoindustries.io.IoUtils;
 import com.aoindustries.net.URIEncoder;
 import com.aoindustries.util.AoArrays;
@@ -133,7 +134,7 @@ abstract public class TreePage extends WebPage {
 					resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unable to find image number "+imageNum);
 				} else {
 					boolean useSmooth=useSmoothOutline(req);
-					resp.setContentType(imageNum==0?"image/gif":useSmooth?"image/jpeg":"image/gif");
+					resp.setContentType(imageNum==0?ContentType.GIF:useSmooth?ContentType.JPEG:ContentType.GIF);
 					byte[] bytes=getImageBytes(imageNum, useSmooth);
 					try (OutputStream out = resp.getOutputStream()) {
 						out.write(bytes);

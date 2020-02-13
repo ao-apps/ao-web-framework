@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
-Copyright (C) 2016, 2017, 2019  AO Industries, Inc.
+Copyright (C) 2016, 2017, 2019, 2020  AO Industries, Inc.
     support@aoindustries.com
     7262 Bull Pen Cir
     Mobile, AL 36695
@@ -53,8 +53,8 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 				scmUrl="@{documented.scm.url}"
 			>
 				<ul>
-					<li>Registering serialization (HTML/XHTML) with new methods <code>Serialization.set(…)</code> and <code>Serialization.get(…)</code>.</li>
-					<li>Registering doctype with new methods <code>Doctype.set(…)</code> and <code>Doctype.get(…)</code>.</li>
+					<li>Registering serialization (HTML/XHTML) with new methods <code>SerializationEE.set(…)</code> and <code>SerializationEE.get(…)</code>.</li>
+					<li>Registering doctype with new methods <code>DoctypeEE.set(…)</code> and <code>DoctypeEE.get(…)</code>.</li>
 					<li>Refactored <code>WebPage.doGet(…)</code> and <code>WebPage.doPost(…)</code> methods for more meaningful parameter order.</li>
 					<li>Added <code><![CDATA[&lt;link rel="author" href="…" /&gt;]]></code> support.</li>
 				</ul>

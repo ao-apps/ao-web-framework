@@ -23,12 +23,12 @@
 package com.aoindustries.website.framework;
 
 import com.aoindustries.encoding.ChainWriter;
+import com.aoindustries.encoding.Doctype;
+import com.aoindustries.encoding.Serialization;
 import com.aoindustries.encoding.TextInJavaScriptEncoder;
-import com.aoindustries.html.Doctype;
+import com.aoindustries.encoding.servlet.DoctypeEE;
+import com.aoindustries.encoding.servlet.SerializationEE;
 import com.aoindustries.html.Html;
-import com.aoindustries.html.Serialization;
-import com.aoindustries.html.servlet.DoctypeEE;
-import com.aoindustries.html.servlet.SerializationEE;
 import com.aoindustries.net.URIEncoder;
 import java.io.IOException;
 import java.sql.SQLException;

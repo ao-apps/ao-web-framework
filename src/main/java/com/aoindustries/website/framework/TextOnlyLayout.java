@@ -23,9 +23,9 @@
 package com.aoindustries.website.framework;
 
 import com.aoindustries.encoding.ChainWriter;
+import com.aoindustries.encoding.Doctype;
 import static com.aoindustries.encoding.JavaScriptInXhtmlAttributeEncoder.encodeJavaScriptInXhtmlAttribute;
 import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
-import com.aoindustries.html.Doctype;
 import com.aoindustries.html.Html;
 import com.aoindustries.html.Link;
 import com.aoindustries.html.Meta;
@@ -119,6 +119,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	public static final String HTTP_SERVLET_RESPONSE_STATUS = "httpServletResponseStatus";
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public void startHTML(
 		WebPage page,
 		WebSiteRequest req,
