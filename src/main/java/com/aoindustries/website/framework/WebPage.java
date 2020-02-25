@@ -34,7 +34,6 @@ import com.aoindustries.net.EmptyURIParameters;
 import com.aoindustries.security.LoginException;
 import com.aoindustries.servlet.ServletUtil;
 import com.aoindustries.servlet.http.HttpServletUtil;
-import com.aoindustries.servlet.http.LastModifiedServlet;
 import com.aoindustries.util.SortedArrayList;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
@@ -386,7 +385,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *       invokes {@link WebPage#printUnauthorizedPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
 	 *       when not authorized and stops here.</li>
 	 *   <li>If {@linkplain #getRedirectURL(com.aoindustries.website.framework.WebSiteRequest) is a redirect},
-	 *       {@linkplain HttpServletUtil#sendRedirect(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.String, com.aoindustries.net.URIParameters, boolean, boolean, com.aoindustries.servlet.http.LastModifiedServlet.AddLastModifiedWhen, int) sends the redirect}
+	 *       {@linkplain HttpServletUtil#sendRedirect(int, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.String, com.aoindustries.net.URIParameters, boolean, boolean) sends the redirect}
 	 *       of the {@linkplain #getRedirectType() correct type} and stops here.</li>
 	 *   <li>Finally, dispatches the request to {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}.</li>
 	 * </ol>
@@ -420,15 +419,13 @@ abstract public class WebPage extends ErrorReportingServlet {
 		String redirect = page.getRedirectURL(req);
 		if(redirect != null) {
 			HttpServletUtil.sendRedirect(
-				req.getServletContext(),
+				page.getRedirectType(),
 				req,
 				resp,
 				redirect,
 				EmptyURIParameters.getInstance(),
 				true,
-				false,
-				LastModifiedServlet.AddLastModifiedWhen.FALSE,
-				page.getRedirectType()
+				false
 			);
 			return;
 		}
@@ -548,7 +545,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *       invokes {@link WebPage#printUnauthorizedPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
 	 *       when not authorized and stops here.</li>
 	 *   <li>If {@linkplain #getRedirectURL(com.aoindustries.website.framework.WebSiteRequest) is a redirect},
-	 *       {@linkplain HttpServletUtil#sendRedirect(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.String, com.aoindustries.net.URIParameters, boolean, boolean, com.aoindustries.servlet.http.LastModifiedServlet.AddLastModifiedWhen, int) sends the redirect}
+	 *       {@linkplain HttpServletUtil#sendRedirect(int, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.String, com.aoindustries.net.URIParameters, boolean, boolean) sends the redirect}
 	 *       of the {@linkplain #getRedirectType() correct type} and stops here.</li>
 	 *   <li>Avoid unexpected POST action after a (re)login: If has parameteter "login_requested"="true"
 	 *       or both "login_username" and "login_password" parameters, dispatch to
@@ -586,15 +583,13 @@ abstract public class WebPage extends ErrorReportingServlet {
 		String redirect = page.getRedirectURL(req);
 		if(redirect != null) {
 			HttpServletUtil.sendRedirect(
-				req.getServletContext(),
+				page.getRedirectType(),
 				req,
 				resp,
 				redirect,
 				EmptyURIParameters.getInstance(),
 				true,
-				false,
-				LastModifiedServlet.AddLastModifiedWhen.FALSE,
-				page.getRedirectType()
+				false
 			);
 			return;
 		}
