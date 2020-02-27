@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2005-2009, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2005-2009, 2015, 2016, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -36,16 +36,16 @@ abstract public class DescriptionAutoListPage extends AutoListPage {
 
 	private static final long serialVersionUID = 1L;
 
-	public DescriptionAutoListPage(LoggerAccessor loggerAccessor) {
-		super(loggerAccessor);
+	public DescriptionAutoListPage() {
+		super();
 	}
 
 	public DescriptionAutoListPage(WebSiteRequest req) {
 		super(req);
 	}
 
-	public DescriptionAutoListPage(LoggerAccessor loggerAccessor, Object param) {
-		super(loggerAccessor, param);
+	public DescriptionAutoListPage(Object param) {
+		super(param);
 	}
 
 	/**

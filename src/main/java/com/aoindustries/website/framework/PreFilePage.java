@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2009, 2015, 2016, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2015, 2016, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -36,16 +36,16 @@ public abstract class PreFilePage extends FilePage {
 
 	private static final long serialVersionUID = 1L;
 
-	public PreFilePage(LoggerAccessor loggerAccessor) {
-		super(loggerAccessor);
+	public PreFilePage() {
+		super();
 	}
 
 	public PreFilePage(WebSiteRequest req) {
 		super(req);
 	}
 
-	public PreFilePage(LoggerAccessor loggerAccessor, Object param) {
-		super(loggerAccessor, param);
+	public PreFilePage(Object param) {
+		super(param);
 	}
 
 	@Override

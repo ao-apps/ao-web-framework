@@ -41,16 +41,16 @@ abstract public class AutoListPage extends WebPage {
 	 */
 	public static final int NUM_COLS = 3;
 
-	public AutoListPage(LoggerAccessor loggerAccessor) {
-		super(loggerAccessor);
+	public AutoListPage() {
+		super();
 	}
 
 	public AutoListPage(WebSiteRequest req) {
 		super(req);
 	}
 
-	public AutoListPage(LoggerAccessor loggerAccessor, Object param) {
-		super(loggerAccessor, param);
+	public AutoListPage(Object param) {
+		super(param);
 	}
 
 	@Override
