@@ -50,6 +50,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -61,6 +62,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author  AO Industries, Inc.
  */
 public class WebSiteRequest extends HttpServletRequestWrapper implements FileRenamePolicy {
+
+	private static final Logger logger = Logger.getLogger(WebSiteRequest.class.getName());
 
 	private static final int MAX_UPLOAD_SIZE = 1073741824;
 
@@ -132,6 +135,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 		}
 	}
 
+	// TODO: One ConcurrentMap per ServletContext
 	private static final Map<Identifier,UploadedFile> uploadedFiles = new HashMap<>();
 	private Identifier getNextID() throws IOException {
 		synchronized(uploadedFiles) {
@@ -145,8 +149,10 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 		}
 	}
 
+	// TODO: Start and stop with ServletContextListener.
+	// TODO: Consider using ao-concurrent to avoid keeping a thread sleeping.
 	private static Thread uploadedFileCleanup;
-	private static void addUploadedFile(UploadedFile uf, final ServletContext servletContext, final LoggerAccessor loggerAccessor) {
+	private static void addUploadedFile(UploadedFile uf, final ServletContext servletContext) {
 		synchronized(uploadedFiles) {
 			uploadedFiles.put(uf.getID(), uf);
 
@@ -175,10 +181,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 														try {
 															FileUtils.delete(file);
 														} catch(IOException e) {
-															loggerAccessor.getLogger(
-																servletContext,
-																getClass().getName()
-															).log(
+															logger.log(
 																Level.SEVERE,
 																"file.getPath()="+file.getPath(),
 																e
@@ -210,10 +213,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 														try {
 															FileUtils.delete(file);
 														} catch(IOException e) {
-															loggerAccessor.getLogger(
-																servletContext,
-																getClass().getName()
-															).log(
+															logger.log(
 																Level.SEVERE,
 																"file.getPath()="+file.getPath(),
 																e
@@ -228,13 +228,13 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 							} catch(ThreadDeath TD) {
 								throw TD;
 							} catch(InterruptedException err) {
-								loggerAccessor.getLogger(servletContext, getClass().getName()).log(Level.WARNING, null, err);
+								logger.log(Level.WARNING, null, err);
 							} catch(RuntimeException | IOException T) {
-								loggerAccessor.getLogger(servletContext, getClass().getName()).log(Level.SEVERE, null, T);
+								logger.log(Level.SEVERE, null, T);
 								try {
 									sleep(60*1000);
 								} catch(InterruptedException err) {
-									loggerAccessor.getLogger(servletContext, getClass().getName()).log(Level.WARNING, null, err);
+									logger.log(Level.WARNING, null, err);
 								}
 							}
 						}
@@ -288,7 +288,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 									user,
 									getContentType(mreq, filename)
 								);
-								addUploadedFile(uf, sourcePage.getServletContext(), sourcePage.getLoggerAccessor());
+								addUploadedFile(uf, sourcePage.getServletContext());
 								reqUploadedFiles.add(uf);
 							}
 						}
@@ -726,16 +726,13 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 *
 	 * @exception  SecurityException  if the ID is not assigned to the person logged in
 	 */
-	public static UploadedFile getUploadedFile(WebSiteUser owner, Identifier id, ServletContext context, LoggerAccessor loggerAccessor) throws SecurityException {
+	public static UploadedFile getUploadedFile(WebSiteUser owner, Identifier id, ServletContext context) throws SecurityException {
 		synchronized(uploadedFiles) {
 			UploadedFile uf=uploadedFiles.get(id);
 			if(uf!=null) {
 				if(uf.getOwner().equals(owner)) return uf;
 				else {
-					loggerAccessor.getLogger(
-						context,
-						WebSiteRequest.class.getName()
-					).log(
+					logger.log(
 						Level.SEVERE,
 						"UploadedFile found, but owner doesn''t match: uf.getOwner()=\"{0}\", owner=\"{1}\".",
 						new Object[] {

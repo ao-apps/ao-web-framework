@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2009, 2015, 2016, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2015, 2016, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -42,7 +42,10 @@ import javax.servlet.http.HttpServletResponse;
  * @author  AO Industries, Inc.
  */
 // TODO: Get rid of this.  Handle statistics in a request listener
+// TODO: And handle errors the propery way
 public abstract class ErrorReportingServlet extends HttpServlet {
+
+	private static final Logger logger = Logger.getLogger(ErrorReportingServlet.class.getName());
 
 	private static final long serialVersionUID = 1L;
 
@@ -79,38 +82,7 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 	 */
 	private static final AtomicLong lastModifiedCount = new AtomicLong();
 
-	private final LoggerAccessor loggerAccessor;
-
-	protected ErrorReportingServlet(LoggerAccessor loggerAccessor) {
-		this.loggerAccessor = loggerAccessor;
-	}
-
-	/**
-	 * Gets the loggerAccess for this page.
-	 */
-	protected LoggerAccessor getLoggerAccessor() {
-		return loggerAccessor;
-	}
-
-	/**
-	 * Gets the logger for this servlet.
-	 */
-	public Logger getLogger() {
-		return getLogger(getClass());
-	}
-
-	/**
-	 * Gets the logger for the provided class.
-	 */
-	protected Logger getLogger(Class<?> clazz) {
-		return getLogger(clazz.getName());
-	}
-
-	/**
-	 * Gets the provided named logger.
-	 */
-	protected Logger getLogger(String name) {
-		return loggerAccessor.getLogger(getServletContext(), name);
+	protected ErrorReportingServlet() {
 	}
 
 	/**
@@ -125,10 +97,10 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 		} catch (ThreadDeath t) {
 			throw t;
 		} catch (RuntimeException | ServletException | IOException e) {
-			getLogger().log(Level.SEVERE, null, e);
+			logger.log(Level.SEVERE, null, e);
 			throw e;
 		} catch (SQLException t) {
-			getLogger().log(Level.SEVERE, null, t);
+			logger.log(Level.SEVERE, null, t);
 			throw new ServletException(t);
 		}
 	}
@@ -145,10 +117,10 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 		} catch (ThreadDeath t) {
 			throw t;
 		} catch (RuntimeException | ServletException | IOException e) {
-			getLogger().log(Level.SEVERE, null, e);
+			logger.log(Level.SEVERE, null, e);
 			throw e;
 		} catch (SQLException t) {
-			getLogger().log(Level.SEVERE, null, t);
+			logger.log(Level.SEVERE, null, t);
 			throw new ServletException(t);
 		}
 	}
@@ -171,10 +143,10 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 		} catch (ThreadDeath err) {
 			throw err;
 		} catch (RuntimeException err) {
-			getLogger().log(Level.SEVERE, null, err);
+			logger.log(Level.SEVERE, null, err);
 			throw err;
 		} catch (IOException | SQLException err) {
-			getLogger().log(Level.SEVERE, null, err);
+			logger.log(Level.SEVERE, null, err);
 			throw new RuntimeException(err);
 		}
 	}
@@ -212,24 +184,6 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 	 */
 	protected long reportingGetLastModified(HttpServletRequest req) throws IOException, SQLException {
 		return super.getLastModified(req);
-	}
-
-	/**
-	 * @deprecated  Please call logger directly for accurate class and method
-	 */
-	@Override
-	@Deprecated
-	final public void log(String message) {
-		getLogger().log(Level.SEVERE, message);
-	}
-
-	/**
-	 * @deprecated  Please call logger directly for accurate class and method
-	 */
-	@Override
-	@Deprecated
-	final public void log(String message, Throwable err) {
-		getLogger().log(Level.SEVERE, message, err);
 	}
 
 	private static final SecureRandom secureRandom = new SecureRandom();

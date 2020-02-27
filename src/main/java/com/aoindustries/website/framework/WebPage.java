@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletResponse;
@@ -67,6 +68,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author  AO Industries, Inc.
  */
 abstract public class WebPage extends ErrorReportingServlet {
+
+	private static final Logger logger = Logger.getLogger(WebPage.class.getName());
 
 	private static final long serialVersionUID = 1L;
 
@@ -136,16 +139,16 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 */
 	private Map<Object,OutputCacheEntry> outputCache;
 
-	public WebPage(LoggerAccessor loggerAccessor) {
-		super(loggerAccessor);
+	public WebPage() {
+		super();
 	}
 
 	public WebPage(WebSiteRequest req) {
-		super(req.sourcePage.getLoggerAccessor());
+		super();
 	}
 
-	public WebPage(LoggerAccessor loggerAccessor, Object param) {
-		super(loggerAccessor);
+	public WebPage(Object param) {
+		super();
 	}
 
 	private void addSearchWords(String words, int weight) {
@@ -1397,7 +1400,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 								doGet(null, null, out);
 								out.flush();
 							} catch(NullPointerException err) {
-								getLogger().log(Level.WARNING, null, err);
+								logger.log(Level.WARNING, null, err);
 							}
 							byte[] bcontent = bytes.getInternalByteArray();
 							size = bytes.size();

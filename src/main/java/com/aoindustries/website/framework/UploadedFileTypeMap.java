@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2009, 2015, 2016, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2015, 2016, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -34,12 +34,10 @@ final public class UploadedFileTypeMap extends FileTypeMap {
 
 	final private WebSiteUser owner;
 	final private ServletContext context;
-	final private LoggerAccessor loggerAccessor;
 
-	public UploadedFileTypeMap(WebSiteUser owner, ServletContext context, LoggerAccessor loggerAccessor) {
+	public UploadedFileTypeMap(WebSiteUser owner, ServletContext context) {
 		this.owner=owner;
 		this.context=context;
-		this.loggerAccessor = loggerAccessor;
 	}
 
 	@Override
@@ -53,7 +51,7 @@ final public class UploadedFileTypeMap extends FileTypeMap {
 		if(pos==-1) pos=filename.lastIndexOf('\\');
 		if(pos!=-1) filename=filename.substring(pos+1);
 		Identifier id = new Identifier(filename);
-		UploadedFile uf = WebSiteRequest.getUploadedFile(owner, id, context, loggerAccessor);
+		UploadedFile uf = WebSiteRequest.getUploadedFile(owner, id, context);
 		if(uf == null) throw new NullPointerException("Unable to find uploaded file: " + id);
 		return uf.getContentType();
 	}

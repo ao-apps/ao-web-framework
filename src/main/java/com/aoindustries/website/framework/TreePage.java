@@ -109,16 +109,16 @@ abstract public class TreePage extends WebPage {
 		}
 	}
 
-	public TreePage(LoggerAccessor loggerAccessor) {
-		super(loggerAccessor);
+	public TreePage() {
+		super();
 	}
 
 	public TreePage(WebSiteRequest req) {
 		super(req);
 	}
 
-	public TreePage(LoggerAccessor loggerAccessor, Object param) {
-		super(loggerAccessor, param);
+	public TreePage(Object param) {
+		super(param);
 	}
 
 	@Override
