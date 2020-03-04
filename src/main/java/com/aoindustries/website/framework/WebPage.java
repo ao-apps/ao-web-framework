@@ -37,6 +37,8 @@ import com.aoindustries.servlet.http.HttpServletUtil;
 import com.aoindustries.util.SortedArrayList;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
+import com.aoindustries.web.resources.registry.Group;
+import com.aoindustries.web.resources.registry.Style;
 import gnu.regexp.RE;
 import gnu.regexp.REException;
 import java.io.File;
@@ -50,6 +52,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -70,6 +73,13 @@ import javax.servlet.http.HttpServletResponse;
 abstract public class WebPage extends ErrorReportingServlet {
 
 	private static final Logger logger = Logger.getLogger(WebPage.class.getName());
+
+	/**
+	 * The name of the request-scope style group that will be used for page-specific styles.
+	 *
+	 * @see  Group
+	 */
+	public static final String STYLE_GROUP = WebPage.class.getName();
 
 	private static final long serialVersionUID = 1L;
 
@@ -1566,5 +1576,14 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 */
 	public String getURLPattern() throws IOException, SQLException {
 		return getURLPath();
+	}
+
+	/**
+	 * Gets additional styles that this page uses.
+	 * These will be added to the {@linkplain #STYLE_GROUP page style group}
+	 * during layout processing.
+	 */
+	public Set<? extends Style> getStyles() {
+		return null;
 	}
 }
