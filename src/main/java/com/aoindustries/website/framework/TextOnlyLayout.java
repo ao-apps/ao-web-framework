@@ -30,17 +30,29 @@ import com.aoindustries.html.Html;
 import com.aoindustries.html.Link;
 import com.aoindustries.html.Meta;
 import com.aoindustries.html.Script;
-import com.aoindustries.html.Style;
 import com.aoindustries.html.servlet.HtmlEE;
 import com.aoindustries.html.util.GoogleAnalytics;
+import com.aoindustries.style.AoStyle;
 import static com.aoindustries.taglib.AttributeUtils.appendWidthStyle;
 import com.aoindustries.taglib.HtmlTag;
 import static com.aoindustries.util.StringUtility.trimNullIfEmpty;
+import com.aoindustries.web.resources.registry.Group;
+import com.aoindustries.web.resources.registry.Registry;
+import com.aoindustries.web.resources.registry.Style;
+import com.aoindustries.web.resources.registry.Styles;
+import com.aoindustries.web.resources.renderer.Renderer;
+import com.aoindustries.web.resources.servlet.RegistryEE;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -49,6 +61,27 @@ import javax.servlet.http.HttpServletResponse;
  * @author  AO Industries, Inc.
  */
 public class TextOnlyLayout extends WebPageLayout {
+
+	/**
+	 * The name of the {@link Group} of web resources for the text layout.
+	 */
+	public static final String STYLE_GROUP = TextOnlyLayout.class.getName();
+
+	public static final Style GLOBAL_CSS = new Style("/layout/text/global.css");
+
+	@WebListener
+	public static class Initializer implements ServletContextListener {
+		@Override
+		public void contextInitialized(ServletContextEvent event) {
+			Styles styles = RegistryEE.get(event.getServletContext()).getGroup(STYLE_GROUP).styles;
+			styles.add(AoStyle.AO_STYLE);
+			styles.add(GLOBAL_CSS);
+		}
+		@Override
+		public void contextDestroyed(ServletContextEvent event) {
+			// Do nothing
+		}
+	}
 
 	public TextOnlyLayout(String[] layoutChoices) {
 		super(layoutChoices);
@@ -155,7 +188,7 @@ public class TextOnlyLayout extends WebPageLayout {
 			html.meta(Meta.HttpEquiv.CONTENT_TYPE).content(resp.getContentType()).__().nl();
 			// Default style language
 			out.print("    ");
-			html.meta(Meta.HttpEquiv.CONTENT_STYLE_TYPE).content(Style.Type.TEXT_CSS).__().nl();
+			html.meta(Meta.HttpEquiv.CONTENT_STYLE_TYPE).content(com.aoindustries.html.Style.Type.TEXT_CSS).__().nl();
 			out.print("    ");
 			html.meta(Meta.HttpEquiv.CONTENT_SCRIPT_TYPE).content(Script.Type.TEXT_JAVASCRIPT).__().nl();
 		}
@@ -219,9 +252,32 @@ public class TextOnlyLayout extends WebPageLayout {
 			// TODO: Dublin Core: https://stackoverflow.com/questions/6665312/is-the-copyright-meta-tag-valid-in-html5
 			html.meta().name("copyright").content(copyright).__().nl();
 		}
+
+		Registry registry = RegistryEE.get(servletContext, req);
+		// Add page styles
+		Styles pageStyles = registry.getGroup(WebPage.STYLE_GROUP).styles;
+		Set<? extends Style> styles = page.getStyles();
+		if(styles != null) {
+			for(Style style : styles) pageStyles.add(style);
+		}
+		// Render links
 		out.print("    ");
-		html.link(Link.Rel.STYLESHEET).href(req.getEncodedURLForPath("/layout/text/global.css", null, false, resp)).__().nl()
-			.script().src(req.getEncodedURLForPath("/global.js", null, false, resp)).__().nl();
+		Renderer.get(servletContext).renderStyles(
+			req,
+			resp,
+			html,
+			new HashSet<>(
+				Arrays.asList(
+					Group.GLOBAL,
+					STYLE_GROUP,
+					WebPage.STYLE_GROUP
+				)
+			),
+			"    "
+		);
+		html.nl();
+
+		html.script().src(req.getEncodedURLForPath("/global.js", null, false, resp)).__().nl();
 		printJavaScriptIncludes(req, resp, out, page);
 		// TODO: Canonical?
 		out.print("  </head>\n"

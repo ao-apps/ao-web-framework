@@ -86,7 +86,11 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 								<link>https://aoindustries.com/ao-lang/apidocs/</link>
 								<link>https://aoindustries.com/ao-net-types/apidocs/</link>
 								<link>https://aoindustries.com/ao-servlet-util/apidocs/</link>
+								<link>https://aoindustries.com/ao-style/apidocs/</link>
 								<link>https://aoindustries.com/ao-taglib/apidocs/</link>
+								<link>https://aoindustries.com/ao-web-resources/registry/apidocs/</link>
+								<link>https://aoindustries.com/ao-web-resources/renderer/apidocs/</link>
+								<link>https://aoindustries.com/ao-web-resources/servlet/apidocs/</link>
 								<link>https://aoindustries.com/aocode-public/apidocs/</link>
 								<link>http://www.servlets.com/cos/javadoc/</link>
 								<!-- No apidocs: <groupId>gnu-regexp</groupId><artifactId>gnu-regexp</artifactId> -->
@@ -129,7 +133,19 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 				<groupId>com.aoindustries</groupId><artifactId>ao-servlet-util</artifactId><version>2.0.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
 			</dependency>
 			<dependency>
+				<groupId>com.aoindustries</groupId><artifactId>ao-style</artifactId><version>1.0.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
+			</dependency>
+			<dependency>
 				<groupId>com.aoindustries</groupId><artifactId>ao-taglib</artifactId><version>5.0.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
+			</dependency>
+			<dependency>
+				<groupId>com.aoindustries</groupId><artifactId>ao-web-resources-registry</artifactId><version>0.1.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
+			</dependency>
+			<dependency>
+				<groupId>com.aoindustries</groupId><artifactId>ao-web-resources-renderer</artifactId><version>0.1.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
+			</dependency>
+			<dependency>
+				<groupId>com.aoindustries</groupId><artifactId>ao-web-resources-servlet</artifactId><version>0.1.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
 			</dependency>
 			<dependency>
 				<groupId>com.aoindustries</groupId><artifactId>aocode-public</artifactId><version>4.0.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
@@ -139,6 +155,25 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 			</dependency>
 			<dependency>
 				<groupId>gnu-regexp</groupId><artifactId>gnu-regexp</artifactId><version>1.1.4</version>
+			</dependency>
+			<!-- Transitive -->
+			<dependency>
+				<groupId>com.aoindustries</groupId><artifactId>ao-io-buffer</artifactId><version>3.2.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
+			</dependency>
+			<dependency>
+				<groupId>com.aoindustries</groupId><artifactId>ao-servlet-filter</artifactId><version>2.1.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
+			</dependency>
+			<dependency>
+				<groupId>com.aoindustries</groupId><artifactId>ao-servlet-last-modified</artifactId><version>1.0.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
+			</dependency>
+			<dependency>
+				<groupId>com.aoindustries</groupId><artifactId>ao-tempfiles</artifactId><version>1.0.1${POST-SNAPSHOT}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.aoindustries</groupId><artifactId>ao-tempfiles-servlet</artifactId><version>1.1.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
+			</dependency>
+			<dependency>
+				<groupId>com.aoindustries</groupId><artifactId>ao-tlds</artifactId><version>1.1.2${POST-SNAPSHOT}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -176,7 +211,19 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 			<groupId>com.aoindustries</groupId><artifactId>ao-servlet-util</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.aoindustries</groupId><artifactId>ao-style</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.aoindustries</groupId><artifactId>ao-taglib</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.aoindustries</groupId><artifactId>ao-web-resources-registry</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.aoindustries</groupId><artifactId>ao-web-resources-renderer</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.aoindustries</groupId><artifactId>ao-web-resources-servlet</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.aoindustries</groupId><artifactId>aocode-public</artifactId>
