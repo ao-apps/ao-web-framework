@@ -86,7 +86,6 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 								<link>https://aoindustries.com/ao-lang/apidocs/</link>
 								<link>https://aoindustries.com/ao-net-types/apidocs/</link>
 								<link>https://aoindustries.com/ao-servlet-util/apidocs/</link>
-								<link>https://aoindustries.com/ao-style/apidocs/</link>
 								<link>https://aoindustries.com/ao-taglib/apidocs/</link>
 								<link>https://aoindustries.com/ao-web-resources/registry/apidocs/</link>
 								<link>https://aoindustries.com/ao-web-resources/renderer/apidocs/</link>
@@ -131,9 +130,6 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 			</dependency>
 			<dependency>
 				<groupId>com.aoindustries</groupId><artifactId>ao-servlet-util</artifactId><version>2.0.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
-			</dependency>
-			<dependency>
-				<groupId>com.aoindustries</groupId><artifactId>ao-style</artifactId><version>1.0.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
 			</dependency>
 			<dependency>
 				<groupId>com.aoindustries</groupId><artifactId>ao-taglib</artifactId><version>5.0.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
@@ -190,9 +186,6 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		</dependency>
 		<dependency>
 			<groupId>com.aoindustries</groupId><artifactId>ao-servlet-util</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.aoindustries</groupId><artifactId>ao-style</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.aoindustries</groupId><artifactId>ao-taglib</artifactId>
