@@ -37,8 +37,9 @@ import com.aoindustries.servlet.http.HttpServletUtil;
 import com.aoindustries.util.SortedArrayList;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
-import com.aoindustries.web.resources.registry.Group;
-import com.aoindustries.web.resources.registry.Style;
+import com.aoindustries.web.resources.registry.Registry;
+import com.aoindustries.web.resources.servlet.PageServlet;
+import com.aoindustries.web.resources.servlet.RegistryEE;
 import gnu.regexp.RE;
 import gnu.regexp.REException;
 import java.io.File;
@@ -52,12 +53,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -73,13 +74,6 @@ import javax.servlet.http.HttpServletResponse;
 abstract public class WebPage extends ErrorReportingServlet {
 
 	private static final Logger logger = Logger.getLogger(WebPage.class.getName());
-
-	/**
-	 * The name of the request-scope style group that will be used for page-specific styles.
-	 *
-	 * @see  Group
-	 */
-	public static final String STYLE_GROUP = WebPage.class.getName();
 
 	private static final long serialVersionUID = 1L;
 
@@ -159,6 +153,16 @@ abstract public class WebPage extends ErrorReportingServlet {
 
 	public WebPage(Object param) {
 		super();
+	}
+
+	/**
+	 * Configures the {@linkplain com.aoindustries.web.resources.servlet.RegistryEE.Page page-scope web resources} that this page uses.
+	 * <p>
+	 * Implementers should call <code>super.configureResources(…)</code> as a matter of convention, despite this default implementation doing nothing.
+	 * </p>
+	 */
+	public void configureResources(ServletContext servletContext, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, Registry pageRegistry) {
+		// Do nothing
 	}
 
 	private void addSearchWords(String words, int weight) {
@@ -374,8 +378,32 @@ abstract public class WebPage extends ErrorReportingServlet {
 		);
 	}
 
-	// <editor-fold defaultstate="collapsed" desc="GET Requests">
+	/**
+	 * Sets the page-scope registry.
+	 * <p>
+	 * TODO: Just subclass {@link PageServlet} once we no longer extend
+	 * {@link ErrorReportingServlet}.
+	 * </p>
+	 *
+	 * @see  PageServlet#service(javax.servlet.ServletRequest, javax.servlet.ServletResponse)
+	 */
+	@Override
+	public void service(ServletRequest request, ServletResponse response) throws ServletException, IOException {
+		Registry oldPageRegistry = RegistryEE.Page.get(request);
+		if(oldPageRegistry == null) {
+			// Create a new page-scope registry
+			RegistryEE.Page.set(request, new Registry());
+		}
+		try {
+			super.service(request, response);
+		} finally {
+			if(oldPageRegistry == null) {
+				RegistryEE.Page.set(request, null);
+			}
+		}
+	}
 
+	// <editor-fold defaultstate="collapsed" desc="GET Requests">
 	/**
 	 * The main entry point for <code>GET</code> requests.
 	 * Prepares the request and performs initial actions:
@@ -508,10 +536,6 @@ abstract public class WebPage extends ErrorReportingServlet {
 		layout.startHTML(this, req, resp, out, null);
 		doGet(req, resp, out, layout);
 		layout.endHTML(this, req, resp, out);
-	}
-
-	final public void doGet(ChainWriter out, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
-		throw new AssertionError("TODO: Delete this method after all subclasses upgraded");
 	}
 
 	/**
@@ -706,10 +730,6 @@ abstract public class WebPage extends ErrorReportingServlet {
 		} finally {
 			SerializationEE.set(req, oldSerialization);
 		}
-	}
-
-	final public void doPost(ChainWriter out, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
-		throw new AssertionError("TODO: Delete this method after all subclasses upgraded");
 	}
 
 	/**
@@ -914,8 +934,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 		// Set the content type
 		ServletUtil.setContentType(
 			resp,
-			// TODO: request-only variant
-			SerializationEE.get(req.getServletContext(), req).getContentType(),
+			SerializationEE.get(getServletContext(), req).getContentType(),
 			Html.ENCODING
 		);
 		// Set additional headers
@@ -1357,7 +1376,16 @@ abstract public class WebPage extends ErrorReportingServlet {
 				// Get the HTML content
 				bytes.reset();
 				try (ChainWriter out = new ChainWriter(bytes)) {
-					doGet(null, null, out);
+					// Isolate page-scope registry
+					Registry oldPageRegistry = RegistryEE.Page.get(req);
+					try {
+						// TODO: Set serialization based on page settings, or XML always for search?
+						// TODO: Set doctype based on page settings?
+						RegistryEE.Page.set(req, new Registry());
+						doGet(null, null, out);
+					} finally {
+						RegistryEE.Page.set(req, oldPageRegistry);
+					}
 					out.flush();
 				}
 				byte[] content = bytes.getInternalByteArray();
@@ -1407,7 +1435,16 @@ abstract public class WebPage extends ErrorReportingServlet {
 							// Get the HTML content
 							bytes.reset();
 							try (ChainWriter out = new ChainWriter(bytes)) {
-								doGet(null, null, out);
+								// Isolate page-scope registry
+								Registry oldPageRegistry = RegistryEE.Page.get(req);
+								try {
+									RegistryEE.Page.set(req, new Registry());
+									// TODO: Set serialization based on page settings, or XML always for search?
+									// TODO: Set doctype based on page settings?
+									doGet(null, null, out);
+								} finally {
+									RegistryEE.Page.set(req, oldPageRegistry);
+								}
 								out.flush();
 							} catch(NullPointerException err) {
 								logger.log(Level.WARNING, null, err);
@@ -1576,14 +1613,5 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 */
 	public String getURLPattern() throws IOException, SQLException {
 		return getURLPath();
-	}
-
-	/**
-	 * Gets additional styles that this page uses.
-	 * These will be added to the {@linkplain #STYLE_GROUP page style group}
-	 * during layout processing.
-	 */
-	public Set<? extends Style> getStyles() {
-		return null;
 	}
 }
