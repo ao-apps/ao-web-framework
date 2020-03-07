@@ -32,26 +32,22 @@ import com.aoindustries.html.Meta;
 import com.aoindustries.html.Script;
 import com.aoindustries.html.servlet.HtmlEE;
 import com.aoindustries.html.util.GoogleAnalytics;
-import com.aoindustries.style.AoStyle;
 import static com.aoindustries.taglib.AttributeUtils.appendWidthStyle;
 import com.aoindustries.taglib.HtmlTag;
 import static com.aoindustries.util.StringUtility.trimNullIfEmpty;
 import com.aoindustries.web.resources.registry.Group;
 import com.aoindustries.web.resources.registry.Registry;
 import com.aoindustries.web.resources.registry.Style;
-import com.aoindustries.web.resources.registry.Styles;
 import com.aoindustries.web.resources.renderer.Renderer;
 import com.aoindustries.web.resources.servlet.RegistryEE;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpServletResponse;
 
@@ -60,12 +56,16 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author  AO Industries, Inc.
  */
+// TODO: Move into own mircoproject (also split into ao-web-framework-html)?
+// TODO: This would start to decompose this in a way like we're doing in SemanticCMS 2.
+// TODO: Probably not worth it for this legacy system?  Could they converge?
 public class TextOnlyLayout extends WebPageLayout {
 
 	/**
-	 * The name of the {@link Group} of web resources for the text layout.
+	 * The name of the {@linkplain com.aoindustries.web.resources.servlet.RegistryEE.Application application-scope}
+	 * group that will be used for text layout web resources.
 	 */
-	public static final String STYLE_GROUP = TextOnlyLayout.class.getName();
+	public static final Group.Name RESOURCE_GROUP = new Group.Name(TextOnlyLayout.class.getName());
 
 	public static final Style GLOBAL_CSS = new Style("/layout/text/global.css");
 
@@ -73,9 +73,10 @@ public class TextOnlyLayout extends WebPageLayout {
 	public static class Initializer implements ServletContextListener {
 		@Override
 		public void contextInitialized(ServletContextEvent event) {
-			Styles styles = RegistryEE.get(event.getServletContext()).getGroup(STYLE_GROUP).styles;
-			styles.add(AoStyle.AO_STYLE);
-			styles.add(GLOBAL_CSS);
+			RegistryEE.Application.get(event.getServletContext())
+				.getGroup(RESOURCE_GROUP)
+				.styles
+				.add(GLOBAL_CSS);
 		}
 		@Override
 		public void contextDestroyed(ServletContextEvent event) {
@@ -88,6 +89,13 @@ public class TextOnlyLayout extends WebPageLayout {
 	}
 
 	@Override
+	public void configureResources(ServletContext servletContext, WebSiteRequest req, HttpServletResponse resp, WebPage page, Registry requestRegistry) {
+		super.configureResources(servletContext, req, resp, page, requestRegistry);
+		requestRegistry.activate(RESOURCE_GROUP);
+	}
+
+	@Override
+	// TODO: Use Html instead of ChainWriter for layouts
 	public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, String align, String width, boolean nowrap) throws IOException {
 		align = trimNullIfEmpty(align);
 		width = trimNullIfEmpty(width);
@@ -159,7 +167,7 @@ public class TextOnlyLayout extends WebPageLayout {
 		HttpServletResponse resp,
 		ChainWriter out,
 		String onload
-	) throws IOException, SQLException {
+	) throws ServletException, IOException, SQLException {
 		boolean isOkResponseStatus;
 		{
 			Integer responseStatus = (Integer)req.getAttribute(HTTP_SERVLET_RESPONSE_STATUS);
@@ -253,27 +261,25 @@ public class TextOnlyLayout extends WebPageLayout {
 			html.meta().name("copyright").content(copyright).__().nl();
 		}
 
-		Registry registry = RegistryEE.get(servletContext, req);
-		// Add page styles
-		Styles pageStyles = registry.getGroup(WebPage.STYLE_GROUP).styles;
-		Set<? extends Style> styles = page.getStyles();
-		if(styles != null) {
-			for(Style style : styles) pageStyles.add(style);
-		}
+		// Configure layout resources
+		Registry requestRegistry = RegistryEE.Request.get(servletContext, req);
+		configureResources(servletContext, req, resp, page, requestRegistry);
+		// Configure page resources
+		Registry pageRegistry = RegistryEE.Page.get(req);
+		if(pageRegistry == null) throw new ServletException("page-scope registry not found.  WebPage.service(ServletRequest,ServletResponse) invoked?");
+		page.configureResources(servletContext, req, resp, this, pageRegistry);
 		// Render links
 		out.print("    ");
 		Renderer.get(servletContext).renderStyles(
 			req,
 			resp,
 			html,
-			new HashSet<>(
-				Arrays.asList(
-					Group.GLOBAL,
-					STYLE_GROUP,
-					WebPage.STYLE_GROUP
-				)
-			),
-			"    "
+			"    ",
+			true, // registeredActivations
+			null, // No additional activations
+			requestRegistry, // request-scope
+			RegistryEE.Session.get(req.getSession(false)), // session-scope
+			pageRegistry
 		);
 		html.nl();
 
@@ -308,7 +314,6 @@ public class TextOnlyLayout extends WebPageLayout {
 		if(isLoggedIn) {
 			out.print("          ");
 			html.hr__().nl();
-			// TODO: Is it POST or post?
 			out.print("          Logout: <form style=\"display:inline\" id=\"logout_form\" method=\"post\" action=\"").encodeXmlAttribute(req.getEncodedURL(page, resp)).print("\"><div style=\"display:inline\">");
 			req.printFormFields(html);
 			html.input.hidden().name("logout_requested").value(true).__();
@@ -423,7 +428,7 @@ public class TextOnlyLayout extends WebPageLayout {
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		ChainWriter out
-	) throws IOException, SQLException {
+	) throws ServletException, IOException, SQLException {
 		out.print("        </td>\n"
 				+ "      </tr>\n"
 				+ "    </table>\n"
