@@ -30,9 +30,12 @@ import com.aoindustries.encoding.servlet.DoctypeEE;
 import com.aoindustries.encoding.servlet.SerializationEE;
 import com.aoindustries.html.Html;
 import com.aoindustries.net.URIEncoder;
+import com.aoindustries.web.resources.registry.Registry;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -68,6 +71,16 @@ abstract public class WebPageLayout {
 	}
 
 	/**
+	 * Configures the {@linkplain com.aoindustries.web.resources.servlet.RegistryEE.Request request-scope web resources} that this layout uses.
+	 * <p>
+	 * Implementers should call <code>super.configureResources(…)</code> as a matter of convention, despite this default implementation doing nothing.
+	 * </p>
+	 */
+	public void configureResources(ServletContext servletContext, WebSiteRequest req, HttpServletResponse resp, WebPage page, Registry requestRegistry) {
+		// Do nothing
+	}
+
+	/**
 	 * Writes all of the HTML preceding the content of the page,
 	 * whether the page is in a frameset or not.
 	 * <p>
@@ -84,7 +97,7 @@ abstract public class WebPageLayout {
 		HttpServletResponse resp,
 		ChainWriter out,
 		String onload
-	) throws IOException, SQLException;
+	) throws ServletException, IOException, SQLException;
 
 	/**
 	 * Writes all of the HTML following the content of the page,
@@ -102,7 +115,7 @@ abstract public class WebPageLayout {
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		ChainWriter out
-	) throws IOException, SQLException;
+	) throws ServletException, IOException, SQLException;
 
 	/**
 	 * Prints the content HTML that shows the output of a search.  This output must include an
