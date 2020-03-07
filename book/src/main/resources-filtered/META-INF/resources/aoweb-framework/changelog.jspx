@@ -143,7 +143,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		>
 			<ul>
 				<li>
-					Removed uses of <ao:a rel="nofollow" href="@{javac.link.javaApi}java/io/File#deleteOnExit--">File.deleteOnExit()</ao:a>
+					Removed uses of <ao:a rel="nofollow" href="@{javadoc.link.javase}java/io/File#deleteOnExit--">File.deleteOnExit()</ao:a>
 					to avoid a <ao:a href="https://bugs.openjdk.java.net/browse/JDK-4872014">JDK memory leak</ao:a> in long-running applications.
 				</li>
 			</ul>
