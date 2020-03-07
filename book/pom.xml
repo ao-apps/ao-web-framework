@@ -34,28 +34,24 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 
 	<properties>
 		<!-- These values are copied from the project being documented -->
-		<documented.groupId>com.aoindustries</documented.groupId><documented.artifactId>aoweb-framework</documented.artifactId>
+		<documented.artifactId>aoweb-framework</documented.artifactId>
 		<documented.javaVersion>1.8</documented.javaVersion>
 		<documented.javac.link.javaApi>${javac.link.javaApi.jdk8}</documented.javac.link.javaApi>
 		<documented.name>AOWeb Framework</documented.name>
-		<documented.url>https://aoindustries.com/${documented.artifactId}/</documented.url>
 		<documented.description>Legacy servlet-based web framework, superfast and capable but tedious to use.</documented.description>
-		<documented.inceptionYear>2000</documented.inceptionYear>
-		<documented.scm.url>https://github.com/aoindustries/${documented.artifactId}</documented.scm.url>
 
-		<description.html><![CDATA[Documentation for <a target="_top" href="${documented.url}">${documented.name}</a> in <a target="_top" href="https://semanticcms.com/">SemanticCMS</a> format.]]></description.html>
+		<description.html><![CDATA[Documentation for <a target="_top" href="${project.url}">${documented.name}</a> in <a target="_top" href="https://semanticcms.com/">SemanticCMS</a> format.]]></description.html>
 	</properties>
 
-	<name>${documented.name} Book</name>
-	<url>${documented.url}</url>
-	<description>Documentation for ${documented.name} in SemanticCMS format.</description>
-	<inceptionYear>${documented.inceptionYear}</inceptionYear>
+	<name>AOWeb Framework Book</name>
+	<url>https://aoindustries.com/aoweb-framework/</url>
+	<description>Documentation for AOWeb Framework in SemanticCMS format.</description>
+	<inceptionYear>2000</inceptionYear>
 
 	<scm>
-		<!-- Can't inherit due to multi-module -->
-		<connection>scm:git:git://github.com/aoindustries/${documented.artifactId}.git</connection>
-		<developerConnection>scm:git:git@github.com:aoindustries/${documented.artifactId}.git</developerConnection>
-		<url>${documented.scm.url}</url>
+		<connection>scm:git:git://github.com/aoindustries/aoweb-framework.git</connection>
+		<developerConnection>scm:git:git@github.com:aoindustries/aoweb-framework.git</developerConnection>
+		<url>https://github.com/aoindustries/aoweb-framework</url>
 		<tag>HEAD</tag>
 	</scm>
 
@@ -63,7 +59,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		<dependencies>
 			<!-- Java EE -->
 			<dependency>
-				<groupId>com.aoindustries</groupId><artifactId>javaee-web-api-bom</artifactId><version>6.0.0${POST-SNAPSHOT}</version>
+				<groupId>com.aoindustries</groupId><artifactId>javaee-web-api-bom</artifactId><version>6.0.1-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
