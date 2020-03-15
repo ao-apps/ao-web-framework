@@ -35,7 +35,7 @@ import com.aoindustries.security.LoginException;
 import com.aoindustries.servlet.ServletUtil;
 import com.aoindustries.servlet.http.HttpServletUtil;
 import com.aoindustries.util.SortedArrayList;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.lang.Strings;
 import com.aoindustries.util.WrappedException;
 import com.aoindustries.web.resources.registry.Registry;
 import com.aoindustries.web.resources.servlet.PageServlet;
@@ -672,14 +672,14 @@ abstract public class WebPage extends ErrorReportingServlet {
 						if(target.getCachedPages(req).length==0) target=target.getParent();
 
 						// Get the list of words to search for
-						String[] words=StringUtility.splitString(query.replace('.', ' '));
+						String[] words=Strings.splitString(query.replace('.', ' '));
 
 						List<SearchResult> results=new ArrayList<>();
 						if(words.length>0) {
 							// Perform the search
 							target.search(words, req, resp, results, new AoByteArrayOutputStream(), new SortedArrayList<>());
 							Collections.sort(results);
-							//StringUtility.sortObjectsAndFloatDescending(results, 1, 5);
+							//Strings.sortObjectsAndFloatDescending(results, 1, 5);
 						}
 
 						layout.printSearchOutput(this, out, req, resp, query, entire_site, results, words);
@@ -1396,19 +1396,19 @@ abstract public class WebPage extends ErrorReportingServlet {
 					String word = words[c];
 					int wordMatch =
 						// Add the keywords with weight 10
-						StringUtility.countOccurrences(keywords, word) * 10
+						Strings.countOccurrences(keywords, word) * 10
 
 						// Add the description with weight 5
-						+StringUtility.countOccurrences(description, word) * 5
+						+Strings.countOccurrences(description, word) * 5
 
 						// Add the title with weight 5
-						+StringUtility.countOccurrences(title, word) * 5
+						+Strings.countOccurrences(title, word) * 5
 
 						// Add the content with weight 1
-						+StringUtility.countOccurrences(content, size, word)
+						+Strings.countOccurrences(content, size, word)
 
 						// Add the author with weight 1
-						+StringUtility.countOccurrences(author, word);
+						+Strings.countOccurrences(author, word);
 
 					if (wordMatch == 0) {
 						totalMatches = 0;
@@ -1491,7 +1491,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 					int wordMatch = 0;
 					for (int d = 0; d < searchWordsSize; d++) {
 						String searchWord = searchWords.get(d);
-						int count = StringUtility.countOccurrences(searchWord, word);
+						int count = Strings.countOccurrences(searchWord, word);
 						if (count > 0) wordMatch += count * searchCounts.get(d)[0];
 					}
 
