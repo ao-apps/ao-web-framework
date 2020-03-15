@@ -29,7 +29,7 @@ import com.aoindustries.io.ContentType;
 import com.aoindustries.io.IoUtils;
 import com.aoindustries.net.URIEncoder;
 import com.aoindustries.util.AoArrays;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.lang.Strings;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -560,7 +560,7 @@ abstract public class TreePage extends WebPage {
 		int treeLen = tree.size();
 		String[][] paths=new String[treeLen][];
 		for (int c = 0; c < treeLen; c++) {
-			List<String> split = StringUtility.splitString(tree.get(c).getPath(), '/');
+			List<String> split = Strings.splitString(tree.get(c).getPath(), '/');
 			paths[c] = split.toArray(new String[split.size()]);
 		}
 		return paths;
@@ -585,6 +585,6 @@ abstract public class TreePage extends WebPage {
 	abstract public boolean useSmoothOutline(WebSiteRequest req);
 
 	public static String replaceHTML(String S) {
-		return StringUtility.replace(S, "&#047;", "/");
+		return Strings.replace(S, "&#047;", "/");
 	}
 }

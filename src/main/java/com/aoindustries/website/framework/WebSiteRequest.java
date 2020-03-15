@@ -29,7 +29,7 @@ import com.aoindustries.net.URIParser;
 import com.aoindustries.security.Identifier;
 import com.aoindustries.security.LoginException;
 import com.aoindustries.util.SortedArrayList;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.lang.Strings;
 import com.aoindustries.util.WrappedException;
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.FileRenamePolicy;
@@ -118,7 +118,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 					while((line=in.readLine())!=null) {
 						if(line.length()>0) {
 							if(line.charAt(0)!='#') {
-								String[] words=StringUtility.splitString(line);
+								String[] words=Strings.splitString(line);
 								if(words.length>0) {
 									String type=words[0];
 									for(int c=1;c<words.length;c++) newMap.put(words[1], type);
@@ -319,7 +319,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	protected static boolean appendParams(StringBuilder SB, Object optParam, List<String> finishedParams, boolean alreadyAppended) {
 		if (optParam != null) {
 			if (optParam instanceof String) {
-				List<String> nameValuePairs=StringUtility.splitString((String)optParam, '&');
+				List<String> nameValuePairs=Strings.splitString((String)optParam, '&');
 				int len=nameValuePairs.size();
 				for(int i=0;i<len;i++) {
 					SB.append(alreadyAppended?'&':'?');
