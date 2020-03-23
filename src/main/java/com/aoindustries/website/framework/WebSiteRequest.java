@@ -721,8 +721,9 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 * Gets a file that was uploaded given its ID.  The authentication
 	 * credentials for this request must match those of the provided ID.
 	 *
-	 * @return  the owner of the object
-	 * @return  the <code>UploadedFile</code> or <code>null</code> if not found
+	 * @param  owner  the owner of the object
+	 *
+	 * @return  the {@link UploadedFile} or <code>null</code> if not found
 	 *
 	 * @exception  SecurityException  if the ID is not assigned to the person logged in
 	 */
