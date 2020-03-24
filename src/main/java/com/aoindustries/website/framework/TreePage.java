@@ -27,9 +27,9 @@ import com.aoindustries.encoding.MediaWriter;
 import com.aoindustries.html.Html;
 import com.aoindustries.io.ContentType;
 import com.aoindustries.io.IoUtils;
-import com.aoindustries.net.URIEncoder;
-import com.aoindustries.util.AoArrays;
+import com.aoindustries.lang.EmptyArrays;
 import com.aoindustries.lang.Strings;
+import com.aoindustries.net.URIEncoder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -189,7 +189,7 @@ abstract public class TreePage extends WebPage {
 
 			out.print("<pre>\n");
 
-			String[] last = AoArrays.EMPTY_STRING_ARRAY;
+			String[] last = EmptyArrays.EMPTY_STRING_ARRAY;
 			for (int c = 0; c < treeLen; c++) {
 				int width = 0;
 				String[] path = paths[c];
@@ -363,7 +363,7 @@ abstract public class TreePage extends WebPage {
 			// Display the tree in a table with links for opening/closing the different parts
 			out.print("  <table cellspacing='0' cellpadding='0'>\n");
 
-			String[] last = AoArrays.EMPTY_STRING_ARRAY;
+			String[] last = EmptyArrays.EMPTY_STRING_ARRAY;
 			for (int c = 0; c < treeLen; c++) {
 				String[] path = paths[c];
 				int pathLen = path.length;
