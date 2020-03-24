@@ -22,9 +22,9 @@
  */
 package com.aoindustries.website.framework;
 
+import com.aoindustries.collections.SortedArrayList;
 import com.aoindustries.encoding.ChainWriter;
 import com.aoindustries.io.AoByteArrayOutputStream;
-import com.aoindustries.util.SortedArrayList;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
