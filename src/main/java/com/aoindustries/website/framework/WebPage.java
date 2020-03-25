@@ -672,7 +672,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 						if(target.getCachedPages(req).length==0) target=target.getParent();
 
 						// Get the list of words to search for
-						String[] words=Strings.splitString(query.replace('.', ' '));
+						String[] words=Strings.split(query.replace('.', ' '));
 
 						List<SearchResult> results=new ArrayList<>();
 						if(words.length>0) {

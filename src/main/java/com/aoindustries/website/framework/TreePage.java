@@ -560,7 +560,7 @@ abstract public class TreePage extends WebPage {
 		int treeLen = tree.size();
 		String[][] paths=new String[treeLen][];
 		for (int c = 0; c < treeLen; c++) {
-			List<String> split = Strings.splitString(tree.get(c).getPath(), '/');
+			List<String> split = Strings.split(tree.get(c).getPath(), '/');
 			paths[c] = split.toArray(new String[split.size()]);
 		}
 		return paths;
