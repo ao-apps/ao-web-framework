@@ -25,7 +25,6 @@ package com.aoindustries.website.framework;
 import com.aoindustries.collections.SortedArrayList;
 import com.aoindustries.encoding.ChainWriter;
 import com.aoindustries.encoding.Doctype;
-import com.aoindustries.encoding.EncodingContext;
 import com.aoindustries.encoding.Serialization;
 import com.aoindustries.encoding.servlet.DoctypeEE;
 import com.aoindustries.encoding.servlet.EncodingContextEE;
@@ -347,11 +346,11 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @param req  {@code null} during search
 	 *
-	 * @see EncodingContext#DEFAULT_SERIALIZATION
+	 * @see Serialization#DEFAULT
 	 * @see SerializationEE#getDefault(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
 	 */
 	protected Serialization getSerialization(WebSiteRequest req) {
-		return (req == null) ? EncodingContext.DEFAULT_SERIALIZATION : SerializationEE.getDefault(getServletContext(), req);
+		return (req == null) ? Serialization.DEFAULT : SerializationEE.getDefault(getServletContext(), req);
 	}
 
 	/**
@@ -359,10 +358,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @param req  {@code null} during search
 	 *
-	 * @see EncodingContext#DEFAULT_DOCTYPE
+	 * @see Doctype#DEFAULT
 	 */
 	protected Doctype getDoctype(WebSiteRequest req) {
-		return EncodingContext.DEFAULT_DOCTYPE;
+		return Doctype.DEFAULT;
 	}
 
 	/**
