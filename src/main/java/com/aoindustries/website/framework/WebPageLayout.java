@@ -25,7 +25,6 @@ package com.aoindustries.website.framework;
 import com.aoindustries.encoding.ChainWriter;
 import com.aoindustries.encoding.Doctype;
 import com.aoindustries.encoding.Serialization;
-import com.aoindustries.encoding.TextInJavaScriptEncoder;
 import com.aoindustries.encoding.servlet.DoctypeEE;
 import com.aoindustries.encoding.servlet.SerializationEE;
 import com.aoindustries.html.Html;
@@ -133,7 +132,7 @@ abstract public class WebPageLayout {
 	 * @see WebPage#doPostWithSearch(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	public void printSearchOutput(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) throws IOException, SQLException {
-		Html html = page.getHtml(req, out);
+		Html html = page.getHtml(req, resp, out);
 		startContent(out, req, resp, 1, 600);
 		printContentTitle(out, req, resp, "Search Results", 1);
 		printContentHorizontalDivider(out, req, resp, 1, false);
@@ -195,7 +194,7 @@ abstract public class WebPageLayout {
 				out.print("    <tr class=\"").print(rowClass).print("\">\n"
 						+ "      <td style=\"white-space:nowrap; text-align:center\">").print(Math.round(99 * result.getProbability() / highest)).print("%</td>\n"
 						+ "      <td style=\"white-space:nowrap; text-align:left\"><a class=\""+linkClass+"\" href=\"")
-					.encodeXmlAttribute(
+					.textInXmlAttribute(
 						resp.encodeURL(
 							URIEncoder.encodeURI(
 								req.getContextPath() + url
@@ -354,20 +353,15 @@ abstract public class WebPageLayout {
 
 	public boolean printWebPageLayoutSelector(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		if(layoutChoices.length>=2) {
-			Html html = page.getHtml(req, out);
+			Html html = page.getHtml(req, resp, out);
 			html.script().out(script -> {
-				script.write("function selectLayout(layout) {\n");
+				script.append("function selectLayout(layout) {\n");
 				for(String choice : layoutChoices) {
-					script.write("  if(layout==\"");
-					TextInJavaScriptEncoder.encodeTextInJavaScript(choice, script);
-					script.write("\") window.top.location.href=\"");
-					TextInJavaScriptEncoder.encodeTextInJavaScript(
-						req.getEncodedURL(page, "layout="+choice, resp),
-						script
-					);
-					script.write("\";\n");
+					script.append("  if(layout==").text(choice).append(") window.top.location.href=").text(
+						req.getEncodedURL(page, "layout="+choice, resp)
+					).append(";\n");
 				}
-				script.write('}');
+				script.append('}');
 			}).__().nl();
 			out.print("<form action=\"#\" style=\"display:inline\"><div style=\"display:inline\">\n"
 				+ "  <select name=\"layout_selector\" onchange=\"selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);\">\n");
@@ -384,7 +378,7 @@ abstract public class WebPageLayout {
 	protected void printJavaScriptIncludes(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, WebPage page) throws IOException, SQLException {
 		Object O = page.getJavaScriptSrc(req);
 		if (O != null) {
-			Html html = page.getHtml(req, out);
+			Html html = page.getHtml(req, resp, out);
 			if (O instanceof String[]) {
 				String[] SA = (String[]) O;
 				int len = SA.length;

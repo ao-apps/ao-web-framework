@@ -28,6 +28,7 @@ import com.aoindustries.encoding.Doctype;
 import com.aoindustries.encoding.EncodingContext;
 import com.aoindustries.encoding.Serialization;
 import com.aoindustries.encoding.servlet.DoctypeEE;
+import com.aoindustries.encoding.servlet.EncodingContextEE;
 import com.aoindustries.encoding.servlet.SerializationEE;
 import com.aoindustries.exception.WrappedException;
 import com.aoindustries.html.Html;
@@ -365,17 +366,102 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
+	 * Prepares for output and returns the {@link ChainWriter}.
+	 * <ol>
+	 *   <li>{@linkplain ServletResponse#resetBuffer() clears the output buffer}.</li>
+	 *   <li>Sets the {@linkplain ServletResponse#setContentType(java.lang.String) response content type}.</li>
+	 *   <li>Sets the {@linkplain ServletResponse#setCharacterEncoding(java.lang.String) response character encoding}
+	 *       to {@linkplain Html#ENCODING the default <code>UTF-8</code>}.</li>
+	 *   <li>Sets any {@linkplain #getAdditionalHeaders(com.aoindustries.website.framework.WebSiteRequest) additional headers}.</li>
+	 * </ol>
+	 * <p>
+	 * Both the {@link Serialization} and {@link Doctype} may have been set
+	 * on the request, and these must be considered in the content type.
+	 * </p>
+	 *
+	 * @see SerializationEE#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
+	 * @see DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
+	 * @see #getAdditionalHeaders(com.aoindustries.website.framework.WebSiteRequest)
+	 */
+	protected ChainWriter getHTMLChainWriter(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// Clear the output buffer
+		resp.resetBuffer();
+		// Set the content type
+		Serialization serialization = getSerialization(req);
+		ServletUtil.setContentType(
+			resp,
+			serialization.getContentType(),
+			Html.ENCODING
+		);
+		// Set additional headers
+		String[] headers = getAdditionalHeaders(req);
+		if(headers != null) {
+			int len = headers.length;
+			for(int c=0; c<len; c += 2) resp.setHeader(headers[c], headers[c + 1]);
+		}
+		Doctype doctype = getDoctype(req);
+		return new ChainWriter(
+			new EncodingContextEE(
+				getServletContext(),
+				req,
+				resp
+			) {
+				@Override
+				public Serialization getSerialization() {
+					return serialization;
+				}
+				@Override
+				public Doctype getDoctype() {
+					return doctype;
+				}
+			},
+			resp.getWriter()
+		);
+	}
+
+	/**
 	 * Gets the default HTML writer for this page.
 	 *
-	 * @see #getSerialization(com.aoindustries.website.framework.WebSiteRequest)
-	 * @see #getDoctype(com.aoindustries.website.framework.WebSiteRequest)
+	 * @see Html#Html(com.aoindustries.encoding.ChainWriter)
 	 */
-	public Html getHtml(WebSiteRequest req, ChainWriter out) {
-		return new Html(
-			getSerialization(req),
-			getDoctype(req),
-			out.getPrintWriter()
+	public Html getHtml(WebSiteRequest req, HttpServletResponse resp, ChainWriter out) {
+		return new Html(out);
+	}
+
+	/**
+	 * Prepares for output and returns the {@link OutputStream}.
+	 * <ol>
+	 *   <li>{@linkplain ServletResponse#resetBuffer() clears the output buffer}.</li>
+	 *   <li>Sets the {@linkplain ServletResponse#setContentType(java.lang.String) response content type}.</li>
+	 *   <li>Sets the {@linkplain ServletResponse#setCharacterEncoding(java.lang.String) response character encoding}
+	 *       to {@linkplain Html#ENCODING the default <code>UTF-8</code>}.</li>
+	 *   <li>Sets any {@linkplain #getAdditionalHeaders(com.aoindustries.website.framework.WebSiteRequest) additional headers}.</li>
+	 * </ol>
+	 * <p>
+	 * Both the {@link Serialization} and {@link Doctype} may have been set
+	 * on the request, and these must be considered in the content type.
+	 * </p>
+	 *
+	 * @see SerializationEE#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
+	 * @see DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
+	 * @see #getAdditionalHeaders(com.aoindustries.website.framework.WebSiteRequest)
+	 */
+	protected OutputStream getHTMLOutputStream(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// Clear the output buffer
+		resp.resetBuffer();
+		// Set the content type
+		ServletUtil.setContentType(
+			resp,
+			SerializationEE.get(getServletContext(), req).getContentType(),
+			Html.ENCODING
 		);
+		// Set additional headers
+		String[] headers = getAdditionalHeaders(req);
+		if(headers != null) {
+			int len = headers.length;
+			for(int c=0; c<len; c += 2) resp.setHeader(headers[c], headers[c + 1]);
+		}
+		return resp.getOutputStream();
 	}
 
 	/**
@@ -875,78 +961,6 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
-	 * Prepares for output and returns the {@link ChainWriter}.
-	 * <ol>
-	 *   <li>{@linkplain ServletResponse#resetBuffer() clears the output buffer}.</li>
-	 *   <li>Sets the {@linkplain ServletResponse#setContentType(java.lang.String) response content type}.</li>
-	 *   <li>Sets the {@linkplain ServletResponse#setCharacterEncoding(java.lang.String) response character encoding}
-	 *       to {@linkplain Html#ENCODING the default <code>UTF-8</code>}.</li>
-	 *   <li>Sets any {@linkplain #getAdditionalHeaders(com.aoindustries.website.framework.WebSiteRequest) additional headers}.</li>
-	 * </ol>
-	 * <p>
-	 * Both the {@link Serialization} and {@link Doctype} may have been set
-	 * on the request, and these must be considered in the content type.
-	 * </p>
-	 *
-	 * @see SerializationEE#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
-	 * @see DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
-	 * @see #getAdditionalHeaders(com.aoindustries.website.framework.WebSiteRequest)
-	 */
-	protected ChainWriter getHTMLChainWriter(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// Clear the output buffer
-		resp.resetBuffer();
-		// Set the content type
-		ServletUtil.setContentType(
-			resp,
-			SerializationEE.get(req.getServletContext(), req).getContentType(),
-			Html.ENCODING
-		);
-		// Set additional headers
-		String[] headers = getAdditionalHeaders(req);
-		if(headers != null) {
-			int len = headers.length;
-			for(int c=0; c<len; c += 2) resp.setHeader(headers[c], headers[c + 1]);
-		}
-		return new ChainWriter(resp.getWriter());
-	}
-
-	/**
-	 * Prepares for output and returns the {@link OutputStream}.
-	 * <ol>
-	 *   <li>{@linkplain ServletResponse#resetBuffer() clears the output buffer}.</li>
-	 *   <li>Sets the {@linkplain ServletResponse#setContentType(java.lang.String) response content type}.</li>
-	 *   <li>Sets the {@linkplain ServletResponse#setCharacterEncoding(java.lang.String) response character encoding}
-	 *       to {@linkplain Html#ENCODING the default <code>UTF-8</code>}.</li>
-	 *   <li>Sets any {@linkplain #getAdditionalHeaders(com.aoindustries.website.framework.WebSiteRequest) additional headers}.</li>
-	 * </ol>
-	 * <p>
-	 * Both the {@link Serialization} and {@link Doctype} may have been set
-	 * on the request, and these must be considered in the content type.
-	 * </p>
-	 *
-	 * @see SerializationEE#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
-	 * @see DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
-	 * @see #getAdditionalHeaders(com.aoindustries.website.framework.WebSiteRequest)
-	 */
-	protected OutputStream getHTMLOutputStream(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// Clear the output buffer
-		resp.resetBuffer();
-		// Set the content type
-		ServletUtil.setContentType(
-			resp,
-			SerializationEE.get(getServletContext(), req).getContentType(),
-			Html.ENCODING
-		);
-		// Set additional headers
-		String[] headers = getAdditionalHeaders(req);
-		if(headers != null) {
-			int len = headers.length;
-			for(int c=0; c<len; c += 2) resp.setHeader(headers[c], headers[c + 1]);
-		}
-		return resp.getOutputStream();
-	}
-
-	/**
 	 * Gets the JavaScript's that should have script src= tags generated, urls relative to top of context <code>path/to/javascript.js</code>.
 	 *
 	 * @param  req  the current <code>WebSiteRequest</code>
@@ -1375,7 +1389,8 @@ abstract public class WebPage extends ErrorReportingServlet {
 
 				// Get the HTML content
 				bytes.reset();
-				try (ChainWriter out = new ChainWriter(bytes)) {
+				// TODO: EncodingContext based on page settings, or XML always for search?
+				try (ChainWriter out = new ChainWriter(null, bytes)) {
 					// Isolate page-scope registry
 					Registry oldPageRegistry = RegistryEE.Page.get(req);
 					try {
@@ -1434,7 +1449,8 @@ abstract public class WebPage extends ErrorReportingServlet {
 
 							// Get the HTML content
 							bytes.reset();
-							try (ChainWriter out = new ChainWriter(bytes)) {
+							// TODO: EncodingContext based on page settings, or XML always for search?
+							try (ChainWriter out = new ChainWriter(null, bytes)) {
 								// Isolate page-scope registry
 								Registry oldPageRegistry = RegistryEE.Page.get(req);
 								try {

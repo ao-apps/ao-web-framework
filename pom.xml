@@ -72,10 +72,10 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 								<!-- Java EE -->
 								<link>${javadoc.link.javaee}</link>
 								<!-- Direct -->
+								<link>https://aoindustries.com/ao-collections/apidocs/</link>
 								<link>https://aoindustries.com/ao-encoding/apidocs/</link>
 								<link>https://aoindustries.com/ao-encoding/servlet/apidocs/</link>
 								<link>https://aoindustries.com/ao-fluent-html/apidocs/</link>
-								<link>https://aoindustries.com/ao-fluent-html/servlet/apidocs/</link>
 								<link>https://aoindustries.com/ao-lang/apidocs/</link>
 								<link>https://aoindustries.com/ao-net-types/apidocs/</link>
 								<link>https://aoindustries.com/ao-servlet-util/apidocs/</link>
@@ -83,7 +83,6 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 								<link>https://aoindustries.com/ao-web-resources/registry/apidocs/</link>
 								<link>https://aoindustries.com/ao-web-resources/renderer/apidocs/</link>
 								<link>https://aoindustries.com/ao-web-resources/servlet/apidocs/</link>
-								<link>https://aoindustries.com/aocode-public/apidocs/</link>
 								<link>http://www.servlets.com/cos/javadoc/</link>
 								<!-- No apidocs: <groupId>gnu-regexp</groupId><artifactId>gnu-regexp</artifactId> -->
 							</links>
@@ -107,6 +106,9 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 			</dependency>
 			<!-- Direct -->
 			<dependency>
+				<groupId>com.aoindustries</groupId><artifactId>ao-collections</artifactId><version>1.0.0${POST-SNAPSHOT}</version>
+			</dependency>
+			<dependency>
 				<groupId>com.aoindustries</groupId><artifactId>ao-encoding</artifactId><version>3.0.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
 			</dependency>
 			<dependency>
@@ -114,9 +116,6 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 			</dependency>
 			<dependency>
 				<groupId>com.aoindustries</groupId><artifactId>ao-fluent-html</artifactId><version>0.1.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
-			</dependency>
-			<dependency>
-				<groupId>com.aoindustries</groupId><artifactId>ao-fluent-html-servlet</artifactId><version>0.1.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
 			</dependency>
 			<dependency>
 				<groupId>com.aoindustries</groupId><artifactId>ao-lang</artifactId><version>4.0.0${POST-SNAPSHOT}</version>
@@ -138,9 +137,6 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 			</dependency>
 			<dependency>
 				<groupId>com.aoindustries</groupId><artifactId>ao-web-resources-servlet</artifactId><version>0.1.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
-			</dependency>
-			<dependency>
-				<groupId>com.aoindustries</groupId><artifactId>aocode-public</artifactId><version>4.0.0${POST-SNAPSHOT}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.servlets</groupId><artifactId>cos</artifactId><version>05Nov2002</version>
@@ -166,6 +162,9 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		</dependency>
 		<!-- Direct -->
 		<dependency>
+			<groupId>com.aoindustries</groupId><artifactId>ao-collections</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.aoindustries</groupId><artifactId>ao-encoding</artifactId>
 		</dependency>
 		<dependency>
@@ -173,9 +172,6 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		</dependency>
 		<dependency>
 			<groupId>com.aoindustries</groupId><artifactId>ao-fluent-html</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.aoindustries</groupId><artifactId>ao-fluent-html-servlet</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.aoindustries</groupId><artifactId>ao-lang</artifactId>
@@ -197,9 +193,6 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		</dependency>
 		<dependency>
 			<groupId>com.aoindustries</groupId><artifactId>ao-web-resources-servlet</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.aoindustries</groupId><artifactId>aocode-public</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.servlets</groupId><artifactId>cos</artifactId>

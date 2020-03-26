@@ -228,7 +228,7 @@ abstract public class TreePage extends WebPage {
 					}
 					String href;
 					if (pos == (path[pathLen-1].length()==0?(pathLen-2):(pathLen-1)) && (href = tree.get(c).getUrl()) != null) {
-						out.print("<a href='").encodeXmlAttribute(
+						out.print("<a href='").textInXmlAttribute(
 							resp.encodeURL(
 								URIEncoder.encodeURI(
 									req.getContextPath() + href
@@ -316,7 +316,7 @@ abstract public class TreePage extends WebPage {
 		layout.printContentHorizontalDivider(out, req, resp, 1, false);
 		layout.startContentLine(out, req, resp, 1, null, null);
 		try {
-			Html html = getHtml(req, out);
+			Html html = getHtml(req, resp, out);
 
 			// Get the tree data
 			int treeLen = tree.size();
@@ -514,7 +514,7 @@ abstract public class TreePage extends WebPage {
 									|| (pos==(pathLen-1) && path[pathLen-1].length()>0)
 								) && (href = tree.get(c).getUrl()) != null
 							) {
-								out.print("<a class='aoLightLink' href='").encodeXmlAttribute(
+								out.print("<a class='aoLightLink' href='").textInXmlAttribute(
 									resp.encodeURL(
 										URIEncoder.encodeURI(
 											req.getContextPath() + href
