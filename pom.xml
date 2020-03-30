@@ -38,7 +38,6 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 	<inceptionYear>2000</inceptionYear>
 
 	<scm>
-		<!-- Can't inherit due to multi-module -->
 		<connection>scm:git:git://github.com/aoindustries/aoweb-framework.git</connection>
 		<developerConnection>scm:git:git@github.com:aoindustries/aoweb-framework.git</developerConnection>
 		<url>https://github.com/aoindustries/aoweb-framework</url>
