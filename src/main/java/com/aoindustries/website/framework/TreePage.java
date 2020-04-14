@@ -154,7 +154,7 @@ abstract public class TreePage extends WebPage {
 	}
 
 	@Override
-	public long getLastModified(WebSiteRequest req) {
+	public long getLastModified(WebSiteRequest req, HttpServletResponse resp) {
 		if(req==null) return -1;
 		String S=req.getParameter("image_num");
 		return S==null?-1:getUptime();
@@ -167,7 +167,7 @@ abstract public class TreePage extends WebPage {
 		ChainWriter out,
 		WebPageLayout layout
 	) throws IOException, SQLException {
-		List<? extends TreePageData> tree = getTree(req);
+		List<? extends TreePageData> tree = getTree(req, resp);
 		String mode;
 		if(displayText(req)) {
 			int treeLen = tree.size();
@@ -260,7 +260,7 @@ abstract public class TreePage extends WebPage {
 		WebSiteRequest req,
 		HttpServletResponse resp
 	) throws ServletException, IOException, SQLException {
-		List<? extends TreePageData> tree = getTree(req);
+		List<? extends TreePageData> tree = getTree(req, resp);
 
 		// Get the scroll to position
 		int scrollToX = Integer.parseInt(req.getParameter("scroll_to_x"));
@@ -296,7 +296,7 @@ abstract public class TreePage extends WebPage {
 	/**
 	 * Gets the tree to be displayed.  Each row consists of three elements: path, href, description
 	 */
-	abstract protected List<? extends TreePageData> getTree(WebSiteRequest req) throws IOException, SQLException;
+	abstract protected List<? extends TreePageData> getTree(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException;
 
 	/**
 	 * Handles the interactive form of this page.

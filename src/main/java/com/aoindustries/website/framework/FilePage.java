@@ -66,8 +66,8 @@ abstract public class FilePage extends WebPage {
 	public abstract File getFile() throws IOException;
 
 	@Override
-	public long getLastModified(WebSiteRequest req) throws IOException, SQLException {
-		return Math.max(super.getLastModified(req), getFile().lastModified());
+	public long getLastModified(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+		return Math.max(super.getLastModified(req, resp), getFile().lastModified());
 	}
 
 	public static void printFile(ChainWriter out, File file) throws IOException {

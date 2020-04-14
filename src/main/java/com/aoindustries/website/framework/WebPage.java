@@ -237,7 +237,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see #getLastModified(com.aoindustries.website.framework.WebSiteRequest)
 	 */
 	@Override
-	final protected long reportingGetLastModified(HttpServletRequest httpReq) throws IOException, SQLException {
+	final protected long reportingGetLastModified(HttpServletRequest httpReq, HttpServletResponse resp) throws IOException, SQLException {
 		WebSiteRequest req = getWebSiteRequest(httpReq);
 		WebPage page = getWebPage(getClass(), req);
 
@@ -255,13 +255,13 @@ abstract public class WebPage extends ErrorReportingServlet {
 		// If redirected
 		if(page.getRedirectURL(req) != null) return -1;
 
-		return page.getLastModified(req);
+		return page.getLastModified(req, resp);
 	}
 
 	/**
 	 * The <code>getLastModified</code> defaults to {@code -1}.
 	 */
-	public long getLastModified(WebSiteRequest req) throws IOException, SQLException {
+	public long getLastModified(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		return -1;
 	}
 
@@ -284,13 +284,13 @@ abstract public class WebPage extends ErrorReportingServlet {
 	/**
 	 * Gets the most recent last modified time of this page and its immediate children.
 	 */
-	public long getWebPageAndChildrenLastModified(WebSiteRequest req) throws IOException, SQLException {
-		WebPage[] myPages = getCachedPages(req);
+	public long getWebPageAndChildrenLastModified(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+		WebPage[] myPages = getCachedPages(req, resp);
 		int len = myPages.length;
 		long mostRecent = getClassLastModified();
 		if(mostRecent==-1) return -1;
 		for (int c = 0; c < len; c++) {
-			long time = myPages[c].getLastModified(req);
+			long time = myPages[c].getLastModified(req, resp);
 			if(time==-1) return -1;
 			if (time > mostRecent) mostRecent = time;
 		}
@@ -300,12 +300,12 @@ abstract public class WebPage extends ErrorReportingServlet {
 	/**
 	 * Recursively gets the most recent modification time.
 	 */
-	final public long getLastModifiedRecursive(WebSiteRequest req) throws IOException, SQLException {
-		long time=getLastModified(req);
-		WebPage[] myPages=getCachedPages(req);
+	final public long getLastModifiedRecursive(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+		long time = getLastModified(req, resp);
+		WebPage[] myPages = getCachedPages(req, resp);
 		int len=myPages.length;
 		for(int c=0; c<len; c++) {
-			long time2=myPages[c].getLastModifiedRecursive(req);
+			long time2 = myPages[c].getLastModifiedRecursive(req, resp);
 			if(time2>time) time=time2;
 		}
 		return time;
@@ -333,10 +333,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * Gets the last modified time for search indexing.  The index will be recreated if
 	 * the search last modified time is changed.  If this method returns <code>-1</code>,
 	 * no search index is built.  This defaults to be a call to <code>getLastModified</code>
-	 * with a null <code>WebSiteRequest</code>.
+	 * with null {@link WebSiteRequest} and {@link HttpServletResponse}.
 	 */
 	public long getSearchLastModified() throws IOException, SQLException {
-		return getLastModified(null);
+		return getLastModified(null, null);
 	}
 
 	// </editor-fold>
@@ -754,7 +754,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 						WebPage target = entire_site ? getRootPage() : this;
 
 						// If the target contains no pages, use its parent
-						if(target.getCachedPages(req).length==0) target=target.getParent();
+						if(target.getCachedPages(req, resp).length == 0) target=target.getParent();
 
 						// Get the list of words to search for
 						String[] words=Strings.split(query.replace('.', ' '));
@@ -1018,8 +1018,8 @@ abstract public class WebPage extends ErrorReportingServlet {
 	/**
 	 * Gets the index of this page in the parents list of children pages.
 	 */
-	final public int getPageIndexInParent(WebSiteRequest req) throws IOException, SQLException {
-		WebPage[] myPages=getParent().getCachedPages(req);
+	final public int getPageIndexInParent(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+		WebPage[] myPages = getParent().getCachedPages(req, resp);
 		int len=myPages.length;
 		for(int c=0;c<len;c++) if(myPages[c].equals(this)) return c;
 		throw new RuntimeException("Unable to find page index in parent.");
@@ -1031,10 +1031,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @return  the <code>WebPage</code> or <code>null</code> if not found
 	 */
-	final public WebPage getNextPage(WebSiteRequest req) throws IOException, SQLException {
+	final public WebPage getNextPage(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		WebPage parent=getParent();
 		if (parent!=null) {
-			WebPage[] myPages=parent.getCachedPages(req);
+			WebPage[] myPages=parent.getCachedPages(req, resp);
 			int len=myPages.length;
 			for(int c=0; c<len; c++) {
 				if(myPages[c].getClass() == getClass()) {
@@ -1052,10 +1052,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @return  the <code>WebPage</code> or <code>null</code> if not found
 	 */
-	final public WebPage getPreviousPage(WebSiteRequest req) throws IOException, SQLException {
+	final public WebPage getPreviousPage(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		WebPage parent = getParent();
 		if (parent != null) {
-			WebPage[] myPages = parent.getCachedPages(req);
+			WebPage[] myPages = parent.getCachedPages(req, resp);
 			int len = myPages.length;
 			for (int c = 0; c < len; c++) {
 				if (myPages[c].getClass() == getClass()) {
@@ -1088,11 +1088,11 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @return a <code>WebPage[]</code> of all of the lower-level pages
 	 *
-	 * @see  #getWebPages(WebSiteRequest)
+	 * @see  #getWebPages(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
-	synchronized public WebPage[] getCachedPages(WebSiteRequest req) throws IOException, SQLException {
+	synchronized public WebPage[] getCachedPages(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		WebPage[] myPages=this.pages;
-		if(myPages==null) myPages=this.pages=getWebPages(req);
+		if(myPages==null) myPages=this.pages=getWebPages(req, resp);
 		return myPages;
 	}
 
@@ -1292,7 +1292,8 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see  #getCachedPages
 	 * @see  #emptyWebPageArray
 	 */
-	protected WebPage[] getWebPages(WebSiteRequest req) throws IOException, SQLException {
+	// TODO: Allow ServletException here, too.  More generally, allow ServletException instead of SQLException
+	protected WebPage[] getWebPages(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		return emptyWebPageArray;
 	}
 
@@ -1362,7 +1363,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	final public void standardSearch(
 		String[] words,
 		WebSiteRequest req,
-		HttpServletResponse response,
+		HttpServletResponse resp,
 		List<SearchResult> results,
 		AoByteArrayOutputStream bytes,
 		List<WebPage> finishedPages
@@ -1383,7 +1384,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 				title = getTitle();
 				description = getDescription();
 				author = getAuthor();
-				authorHref = getAuthorHref(req, response);
+				authorHref = getAuthorHref(req, resp);
 				String keywords = getKeywords();
 
 				// Get the HTML content
@@ -1443,7 +1444,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 							title = getTitle();
 							description = getDescription();
 							author = getAuthor();
-							authorHref = getAuthorHref(req, response);
+							authorHref = getAuthorHref(req, resp);
 							String keywords = getKeywords();
 
 							// Get the HTML content
@@ -1537,7 +1538,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 						title == null ? getTitle() : title,
 						description == null ? getDescription() : description,
 						author == null ? getAuthor() : author,
-						authorHref == null ? getAuthorHref(req, response) : authorHref
+						authorHref == null ? getAuthorHref(req, resp) : authorHref
 					)
 				);
 			}
@@ -1546,9 +1547,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 			finishedPages.add(this);
 
 			// Search recursively
-			WebPage[] myPages = getCachedPages(req);
+			WebPage[] myPages = getCachedPages(req, resp);
 			int len = myPages.length;
-			for (int c = 0; c < len; c++) myPages[c].search(words, req, response, results, bytes, finishedPages);
+			for (int c = 0; c < len; c++) myPages[c].search(words, req, resp, results, bytes, finishedPages);
 		}
 	}
 

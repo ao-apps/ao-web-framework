@@ -107,6 +107,6 @@ abstract public class AutoListPage extends WebPage {
 	 * Prints an unordered list of the available pages.
 	 */
 	public static void printPageList(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, WebPage parent, WebPageLayout layout) throws IOException, SQLException {
-		printPageList(out, req, resp, parent.getCachedPages(req), layout);
+		printPageList(out, req, resp, parent.getCachedPages(req, resp), layout);
 	}
 }

@@ -54,11 +54,11 @@ abstract public class AutoSiteMap extends TreePage {
 	/**
 	 * Recursively builds the list of all sites.
 	 */
-	private void buildData(String path, WebPage page, List<TreePageData> data, WebSiteRequest req) throws IOException, SQLException {
+	private void buildData(String path, WebPage page, List<TreePageData> data, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		if(isVisible(page)) {
 			if(path.length()>0) path=path+'/'+page.getShortTitle();
 			else path=page.getShortTitle();
-			WebPage[] pages=page.getCachedPages(req);
+			WebPage[] pages = page.getCachedPages(req, resp);
 			int len=pages.length;
 			data.add(
 				new TreePageData(
@@ -67,7 +67,7 @@ abstract public class AutoSiteMap extends TreePage {
 					page.getDescription()
 				)
 			);
-			for(int c=0; c<len; c++) buildData(path, pages[c], data, req);
+			for(int c=0; c<len; c++) buildData(path, pages[c], data, req, resp);
 		}
 	}
 
@@ -84,10 +84,10 @@ abstract public class AutoSiteMap extends TreePage {
 	}
 
 	@Override
-	final protected List<? extends TreePageData> getTree(WebSiteRequest req) throws IOException, SQLException {
+	final protected List<? extends TreePageData> getTree(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		WebPage home=getRootPage();
 		List<TreePageData> data=new ArrayList<>();
-		buildData("", home, data, req);
+		buildData("", home, data, req, resp);
 		//int size=data.size();
 		return data;
 	}

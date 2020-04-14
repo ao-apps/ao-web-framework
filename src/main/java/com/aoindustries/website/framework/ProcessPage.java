@@ -25,6 +25,7 @@ package com.aoindustries.website.framework;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Pulls information from a native process to be used as the content.
@@ -53,7 +54,7 @@ abstract public class ProcessPage extends InputStreamPage {
 	}
 
 	@Override
-	public long getLastModified(WebSiteRequest req) {
+	public long getLastModified(WebSiteRequest req, HttpServletResponse resp) {
 		return -1;
 	}
 
@@ -67,6 +68,6 @@ abstract public class ProcessPage extends InputStreamPage {
 	 */
 	@Override
 	public long getSearchLastModified() throws IOException, SQLException {
-		return super.getLastModified(null);
+		return super.getLastModified(null, null);
 	}
 }

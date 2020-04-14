@@ -81,7 +81,7 @@ abstract public class DumpURLs extends WebPage {
 	 * The last modified time is -1 to always reload the list.
 	 */
 	@Override
-	public long getLastModified(WebSiteRequest req) throws IOException, SQLException {
+	public long getLastModified(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		return -1;
 	}
 
@@ -115,7 +115,7 @@ abstract public class DumpURLs extends WebPage {
 
 			finishedPages.add(page);
 
-			WebPage[] pages = page.getCachedPages(req);
+			WebPage[] pages = page.getCachedPages(req, resp);
 			int len = pages.length;
 			for (int c = 0; c < len; c++) printURLs(req, resp, out, pages[c], finishedPages);
 		}

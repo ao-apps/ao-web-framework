@@ -132,6 +132,24 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 		return getCount.get();
 	}
 
+	private static final String RESPONSE_REQUEST_ATTRIBUTE = ErrorReportingServlet.class.getName() + ".resp";
+
+	/**
+	 * Stores the current response in a request attribute named {@link #RESPONSE_REQUEST_ATTRIBUTE}.
+	 * This is used by {@link #reportingGetLastModified(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}.
+	 */
+	@Override
+	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// Store the current response in the request, so can be used for getLastModified
+		Object oldResp = req.getAttribute(RESPONSE_REQUEST_ATTRIBUTE);
+		try {
+			req.setAttribute(RESPONSE_REQUEST_ATTRIBUTE, resp);
+			super.service(req, resp);
+		} finally {
+			req.setAttribute(RESPONSE_REQUEST_ATTRIBUTE, oldResp);
+		}
+	}
+
 	/**
 	 * Any error that occurs during a <code>getLastModified</code> call is caught here.
 	 */
@@ -139,7 +157,9 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 	final protected long getLastModified(HttpServletRequest req) {
 		lastModifiedCount.incrementAndGet();
 		try {
-			return reportingGetLastModified(req);
+			HttpServletResponse resp = (HttpServletResponse)req.getAttribute(RESPONSE_REQUEST_ATTRIBUTE);
+			if(resp == null) throw new IllegalStateException("HttpServletResponse not found on the request: " + RESPONSE_REQUEST_ATTRIBUTE);
+			return reportingGetLastModified(req, resp);
 		} catch (ThreadDeath err) {
 			throw err;
 		} catch (RuntimeException err) {
@@ -182,7 +202,7 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 	/**
 	 * @see javax.servlet.http.HttpServlet#getLastModified(HttpServletRequest)
 	 */
-	protected long reportingGetLastModified(HttpServletRequest req) throws IOException, SQLException {
+	protected long reportingGetLastModified(HttpServletRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		return super.getLastModified(req);
 	}
 

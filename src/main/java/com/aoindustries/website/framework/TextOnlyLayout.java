@@ -370,11 +370,11 @@ public class TextOnlyLayout extends WebPageLayout {
 		out.print("          <b>Related Pages</b>");
 		html.br__().nl();
 		out.print("          <div style=\"white-space:nowrap\">\n");
-		WebPage[] pages=page.getCachedPages(req);
+		WebPage[] pages = page.getCachedPages(req, resp);
 		parent=page;
 		if(pages.length==0) {
 			parent=page.getParent();
-			if(parent!=null) pages=parent.getCachedPages(req);
+			if(parent != null) pages = parent.getCachedPages(req, resp);
 		}
 
 		for(int c=-1;c<pages.length;c++) {
