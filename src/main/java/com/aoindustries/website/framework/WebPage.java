@@ -231,10 +231,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *       when not authorized.</li>
 	 *   <li>If {@linkplain #getRedirectURL(com.aoindustries.website.framework.WebSiteRequest) is a redirect},
 	 *       returns {@code -1} for unknown.</li>
-	 *   <li>Finally, dispatches the request to {@link #getLastModified(com.aoindustries.website.framework.WebSiteRequest)}.</li>
+	 *   <li>Finally, dispatches the request to {@link #getLastModified(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}.</li>
 	 * </ol>
 	 *
-	 * @see #getLastModified(com.aoindustries.website.framework.WebSiteRequest)
+	 * @see #getLastModified(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
 	final protected long reportingGetLastModified(HttpServletRequest httpReq, HttpServletResponse resp) throws IOException, SQLException {

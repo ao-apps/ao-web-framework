@@ -762,7 +762,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	/**
 	 * Gets the person who is logged in or <code>null</code> if no login is performed for this request.
 	 *
-	 * @param resp The current response or {@code null} when invoked from {@link WebPage#reportingGetLastModified(javax.servlet.http.HttpServletRequest)}
+	 * @param  resp  The current response or {@code null} when invoked from {@link WebPage#reportingGetLastModified(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}
 	 *
 	 * @exception LoginException if an invalid login attempt is made or the user credentials are not found
 	 */
