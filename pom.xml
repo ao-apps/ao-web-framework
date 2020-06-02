@@ -68,13 +68,22 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId><artifactId>maven-dependency-plugin</artifactId>
+						<dependencies>
+							<dependency>
+								<groupId>com.aoindustries</groupId><artifactId>ao-javadoc-offline</artifactId><version>1.0.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
+							</dependency>
+						</dependencies>
 						<executions>
 							<execution>
-								<id>unpack.offlinkLinks</id>
-								<phase>generate-sources</phase>
-								<goals><goal>unpack</goal></goals>
+								<id>unpack.offlinkLinks</id><phase>generate-sources</phase><goals><goal>unpack</goal></goals>
 								<configuration>
+									<silent>true</silent>
 									<artifactItems>
+										<artifactItem>
+											<groupId>com.aoindustries</groupId><artifactId>ao-javadoc-offline</artifactId><version>1.0.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
+											<includes>**/element-list, **/package-list</includes>
+											<outputDirectory>${project.build.directory}/offlineLinks</outputDirectory>
+										</artifactItem>
 										<!-- Direct -->
 										<artifactItem>
 											<groupId>com.aoindustries</groupId><artifactId>ao-collections</artifactId>
@@ -131,6 +140,8 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 											<classifier>javadoc</classifier><includes>element-list, package-list</includes>
 											<outputDirectory>${project.build.directory}/offlineLinks/com.aoindustries/ao-web-resources-servlet</outputDirectory>
 										</artifactItem>
+										<!-- ao-javadoc-offline: <groupId>com.servlets</groupId><artifactId>cos</artifactId> -->
+										<!-- No apidocs: <groupId>gnu-regexp</groupId><artifactId>gnu-regexp</artifactId> -->
 									</artifactItems>
 								</configuration>
 							</execution>
@@ -139,26 +150,16 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId><artifactId>maven-javadoc-plugin</artifactId>
 						<configuration>
-							<links>
-								<link>${javadoc.link.javase}</link>
-								<!-- Java EE -->
-								<link>${javadoc.link.javaee}</link>
-								<!-- Direct -->
-								<!-- offlineLink: <groupId>com.aoindustries</groupId><artifactId>ao-collections</artifactId> -->
-								<!-- offlineLink: <groupId>com.aoindustries</groupId><artifactId>ao-encoding</artifactId> -->
-								<!-- offlineLink: <groupId>com.aoindustries</groupId><artifactId>ao-encoding-servlet</artifactId> -->
-								<!-- offlineLink: <groupId>com.aoindustries</groupId><artifactId>ao-fluent-html</artifactId> -->
-								<!-- offlineLink: <groupId>com.aoindustries</groupId><artifactId>ao-lang</artifactId> -->
-								<!-- offlineLink: <groupId>com.aoindustries</groupId><artifactId>ao-net-types</artifactId> -->
-								<!-- offlineLink: <groupId>com.aoindustries</groupId><artifactId>ao-servlet-util</artifactId> -->
-								<!-- offlineLink: <groupId>com.aoindustries</groupId><artifactId>ao-taglib</artifactId> -->
-								<!-- offlineLink: <groupId>com.aoindustries</groupId><artifactId>ao-web-resources-registry</artifactId> -->
-								<!-- offlineLink: <groupId>com.aoindustries</groupId><artifactId>ao-web-resources-renderer</artifactId> -->
-								<!-- offlineLink: <groupId>com.aoindustries</groupId><artifactId>ao-web-resources-servlet</artifactId> -->
-								<link>http://www.servlets.com/cos/javadoc/</link>
-								<!-- No apidocs: <groupId>gnu-regexp</groupId><artifactId>gnu-regexp</artifactId> -->
-							</links>
 							<offlineLinks>
+								<offlineLink>
+									<url>${javadoc.link.javase}</url>
+									<location>${project.build.directory}/offlineLinks/com/aoindustries/javadoc/offline/javase/${javase.release}</location>
+								</offlineLink>
+								<!-- Java EE -->
+								<offlineLink>
+									<url>${javadoc.link.javaee}</url>
+									<location>${project.build.directory}/offlineLinks/com/aoindustries/javadoc/offline/javaee/${javaee.version}</location>
+								</offlineLink>
 								<!-- Direct -->
 								<offlineLink>
 									<url>https://aoindustries.com/ao-collections/apidocs/</url>
@@ -204,6 +205,11 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 									<url>https://aoindustries.com/ao-web-resources/servlet/apidocs/</url>
 									<location>${project.build.directory}/offlineLinks/com.aoindustries/ao-web-resources-servlet</location>
 								</offlineLink>
+								<offlineLink>
+									<url>http://www.servlets.com/cos/javadoc/</url>
+									<location>${project.build.directory}/offlineLinks/com/aoindustries/javadoc/offline/com.servlets/cos</location>
+								</offlineLink>
+								<!-- No apidocs: <groupId>gnu-regexp</groupId><artifactId>gnu-regexp</artifactId> -->
 							</offlineLinks>
 						</configuration>
 					</plugin>
@@ -261,6 +267,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 				<groupId>com.servlets</groupId><artifactId>cos</artifactId><version>05Nov2002</version>
 			</dependency>
 			<dependency>
+				<!-- TODO: Remove this, use standard Java regular expressions -->
 				<groupId>gnu-regexp</groupId><artifactId>gnu-regexp</artifactId><version>1.1.4</version>
 			</dependency>
 		</dependencies>
@@ -317,6 +324,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 			<groupId>com.servlets</groupId><artifactId>cos</artifactId>
 		</dependency>
 		<dependency>
+			<!-- TODO: Remove this, use standard Java regular expressions -->
 			<groupId>gnu-regexp</groupId><artifactId>gnu-regexp</artifactId>
 		</dependency>
 	</dependencies>
