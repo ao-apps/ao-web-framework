@@ -74,6 +74,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 								<configuration>
 									<artifactItems>
 										<!-- Direct -->
+										<!-- ao-javadoc-offline: <groupId>javax.activation</groupId><artifactId>activation</artifactId> -->
 										<artifactItem>
 											<groupId>com.aoindustries</groupId><artifactId>ao-collections</artifactId>
 											<classifier>javadoc</classifier><includes>element-list, package-list</includes>
@@ -131,6 +132,8 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 										</artifactItem>
 										<!-- ao-javadoc-offline: <groupId>com.servlets</groupId><artifactId>cos</artifactId> -->
 										<!-- No apidocs: <groupId>gnu-regexp</groupId><artifactId>gnu-regexp</artifactId> -->
+										<!-- ao-javadoc-offline: <groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId> -->
+										<!-- ao-javadoc-offline: <groupId>javax.servlet.jsp</groupId><artifactId>javax.servlet.jsp-api</artifactId> -->
 									</artifactItems>
 								</configuration>
 							</execution>
@@ -140,16 +143,8 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 						<groupId>org.apache.maven.plugins</groupId><artifactId>maven-javadoc-plugin</artifactId>
 						<configuration>
 							<offlineLinks>
-								<offlineLink>
-									<url>${javadoc.link.javase}</url>
-									<location>${project.build.directory}/offlineLinks/com/aoindustries/javadoc/offline/javase/${javase.release}</location>
-								</offlineLink>
-								<!-- Java EE -->
-								<offlineLink>
-									<url>${javadoc.link.javaee}</url>
-									<location>${project.build.directory}/offlineLinks/com/aoindustries/javadoc/offline/javaee/${javaee.version}</location>
-								</offlineLink>
 								<!-- Direct -->
+								<!-- Java EE: <groupId>javax.activation</groupId><artifactId>activation</artifactId> -->
 								<offlineLink>
 									<url>https://aoindustries.com/ao-collections/apidocs/</url>
 									<location>${project.build.directory}/offlineLinks/com.aoindustries/ao-collections</location>
@@ -199,6 +194,18 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 									<location>${project.build.directory}/offlineLinks/com/aoindustries/javadoc/offline/com.servlets/cos</location>
 								</offlineLink>
 								<!-- No apidocs: <groupId>gnu-regexp</groupId><artifactId>gnu-regexp</artifactId> -->
+								<!-- Java EE: <groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId> -->
+								<!-- Java EE: <groupId>javax.servlet.jsp</groupId><artifactId>javax.servlet.jsp-api</artifactId> -->
+								<!-- Java SE -->
+								<offlineLink>
+									<url>${javadoc.link.javase}</url>
+									<location>${project.build.directory}/offlineLinks/com/aoindustries/javadoc/offline/javase/${javase.release}</location>
+								</offlineLink>
+								<!-- Java EE -->
+								<offlineLink>
+									<url>${javadoc.link.javaee}</url>
+									<location>${project.build.directory}/offlineLinks/com/aoindustries/javadoc/offline/javaee/${javaee.version}</location>
+								</offlineLink>
 							</offlineLinks>
 						</configuration>
 					</plugin>
@@ -209,16 +216,10 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 
 	<dependencyManagement>
 		<dependencies>
-			<!-- Java EE -->
+			<!-- Direct -->
 			<dependency>
 				<groupId>javax.activation</groupId><artifactId>activation</artifactId><version>1.1.1</version>
 			</dependency>
-			<dependency>
-				<groupId>com.aoindustries</groupId><artifactId>javaee-web-api-bom</artifactId><version>6.0.1${POST-SNAPSHOT}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<!-- Direct -->
 			<dependency>
 				<groupId>com.aoindustries</groupId><artifactId>ao-collections</artifactId><version>1.1.0${POST-SNAPSHOT}</version>
 			</dependency>
@@ -259,23 +260,22 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 				<!-- TODO: Remove this, use standard Java regular expressions -->
 				<groupId>gnu-regexp</groupId><artifactId>gnu-regexp</artifactId><version>1.1.4</version>
 			</dependency>
+			<!-- javaee-web-api-bom: <groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId> -->
+			<!-- javaee-web-api-bom: <groupId>javax.servlet.jsp</groupId><artifactId>javax.servlet.jsp-api</artifactId> -->
+			<!-- BOM -->
+			<dependency>
+				<groupId>com.aoindustries</groupId><artifactId>javaee-web-api-bom</artifactId><version>6.0.1${POST-SNAPSHOT}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
 	<dependencies>
-		<!-- Java EE -->
+		<!-- Direct -->
 		<dependency>
 			<groupId>javax.activation</groupId><artifactId>activation</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet.jsp</groupId><artifactId>javax.servlet.jsp-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<!-- Direct -->
 		<dependency>
 			<groupId>com.aoindustries</groupId><artifactId>ao-collections</artifactId>
 		</dependency>
@@ -315,6 +315,12 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		<dependency>
 			<!-- TODO: Remove this, use standard Java regular expressions -->
 			<groupId>gnu-regexp</groupId><artifactId>gnu-regexp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId><artifactId>javax.servlet.jsp-api</artifactId>
 		</dependency>
 	</dependencies>
 </project>
