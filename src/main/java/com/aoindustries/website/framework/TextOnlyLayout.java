@@ -33,6 +33,7 @@ import com.aoindustries.html.Script;
 import com.aoindustries.html.util.GoogleAnalytics;
 import static com.aoindustries.lang.Strings.trimNullIfEmpty;
 import static com.aoindustries.taglib.AttributeUtils.appendWidthStyle;
+import com.aoindustries.taglib.GlobalAttributes;
 import com.aoindustries.taglib.HtmlTag;
 import com.aoindustries.web.resources.registry.Group;
 import com.aoindustries.web.resources.registry.Registry;
@@ -179,7 +180,7 @@ public class TextOnlyLayout extends WebPageLayout {
 		html.xmlDeclaration(resp.getCharacterEncoding());
 		html.doctype();
 		// Write <html>
-		HtmlTag.beginHtmlTag(resp, out, html.serialization, null); // TODO: Move to Html class
+		HtmlTag.beginHtmlTag(resp, out, html.serialization, (GlobalAttributes)null); // TODO: Move to Html class
 		out.write("\n"
 				+ "  <head>\n");
 		// If this is not the default layout, then robots noindex
