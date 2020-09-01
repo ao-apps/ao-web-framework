@@ -45,7 +45,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1195,7 +1194,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 				if(list==null) webPageCache.put(classname, list=new ArrayList<>());
 				list.add(page);
 				return page;
-			} catch (ClassCastException | IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+			} catch (ClassCastException | ReflectiveOperationException e) {
 				throw new IOException("Unable to getWebPage: "+clazz.getName()+", classname="+classname+", req="+req, e);
 			}
 		}
@@ -1248,7 +1247,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 				if(list==null) webPageCache.put(classname, list=new ArrayList<>());
 				list.add(page);
 				return page;
-			} catch (ClassCastException | IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+			} catch (ClassCastException | ReflectiveOperationException e) {
 				throw new IOException("Unable to getWebPage: "+clazz.getName()+", classname="+classname+", params="+params, e);
 			}
 		}
