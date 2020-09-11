@@ -121,7 +121,9 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 								String[] words=Strings.split(line);
 								if(words.length>0) {
 									String type=words[0];
-									for(int c=1;c<words.length;c++) newMap.put(words[1], type);
+									for(int c=1;c<words.length;c++) {
+										newMap.put(words[1], type);
+									}
 								}
 							}
 						}
@@ -159,7 +161,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 			if(uploadedFileCleanup==null) {
 				uploadedFileCleanup=new Thread() {
 					@Override
-					@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+					@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "SleepWhileInLoop"})
 					public void run() {
 						while(true) {
 							try {
@@ -260,6 +262,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	private boolean isLinux;
 	private boolean isLinuxDone;
 
+	@SuppressWarnings("OverridableMethodCallInConstructor")
 	public WebSiteRequest(WebPage sourcePage, HttpServletRequest req) throws IOException, SQLException {
 		super(req);
 		this.sourcePage=sourcePage;
