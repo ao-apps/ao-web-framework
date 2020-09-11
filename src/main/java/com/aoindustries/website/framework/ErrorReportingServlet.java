@@ -22,6 +22,7 @@
  */
 package com.aoindustries.website.framework;
 
+import com.aoindustries.exception.WrappedException;
 import com.aoindustries.io.IoUtils;
 import java.io.IOException;
 import java.security.SecureRandom;
@@ -89,6 +90,7 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 	 * Any error that occurs during a <code>doGet</code> is caught and reported here.
 	 */
 	@Override
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	final protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setBufferSize(BUFFER_SIZE);
 		getCount.incrementAndGet();
@@ -96,10 +98,10 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 			reportingDoGet(req, resp);
 		} catch (ThreadDeath t) {
 			throw t;
-		} catch (RuntimeException | ServletException | IOException e) {
+		} catch (Error | RuntimeException | ServletException | IOException e) {
 			logger.log(Level.SEVERE, null, e);
 			throw e;
-		} catch (SQLException t) {
+		} catch (Throwable t) {
 			logger.log(Level.SEVERE, null, t);
 			throw new ServletException(t);
 		}
@@ -109,6 +111,7 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 	 * Any error that occurs during a <code>doPost</code> is caught and reported here.
 	 */
 	@Override
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	final protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setBufferSize(BUFFER_SIZE);
 		postCount.incrementAndGet();
@@ -116,10 +119,10 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 			reportingDoPost(req, resp);
 		} catch (ThreadDeath t) {
 			throw t;
-		} catch (RuntimeException | ServletException | IOException e) {
+		} catch (Error | RuntimeException | ServletException | IOException e) {
 			logger.log(Level.SEVERE, null, e);
 			throw e;
-		} catch (SQLException t) {
+		} catch (Throwable t) {
 			logger.log(Level.SEVERE, null, t);
 			throw new ServletException(t);
 		}
@@ -154,6 +157,7 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 	 * Any error that occurs during a <code>getLastModified</code> call is caught here.
 	 */
 	@Override
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	final protected long getLastModified(HttpServletRequest req) {
 		lastModifiedCount.incrementAndGet();
 		try {
@@ -162,12 +166,12 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 			return reportingGetLastModified(req, resp);
 		} catch (ThreadDeath err) {
 			throw err;
-		} catch (RuntimeException err) {
+		} catch (Error | RuntimeException err) {
 			logger.log(Level.SEVERE, null, err);
 			throw err;
-		} catch (IOException | SQLException err) {
-			logger.log(Level.SEVERE, null, err);
-			throw new RuntimeException(err);
+		} catch (Throwable t) {
+			logger.log(Level.SEVERE, null, t);
+			throw new WrappedException(t);
 		}
 	}
 

@@ -159,6 +159,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 			if(uploadedFileCleanup==null) {
 				uploadedFileCleanup=new Thread() {
 					@Override
+					@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 					public void run() {
 						while(true) {
 							try {
@@ -229,8 +230,8 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 								throw TD;
 							} catch(InterruptedException err) {
 								logger.log(Level.WARNING, null, err);
-							} catch(RuntimeException | IOException T) {
-								logger.log(Level.SEVERE, null, T);
+							} catch(Throwable t) {
+								logger.log(Level.SEVERE, null, t);
 								try {
 									sleep(60*1000);
 								} catch(InterruptedException err) {
