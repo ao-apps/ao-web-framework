@@ -24,6 +24,7 @@ package com.aoindustries.website.framework;
 
 import com.aoindustries.exception.WrappedException;
 import com.aoindustries.io.IoUtils;
+import com.aoindustries.lang.Throwables;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.sql.SQLException;
@@ -96,14 +97,12 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 		getCount.incrementAndGet();
 		try {
 			reportingDoGet(req, resp);
-		} catch (ThreadDeath t) {
-			throw t;
-		} catch (Error | RuntimeException | ServletException | IOException e) {
-			logger.log(Level.SEVERE, null, e);
-			throw e;
+		} catch (ThreadDeath td) {
+			throw td;
 		} catch (Throwable t) {
 			logger.log(Level.SEVERE, null, t);
-			throw new ServletException(t);
+			if(t instanceof IOException) throw (IOException)t;
+			throw Throwables.wrap(t, ServletException.class, ServletException::new);
 		}
 	}
 
@@ -117,14 +116,12 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 		postCount.incrementAndGet();
 		try {
 			reportingDoPost(req, resp);
-		} catch (ThreadDeath t) {
-			throw t;
-		} catch (Error | RuntimeException | ServletException | IOException e) {
-			logger.log(Level.SEVERE, null, e);
-			throw e;
+		} catch (ThreadDeath td) {
+			throw td;
 		} catch (Throwable t) {
 			logger.log(Level.SEVERE, null, t);
-			throw new ServletException(t);
+			if(t instanceof IOException) throw (IOException)t;
+			throw Throwables.wrap(t, ServletException.class, ServletException::new);
 		}
 	}
 
@@ -164,14 +161,11 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 			HttpServletResponse resp = (HttpServletResponse)req.getAttribute(RESPONSE_REQUEST_ATTRIBUTE);
 			if(resp == null) throw new IllegalStateException("HttpServletResponse not found on the request: " + RESPONSE_REQUEST_ATTRIBUTE);
 			return reportingGetLastModified(req, resp);
-		} catch (ThreadDeath err) {
-			throw err;
-		} catch (Error | RuntimeException err) {
-			logger.log(Level.SEVERE, null, err);
-			throw err;
+		} catch (ThreadDeath td) {
+			throw td;
 		} catch (Throwable t) {
 			logger.log(Level.SEVERE, null, t);
-			throw new WrappedException(t);
+			throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
 		}
 	}
 
