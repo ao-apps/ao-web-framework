@@ -25,7 +25,6 @@ package com.aoindustries.website.framework;
 import com.aoindustries.collections.SortedArrayList;
 import com.aoindustries.exception.WrappedException;
 import com.aoindustries.html.Html;
-import com.aoindustries.io.FileUtils;
 import com.aoindustries.lang.Strings;
 import com.aoindustries.net.URIEncoder;
 import com.aoindustries.net.URIParser;
@@ -37,6 +36,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -182,7 +182,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 													File file=uf.getStorageFile();
 													if(file.exists()) {
 														try {
-															FileUtils.delete(file);
+															Files.delete(file.toPath());
 														} catch(IOException e) {
 															logger.log(
 																Level.SEVERE,
@@ -214,7 +214,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 													}
 													if(!found) {
 														try {
-															FileUtils.delete(file);
+															Files.delete(file.toPath());
 														} catch(IOException e) {
 															logger.log(
 																Level.SEVERE,
@@ -308,7 +308,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 						String filename=E.nextElement();
 						File file=mreq.getFile(filename);
 						if(file!=null && file.exists()) {
-							FileUtils.delete(file);
+							Files.delete(file.toPath());
 						}
 					}
 				}
