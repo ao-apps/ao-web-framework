@@ -23,7 +23,6 @@
 package com.aoindustries.website.framework;
 
 import com.aoindustries.collections.SortedArrayList;
-import com.aoindustries.exception.WrappedException;
 import com.aoindustries.html.Html;
 import com.aoindustries.lang.Strings;
 import com.aoindustries.net.URIEncoder;
@@ -36,6 +35,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.security.SecureRandom;
 import java.sql.SQLException;
@@ -759,7 +759,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 				if(!newFile.exists()) return newFile;
 			}
 		} catch(IOException err) {
-			throw new WrappedException(err, new Object[] {"file.getPath()="+file.getPath()});
+			throw new UncheckedIOException("file.getPath()=" + file.getPath(), err);
 		}
 	}
 
