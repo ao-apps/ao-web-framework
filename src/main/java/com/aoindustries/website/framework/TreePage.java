@@ -280,7 +280,7 @@ abstract public class TreePage extends WebPage {
 			int treeLen = tree.size();
 			boolean[] opened = new boolean[treeLen];
 			for (int c = 0; c < treeLen; c++) {
-				opened[c] = "true".equals(req.getParameter("opened_" + c));
+				opened[c] = Boolean.parseBoolean(req.getParameter("opened_" + c));
 			}
 
 			// Print the new table

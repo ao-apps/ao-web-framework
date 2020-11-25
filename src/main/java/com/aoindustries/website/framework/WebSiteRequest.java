@@ -491,7 +491,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	}
 
 	protected boolean appendSettings(List<String> finishedParams, boolean alreadyAppended, StringBuilder SB) {
-		boolean searchEngine="true".equals(getParameter("search_engine"));
+		boolean searchEngine = Boolean.parseBoolean(getParameter("search_engine"));
 		if(searchEngine) alreadyAppended=appendParams(SB, new String[] {"search_engine", "true"}, finishedParams, alreadyAppended);
 		return alreadyAppended;
 	}
@@ -706,7 +706,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	 * Prints the hidden variables that contain all of the current settings.
 	 */
 	public void printFormFields(Html html) throws IOException {
-		if("true".equals(req.getParameter("search_engine"))) printHiddenField(html, "search_engine", "true");
+		if(Boolean.parseBoolean(req.getParameter("search_engine"))) printHiddenField(html, "search_engine", "true");
 	}
 
 	/**

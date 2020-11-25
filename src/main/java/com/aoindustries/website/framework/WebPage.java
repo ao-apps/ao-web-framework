@@ -240,7 +240,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 		WebSiteRequest req = getWebSiteRequest(httpReq);
 		WebPage page = getWebPage(getClass(), req);
 
-		if("true".equals(req.getParameter("login_requested"))) {
+		if(Boolean.parseBoolean(req.getParameter("login_requested"))) {
 			return -1;
 		}
 		WebSiteUser user;
@@ -522,10 +522,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 		WebSiteRequest req = getWebSiteRequest(httpReq);
 		WebPage page = getWebPage(getClass(), req);
 		// Logout when requested
-		boolean isLogout = "true".equals(req.getParameter("logout_requested")); // TODO: No magic value here, constant where best
+		boolean isLogout = Boolean.parseBoolean(req.getParameter("logout_requested")); // TODO: No magic value here, constant where best
 		if(isLogout) req.logout(resp);
 
-		if("true".equals(req.getParameter("login_requested"))) {
+		if(Boolean.parseBoolean(req.getParameter("login_requested"))) {
 			// TODO: robots header on "login_requested"
 			page.printLoginForm(page, new LoginException("Please Login"), req, resp);
 			return;
@@ -683,10 +683,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 		WebSiteRequest req = getWebSiteRequest(httpReq);
 		WebPage page = getWebPage(getClass(), req);
 		// Logout when requested
-		boolean isLogout = "true".equals(req.getParameter("logout_requested")); // TODO: No magic value here, constant where best
+		boolean isLogout = Boolean.parseBoolean(req.getParameter("logout_requested")); // TODO: No magic value here, constant where best
 		if(isLogout) req.logout(resp);
 
-		if("true".equals(req.getParameter("login_requested"))) {
+		if(Boolean.parseBoolean(req.getParameter("login_requested"))) {
 			page.printLoginForm(page, new LoginException("Please Login"), req, resp);
 			return;
 		}
