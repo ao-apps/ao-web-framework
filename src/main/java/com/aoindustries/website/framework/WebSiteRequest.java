@@ -68,6 +68,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	/**
 	 * Gets the upload directory.
 	 */
+	// TODO: It would be good form for each user to have their own upload directory by username
 	private static File getFileUploadDirectory(ServletContext servletContext) throws FileNotFoundException {
 		File uploadDir = new File(
 			(File)servletContext.getAttribute(ServletContext.TEMPDIR),
