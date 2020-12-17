@@ -155,7 +155,6 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 											<classifier>javadoc</classifier><includes>element-list, package-list</includes>
 											<outputDirectory>${project.build.directory}/offlineLinks/com.aoindustries/ao-web-resources-servlet</outputDirectory>
 										</artifactItem>
-										<!-- ao-javadoc-offline: <groupId>com.servlets</groupId><artifactId>cos</artifactId> -->
 										<!-- No apidocs: <groupId>gnu-regexp</groupId><artifactId>gnu-regexp</artifactId> -->
 										<!-- ao-javadoc-offline: <groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId> -->
 										<!-- ao-javadoc-offline: <groupId>javax.servlet.jsp</groupId><artifactId>javax.servlet.jsp-api</artifactId> -->
@@ -214,10 +213,6 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 									<url>https://aoindustries.com/ao-web-resources/servlet/apidocs/</url>
 									<location>${project.build.directory}/offlineLinks/com.aoindustries/ao-web-resources-servlet</location>
 								</offlineLink>
-								<offlineLink>
-									<url>http://www.servlets.com/cos/javadoc/</url>
-									<location>${project.build.directory}/offlineLinks/com/aoindustries/javadoc/offline/com.servlets/cos</location>
-								</offlineLink>
 								<!-- No apidocs: <groupId>gnu-regexp</groupId><artifactId>gnu-regexp</artifactId> -->
 								<!-- Java EE: <groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId> -->
 								<!-- Java EE: <groupId>javax.servlet.jsp</groupId><artifactId>javax.servlet.jsp-api</artifactId> -->
@@ -264,7 +259,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 				<groupId>com.aoindustries</groupId><artifactId>ao-net-types</artifactId><version>1.2.1${POST-SNAPSHOT}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.aoindustries</groupId><artifactId>ao-servlet-util</artifactId><version>3.2.0${POST-SNAPSHOT}</version>
+				<groupId>com.aoindustries</groupId><artifactId>ao-servlet-util</artifactId><version>3.3.0${POST-SNAPSHOT}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.aoindustries</groupId><artifactId>ao-taglib</artifactId><version>6.2.0${POST-SNAPSHOT}</version>
@@ -277,9 +272,6 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 			</dependency>
 			<dependency>
 				<groupId>com.aoindustries</groupId><artifactId>ao-web-resources-servlet</artifactId><version>0.1.0${POST-SNAPSHOT}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.servlets</groupId><artifactId>cos</artifactId><version>05Nov2002</version>
 			</dependency>
 			<dependency>
 				<!-- TODO: Remove this, use standard Java regular expressions -->
@@ -364,9 +356,6 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		</dependency>
 		<dependency>
 			<groupId>com.aoindustries</groupId><artifactId>ao-web-resources-servlet</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.servlets</groupId><artifactId>cos</artifactId>
 		</dependency>
 		<dependency>
 			<!-- TODO: Remove this, use standard Java regular expressions -->

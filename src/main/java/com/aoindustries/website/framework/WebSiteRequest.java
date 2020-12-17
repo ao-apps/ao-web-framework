@@ -28,8 +28,7 @@ import com.aoindustries.lang.Strings;
 import com.aoindustries.net.URIEncoder;
 import com.aoindustries.net.URIParser;
 import com.aoindustries.security.Identifier;
-import com.oreilly.servlet.MultipartRequest;
-import com.oreilly.servlet.multipart.FileRenamePolicy;
+import com.aoindustries.servlet.http.HttpServletUtil;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -55,17 +54,16 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 
 /**
  * A <code>WebSiteSettings</code> contains all the values that a user may customize while they view the web site.
  *
  * @author  AO Industries, Inc.
  */
-public class WebSiteRequest extends HttpServletRequestWrapper implements FileRenamePolicy {
+public class WebSiteRequest extends HttpServletRequestWrapper {
 
 	private static final Logger logger = Logger.getLogger(WebSiteRequest.class.getName());
-
-	private static final int MAX_UPLOAD_SIZE = 1073741824;
 
 	/**
 	 * Gets the upload directory.
@@ -109,7 +107,8 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	private static class MimeTypeLock {}
 	private static final MimeTypeLock mimeTypeLock=new MimeTypeLock();
 	private static Map<String,String> mimeTypes;
-	private static String getContentType(MultipartRequest mreq, String filename) throws IOException {
+	// TODO: Should client-provided content-type take priority?
+	private static String getContentType(Part part, String filename) throws IOException {
 		synchronized(mimeTypeLock) {
 			if(mimeTypes==null) {
 				Map<String,String> newMap=new HashMap<>();
@@ -133,7 +132,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 			}
 			String type=mimeTypes.get(getExtension(filename).toLowerCase());
 			if(type!=null) return type;
-			return mreq.getContentType(filename);
+			return part.getContentType();
 		}
 	}
 
@@ -250,7 +249,6 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 
 	final protected WebPage sourcePage;
 	final private HttpServletRequest req;
-	private MultipartRequest mreq;
 	private List<UploadedFile> reqUploadedFiles;
 
 	private boolean isLynx;
@@ -265,55 +263,60 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 	@SuppressWarnings("OverridableMethodCallInConstructor")
 	public WebSiteRequest(WebPage sourcePage, HttpServletRequest req) throws IOException, SQLException {
 		super(req);
-		this.sourcePage=sourcePage;
-		this.req=req;
+		this.sourcePage = sourcePage;
+		this.req = req;
+		final String MULTIPART = "multipart/form-data";
 		String contentType=req.getHeader("content-type");
-		if (contentType!=null && contentType.length()>=19 && contentType.substring(0,19).equalsIgnoreCase("multipart/form-data")) {
-			boolean keepFiles=false;
+		if (
+			contentType != null
+			&& contentType.length() >= MULTIPART.length()
+			&& contentType.substring(0, MULTIPART.length()).equalsIgnoreCase(MULTIPART)
+		) {
+			boolean keepFiles = false;
 			try {
-				mreq = new MultipartRequest(req, getFileUploadDirectory(getServletContext()).getPath(), MAX_UPLOAD_SIZE, this);
 				try {
 					// Determine the authentication info
-					WebSiteUser user=getWebSiteUser(null);
-					if(user!=null) {
-						keepFiles=true;
+					WebSiteUser user = getWebSiteUser(null);
+					if(user != null) {
+						File uploadDirectory = getFileUploadDirectory(getServletContext());
+						keepFiles = true;
 						// Create an UploadedFile for each file in the MultipartRequest
-						reqUploadedFiles=new ArrayList<>();
-						@SuppressWarnings("unchecked")
-						Enumeration<String> E=mreq.getFileNames();
-						while(E.hasMoreElements()) {
-							String filename=E.nextElement();
-							File file=mreq.getFile(filename);
-							if(file!=null) {
-								// Not necessary since there is a clean-up thread: file.deleteOnExit(); // JDK implementation builds an ever-growing set
-								UploadedFile uf=new UploadedFile(
-									mreq.getOriginalFileName(filename),
-									file,
-									user,
-									getContentType(mreq, filename)
-								);
-								addUploadedFile(uf, sourcePage.getServletContext());
-								reqUploadedFiles.add(uf);
+						reqUploadedFiles = new ArrayList<>();
+						for(Part part : req.getParts()) {
+							// Get a copy of the file in our upload directory
+							File file;
+							while(true) {
+								File newFile = new File(uploadDirectory, String.valueOf(getNextID()));
+								if(!newFile.exists()) {
+									file = newFile;
+									break;
+								}
 							}
+							part.write(file.getCanonicalPath());
+
+							String filename = part.getName();
+							// Not necessary since there is a clean-up thread: file.deleteOnExit(); // JDK implementation builds an ever-growing set
+							UploadedFile uf = new UploadedFile(
+								HttpServletUtil.getSubmittedFileName(part),
+								file,
+								user,
+								getContentType(part, filename) // TODO: Should this be the submitted filename?
+							);
+							addUploadedFile(uf, sourcePage.getServletContext());
+							reqUploadedFiles.add(uf);
 						}
 					}
 				} catch(LoginException err) {
 					// Ignore the error, just allow the files to be cleaned up because keepFiles is still false
 				}
 			} finally {
-				if(!keepFiles && mreq!=null) {
-					@SuppressWarnings("unchecked")
-					Enumeration<String> E=mreq.getFileNames();
-					while(E.hasMoreElements()) {
-						String filename=E.nextElement();
-						File file=mreq.getFile(filename);
-						if(file!=null && file.exists()) {
-							Files.delete(file.toPath());
-						}
+				if(!keepFiles) {
+					for(Part part : req.getParts()) {
+						part.delete();
 					}
 				}
 			}
-		} else this.mreq = null;
+		}
 	}
 
 	/**
@@ -498,25 +501,18 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 
 	@Override
 	public String getParameter(String name) {
-		if(mreq==null) return req.getParameter(name);
-		else {
-			String param=mreq.getParameter(name);
-			if(param==null) param=req.getParameter(name);
-			return param;
-		}
+		return req.getParameter(name);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public Enumeration<String> getParameterNames() {
-		if (mreq==null) return req.getParameterNames();
-		return (Enumeration<String>)mreq.getParameterNames();
+		return req.getParameterNames();
 	}
 
 	@Override
 	public String[] getParameterValues(String name) {
-		if (mreq==null) return req.getParameterValues(name);
-		return mreq.getParameterValues(name);
+		return req.getParameterValues(name);
 	}
 
 	/**
@@ -748,18 +744,6 @@ public class WebSiteRequest extends HttpServletRequestWrapper implements FileRen
 				}
 			}
 			return null;
-		}
-	}
-
-	@Override
-	public File rename(File file) {
-		try {
-			while(true) {
-				File newFile=new File(getFileUploadDirectory(getServletContext()), String.valueOf(getNextID()));
-				if(!newFile.exists()) return newFile;
-			}
-		} catch(IOException err) {
-			throw new UncheckedIOException("file.getPath()=" + file.getPath(), err);
 		}
 	}
 

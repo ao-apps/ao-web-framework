@@ -37,7 +37,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T22:08:31-0500"
-		dateModified="2020-04-21T00:55:07-05:00"
+		dateModified="2020-12-16T21:50:02-06:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -63,6 +63,10 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 					<li>Integrated with <core:link book="/ao-web-resources" page="/index.jspx" />.</li>
 					<li><code>HttpServletResponse</code> is passed many places that were formerly only given <code>WebSiteRequest</code>.</li>
 					<li>Added support for <ao:a href="https://developers.google.com/speed/webp">WebP images</ao:a>.</li>
+					<li>
+						Now using <ao:a rel="nofollow" href="@{javadoc.link.javaee}javax/servlet/http/HttpServletRequest.html#getParts()">the standard file upload API</ao:a>
+						for all uploaded files.  This allows the removal of the <code>com.servlets:cos</code> legacy dependency.
+					</li>
 				</ul>
 			</changelog:release>
 		</c:if>
