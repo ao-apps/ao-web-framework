@@ -160,6 +160,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * Implementers should call <code>super.configureResources(…)</code> as a matter of convention, despite this default implementation doing nothing.
 	 * </p>
 	 */
+	@SuppressWarnings("NoopMethodInAbstractClass")
 	public void configureResources(ServletContext servletContext, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, Registry pageRegistry) {
 		// Do nothing
 	}
@@ -395,7 +396,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 		String[] headers = getAdditionalHeaders(req);
 		if(headers != null) {
 			int len = headers.length;
-			for(int c=0; c<len; c += 2) resp.setHeader(headers[c], headers[c + 1]);
+			for(int c = 0; c < len; c += 2) {
+				resp.setHeader(headers[c], headers[c + 1]);
+			}
 		}
 		Doctype doctype = getDoctype(req);
 		return new ChainWriter(
@@ -457,7 +460,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 		String[] headers = getAdditionalHeaders(req);
 		if(headers != null) {
 			int len = headers.length;
-			for(int c=0; c<len; c += 2) resp.setHeader(headers[c], headers[c + 1]);
+			for(int c = 0; c < len; c += 2) {
+				resp.setHeader(headers[c], headers[c + 1]);
+			}
 		}
 		return resp.getOutputStream();
 	}
@@ -632,6 +637,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter)
 	 */
+	@SuppressWarnings("NoopMethodInAbstractClass")
 	public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
@@ -954,7 +960,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 	public final WebPage getRootPage() throws IOException, SQLException {
 		WebPage page = this;
 		WebPage parent;
-		while ((parent = page.getParent()) != null) page = parent;
+		while ((parent = page.getParent()) != null) {
+			page = parent;
+		}
 		return page;
 	}
 
@@ -1020,7 +1028,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 	final public int getPageIndexInParent(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		WebPage[] myPages = getParent().getCachedPages(req, resp);
 		int len=myPages.length;
-		for(int c=0;c<len;c++) if(myPages[c].equals(this)) return c;
+		for(int c = 0; c < len; c++) {
+			if(myPages[c].equals(this)) return c;
+		}
 		throw new RuntimeException("Unable to find page index in parent.");
 	}
 
@@ -1292,6 +1302,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see  #emptyWebPageArray
 	 */
 	// TODO: Allow ServletException here, too.  More generally, allow ServletException instead of SQLException
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Empty array is unmodifiable
 	protected WebPage[] getWebPages(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		return emptyWebPageArray;
 	}
@@ -1548,7 +1559,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 			// Search recursively
 			WebPage[] myPages = getCachedPages(req, resp);
 			int len = myPages.length;
-			for (int c = 0; c < len; c++) myPages[c].search(words, req, resp, results, bytes, finishedPages);
+			for (int c = 0; c < len; c++) {
+				myPages[c].search(words, req, resp, results, bytes, finishedPages);
+			}
 		}
 	}
 
@@ -1591,8 +1604,8 @@ abstract public class WebPage extends ErrorReportingServlet {
 		return sc;
 	}
 
-	void setServletContext(ServletContext context) {
-		this.context=context;
+	final void setServletContext(ServletContext context) {
+		this.context = context;
 	}
 
 	/**

@@ -215,8 +215,9 @@ abstract public class TreePage extends WebPage {
 							width += 3;
 						}
 						int len2 = last[pos].length();
-						for (int d = 0; d < len2; d++)
+						for (int d = 0; d < len2; d++) {
 							out.print(' ');
+						}
 						width += len2;
 					} else break;
 				}
@@ -243,8 +244,9 @@ abstract public class TreePage extends WebPage {
 						out.print(' ');
 					width += replaced.length() + 1;
 				}
-				for (; width < longest; width++)
+				for (; width < longest; width++) {
 					out.print(' ');
+				}
 				String description=tree.get(c).getDescription();
 				if(description!=null) out.println(description);
 

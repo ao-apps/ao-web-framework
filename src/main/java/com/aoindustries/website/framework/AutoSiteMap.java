@@ -67,7 +67,9 @@ abstract public class AutoSiteMap extends TreePage {
 					page.getDescription()
 				)
 			);
-			for(int c=0; c<len; c++) buildData(path, pages[c], data, req, resp);
+			for(int c=0; c<len; c++) {
+				buildData(path, pages[c], data, req, resp);
+			}
 		}
 	}
 

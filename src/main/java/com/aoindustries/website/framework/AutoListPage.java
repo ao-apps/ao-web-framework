@@ -80,6 +80,7 @@ abstract public class AutoListPage extends WebPage {
 	/**
 	 * Prints the content that will be put before the auto-generated list.
 	 */
+	@SuppressWarnings("NoopMethodInAbstractClass")
 	public void printContentStart(
 		ChainWriter out,
 		WebSiteRequest req,

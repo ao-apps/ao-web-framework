@@ -89,6 +89,7 @@ abstract public class DumpURLs extends WebPage {
 	 * Do not include this in the search results.
 	 */
 	@Override
+	@SuppressWarnings("NoopMethodInAbstractClass")
 	public void search(
 		String[] words,
 		WebSiteRequest req,
@@ -117,7 +118,9 @@ abstract public class DumpURLs extends WebPage {
 
 			WebPage[] pages = page.getCachedPages(req, resp);
 			int len = pages.length;
-			for (int c = 0; c < len; c++) printURLs(req, resp, out, pages[c], finishedPages);
+			for (int c = 0; c < len; c++) {
+				printURLs(req, resp, out, pages[c], finishedPages);
+			}
 		}
 	}
 }

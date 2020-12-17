@@ -64,7 +64,10 @@ abstract public class WebPageLayout {
 	/**
 	 * Gets the names of every supported layout.  The layout at index 0 is the default.
 	 * Is an empty array during a search.
+	 *
+	 * @return  No defensive copy is made
 	 */
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	final public String[] getLayoutChoices() {
 		return layoutChoices;
 	}
@@ -75,6 +78,7 @@ abstract public class WebPageLayout {
 	 * Implementers should call <code>super.configureResources(…)</code> as a matter of convention, despite this default implementation doing nothing.
 	 * </p>
 	 */
+	@SuppressWarnings("NoopMethodInAbstractClass")
 	public void configureResources(ServletContext servletContext, WebSiteRequest req, HttpServletResponse resp, WebPage page, Registry requestRegistry) {
 		// Do nothing
 	}
