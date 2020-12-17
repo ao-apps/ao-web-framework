@@ -30,6 +30,7 @@ import java.io.File;
  *
  * @author  AO Industries, Inc.
  */
+// TODO: This is not Serializable.  How is it persisted through reboots?
 final public class UploadedFile {
 
 	final private Identifier id;
