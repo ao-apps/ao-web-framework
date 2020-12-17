@@ -200,7 +200,7 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 	/**
 	 * @see javax.servlet.http.HttpServlet#getLastModified(HttpServletRequest)
 	 */
-	protected long reportingGetLastModified(HttpServletRequest req, HttpServletResponse resp) throws IOException, SQLException {
+	protected long reportingGetLastModified(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
 		return super.getLastModified(req);
 	}
 

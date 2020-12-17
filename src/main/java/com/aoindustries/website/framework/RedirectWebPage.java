@@ -65,7 +65,7 @@ public class RedirectWebPage extends WebPage {
 	}
 
 	@Override
-	protected WebSiteRequest getWebSiteRequest(HttpServletRequest req) throws IOException, SQLException {
+	protected WebSiteRequest getWebSiteRequest(HttpServletRequest req) throws ServletException, IOException, SQLException {
 		return new WebSiteRequest(this, req);
 	}
 

@@ -37,7 +37,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T22:08:31-0500"
-		dateModified="2020-12-16T21:50:02-06:00"
+		dateModified="2020-12-16T23:36:52-06:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -66,6 +66,10 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 					<li>
 						Now using <ao:a rel="nofollow" href="@{javadoc.link.javaee}javax/servlet/http/HttpServletRequest.html#getParts()">the standard file upload API</ao:a>
 						for all uploaded files.  This allows the removal of the <code>com.servlets:cos</code> legacy dependency.
+					</li>
+					<li>
+						<ao:a rel="nofollow" href="@{javadoc.link.javaee}javax/servlet/ServletException.html">ServletException</ao:a>
+						allowed more places where it naturally fits.
 					</li>
 				</ul>
 			</changelog:release>

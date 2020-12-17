@@ -236,7 +236,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see #getLastModified(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
-	final protected long reportingGetLastModified(HttpServletRequest httpReq, HttpServletResponse resp) throws IOException, SQLException {
+	final protected long reportingGetLastModified(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException, IOException, SQLException {
 		WebSiteRequest req = getWebSiteRequest(httpReq);
 		WebPage page = getWebPage(getClass(), req);
 
@@ -1322,7 +1322,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * Gets the <code>WebSiteRequest</code> that handles authentication and other details
 	 * of this site.
 	 */
-	abstract protected WebSiteRequest getWebSiteRequest(HttpServletRequest req) throws IOException, SQLException;
+	abstract protected WebSiteRequest getWebSiteRequest(HttpServletRequest req) throws ServletException, IOException, SQLException;
 
 	/**
 	 * Searches this WebPage and all of its subordinate pages, returning the matches

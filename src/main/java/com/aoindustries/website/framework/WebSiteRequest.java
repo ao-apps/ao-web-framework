@@ -34,7 +34,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.security.SecureRandom;
 import java.sql.SQLException;
@@ -51,6 +50,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.security.auth.login.LoginException;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
@@ -261,7 +261,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	private boolean isLinuxDone;
 
 	@SuppressWarnings("OverridableMethodCallInConstructor")
-	public WebSiteRequest(WebPage sourcePage, HttpServletRequest req) throws IOException, SQLException {
+	public WebSiteRequest(WebPage sourcePage, HttpServletRequest req) throws ServletException, IOException, SQLException {
 		super(req);
 		this.sourcePage = sourcePage;
 		this.req = req;
