@@ -121,10 +121,10 @@ abstract public class DumpURLs extends WebPage {
 
 			finishedPages.add(page);
 
-			WebPage[] pages = page.getCachedPages(req, resp);
-			int len = pages.length;
+			WebPage[] children = page.getCachedChildren(req, resp);
+			int len = children.length;
 			for (int c = 0; c < len; c++) {
-				printURLs(req, resp, html, pages[c], finishedPages);
+				printURLs(req, resp, html, children[c], finishedPages);
 			}
 		}
 	}

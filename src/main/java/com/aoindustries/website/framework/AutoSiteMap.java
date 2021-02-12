@@ -59,7 +59,7 @@ abstract public class AutoSiteMap extends TreePage {
 	private void buildData(Deque<String> path, WebPage page, List<TreePageData> data, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		if(isVisible(page)) {
 			path.add(page.getShortTitle());
-			WebPage[] children = page.getCachedPages(req, resp);
+			WebPage[] children = page.getCachedChildren(req, resp);
 			data.add(
 				new TreePageData(
 					req.getURL(page),

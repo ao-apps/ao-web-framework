@@ -399,20 +399,20 @@ public class TextOnlyLayout extends WebPageLayout {
 		html.out.write("          <b>"); html.text("Related Pages"); html.out.write("</b>");
 		html.br__().nl();
 		html.out.write("          <div style=\"white-space:nowrap\">\n");
-		WebPage[] pages = page.getCachedPages(req, resp);
+		WebPage[] children = page.getCachedChildren(req, resp);
 		parent=page;
-		if(pages.length==0) {
+		if(children.length==0) {
 			parent=page.getParent();
-			if(parent != null) pages = parent.getCachedPages(req, resp);
+			if(parent != null) children = parent.getCachedChildren(req, resp);
 		}
 
-		for(int c=-1;c<pages.length;c++) {
+		for(int c=-1;c<children.length;c++) {
 			WebPage tpage;
 			if (c==-1) {
 				if (parent!=null && parent.includeNavImageAsParent()) tpage=parent;
 				else tpage=null;
 			} else {
-				tpage=pages[c];
+				tpage=children[c];
 			}
 			if(tpage!=null && (tpage.useNavImage() || tpage.equals(page) || (tpage.includeNavImageAsParent() && tpage.equals(parent)))) {
 				String navAlt = tpage.getNavImageAlt(req);

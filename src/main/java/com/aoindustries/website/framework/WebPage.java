@@ -89,9 +89,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 	/**
 	 * Stores a cache of the list of child pages, once created.
 	 *
-	 * @see  #getCachedPages
+	 * @see  #getCachedChildren(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
-	private WebPage[] pages;
+	private WebPage[] cachedChildren;
 
 	/**
 	 * The last modified time of the content in the search index or <code>-1</code> if not indexed.
@@ -281,12 +281,12 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * Gets the most recent last modified time of this page and its immediate children.
 	 */
 	public long getWebPageAndChildrenLastModified(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
-		WebPage[] myPages = getCachedPages(req, resp);
-		int len = myPages.length;
+		WebPage[] children = getCachedChildren(req, resp);
+		int len = children.length;
 		long mostRecent = getClassLastModified();
 		if(mostRecent==-1) return -1;
 		for (int c = 0; c < len; c++) {
-			long time = myPages[c].getLastModified(req, resp);
+			long time = children[c].getLastModified(req, resp);
 			if(time==-1) return -1;
 			if (time > mostRecent) mostRecent = time;
 		}
@@ -298,10 +298,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 */
 	final public long getLastModifiedRecursive(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		long time = getLastModified(req, resp);
-		WebPage[] myPages = getCachedPages(req, resp);
-		int len=myPages.length;
+		WebPage[] children = getCachedChildren(req, resp);
+		int len=children.length;
 		for(int c=0; c<len; c++) {
-			long time2 = myPages[c].getLastModifiedRecursive(req, resp);
+			long time2 = children[c].getLastModifiedRecursive(req, resp);
 			if(time2>time) time=time2;
 		}
 		return time;
@@ -750,7 +750,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 						WebPage target = entire_site ? getRootPage() : this;
 
 						// If the target contains no pages, use its parent
-						if(target.getCachedPages(req, resp).length == 0) target=target.getParent();
+						if(target.getCachedChildren(req, resp).length == 0) target=target.getParent();
 
 						// Get the list of words to search for
 						String[] words=Strings.split(query.replace('.', ' '));
@@ -1023,10 +1023,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * Gets the index of this page in the parents list of children pages.
 	 */
 	final public int getPageIndexInParent(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
-		WebPage[] myPages = getParent().getCachedPages(req, resp);
-		int len=myPages.length;
+		WebPage[] siblings = getParent().getCachedChildren(req, resp);
+		int len=siblings.length;
 		for(int c = 0; c < len; c++) {
-			if(myPages[c].equals(this)) return c;
+			if(siblings[c].equals(this)) return c;
 		}
 		throw new RuntimeException("Unable to find page index in parent.");
 	}
@@ -1040,11 +1040,11 @@ abstract public class WebPage extends ErrorReportingServlet {
 	final public WebPage getNextPage(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		WebPage parent=getParent();
 		if (parent!=null) {
-			WebPage[] myPages=parent.getCachedPages(req, resp);
-			int len=myPages.length;
+			WebPage[] siblings = parent.getCachedChildren(req, resp);
+			int len=siblings.length;
 			for(int c=0; c<len; c++) {
-				if(myPages[c].getClass() == getClass()) {
-					if (c < (len - 1)) return myPages[c + 1];
+				if(siblings[c].getClass() == getClass()) {
+					if (c < (len - 1)) return siblings[c + 1];
 					return null;
 				}
 			}
@@ -1061,11 +1061,11 @@ abstract public class WebPage extends ErrorReportingServlet {
 	final public WebPage getPreviousPage(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		WebPage parent = getParent();
 		if (parent != null) {
-			WebPage[] myPages = parent.getCachedPages(req, resp);
-			int len = myPages.length;
+			WebPage[] siblings = parent.getCachedChildren(req, resp);
+			int len = siblings.length;
 			for (int c = 0; c < len; c++) {
-				if (myPages[c].getClass() == getClass()) {
-					if (c > 0) return myPages[c - 1];
+				if (siblings[c].getClass() == getClass()) {
+					if (c > 0) return siblings[c - 1];
 					return null;
 				}
 			}
@@ -1087,19 +1087,19 @@ abstract public class WebPage extends ErrorReportingServlet {
 	/**
 	 * Gets all of the pages that are children of this one in the page hierarchy.
 	 * Unless overridden, the pages are cached in a <code>WebPage[]</code> for
-	 * faster access.  The actual list of pages is obtained from <code>getWebPages</code>.
+	 * faster access.  The actual list of pages is obtained from {@link #getChildren(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}.
 	 * <p>
 	 * Pages will also not be cached if the configuration property is set to anything
 	 * other than <code>"true"</code>
 	 *
 	 * @return a <code>WebPage[]</code> of all of the lower-level pages
 	 *
-	 * @see  #getWebPages(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
+	 * @see  #getChildren(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
-	synchronized public WebPage[] getCachedPages(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
-		WebPage[] myPages=this.pages;
-		if(myPages==null) myPages=this.pages=getWebPages(req, resp);
-		return myPages;
+	synchronized public WebPage[] getCachedChildren(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+		WebPage[] children = this.cachedChildren;
+		if(children == null) this.cachedChildren = children = getChildren(req, resp);
+		return children;
 	}
 
 	/**
@@ -1295,12 +1295,12 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @return a <code>WebPage[]</code> of all of the lower-level pages
 	 *
-	 * @see  #getCachedPages
+	 * @see  #getCachedChildren(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 * @see  #emptyWebPageArray
 	 */
 	// TODO: Allow ServletException here, too.  More generally, allow ServletException instead of SQLException
 	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Empty array is unmodifiable
-	protected WebPage[] getWebPages(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+	protected WebPage[] getChildren(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		return emptyWebPageArray;
 	}
 
@@ -1550,10 +1550,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 			finishedPages.add(this);
 
 			// Search recursively
-			WebPage[] myPages = getCachedPages(req, resp);
-			int len = myPages.length;
+			WebPage[] children = getCachedChildren(req, resp);
+			int len = children.length;
 			for (int c = 0; c < len; c++) {
-				myPages[c].search(words, req, resp, results, bytes, finishedPages);
+				children[c].search(words, req, resp, results, bytes, finishedPages);
 			}
 		}
 	}

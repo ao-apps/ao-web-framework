@@ -37,7 +37,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T22:08:31-0500"
-		dateModified="2021-02-12T07:03:40-06:00"
+		dateModified="2021-02-12T07:50:04-06:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -75,6 +75,10 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 					<li>
 						<code>TreePageData</code> now takes a <code>String[]</code> for the path.  This allows path elements
 						to contain slash (/) characters without any special encoding.
+					</li>
+					<li>
+						Renamed <code>WebPage.getWebPages(…)</code> to <code>getChildren(…)</code> and
+						<code>WebPage.getCachedPages(…)</code> to <code>getCachedChildren(…)</code>.
 					</li>
 				</ul>
 			</changelog:release>
