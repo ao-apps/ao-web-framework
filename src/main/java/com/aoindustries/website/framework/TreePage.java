@@ -28,12 +28,12 @@ import com.aoindustries.html.Html;
 import com.aoindustries.io.ContentType;
 import com.aoindustries.io.IoUtils;
 import com.aoindustries.lang.EmptyArrays;
-import com.aoindustries.lang.Strings;
 import com.aoindustries.net.URIEncoder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -242,8 +242,13 @@ abstract public class TreePage extends WebPage {
 					} else {
 						html.text(p);
 					}
-					String S;
-					if (p.length()>0 && (pos < (pathLen - 1) || ((S = tree.get(c).getPath()).length() > 0 && S.charAt(S.length() - 1) == '/'))) {
+					if (
+						p.length() > 0
+						&& (
+							pos < (pathLen - 1)
+							|| tree.get(c).hasChildren()
+						)
+					) {
 						html.out.write('/');
 					} else {
 						html.out.write(' ');
@@ -569,10 +574,15 @@ abstract public class TreePage extends WebPage {
 
 	private static String[][] getLines(List<? extends TreePageData> tree) {
 		int treeLen = tree.size();
-		String[][] paths=new String[treeLen][];
+		String[][] paths = new String[treeLen][];
 		for (int c = 0; c < treeLen; c++) {
-			List<String> split = Strings.split(tree.get(c).getPath(), '/');
-			paths[c] = split.toArray(new String[split.size()]);
+			TreePageData data = tree.get(c);
+			String[] path = data.getPath();
+			if(data.hasChildren()) {
+				path = Arrays.copyOf(path, path.length + 1);
+				path[path.length - 1] = "";
+			}
+			paths[c] = path;
 		}
 		return paths;
 	}

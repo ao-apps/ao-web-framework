@@ -37,7 +37,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T22:08:31-0500"
-		dateModified="2021-02-11T03:25:15-06:00"
+		dateModified="2021-02-12T07:03:40-06:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -71,6 +71,10 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 					<li>
 						<ao:a rel="nofollow" href="@{javadoc.link.javaee}javax/servlet/ServletException.html">ServletException</ao:a>
 						allowed more places where it naturally fits.
+					</li>
+					<li>
+						<code>TreePageData</code> now takes a <code>String[]</code> for the path.  This allows path elements
+						to contain slash (/) characters without any special encoding.
 					</li>
 				</ul>
 			</changelog:release>

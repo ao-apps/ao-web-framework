@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2006-2009, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2015, 2016, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,23 +22,38 @@
  */
 package com.aoindustries.website.framework;
 
+import java.util.Collection;
+
 /**
  * @author  AO Industries, Inc.
  */
 public class TreePageData {
 
-	private final String path;
 	private final String url;
 	private final String description;
+	private final boolean hasChilren;
+	private final String[] path;
 
-	public TreePageData(String path, String url, String description) {
-		this.path=path;
-		this.url=url;
-		this.description=description;
+	/**
+	 * @param path The path of display names.
+	 */
+	public TreePageData(String url, String description, boolean hasChildren, String ... path) {
+		this.url = url;
+		this.description = description;
+		this.hasChilren = hasChildren;
+		this.path = path;
 	}
 
-	public String getPath() {
-		return path;
+	/**
+	 * @param path The path of display names, extracted via {@link Collection#toArray(java.lang.Object[])}
+	 */
+	public TreePageData(String url, String description, boolean hasChildren, Collection<? extends String> path) {
+		this(
+			url,
+			description,
+			hasChildren,
+			path.toArray(new String[path.size()])
+		);
 	}
 
 	public String getUrl() {
@@ -47,5 +62,13 @@ public class TreePageData {
 
 	public String getDescription() {
 		return description;
+	}
+
+	public boolean hasChildren() {
+		return hasChilren;
+	}
+
+	public String[] getPath() {
+		return path;
 	}
 }

@@ -25,7 +25,9 @@ package com.aoindustries.website.framework;
 import com.aoindustries.html.Html;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -54,22 +56,22 @@ abstract public class AutoSiteMap extends TreePage {
 	/**
 	 * Recursively builds the list of all sites.
 	 */
-	private void buildData(String path, WebPage page, List<TreePageData> data, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+	private void buildData(Deque<String> path, WebPage page, List<TreePageData> data, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		if(isVisible(page)) {
-			if(path.length()>0) path=path+'/'+page.getShortTitle();
-			else path=page.getShortTitle();
-			WebPage[] pages = page.getCachedPages(req, resp);
-			int len=pages.length;
+			path.add(page.getShortTitle());
+			WebPage[] children = page.getCachedPages(req, resp);
 			data.add(
 				new TreePageData(
-					len>0 ? (path+'/') : path,
 					req.getURL(page),
-					page.getDescription()
+					page.getDescription(),
+					children.length > 0,
+					path
 				)
 			);
-			for(int c=0; c<len; c++) {
-				buildData(path, pages[c], data, req, resp);
+			for(WebPage child : children) {
+				buildData(path, child, data, req, resp);
 			}
+			path.removeLast();
 		}
 	}
 
@@ -89,8 +91,7 @@ abstract public class AutoSiteMap extends TreePage {
 	final protected List<? extends TreePageData> getTree(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		WebPage home=getRootPage();
 		List<TreePageData> data=new ArrayList<>();
-		buildData("", home, data, req, resp);
-		//int size=data.size();
+		buildData(new ArrayDeque<>(), home, data, req, resp);
 		return data;
 	}
 
