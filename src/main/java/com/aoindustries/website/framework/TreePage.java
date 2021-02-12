@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2014, 2015, 2016, 2019, 2020 AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2014, 2015, 2016, 2019, 2020, 2021 AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,8 +22,8 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.encoding.ChainWriter;
 import com.aoindustries.encoding.MediaWriter;
+import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
 import com.aoindustries.html.Html;
 import com.aoindustries.io.ContentType;
 import com.aoindustries.io.IoUtils;
@@ -164,7 +164,7 @@ abstract public class TreePage extends WebPage {
 	public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		ChainWriter out,
+		Html html,
 		WebPageLayout layout
 	) throws IOException, SQLException {
 		List<? extends TreePageData> tree = getTree(req, resp);
@@ -187,7 +187,7 @@ abstract public class TreePage extends WebPage {
 				if(width>longest) longest=width;
 			}
 
-			out.print("<pre>\n");
+			html.out.write("<pre>\n");
 
 			String[] last = EmptyArrays.EMPTY_STRING_ARRAY;
 			for (int c = 0; c < treeLen; c++) {
@@ -211,49 +211,57 @@ abstract public class TreePage extends WebPage {
 									} else break;
 								}
 							}
-							out.print(hasMore ? "|  " : "   ");
+							html.out.write(hasMore ? "|  " : "   ");
 							width += 3;
 						}
 						int len2 = last[pos].length();
 						for (int d = 0; d < len2; d++) {
-							out.print(' ');
+							html.out.write(' ');
 						}
 						width += len2;
 					} else break;
 				}
 				for (; pos < pathLen; pos++) {
-					String replaced=replaceHTML(path[pos]);
-					if (pos>0 && replaced.length()>0) {
-						out.print("+--");
+					String p = path[pos];
+					if (pos > 0 && p.length() > 0) {
+						html.out.write("+--");
 						width += 3;
 					}
 					String href;
 					if (pos == (path[pathLen-1].length()==0?(pathLen-2):(pathLen-1)) && (href = tree.get(c).getUrl()) != null) {
-						out.print("<a href='").textInXmlAttribute(
+						html.out.write("<a href='");
+						encodeTextInXhtmlAttribute(
 							resp.encodeURL(
 								URIEncoder.encodeURI(
 									req.getContextPath() + href
 								)
-							)
-						).print("'>").print(replaced).print("</a>");
-					} else out.print(replaced);
+							),
+							html.out
+						);
+						html.out.write("'>"); html.text(p); html.out.write("</a>");
+					} else {
+						html.text(p);
+					}
 					String S;
-					if (replaced.length()>0 && (pos < (pathLen - 1) || ((S = tree.get(c).getPath()).length() > 0 && S.charAt(S.length() - 1) == '/')))
-						out.print('/');
-					else
-						out.print(' ');
-					width += replaced.length() + 1;
+					if (p.length()>0 && (pos < (pathLen - 1) || ((S = tree.get(c).getPath()).length() > 0 && S.charAt(S.length() - 1) == '/'))) {
+						html.out.write('/');
+					} else {
+						html.out.write(' ');
+					}
+					width += p.length() + 1;
 				}
 				for (; width < longest; width++) {
-					out.print(' ');
+					html.out.write(' ');
 				}
 				String description=tree.get(c).getDescription();
-				if(description!=null) out.println(description);
+				if(description != null) html.text(description).nl();
 
 				last = path;
 			}
-			out.print("</pre>\n");
-		} else handleRequest(out, req, resp, tree, -1, -1, null);
+			html.out.write("</pre>\n");
+		} else {
+			handleRequest(html, req, resp, tree, -1, -1, null);
+		}
 	}
 
 	// TODO: Override different method that already does everything before the layout
@@ -268,14 +276,14 @@ abstract public class TreePage extends WebPage {
 		int scrollToX = Integer.parseInt(req.getParameter("scroll_to_x"));
 		int scrollToY = Integer.parseInt(req.getParameter("scroll_to_y"));
 
-		ChainWriter out = getHTMLChainWriter(req, resp);
+		Html html = getHTML(req, resp);
 		try {
 			WebPageLayout layout = getWebPageLayout(req);
 			layout.startHTML(
 				this,
 				req,
 				resp,
-				out,
+				html,
 				scrollToX >= 0 ? ("window.scrollTo(" + scrollToX + ", " + scrollToY + ");") : null
 			);
 
@@ -286,12 +294,12 @@ abstract public class TreePage extends WebPage {
 			}
 
 			// Print the new table
-			handleRequest(out, req, resp, tree, scrollToX, scrollToY, opened);
+			handleRequest(html, req, resp, tree, scrollToX, scrollToY, opened);
 
-			layout.endHTML(this, req, resp, out);
+			layout.endHTML(this, req, resp, html);
 		} finally {
-			out.flush();
-			out.close();
+			html.out.flush();
+			html.out.close();
 		}
 	}
 
@@ -304,7 +312,7 @@ abstract public class TreePage extends WebPage {
 	 * Handles the interactive form of this page.
 	 */
 	private void handleRequest(
-		ChainWriter out,
+		Html html,
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		List<? extends TreePageData> tree,
@@ -313,13 +321,11 @@ abstract public class TreePage extends WebPage {
 		boolean[] opened
 	) throws IOException, SQLException {
 		WebPageLayout layout=getWebPageLayout(req);
-		layout.startContent(out, req, resp, 1, getPreferredContentWidth(req));
-		layout.printContentTitle(out, req, resp, this, 1);
-		layout.printContentHorizontalDivider(out, req, resp, 1, false);
-		layout.startContentLine(out, req, resp, 1, null, null);
+		layout.startContent(html, req, resp, 1, getPreferredContentWidth(req));
+		layout.printContentTitle(html, req, resp, this, 1);
+		layout.printContentHorizontalDivider(html, req, resp, 1, false);
+		layout.startContentLine(html, req, resp, 1, null, null);
 		try {
-			Html html = getHtml(req, resp, out);
-
 			// Get the tree data
 			int treeLen = tree.size();
 
@@ -351,19 +357,19 @@ abstract public class TreePage extends WebPage {
 			html.nl();
 
 			// Write the form containing the current settings
-			out.print("<form action='' id='tree_form' method='post'><div>\n");
+			html.out.write("<form action='' id='tree_form' method='post'><div>\n");
 			req.printFormFields(html);
-			out.print("  ");
+			html.out.write("  ");
 			html.input.hidden().name("scroll_to_x").value(scrollToX).__().nl();
-			out.print("  ");
+			html.out.write("  ");
 			html.input.hidden().name("scroll_to_y").value(scrollToY).__().nl();
 			for(int c=0; c<treeLen; c++) {
-				out.print("  ");
+				html.out.write("  ");
 				html.input.hidden().name("opened_" + c).value(opened[c]).__().nl();
 			}
 
 			// Display the tree in a table with links for opening/closing the different parts
-			out.print("  <table cellspacing='0' cellpadding='0'>\n");
+			html.out.write("  <table cellspacing='0' cellpadding='0'>\n");
 
 			String[] last = EmptyArrays.EMPTY_STRING_ARRAY;
 			for (int c = 0; c < treeLen; c++) {
@@ -396,7 +402,7 @@ abstract public class TreePage extends WebPage {
 						}
 					}
 					if (visible) {
-						out.print("    <tr>\n"
+						html.out.write("    <tr>\n"
 								+ "      <td style='white-space:nowrap; border:0px;'><table cellspacing='0' cellpadding='0'><tr><td style='white-space:nowrap; border:0px;'>");
 
 						int max = Math.min(pathLen - 1, last.length);
@@ -461,11 +467,11 @@ abstract public class TreePage extends WebPage {
 								}
 
 								if(hasSub) {
-									out
-										.print("<a href='javascript:")
-										.print(opened[c] ? "closeNode(" : "openNode(")
-										.print(c)
-										.print(");'>");
+									html.out
+										.append("<a href='javascript:")
+										.append(opened[c] ? "closeNode(" : "openNode(")
+										.append(Integer.toString(c))
+										.append(");'>");
 									html.img()
 										.alt(opened[c] ? "Close" : "Open")
 										.src(
@@ -482,7 +488,7 @@ abstract public class TreePage extends WebPage {
 										.width(IMAGE_WIDTH)
 										.height(IMAGE_HEIGHT)
 										.__();
-									out.print("</a>");
+									html.out.write("</a>");
 								} else {
 									html.img()
 										.src(
@@ -504,11 +510,11 @@ abstract public class TreePage extends WebPage {
 									.height(IMAGE_HEIGHT)
 									.alt("")
 									.__();
-								out.print("</td><td style='white-space:nowrap'>");
+								html.out.write("</td><td style='white-space:nowrap'>");
 							}
 
 							boolean useCodeFont=useCodeFont(req);
-							if (useCodeFont) out.print("<code>");
+							if (useCodeFont) html.out.write("<code>");
 							String href;
 							if(
 								(
@@ -516,18 +522,23 @@ abstract public class TreePage extends WebPage {
 									|| (pos==(pathLen-1) && path[pathLen-1].length()>0)
 								) && (href = tree.get(c).getUrl()) != null
 							) {
-								out.print("<a class='aoLightLink' href='").textInXmlAttribute(
+								html.out.write("<a class='aoLightLink' href='");
+								encodeTextInXhtmlAttribute(
 									resp.encodeURL(
 										URIEncoder.encodeURI(
 											req.getContextPath() + href
 										)
-									)
-								).print("'>").print(path[pos]).print("</a>");
-							} else if(path[pos].length()>0) out.print(path[pos]);
-							if(useCodeFont) out.print("</code>");
+									),
+									html.out
+								);
+								html.out.write("'>"); html.text(path[pos]); html.out.write("</a>");
+							} else if(!path[pos].isEmpty()) {
+								html.text(path[pos]);
+							}
+							if(useCodeFont) html.out.write("</code>");
 						}
 
-						out.print("</td></tr></table></td>\n"
+						html.out.write("</td></tr></table></td>\n"
 								+ "      <td style='white-space:nowrap; width:20px'>");
 						html.img()
 							.src(req.getEncodedURL(this, "image_num=0", resp))
@@ -536,21 +547,19 @@ abstract public class TreePage extends WebPage {
 							.height(1)
 							.alt("")
 							.__();
-						out.print("</td>\n"
+						html.out.write("</td>\n"
 								+ "      <td style='white-space:nowrap'>");
-						String description=tree.get(c).getDescription();
-						if(description!=null) out.print(description);
-						out.print("</td>\n"
+						html.text(tree.get(c).getDescription()).out.write("</td>\n"
 								+ "    </tr>\n");
 						last = path;
 					}
 			}
 
-			out.print("  </table>\n"
+			html.out.write("  </table>\n"
 					+ "</div></form>\n");
 		} finally {
-			layout.endContentLine(out, req, resp, 1, false);
-			layout.endContent(this, out, req, resp, 1);
+			layout.endContentLine(html, req, resp, 1, false);
+			layout.endContent(this, html, req, resp, 1);
 		}
 	}
 
@@ -585,8 +594,4 @@ abstract public class TreePage extends WebPage {
 	}
 
 	abstract public boolean useSmoothOutline(WebSiteRequest req);
-
-	public static String replaceHTML(String S) {
-		return Strings.replace(S, "&#047;", "/");
-	}
 }

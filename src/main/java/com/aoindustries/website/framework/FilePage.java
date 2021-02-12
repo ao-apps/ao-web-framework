@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2009, 2015, 2016, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2015, 2016, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,7 +22,7 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.encoding.ChainWriter;
+import com.aoindustries.html.Html;
 import com.aoindustries.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
@@ -54,10 +54,10 @@ abstract public class FilePage extends WebPage {
 	public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		ChainWriter out,
+		Html html,
 		WebPageLayout layout
 	) throws IOException, SQLException {
-		printFile(out, getFile());
+		printFile(html, getFile());
 	}
 
 	/**
@@ -70,7 +70,7 @@ abstract public class FilePage extends WebPage {
 		return Math.max(super.getLastModified(req, resp), getFile().lastModified());
 	}
 
-	public static void printFile(ChainWriter out, File file) throws IOException {
-		FileUtils.copy(file, out);
+	public static void printFile(Html html, File file) throws IOException {
+		FileUtils.copy(file, html.out);
 	}
 }

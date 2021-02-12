@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2009, 2015, 2016, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2015, 2016, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,7 +22,7 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.encoding.ChainWriter;
+import com.aoindustries.html.Html;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -80,9 +80,9 @@ abstract public class AutoSiteMap extends TreePage {
 	public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		ChainWriter out
+		Html html
 	) throws ServletException, IOException, SQLException {
-		if(req != null) super.doGet(req, resp, out); // TODO: A search layout that does almost nothing
+		if(req != null) super.doGet(req, resp, html); // TODO: A search layout that does almost nothing
 	}
 
 	@Override

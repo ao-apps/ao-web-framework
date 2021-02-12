@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2015, 2016, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2015, 2016, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -23,7 +23,6 @@
 package com.aoindustries.website.framework;
 
 import com.aoindustries.collections.SortedArrayList;
-import com.aoindustries.encoding.ChainWriter;
 import com.aoindustries.encoding.Doctype;
 import com.aoindustries.encoding.Serialization;
 import com.aoindustries.encoding.servlet.DoctypeEE;
@@ -44,6 +43,7 @@ import gnu.regexp.REException;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -52,8 +52,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.security.auth.login.LoginException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -71,8 +69,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author  AO Industries, Inc.
  */
 abstract public class WebPage extends ErrorReportingServlet {
-
-	private static final Logger logger = Logger.getLogger(WebPage.class.getName());
 
 	private static final long serialVersionUID = 1L;
 
@@ -365,7 +361,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
-	 * Prepares for output and returns the {@link ChainWriter}.
+	 * Prepares for output and returns the {@link Html}.
 	 * <ol>
 	 *   <li>{@linkplain ServletResponse#resetBuffer() clears the output buffer}.</li>
 	 *   <li>Sets the {@linkplain ServletResponse#setContentType(java.lang.String) response content type}.</li>
@@ -382,7 +378,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
 	 * @see #getAdditionalHeaders(com.aoindustries.website.framework.WebSiteRequest)
 	 */
-	protected ChainWriter getHTMLChainWriter(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected Html getHTML(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// Clear the output buffer
 		resp.resetBuffer();
 		// Set the content type
@@ -401,7 +397,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 			}
 		}
 		Doctype doctype = getDoctype(req);
-		return new ChainWriter(
+		return new Html(
 			new EncodingContextEE(
 				getServletContext(),
 				req,
@@ -418,15 +414,6 @@ abstract public class WebPage extends ErrorReportingServlet {
 			},
 			resp.getWriter()
 		);
-	}
-
-	/**
-	 * Gets the default HTML writer for this page.
-	 *
-	 * @see Html#Html(com.aoindustries.encoding.ChainWriter)
-	 */
-	public Html getHtml(WebSiteRequest req, HttpServletResponse resp, ChainWriter out) {
-		return new Html(out);
 	}
 
 	/**
@@ -563,20 +550,20 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
-	 * Prepares the request then invokes {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter)}.
+	 * Prepares the request then invokes {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Html)}.
 	 * To not have these steps automatically applied, override this method.
 	 * By the time this method is called, security checks, authentication, and redirects have been done.
 	 * <ol>
 	 *   <li>Sets the {@linkplain Serialization serialization}.</li>
 	 *   <li>Sets the {@linkplain Doctype DOCTYPE}.</li>
-	 *   <li>Gets the {@linkplain #getHTMLChainWriter(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse) response writer}.</li>
-	 *   <li>Invokes {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter)}.</li>
+	 *   <li>Gets the {@linkplain #getHTML(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse) response writer}.</li>
+	 *   <li>Invokes {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Html)}.</li>
 	 * </ol>
 	 *
 	 * @see #reportingDoGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 * @see #getSerialization(com.aoindustries.website.framework.WebSiteRequest)
 	 * @see #getDoctype(com.aoindustries.website.framework.WebSiteRequest)
-	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter)
+	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Html)
 	 */
 	public void doGet(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
 		Serialization serialization = getSerialization(req);
@@ -584,9 +571,12 @@ abstract public class WebPage extends ErrorReportingServlet {
 		try {
 			Doctype oldDoctype = DoctypeEE.replace(req, getDoctype(req));
 			try {
-				try (ChainWriter out = getHTMLChainWriter(req, resp)) {
-					doGet(req, resp, out);
-					out.flush();
+				Html html = getHTML(req, resp);
+				try {
+					doGet(req, resp, html);
+				} finally {
+					html.out.flush();
+					html.out.close();
 				}
 			} finally {
 				DoctypeEE.set(req, oldDoctype);
@@ -597,19 +587,19 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
-	 * The layout is automatically applied to the page, then {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter, com.aoindustries.website.framework.WebPageLayout)}
+	 * The layout is automatically applied to the page, then {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Html, com.aoindustries.website.framework.WebPageLayout)}
 	 * is called.  To not have the layout automatically applied, override this method.
 	 * By the time this method is called, security checks, authentication, redirects, doctype, and serialization have been done.
 	 *
 	 * @param  req   the {@link WebSiteRequest} for this request, or {@code null} when searching
 	 * @param  resp  the {@link HttpServletResponse} for this request, or {@code null} when searching
-	 * @param  out   the {@link ChainWriter} to send output to
+	 * @param  html  the {@link Html} to send output to
 	 *
 	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 * @see #getWebPageLayout(com.aoindustries.website.framework.WebSiteRequest)
-	 * @see WebPageLayout#startHTML(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter, java.lang.String)
-	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter, com.aoindustries.website.framework.WebPageLayout)
-	 * @see WebPageLayout#endHTML(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter)
+	 * @see WebPageLayout#startHTML(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Html, java.lang.String)
+	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Html, com.aoindustries.website.framework.WebPageLayout)
+	 * @see WebPageLayout#endHTML(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Html)
 	 */
 	// TODO: We could have a NullHtmlWriter that does not write any HTML tags or attributes, but just the text body.
 	// TODO: Then there could be a search-specific request object, instead of null, which is used during searches.
@@ -619,12 +609,12 @@ abstract public class WebPage extends ErrorReportingServlet {
 	public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		ChainWriter out
+		Html html
 	) throws ServletException, IOException, SQLException {
 		WebPageLayout layout = getWebPageLayout(req);
-		layout.startHTML(this, req, resp, out, null);
-		doGet(req, resp, out, layout);
-		layout.endHTML(this, req, resp, out);
+		layout.startHTML(this, req, resp, html, null);
+		doGet(req, resp, html, layout);
+		layout.endHTML(this, req, resp, html);
 	}
 
 	/**
@@ -632,16 +622,16 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @param  req     the {@link WebSiteRequest} for this request, or {@code null} when searching
 	 * @param  resp    the {@link HttpServletResponse} for this request, or {@code null} when searching
-	 * @param  out     the {@link ChainWriter} to send output to
+	 * @param  html    the {@link Html} to send output to
 	 * @param  layout  the {@link WebPageLayout} that has been applied
 	 *
-	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter)
+	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Html)
 	 */
 	@SuppressWarnings("NoopMethodInAbstractClass")
 	public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		ChainWriter out,
+		Html html,
 		WebPageLayout layout
 	) throws ServletException, IOException, SQLException {
 	}
@@ -751,9 +741,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 			try {
 				Doctype oldDoctype = DoctypeEE.replace(req, getDoctype(req));
 				try {
-					try (ChainWriter out = getHTMLChainWriter(req, resp)) {
+					Html html = getHTML(req, resp);
+					try {
 						WebPageLayout layout = getWebPageLayout(req);
-						layout.startHTML(this, req, resp, out, "document.forms.search_two.search_query.select(); document.forms.search_two.search_query.focus();");
+						layout.startHTML(this, req, resp, html, "document.forms.search_two.search_query.select(); document.forms.search_two.search_query.focus();");
 
 						boolean entire_site = searchTarget.equals("entire_site");
 						WebPage target = entire_site ? getRootPage() : this;
@@ -772,10 +763,12 @@ abstract public class WebPage extends ErrorReportingServlet {
 							//Strings.sortObjectsAndFloatDescending(results, 1, 5);
 						}
 
-						layout.printSearchOutput(this, out, req, resp, query, entire_site, results, words);
+						layout.printSearchOutput(this, html, req, resp, query, entire_site, results, words);
 
-						layout.endHTML(this, req, resp, out);
-						out.flush();
+						layout.endHTML(this, req, resp, html);
+					} finally {
+						html.out.flush();
+						html.out.close();
 					}
 				} finally {
 					DoctypeEE.set(req, oldDoctype);
@@ -789,20 +782,20 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
-	 * Prepares the request then invokes {@link #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter)}.
+	 * Prepares the request then invokes {@link #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Html)}.
 	 * To not have these steps automatically applied, override this method.
 	 * By the time this method is called, security checks, authentication, and redirects have been done.
 	 * <ol>
 	 *   <li>Sets the {@linkplain Serialization serialization}.</li>
 	 *   <li>Sets the {@linkplain Doctype DOCTYPE}.</li>
-	 *   <li>Gets the {@linkplain #getHTMLChainWriter(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse) response writer}.</li>
-	 *   <li>Invokes {@link #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter)}.</li>
+	 *   <li>Gets the {@linkplain #getHTML(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse) response writer}.</li>
+	 *   <li>Invokes {@link #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Html)}.</li>
 	 * </ol>
 	 *
 	 * @see #doPostWithSearch(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 * @see #getSerialization(com.aoindustries.website.framework.WebSiteRequest)
 	 * @see #getDoctype(com.aoindustries.website.framework.WebSiteRequest)
-	 * @see #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter)
+	 * @see #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Html)
 	 */
 	public void doPost(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
 		Serialization serialization = getSerialization(req);
@@ -810,9 +803,12 @@ abstract public class WebPage extends ErrorReportingServlet {
 		try {
 			Doctype oldDoctype = DoctypeEE.replace(req, getDoctype(req));
 			try {
-				try (ChainWriter out = getHTMLChainWriter(req, resp)) {
-					doPost(req, resp, out);
-					out.flush();
+				Html html = getHTML(req, resp);
+				try {
+					doPost(req, resp, html);
+				} finally {
+					html.out.flush();
+					html.out.close();
 				}
 			} finally {
 				DoctypeEE.set(req, oldDoctype);
@@ -823,49 +819,49 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
-	 * The layout is automatically applied to the page, then {@link #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter, com.aoindustries.website.framework.WebPageLayout)}
+	 * The layout is automatically applied to the page, then {@link #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Html, com.aoindustries.website.framework.WebPageLayout)}
 	 * is called.  To not have the layout automatically applied, override this method.
 	 * By the time this method is called, security checks, authentication, redirects, doctype, and serialization have been done.
 	 *
 	 * @param  req   the {@link WebSiteRequest} for this request, or {@code null} when searching
 	 * @param  resp  the {@link HttpServletResponse} for this request, or {@code null} when searching
-	 * @param  out   the {@link ChainWriter} to send output to
+	 * @param  html  the {@link Html} to send output to
 	 *
 	 * @see #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 * @see #getWebPageLayout(com.aoindustries.website.framework.WebSiteRequest)
-	 * @see WebPageLayout#startHTML(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter, java.lang.String)
-	 * @see #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter, com.aoindustries.website.framework.WebPageLayout)
-	 * @see WebPageLayout#endHTML(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter)
+	 * @see WebPageLayout#startHTML(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Html, java.lang.String)
+	 * @see #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Html, com.aoindustries.website.framework.WebPageLayout)
+	 * @see WebPageLayout#endHTML(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Html)
 	 */
 	public void doPost(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		ChainWriter out
+		Html html
 	) throws ServletException, IOException, SQLException {
 		WebPageLayout layout = getWebPageLayout(req);
-		layout.startHTML(this, req, resp, out, null);
-		doPost(req, resp, out, layout);
-		layout.endHTML(this, req, resp, out);
+		layout.startHTML(this, req, resp, html, null);
+		doPost(req, resp, html, layout);
+		layout.endHTML(this, req, resp, html);
 	}
 
 	/**
-	 * By default, a POST request just calls {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter, com.aoindustries.website.framework.WebPageLayout)}.
+	 * By default, a POST request just calls {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Html, com.aoindustries.website.framework.WebPageLayout)}.
 	 *
 	 * @param  req     the current {@link WebSiteRequest}
 	 * @param  resp    the {@link HttpServletResponse} for this request
-	 * @param  out     the {@link ChainWriter} to send output to
+	 * @param  html    the {@link Html} to send output to
 	 * @param  layout  the {@link WebPageLayout} that has been applied
 	 *
-	 * @see #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter)
-	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.encoding.ChainWriter, com.aoindustries.website.framework.WebPageLayout)
+	 * @see #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Html)
+	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Html, com.aoindustries.website.framework.WebPageLayout)
 	 */
 	public void doPost(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		ChainWriter out,
+		Html html,
 		WebPageLayout layout
 	) throws ServletException, IOException, SQLException {
-		doGet(req, resp, out, layout);
+		doGet(req, resp, html, layout);
 	}
 
 	// </editor-fold>
@@ -949,6 +945,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 
 	/**
 	 * Gets the description of this page.  By default, the description of the parent page is used.
+	 * May not contain HTML.
 	 */
 	public String getDescription() throws IOException, SQLException {
 		return getParent().getDescription();
@@ -1400,19 +1397,18 @@ abstract public class WebPage extends ErrorReportingServlet {
 				// Get the HTML content
 				bytes.reset();
 				// TODO: EncodingContext based on page settings, or XML always for search?
-				try (ChainWriter out = new ChainWriter(null, bytes)) {
-					// Isolate page-scope registry
-					Registry oldPageRegistry = RegistryEE.Page.get(req);
-					try {
-						// TODO: Set serialization based on page settings, or XML always for search?
-						// TODO: Set doctype based on page settings?
-						RegistryEE.Page.set(req, new Registry());
-						doGet(null, null, out);
-					} finally {
-						RegistryEE.Page.set(req, oldPageRegistry);
-					}
-					out.flush();
+				Html html = new Html(new OutputStreamWriter(bytes, Html.ENCODING));
+				// Isolate page-scope registry
+				Registry oldPageRegistry = RegistryEE.Page.get(req);
+				try {
+					// TODO: Set serialization based on page settings, or XML always for search?
+					// TODO: Set doctype based on page settings?
+					RegistryEE.Page.set(req, new Registry());
+					doGet(null, null, html);
+				} finally {
+					RegistryEE.Page.set(req, oldPageRegistry);
 				}
+				html.out.flush();
 				byte[] content = bytes.getInternalByteArray();
 				size = bytes.size();
 
@@ -1460,21 +1456,18 @@ abstract public class WebPage extends ErrorReportingServlet {
 							// Get the HTML content
 							bytes.reset();
 							// TODO: EncodingContext based on page settings, or XML always for search?
-							try (ChainWriter out = new ChainWriter(null, bytes)) {
-								// Isolate page-scope registry
-								Registry oldPageRegistry = RegistryEE.Page.get(req);
-								try {
-									RegistryEE.Page.set(req, new Registry());
-									// TODO: Set serialization based on page settings, or XML always for search?
-									// TODO: Set doctype based on page settings?
-									doGet(null, null, out);
-								} finally {
-									RegistryEE.Page.set(req, oldPageRegistry);
-								}
-								out.flush();
-							} catch(NullPointerException err) {
-								logger.log(Level.WARNING, null, err);
+							Html html = new Html(new OutputStreamWriter(bytes, Html.ENCODING));
+							// Isolate page-scope registry
+							Registry oldPageRegistry = RegistryEE.Page.get(req);
+							try {
+								RegistryEE.Page.set(req, new Registry());
+								// TODO: Set serialization based on page settings, or XML always for search?
+								// TODO: Set doctype based on page settings?
+								doGet(null, null, html);
+							} finally {
+								RegistryEE.Page.set(req, oldPageRegistry);
 							}
+							html.out.flush();
 							byte[] bcontent = bytes.getInternalByteArray();
 							size = bytes.size();
 							String content = new String(bcontent, 0, size);
@@ -1610,6 +1603,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 
 	/**
 	 * Gets the copyright information for this page.  Defaults to the copyright of the parent page.
+	 * May not contain HTML.
 	 *
 	 * // TODO: Use dcterms:
 	 *          http://stackoverflow.com/questions/6665312/is-the-copyright-meta-tag-valid-in-html5

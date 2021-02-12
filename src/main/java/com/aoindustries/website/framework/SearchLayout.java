@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,7 +22,7 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.encoding.ChainWriter;
+import com.aoindustries.html.Html;
 import com.aoindustries.lang.EmptyArrays;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
@@ -50,7 +50,7 @@ public class SearchLayout extends WebPageLayout {
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		ChainWriter out,
+		Html html,
 		String onload
 	) {
 		// Do nothing
@@ -61,69 +61,69 @@ public class SearchLayout extends WebPageLayout {
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		ChainWriter out
+		Html html
 	) {
 		// Do nothing
 	}
 
 	@Override
-	final public void printSearchOutput(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) {
+	final public void printSearchOutput(WebPage page, Html html, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) {
 		throw new AssertionError("This should never be called within a search sub-request");
 	}
 
 	@Override
-	public void startContent(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) {
+	public void startContent(Html html, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) {
 		// Do nothing
 	}
 	
 	@Override
-	public void printContentHorizontalDivider(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int[] colspansAndDirections, boolean endsInternal) {
+	public void printContentHorizontalDivider(Html html, WebSiteRequest req, HttpServletResponse resp, int[] colspansAndDirections, boolean endsInternal) {
 		// Do nothing
 	}
 
 	@Override
-	public void printContentTitle(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) {
+	public void printContentTitle(Html html, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) {
 		// Do nothing
 		// TODO: Should we write the title, encoded?  Or is the title used directly by the search indexing anyway?
 	}
 
 	@Override
-	public void startContentLine(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int colspan, String align, String width) {
+	public void startContentLine(Html html, WebSiteRequest req, HttpServletResponse resp, int colspan, String align, String width) {
 		// Do nothing
 	}
 
 	@Override
-	public void printContentVerticalDivider(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align, String width) {
+	public void printContentVerticalDivider(Html html, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align, String width) {
 		// Do nothing
 	}
 
 	@Override
-	public void endContentLine(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int rowspan, boolean endsInternal) {
+	public void endContentLine(Html html, WebSiteRequest req, HttpServletResponse resp, int rowspan, boolean endsInternal) {
 		// Do nothing
 	}
 
 	@Override
-	public void endContent(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) {
+	public void endContent(WebPage page, Html html, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) {
 		// Do nothing
 	}
 
 	@Override
-	public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, String align, String width, boolean nowrap) {
+	public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, Html html, String align, String width, boolean nowrap) {
 		// Do nothing
 	}
 
 	@Override
-	public void endLightArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out) {
+	public void endLightArea(WebSiteRequest req, HttpServletResponse resp, Html html) {
 		// Do nothing
 	}
 
 	@Override
-	public void beginWhiteArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, String align, String width, boolean nowrap) {
+	public void beginWhiteArea(WebSiteRequest req, HttpServletResponse resp, Html html, String align, String width, boolean nowrap) {
 		// Do nothing
 	}
 
 	@Override
-	public void endWhiteArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out) {
+	public void endWhiteArea(WebSiteRequest req, HttpServletResponse resp, Html html) {
 		// Do nothing
 	}
 
@@ -133,12 +133,12 @@ public class SearchLayout extends WebPageLayout {
 	}
 
 	@Override
-	final public boolean printWebPageLayoutSelector(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp) {
+	final public boolean printWebPageLayoutSelector(WebPage page, Html html, WebSiteRequest req, HttpServletResponse resp) {
 		throw new AssertionError("This should never be called within a search sub-request");
 	}
 
 	@Override
-	protected void printJavaScriptIncludes(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, WebPage page) {
+	protected void printJavaScriptIncludes(WebSiteRequest req, HttpServletResponse resp, Html html, WebPage page) {
 		// Do nothing
 	}
 }

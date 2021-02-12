@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2015, 2016, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2015, 2016, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,7 +22,8 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.encoding.ChainWriter;
+import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
+import com.aoindustries.html.Html;
 import com.aoindustries.io.IoUtils;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,8 +57,8 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 	}
 
 	@Override
-	public void printStream(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws IOException, SQLException {
-		printHTMLStream(out, req, resp, getWebPageLayout(req), in, "aoLightLink");
+	public void printStream(Html html, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws IOException, SQLException {
+		printHTMLStream(html, req, resp, getWebPageLayout(req), in, "aoLightLink");
 	}
 
 	/**
@@ -79,49 +80,53 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 	 * Prints HTML content, parsing for special <code>@</code> tags.  Types of tags include:
 	 * <ul>
 	 *   <li>@URL(classname)    Loads a WebPage of the given class and builds a URL to it</li>
-	 *   <li>@BEGIN_LIGHT_AREA  Calls <code>layout.beginLightArea(ChainWriter)</code></li>
-	 *   <li>@END_LIGHT_AREA    Calls <code>layout.endLightArea(ChainWriter)</code></li>
-	 *   <li>@END_CONTENT_LINE  Calls <code>layout.endContentLine</code></li>
-	 *   <li>@PRINT_CONTENT_HORIZONTAL_DIVIDER  Calls <code>layout.printContentHorizontalDivider</code></li>
-	 *   <li>@START_CONTENT_LINE  Calls <code>layout.startContentLine</code></li>
+	 *   <li>@BEGIN_LIGHT_AREA  Calls {@link WebPageLayout#beginLightArea(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Html)}</li>
+	 *   <li>@END_LIGHT_AREA    Calls {@link WebPageLayout#endLightArea(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Html)}</li>
+	 *   <li>@END_CONTENT_LINE  Calls {@link WebPageLayout#endContentLine(com.aoindustries.html.Html, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, int, boolean)}</li>
+	 *   <li>@PRINT_CONTENT_HORIZONTAL_DIVIDER  Calls {@link WebPageLayout#printContentHorizontalDivider(com.aoindustries.html.Html, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, int, boolean)}</li>
+	 *   <li>@START_CONTENT_LINE  Calls {@link WebPageLayout#startContentLine(com.aoindustries.html.Html, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, int, java.lang.String, java.lang.String)}</li>
 	 *   <li>@LINK_CLASS        The preferred link class for this element</li>
 	 * </ul>
 	 */
-	public static void printHTML(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, String html, String linkClass) throws IOException, SQLException {
-		if(req==null) out.print(html);
-		else {
-			int len=html.length();
+	public static void printHTML(Html html, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, String htmlContent, String linkClass) throws IOException, SQLException {
+		if(req == null) {
+			html.out.write(htmlContent);
+		} else {
+			int len=htmlContent.length();
 			int pos=0;
 			while(pos<len) {
-				char ch=html.charAt(pos++);
+				char ch=htmlContent.charAt(pos++);
 				if(ch=='@') {
-					if((pos+4)<len && html.substring(pos, pos+4).equalsIgnoreCase("URL(")) {
-						int endPos=html.indexOf(')', pos+4);
+					// TODO: regionsMatches would be faster than repeated substring
+					if((pos+4)<len && htmlContent.substring(pos, pos+4).equalsIgnoreCase("URL(")) {
+						int endPos=htmlContent.indexOf(')', pos+4);
 						if(endPos==-1) throw new IllegalArgumentException("Unable to find closing parenthesis for @URL( substitution, pos="+pos);
-						String className=html.substring(pos+4, endPos);
-						out.textInXmlAttribute(req.getEncodedURLForClass(className, resp));
+						String className=htmlContent.substring(pos+4, endPos);
+						encodeTextInXhtmlAttribute(req.getEncodedURLForClass(className, resp), html.out);
 						pos=endPos+1;
-					} else if((pos+16)<len && html.substring(pos, pos+16).equalsIgnoreCase("BEGIN_LIGHT_AREA")) {
-						layout.beginLightArea(req, resp, out);
+					} else if((pos+16)<len && htmlContent.substring(pos, pos+16).equalsIgnoreCase("BEGIN_LIGHT_AREA")) {
+						layout.beginLightArea(req, resp, html);
 						pos+=16;
-					} else if((pos+14)<len && html.substring(pos, pos+14).equalsIgnoreCase("END_LIGHT_AREA")) {
-						layout.endLightArea(req, resp, out);
+					} else if((pos+14)<len && htmlContent.substring(pos, pos+14).equalsIgnoreCase("END_LIGHT_AREA")) {
+						layout.endLightArea(req, resp, html);
 						pos+=14;
-					} else if((pos+16)<len && html.substring(pos, pos+16).equalsIgnoreCase("END_CONTENT_LINE")) {
-						layout.endContentLine(out, req, resp, 1, false);
+					} else if((pos+16)<len && htmlContent.substring(pos, pos+16).equalsIgnoreCase("END_CONTENT_LINE")) {
+						layout.endContentLine(html, req, resp, 1, false);
 						pos+=16;
-					} else if((pos+32)<len && html.substring(pos, pos+32).equalsIgnoreCase("PRINT_CONTENT_HORIZONTAL_DIVIDER")) {
-						layout.printContentHorizontalDivider(out, req, resp, 1, false);
+					} else if((pos+32)<len && htmlContent.substring(pos, pos+32).equalsIgnoreCase("PRINT_CONTENT_HORIZONTAL_DIVIDER")) {
+						layout.printContentHorizontalDivider(html, req, resp, 1, false);
 						pos+=32;
-					} else if((pos+18)<len && html.substring(pos, pos+18).equalsIgnoreCase("START_CONTENT_LINE")) {
-						layout.startContentLine(out, req, resp, 1, null, null);
+					} else if((pos+18)<len && htmlContent.substring(pos, pos+18).equalsIgnoreCase("START_CONTENT_LINE")) {
+						layout.startContentLine(html, req, resp, 1, null, null);
 						pos+=18;
-					} else if((pos+10)<len && html.substring(pos, pos+10).equalsIgnoreCase("LINK_CLASS")) {
-						out.print(linkClass==null?"aoLightLink":linkClass);
+					} else if((pos+10)<len && htmlContent.substring(pos, pos+10).equalsIgnoreCase("LINK_CLASS")) {
+						html.out.write(linkClass==null?"aoLightLink":linkClass);
 						pos+=10;
-					} else out.print('@');
+					} else {
+						html.out.write('@');
+					}
 				} else {
-					out.print(ch);
+					html.out.write(ch);
 				}
 			}
 		}
@@ -140,11 +145,11 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 	/**
 	 * @see  #printHTML
 	 */
-	public static void printHTMLStream(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, InputStream in, String linkClass) throws IOException, SQLException {
+	public static void printHTMLStream(Html html, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, InputStream in, String linkClass) throws IOException, SQLException {
 		if(in==null) throw new NullPointerException("in is null");
 		Reader reader = new InputStreamReader(in);
 		if(req==null) {
-			IoUtils.copy(reader, out);
+			IoUtils.copy(reader, html.out);
 		} else {
 			StringBuilder buffer=null;
 			int ch;
@@ -157,7 +162,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 					while((ch=reader.read())!=-1) {
 						// If @ found, print buffer and reset for next tag
 						if(ch=='@') {
-							out.print(buffer.toString());
+							html.out.write(buffer.toString());
 							buffer.setLength(0);
 							buffer.append('@');
 						} else {
@@ -169,18 +174,18 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 								String tag=tags[c];
 								if(tag.length()>=tagPart.length()) {
 									if(tags[c].equalsIgnoreCase(tagPart)) {
-										if(c==0) layout.printContentHorizontalDivider(out, req, resp, 1, false);
-										else if(c==1) layout.startContentLine(out, req, resp, 1, null, null);
-										else if(c==2) layout.beginLightArea(req, resp, out);
-										else if(c==3) layout.endContentLine(out, req, resp, 1, false);
-										else if(c==4) layout.endLightArea(req, resp, out);
-										else if(c==5) out.print(linkClass==null?"aoLightLink":linkClass);
+										if(c==0) layout.printContentHorizontalDivider(html, req, resp, 1, false);
+										else if(c==1) layout.startContentLine(html, req, resp, 1, null, null);
+										else if(c==2) layout.beginLightArea(req, resp, html);
+										else if(c==3) layout.endContentLine(html, req, resp, 1, false);
+										else if(c==4) layout.endLightArea(req, resp, html);
+										else if(c==5) html.out.write(linkClass == null ? "aoLightLink" : linkClass);
 										else if(c==6) {
 											// Read up to a ')'
 											while((ch=reader.read())!=-1) {
 												if(ch==')') {
 													String className=buffer.toString().substring(5, buffer.length());
-													out.textInXmlAttribute(req.getEncodedURLForClass(className, resp));
+													encodeTextInXhtmlAttribute(req.getEncodedURLForClass(className, resp), html.out);
 													buffer.setLength(0);
 													break;
 												} else buffer.append((char)ch);
@@ -199,13 +204,15 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 								}
 							}
 							if(!found) {
-								out.print(tagPart);
+								html.out.write(tagPart);
 								buffer.setLength(0);
 								break;
 							}
 						}
 					}
-				} else out.print((char)ch);
+				} else {
+					html.out.write((char)ch);
+				}
 			}
 		}
 	}

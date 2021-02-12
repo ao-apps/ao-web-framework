@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2007-2009, 2015, 2016, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2007-2009, 2015, 2016, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,7 +22,7 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.encoding.ChainWriter;
+import com.aoindustries.html.Html;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.servlet.ServletContext;
@@ -81,7 +81,7 @@ public class RedirectWebPage extends WebPage {
 	final public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		ChainWriter out
+		Html html
 	) throws ServletException, IOException, SQLException {
 		// resp null during search
 		if(resp != null) resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
@@ -94,7 +94,7 @@ public class RedirectWebPage extends WebPage {
 	final public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		ChainWriter out,
+		Html html,
 		WebPageLayout layout
 	) throws ServletException, IOException, SQLException {
 		// resp null during search
@@ -108,7 +108,7 @@ public class RedirectWebPage extends WebPage {
 	final public void doPost(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		ChainWriter out
+		Html html
 	) throws ServletException, IOException, SQLException {
 		resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 	}
@@ -120,7 +120,7 @@ public class RedirectWebPage extends WebPage {
 	final public void doPost(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		ChainWriter out,
+		Html html,
 		WebPageLayout layout
 	) throws ServletException, IOException, SQLException {
 		resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);

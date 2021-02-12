@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2015, 2016, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2015, 2016, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -23,7 +23,8 @@
 package com.aoindustries.website.framework;
 
 import com.aoindustries.collections.SortedArrayList;
-import com.aoindustries.encoding.ChainWriter;
+import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
+import com.aoindustries.html.Html;
 import com.aoindustries.io.AoByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -56,15 +57,15 @@ abstract public class DumpURLs extends WebPage {
 	public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		ChainWriter out,
+		Html html,
 		WebPageLayout layout
 	) throws IOException, SQLException {
-		out.print("The following is a list of all unique servlet URLs in the site and may be used to add this site to\n"
+		html.out.write("The following is a list of all unique servlet URLs in the site and may be used to add this site to\n"
 				+ "search engines:\n"
 				+ "<pre>\n");
 		WebPage page = getRootPage();
-		printURLs(req, resp, out, page, new SortedArrayList<>());
-		out.print("</pre>\n");
+		printURLs(req, resp, html, page, new SortedArrayList<>());
+		html.out.write("</pre>\n");
 	}
 
 	@Override
@@ -110,16 +111,20 @@ abstract public class DumpURLs extends WebPage {
 		return "List URLs";
 	}
 
-	private void printURLs(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, WebPage page, List<WebPage> finishedPages) throws IOException, SQLException {
+	private void printURLs(WebSiteRequest req, HttpServletResponse resp, Html html, WebPage page, List<WebPage> finishedPages) throws IOException, SQLException {
 		if(!finishedPages.contains(page)) {
-			out.print("<a class='aoLightLink' href='").textInXmlAttribute(req.getEncodedURL(page, resp)).print("'>").textInXhtml(req.getURL(page)).print("</a>\n");
+			html.out.write("<a class='aoLightLink' href='");
+			encodeTextInXhtmlAttribute(req.getEncodedURL(page, resp), html.out);
+			html.out.write("'>");
+			html.text(req.getURL(page));
+			html.out.write("</a>\n");
 
 			finishedPages.add(page);
 
 			WebPage[] pages = page.getCachedPages(req, resp);
 			int len = pages.length;
 			for (int c = 0; c < len; c++) {
-				printURLs(req, resp, out, pages[c], finishedPages);
+				printURLs(req, resp, html, pages[c], finishedPages);
 			}
 		}
 	}

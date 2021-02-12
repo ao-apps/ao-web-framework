@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2003-2013, 2015, 2016, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2015, 2016, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -95,56 +95,55 @@ public class TextOnlyLayout extends WebPageLayout {
 	}
 
 	@Override
-	// TODO: Use Html instead of ChainWriter for layouts
-	public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, String align, String width, boolean nowrap) throws IOException {
+	public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, Html html, String align, String width, boolean nowrap) throws IOException {
 		align = trimNullIfEmpty(align);
 		width = trimNullIfEmpty(width);
-		out.print("<table style=\"border:5px outset #a0a0a0");
+		html.out.write("<table style=\"border:5px outset #a0a0a0");
 		if(align != null) {
-			out.append(";text-align:");
-			encodeTextInXhtmlAttribute(align, out);
+			html.out.write(";text-align:");
+			encodeTextInXhtmlAttribute(align, html.out);
 		}
 		if(width != null) {
-			out.append(';');
-			appendWidthStyle(width, out);
+			html.out.write(';');
+			appendWidthStyle(width, html.out);
 		}
-		out.print("\" cellpadding=\"0\" cellspacing=\"0\">\n"
+		html.out.write("\" cellpadding=\"0\" cellspacing=\"0\">\n"
 				+ "  <tr>\n"
 				+ "    <td class=\"aoLightRow\" style=\"padding:4px");
-		if(nowrap) out.append(";white-space:nowrap");
-		out.append("\">");
+		if(nowrap) html.out.write(";white-space:nowrap");
+		html.out.write("\">");
 	}
 
 	@Override
-	public void endLightArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out) {
-	out.print("</td>\n"
+	public void endLightArea(WebSiteRequest req, HttpServletResponse resp, Html html) throws IOException {
+		html.out.write("</td>\n"
 				+ "  </tr>\n"
 				+ "</table>\n");
 	}
 
 	@Override
-	public void beginWhiteArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, String align, String width, boolean nowrap) throws IOException {
+	public void beginWhiteArea(WebSiteRequest req, HttpServletResponse resp, Html html, String align, String width, boolean nowrap) throws IOException {
 		align = trimNullIfEmpty(align);
 		width = trimNullIfEmpty(width);
-		out.print("<table style=\"border:5px outset #a0a0a0");
+		html.out.write("<table style=\"border:5px outset #a0a0a0");
 		if(align != null) {
-			out.append(";text-align:");
-			encodeTextInXhtmlAttribute(align, out);
+			html.out.write(";text-align:");
+			encodeTextInXhtmlAttribute(align, html.out);
 		}
 		if(width != null) {
-			out.append(';');
-			appendWidthStyle(width, out);
+			html.out.write(';');
+			appendWidthStyle(width, html.out);
 		}
-		out.print("\" cellpadding=\"0\" cellspacing=\"0\">\n"
+		html.out.write("\" cellpadding=\"0\" cellspacing=\"0\">\n"
 				+ "  <tr>\n"
 				+ "    <td class=\"aoWhiteRow\" style=\"background-color:white;padding:4px");
-		if(nowrap) out.append(";white-space:nowrap");
-		out.append("\">");
+		if(nowrap) html.out.write(";white-space:nowrap");
+		html.out.write("\">");
 	}
 
 	@Override
-	public void endWhiteArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out) {
-		out.print("</td>\n"
+	public void endWhiteArea(WebSiteRequest req, HttpServletResponse resp, Html html) throws IOException {
+		html.out.write("</td>\n"
 				+ "  </tr>\n"
 				+ "</table>\n");
 	}
@@ -165,7 +164,7 @@ public class TextOnlyLayout extends WebPageLayout {
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		ChainWriter out,
+		Html html,
 		String onload
 	) throws ServletException, IOException, SQLException {
 		boolean isOkResponseStatus;
@@ -176,28 +175,27 @@ public class TextOnlyLayout extends WebPageLayout {
 		ServletContext servletContext = req.getServletContext();
 		String trackingId = getGoogleAnalyticsNewTrackingCode(servletContext);
 		// Write doctype
-		Html html = page.getHtml(req, resp, out);
 		html.xmlDeclaration(resp.getCharacterEncoding());
 		html.doctype();
 		// Write <html>
-		HtmlTag.beginHtmlTag(resp, out, html.serialization, (GlobalAttributes)null); // TODO: Move to Html class
-		out.write("\n"
+		HtmlTag.beginHtmlTag(resp, html.out, html.serialization, (GlobalAttributes)null); // TODO: Move to Html class
+		html.out.write("\n"
 				+ "  <head>\n");
 		// If this is not the default layout, then robots noindex
 		if(!isOkResponseStatus || !getName().equals(getLayoutChoices()[0])) {
-			out.print("    ");
+			html.out.write("    ");
 			html.meta(Meta.Name.ROBOTS).content("noindex, nofollow").__().nl();
 		}
 		if(html.doctype == Doctype.HTML5) {
-			out.print("    ");
+			html.out.write("    ");
 			html.meta().charset(resp.getCharacterEncoding()).__().nl();
 		} else {
-			out.print("    ");
+			html.out.write("    ");
 			html.meta(Meta.HttpEquiv.CONTENT_TYPE).content(resp.getContentType()).__().nl();
 			// Default style language
-			out.print("    ");
+			html.out.write("    ");
 			html.meta(Meta.HttpEquiv.CONTENT_STYLE_TYPE).content(com.aoindustries.html.Style.Type.TEXT_CSS).__().nl();
-			out.print("    ");
+			html.out.write("    ");
 			html.meta(Meta.HttpEquiv.CONTENT_SCRIPT_TYPE).content(Script.Type.TEXT_JAVASCRIPT).__().nl();
 		}
 		if(html.doctype == Doctype.HTML5) {
@@ -206,29 +204,29 @@ public class TextOnlyLayout extends WebPageLayout {
 			GoogleAnalytics.writeAnalyticsJs(html, trackingId);
 		}
 		// Mobile support
-		out.print("    ");
+		html.out.write("    ");
 		html.meta(Meta.Name.VIEWPORT).content("width=device-width, initial-scale=1.0").__().nl();
-		out.print("    ");
+		html.out.write("    ");
 		// TODO: This is probably only appropriate for single-page applications!
 		// TODO: See https://medium.com/@firt/dont-use-ios-web-app-meta-tag-irresponsibly-in-your-progressive-web-apps-85d70f4438cb
 		html.meta(Meta.Name.APPLE_MOBILE_WEB_APP_CAPABLE).content("yes").__().nl();
-		out.print("    ");
+		html.out.write("    ");
 		html.meta(Meta.Name.APPLE_MOBILE_WEB_APP_STATUS_BAR_STYLE).content("black").__().nl();
 		// Authors
 		// TODO: dcterms copyright
 		String author = page.getAuthor();
 		if(author != null && (author = author.trim()).length() > 0) {
-			out.print("    ");
+			html.out.write("    ");
 			html.meta(Meta.Name.AUTHOR).content(author).__().nl();
 		}
 		String authorHref = page.getAuthorHref(req, resp);
 		if(authorHref != null && (authorHref = authorHref.trim()).length() > 0) {
-			out.print("    ");
+			html.out.write("    ");
 			html.link(Link.Rel.AUTHOR).href(authorHref).__().nl();
 		}
-		out.print("    <title>");
+		html.out.write("    <title>");
 		// No more page stack, just show current page only
-		out.textInXhtml(page.getTitle());
+		html.text(page.getTitle());
 		/*
 		List<WebPage> parents=new ArrayList<>();
 		WebPage parent=page;
@@ -237,26 +235,26 @@ public class TextOnlyLayout extends WebPageLayout {
 			parent=parent.getParent();
 		}
 		for(int c=(parents.size()-1);c>=0;c--) {
-			if(c<(parents.size()-1)) out.print(" - ");
+			if(c<(parents.size()-1)) html.out.write(" - ");
 			parent=parents.get(c);
-			out.encodeXhtml(parent.getTitle());
+			encodeTextInXhtml(parent.getTitle(), html.out); // Encode directly, since doesn't support Markup
 		}
 		*/
-		out.print("</title>\n");
+		html.out.write("</title>\n");
 		String description = page.getDescription();
 		if(description != null && (description = description.trim()).length() > 0) {
-			out.print("    ");
+			html.out.write("    ");
 			html.meta(Meta.Name.DESCRIPTION).content(description).__().nl();
 		}
 		String keywords = page.getKeywords();
 		if(keywords != null && (keywords = keywords.trim()).length() > 0) {
-			out.print("    ");
+			html.out.write("    ");
 			html.meta(Meta.Name.KEYWORDS).content(keywords).__().nl();
 		}
 		// TODO: Review HTML 4/HTML 5 differences from here
 		String copyright = page.getCopyright(req, resp, page);
 		if(copyright!=null && copyright.length()>0) {
-			out.print("    ");
+			html.out.write("    ");
 			// TODO: Dublin Core: https://stackoverflow.com/questions/6665312/is-the-copyright-meta-tag-valid-in-html5
 			html.meta().name("copyright").content(copyright).__().nl();
 		}
@@ -269,7 +267,7 @@ public class TextOnlyLayout extends WebPageLayout {
 		if(pageRegistry == null) throw new ServletException("page-scope registry not found.  WebPage.service(ServletRequest,ServletResponse) invoked?");
 		page.configureResources(servletContext, req, resp, this, pageRegistry);
 		// Render links
-		out.print("    ");
+		html.out.write("    ");
 		Renderer.get(servletContext).renderStyles(
 			req,
 			resp,
@@ -284,71 +282,97 @@ public class TextOnlyLayout extends WebPageLayout {
 		html.nl();
 
 		html.script().src(req.getEncodedURLForPath("/global.js", null, false, resp)).__().nl();
-		printJavaScriptIncludes(req, resp, out, page);
+		printJavaScriptIncludes(req, resp, html, page);
 		// TODO: Canonical?
-		out.print("  </head>\n"
+		html.out.write("  </head>\n"
 				+ "  <body\n");
-		int color=getBackgroundColor(req);
-		if(color!=-1) out.print("    bgcolor=\"").writeHtmlColor(color).print("\"\n");
-		color=getTextColor(req);
-		if(color!=-1) out.print("    text=\"").writeHtmlColor(color).print("\"\n");
-		color=getLinkColor(req);
-		if(color!=-1) out.print("    link=\"").writeHtmlColor(color).print("\"\n");
-		color=getVisitedLinkColor(req);
-		if(color!=-1) out.print("    vlink=\"").writeHtmlColor(color).print("\"\n");
-		color=getActiveLinkColor(req);
-		if(color!=-1) out.print("    alink=\"").writeHtmlColor(color).print("\"\n");
+		int color = getBackgroundColor(req);
+		if(color != -1) {
+			html.out.write("    bgcolor=\"");
+			ChainWriter.writeHtmlColor(color, html.out);
+			html.out.write("\"\n");
+		}
+		color = getTextColor(req);
+		if(color != -1) {
+			html.out.write("    text=\"");
+			ChainWriter.writeHtmlColor(color, html.out);
+			html.out.write("\"\n");
+		}
+		color = getLinkColor(req);
+		if(color != -1) {
+			html.out.write("    link=\"");
+			ChainWriter.writeHtmlColor(color, html.out);
+			html.out.write("\"\n");
+		}
+		color = getVisitedLinkColor(req);
+		if(color != -1) {
+			html.out.write("    vlink=\"");
+			ChainWriter.writeHtmlColor(color, html.out);
+			html.out.write("\"\n");
+		}
+		color = getActiveLinkColor(req);
+		if(color != -1) {
+			html.out.write("    alink=\"");
+			ChainWriter.writeHtmlColor(color, html.out);
+			html.out.write("\"\n");
+		}
 		// TODO: These onloads should be merged?
 		if (onload == null) onload = page.getOnloadScript(req);
 		if (onload != null) {
-			out.print("    onload=\"");
-			encodeJavaScriptInXhtmlAttribute(onload, out);
-			out.print("\"\n");
+			html.out.write("    onload=\"");
+			encodeJavaScriptInXhtmlAttribute(onload, html.out);
+			html.out.write("\"\n");
 		}
-		out.print("  >\n"
-				+ "    <table cellspacing=\"10\" cellpadding=\"0\">\n");
-		out.print("      <tr>\n"
+		html.out.write("  >\n"
+				+ "    <table cellspacing=\"10\" cellpadding=\"0\">\n"
+				+ "      <tr>\n"
 				+ "        <td valign=\"top\">\n");
-		printLogo(page, out, req, resp);
+		printLogo(page, html, req, resp);
 		boolean isLoggedIn=req.isLoggedIn();
 		if(isLoggedIn) {
-			out.print("          ");
+			html.out.write("          ");
 			html.hr__().nl();
-			out.print("          Logout: <form style=\"display:inline\" id=\"logout_form\" method=\"post\" action=\"").textInXmlAttribute(req.getEncodedURL(page, resp)).print("\"><div style=\"display:inline\">");
+			html.out.write("          Logout: <form style=\"display:inline\" id=\"logout_form\" method=\"post\" action=\"");
+			encodeTextInXhtmlAttribute(req.getEncodedURL(page, resp), html.out);
+			html.out.write("\"><div style=\"display:inline\">");
 			req.printFormFields(html);
 			html.input.hidden().name("logout_requested").value(true).__();
 			html.input.submit__("Logout");
-			out.print("</div></form>\n");
+			html.out.write("</div></form>\n");
 		} else {
-			out.print("          ");
+			html.out.write("          ");
 			html.hr__().nl();
-			out.print("          Login: <form style=\"display:inline\" id=\"login_form\" method=\"post\" action=\"").textInXmlAttribute(req.getEncodedURL(page, resp)).print("\"><div style=\"display:inline\">");
+			html.out.write("          Login: <form style=\"display:inline\" id=\"login_form\" method=\"post\" action=\"");
+			encodeTextInXhtmlAttribute(req.getEncodedURL(page, resp), html.out);
+			html.out.write("\"><div style=\"display:inline\">");
 			req.printFormFields(html);
 			html.input.hidden().name("login_requested").value(true).__();
 			html.input.submit__("Login");
-			out.print("</div></form>\n");
+			html.out.write("</div></form>\n");
 		}
-		out.print("          ");
+		html.out.write("          ");
 		html.hr__().nl();
-		out.print("          <div style=\"white-space:nowrap\">\n");
-		if(getLayoutChoices().length>=2) out.print("Layout: ");
-		if(printWebPageLayoutSelector(page, out, req, resp)) {
+		html.out.write("          <div style=\"white-space:nowrap\">\n");
+		if(getLayoutChoices().length >= 2) html.text("Layout:").out.write(' ');
+		if(printWebPageLayoutSelector(page, html, req, resp)) {
 			html.br__().nl();
-			out.print("            Search: <form id=\"search_site\" style=\"display:inline\" method=\"post\" action=\"").textInXmlAttribute(req.getEncodedURL(page, resp)).print("\"><div style=\"display:inline\">\n"
+			html.out.write("            "); html.text("Search:"); html.out.write(" <form id=\"search_site\" style=\"display:inline\" method=\"post\" action=\"");
+			encodeTextInXhtmlAttribute(req.getEncodedURL(page, resp), html.out);
+			html.out.write("\"><div style=\"display:inline\">\n"
 				+ "              ");
 			html.input.hidden().name("search_target").value("entire_site").__().nl();
 		}
 		req.printFormFields(html);
-		out.print("              ");
+		html.out.write("              ");
 		html.input.text().name("search_query").size(12).maxlength(255).__().nl();
-		out.print("            </div></form>");
+		html.out.write("            </div></form>");
 		html.br__().nl();
-		out.print("          </div>\n"
+		html.out.write("          </div>\n"
 				+ "          ");
 		html.hr__().nl();
-		out.print("          <b>Current Location</b>");
+		html.out.write("          <b>"); html.text("Current Location"); html.out.write("</b>");
 		html.br__().nl();
-		out.print("          <div style=\"white-space:nowrap\">\n");
+		html.out.write("          <div style=\"white-space:nowrap\">\n");
 		List<WebPage> parents=new ArrayList<>();
 		//parents.clear();
 		WebPage parent=page;
@@ -358,19 +382,23 @@ public class TextOnlyLayout extends WebPageLayout {
 		}
 		for(int c=(parents.size()-1);c>=0;c--) {
 			parent=parents.get(c);
-			String navAlt=parent.getNavImageAlt(req);
+			String navAlt = parent.getNavImageAlt(req);
 			String navSuffix=parent.getNavImageSuffix(req);
-			out.print("            <a href=\"").textInXmlAttribute(req.getEncodedURL(parent, resp)).print("\">").textInXhtml(TreePage.replaceHTML(navAlt));
-			if(navSuffix!=null) out.print(" (").textInXhtml(navSuffix).print(')');
-			out.print("</a>");
+			html.out.write("            <a href=\"");
+			encodeTextInXhtmlAttribute(req.getEncodedURL(parent, resp), html.out);
+			html.out.write("\">"); html.text(navAlt);
+			if(navSuffix != null) {
+				html.out.write(" ("); html.text(navSuffix).out.write(')');
+			}
+			html.out.write("</a>");
 			html.br__().nl();
 		}
-		out.print("          </div>\n"
+		html.out.write("          </div>\n"
 				+ "          ");
 		html.hr__().nl();
-		out.print("          <b>Related Pages</b>");
+		html.out.write("          <b>"); html.text("Related Pages"); html.out.write("</b>");
 		html.br__().nl();
-		out.print("          <div style=\"white-space:nowrap\">\n");
+		html.out.write("          <div style=\"white-space:nowrap\">\n");
 		WebPage[] pages = page.getCachedPages(req, resp);
 		parent=page;
 		if(pages.length==0) {
@@ -387,30 +415,36 @@ public class TextOnlyLayout extends WebPageLayout {
 				tpage=pages[c];
 			}
 			if(tpage!=null && (tpage.useNavImage() || tpage.equals(page) || (tpage.includeNavImageAsParent() && tpage.equals(parent)))) {
-				String navAlt=tpage.getNavImageAlt(req);
+				String navAlt = tpage.getNavImageAlt(req);
 				String navSuffix=tpage.getNavImageSuffix(req);
 				//boolean isSelected=tpage.equals(page);
-				out.print("          <a href=\"").textInXmlAttribute(tpage.getNavImageURL(req, resp, null)).print("\">").textInXhtml(TreePage.replaceHTML(navAlt));
-				if(navSuffix!=null) out.print(" (").textInXhtml(navSuffix).print(')');
-				out.print("</a>");
+				html.out.write("          <a href=\"");
+				encodeTextInXhtmlAttribute(tpage.getNavImageURL(req, resp, null), html.out);
+				html.out.write("\">"); html.text(navAlt);
+				if(navSuffix != null) {
+					html.out.write(" ("); html.text(navSuffix).out.write(')');
+				}
+				html.out.write("</a>");
 				html.br__().nl();
 			}
 		}
-		out.print("          </div>\n"
+		html.out.write("          </div>\n"
 				+ "          ");
 		html.hr__().nl();
-		printBelowRelatedPages(out, req);
-		out.print("        </td>\n"
+		printBelowRelatedPages(html, req);
+		html.out.write("        </td>\n"
 				+ "        <td valign=\"top\">");
 		WebPage[] commonPages=getCommonPages(page, req);
 		if(commonPages!=null && commonPages.length>0) {
-			out.print("        <table cellspacing=\"0\" cellpadding=\"0\" style=\"width:100%\"><tr>\n");
+			html.out.write("        <table cellspacing=\"0\" cellpadding=\"0\" style=\"width:100%\"><tr>\n");
 			for(int c=0;c<commonPages.length;c++) {
-				if(c>0) out.print("          <td style=\"text-align:center;width:1%\">|</td>\n");
+				if(c>0) html.out.write("          <td style=\"text-align:center;width:1%\">|</td>\n");
 				WebPage tpage=commonPages[c];
-				out.print("          <td style=\"white-space:nowrap; text-align:center; width:").print((101-commonPages.length)/commonPages.length).print("%\"><a href=\"").textInXmlAttribute(tpage.getNavImageURL(req, resp, null)).print("\">").print(tpage.getNavImageAlt(req)).print("</a></td>\n");
+				html.out.append("          <td style=\"white-space:nowrap; text-align:center; width:").append(((101 - commonPages.length) / commonPages.length) + "%").append("\"><a href=\"");
+				encodeTextInXhtmlAttribute(tpage.getNavImageURL(req, resp, null), html.out);
+				html.out.write("\">"); html.text(tpage.getNavImageAlt(req)); html.out.write("</a></td>\n");
 			}
-			out.print("        </tr></table>\n");
+			html.out.write("        </tr></table>\n");
 		}
 	}
 
@@ -427,38 +461,39 @@ public class TextOnlyLayout extends WebPageLayout {
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		ChainWriter out
+		Html html
 	) throws ServletException, IOException, SQLException {
-		out.print("        </td>\n"
+		html.out.write("        </td>\n"
 				+ "      </tr>\n"
 				+ "    </table>\n"
 				+ "  </body>\n");
-		HtmlTag.endHtmlTag(out);
-		out.write('\n');
+		HtmlTag.endHtmlTag(html.out);
+		html.nl();
 	}
 
 	/**
 	 * Starts the content area of a page.
 	 */
 	@Override
-	public void startContent(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) throws IOException {
-		Html html = new Html(out);
-		out.print("<table cellpadding=\"0\" cellspacing=\"0\"");
+	public void startContent(Html html, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) throws IOException {
+		html.out.write("<table cellpadding=\"0\" cellspacing=\"0\"");
 		if(preferredWidth != -1) {
-			out.print(" style=\"width:").print(preferredWidth).print("px\"");
+			html.out.append(" style=\"width:").append(Integer.toString(preferredWidth)).append("px\"");
 		}
-		out.print(">\n"
+		html.out.write(">\n"
 				+ "  <tr>\n");
 		int totalColumns=0;
 		for(int c=0;c<contentColumnSpans.length;c++) {
 			if(c>0) totalColumns++;
 			totalColumns+=contentColumnSpans[c];
 		}
-		out.print("    <td");
-		if(totalColumns!=1) out.print(" colspan=\"").print(totalColumns).print('"');
-		out.print('>');
+		html.out.write("    <td");
+		if(totalColumns != 1) {
+			html.out.append(" colspan=\"").append(Integer.toString(totalColumns)).append('"');
+		}
+		html.out.write('>');
 		html.hr__();
-		out.print("</td>\n"
+		html.out.write("</td>\n"
 				+ "  </tr>\n");
 	}
 
@@ -466,113 +501,120 @@ public class TextOnlyLayout extends WebPageLayout {
 	 * Prints a horizontal divider of the provided colspan.
 	 */
 	@Override
-	public void printContentHorizontalDivider(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int[] colspansAndDirections, boolean endsInternal) throws IOException {
-		Html html = new Html(out);
-		out.print("  <tr>\n");
+	public void printContentHorizontalDivider(Html html, WebSiteRequest req, HttpServletResponse resp, int[] colspansAndDirections, boolean endsInternal) throws IOException {
+		html.out.write("  <tr>\n");
 		for(int c=0;c<colspansAndDirections.length;c+=2) {
 			int direction=c==0?-1:colspansAndDirections[c-1];
 			if(direction!=-1) {
 				switch(direction) {
 					case UP:
-						out.print("    <td>&#160;</td>\n");
+						html.out.write("    <td>&#160;</td>\n");
 						break;
 					case DOWN:
-						out.print("    <td>&#160;</td>\n");
+						html.out.write("    <td>&#160;</td>\n");
 						break;
 					case UP_AND_DOWN:
-						out.print("    <td>&#160;</td>\n");
+						html.out.write("    <td>&#160;</td>\n");
 						break;
 					default: throw new IllegalArgumentException("Unknown direction: "+direction);
 				}
 			}
 
 			int colspan=colspansAndDirections[c];
-			out.print("    <td");
-			if(colspan!=1) out.print(" colspan=\"").print(colspan).print('"');
-			out.print('>');
+			html.out.write("    <td");
+			if(colspan != 1) {
+				html.out.append(" colspan=\"").append(Integer.toString(colspan)).append('"');
+			}
+			html.out.write('>');
 			html.hr__();
-			out.print("</td>\n");
+			html.out.write("</td>\n");
 		}
-		out.print("  </tr>\n");
+		html.out.write("  </tr>\n");
 	}
 
 	/**
 	 * Prints the title of the page in one row in the content area.
 	 */
 	@Override
-	public void printContentTitle(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) throws IOException {
-		startContentLine(out, req, resp, contentColumns, "center", null);
-		out.print("<h1>").print(title).print("</h1>\n");
-		endContentLine(out, req, resp, 1, false);
+	public void printContentTitle(Html html, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) throws IOException {
+		startContentLine(html, req, resp, contentColumns, "center", null);
+		html.out.write("<h1>"); html.text(title).out.write("</h1>\n");
+		endContentLine(html, req, resp, 1, false);
 	}
 
 	/**
 	 * Starts one line of content with the initial colspan set to the provided colspan.
 	 */
 	@Override
-	public void startContentLine(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int colspan, String align, String width) throws IOException {
+	public void startContentLine(Html html, WebSiteRequest req, HttpServletResponse resp, int colspan, String align, String width) throws IOException {
 		align = trimNullIfEmpty(align);
 		width = trimNullIfEmpty(width);
-		out.print("  <tr>\n"
+		html.out.write("  <tr>\n"
 				+ "    <td");
 		if(align != null || width != null) {
-			out.append(" style=\"");
+			html.out.write(" style=\"");
 			if(align != null) {
-				out.append("text-align:");
-				encodeTextInXhtmlAttribute(align, out);
+				html.out.write("text-align:");
+				encodeTextInXhtmlAttribute(align, html.out);
 			}
 			if(width != null) {
-				if(align != null) out.append(';');
-				appendWidthStyle(width, out);
+				if(align != null) html.out.write(';');
+				appendWidthStyle(width, html.out);
 			}
-			out.append('"');
+			html.out.write('"');
 		}
-		out.print(" valign=\"top\"");
-		if(colspan!=1) out.print(" colspan=\"").print(colspan).print('"');
-		out.print('>');
+		html.out.write(" valign=\"top\"");
+		if(colspan != 1) {
+			html.out.append(" colspan=\"").append(Integer.toString(colspan)).append('"');
+		}
+		html.out.write('>');
 	}
 
 	/**
 	 * Starts one line of content with the initial colspan set to the provided colspan.
 	 */
 	@Override
-	public void printContentVerticalDivider(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align, String width) throws IOException {
+	public void printContentVerticalDivider(Html html, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align, String width) throws IOException {
 		align = trimNullIfEmpty(align);
 		width = trimNullIfEmpty(width);
-		out.print("    </td>\n");
+		html.out.write("    </td>\n");
 		switch(direction) {
 			case UP_AND_DOWN:
-				out.print("    <td>&#160;</td>\n");
+				html.out.write("    <td>&#160;</td>\n");
 				break;
 			case NONE:
 				break;
 			default: throw new IllegalArgumentException("Unknown direction: "+direction);
 		}
-		out.print("    <td");
+		html.out.write("    <td");
 		if(align != null || width != null) {
-			out.append(" style=\"");
+			html.out.write(" style=\"");
 			if(align != null) {
-				out.append("text-align:");
-				encodeTextInXhtmlAttribute(align, out);
+				html.out.write("text-align:");
+				encodeTextInXhtmlAttribute(align, html.out);
 			}
 			if(width != null) {
-				if(align != null) out.append(';');
-				appendWidthStyle(width, out);
+				if(align != null) html.out.write(';');
+				appendWidthStyle(width, html.out);
 			}
-			out.append('"');
+			html.out.write('"');
 		}
-		out.print(" valign=\"top\"");
-		if(colspan!=1) out.print(" colspan=\"").print(colspan).print('"');
-		if(rowspan!=1) out.print(" rowspan=\"").print(rowspan).print('"');
-		out.print('>');
+		html.out.write(" valign=\"top\"");
+		if(colspan != 1) {
+			html.out.append(" colspan=\"").append(Integer.toString(colspan)).append('"');
+		}
+		if(rowspan != 1) {
+			html.out.append(" rowspan=\"").append(Integer.toString(rowspan)).append('"');
+		}
+		html.out.write('>');
 	}
 
 	/**
 	 * Ends one line of content.
 	 */
 	@Override
-	public void endContentLine(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int rowspan, boolean endsInternal) {
-		out.print("    </td>\n"
+	public void endContentLine(Html html, WebSiteRequest req, HttpServletResponse resp, int rowspan, boolean endsInternal) throws IOException {
+		html.out.write("    </td>\n"
 				+ "  </tr>\n");
 	}
 
@@ -580,25 +622,28 @@ public class TextOnlyLayout extends WebPageLayout {
 	 * Ends the content area of a page.
 	 */
 	@Override
-	public void endContent(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) throws IOException, SQLException {
-		Html html = page.getHtml(req, resp, out);
+	public void endContent(WebPage page, Html html, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) throws IOException, SQLException {
 		int totalColumns=0;
 		for(int c=0;c<contentColumnSpans.length;c++) {
 			if(c>0) totalColumns+=1;
 			totalColumns+=contentColumnSpans[c];
 		}
-		out.print("  <tr><td");
-		if(totalColumns!=1) out.print(" colspan=\"").print(totalColumns).print('"');
-		out.print('>');
-		html.hr__();
-		out.print("</td></tr>\n");
-		String copyright=page.getCopyright(req, resp, page);
-		if(copyright!=null && copyright.length()>0) {
-			out.print("  <tr><td");
-			if(totalColumns!=1) out.print(" colspan=\"").print(totalColumns).print('"');
-			out.print(" style=\"text-align:center\"><span style=\"font-size:x-small\">").print(copyright).print("</span></td></tr>\n");
+		html.out.write("  <tr><td");
+		if(totalColumns != 1) {
+			html.out.append(" colspan=\"").append(Integer.toString(totalColumns)).append('"');
 		}
-		out.print("</table>\n");
+		html.out.write('>');
+		html.hr__();
+		html.out.write("</td></tr>\n");
+		String copyright = page.getCopyright(req, resp, page);
+		if(copyright != null && !copyright.isEmpty()) {
+			html.out.write("  <tr><td");
+			if(totalColumns != 1) {
+				html.out.append(" colspan=\"").append(Integer.toString(totalColumns)).append('"');
+			}
+			html.out.write(" style=\"text-align:center\"><span style=\"font-size:x-small\">"); html.text(copyright);html.out.write("</span></td></tr>\n");
+		}
+		html.out.write("</table>\n");
 	}
 
 	@Override
@@ -610,12 +655,12 @@ public class TextOnlyLayout extends WebPageLayout {
 		return null;
 	}
 
-	public void printLogo(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+	public void printLogo(WebPage page, Html html, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 	}
 
 	/**
 	 * Prints content below the related pages area on the left.
 	 */
-	public void printBelowRelatedPages(ChainWriter out, WebSiteRequest req) throws IOException, SQLException {
+	public void printBelowRelatedPages(Html html, WebSiteRequest req) throws IOException, SQLException {
 	}
 }

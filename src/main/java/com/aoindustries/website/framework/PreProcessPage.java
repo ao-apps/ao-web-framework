@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2009, 2015, 2016, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2015, 2016, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,7 +22,7 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.encoding.ChainWriter;
+import com.aoindustries.html.Html;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.servlet.http.HttpServletResponse;
@@ -52,11 +52,11 @@ public abstract class PreProcessPage extends ProcessPage {
 	public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		ChainWriter out,
+		Html html,
 		WebPageLayout layout
 	) throws IOException, SQLException {
-		out.write("<pre>\n"); // all println to write with \n, all print to write?
-		super.doGet(req, resp, out, layout);
-		out.write("</pre>\n");
+		html.out.write("<pre>");
+		super.doGet(req, resp, html, layout);
+		html.out.write("</pre>\n");
 	}
 }

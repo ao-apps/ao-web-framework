@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2009, 2015, 2016, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2015, 2016, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,7 +22,8 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.encoding.ChainWriter;
+import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
+import com.aoindustries.html.Html;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.servlet.http.HttpServletResponse;
@@ -57,23 +58,23 @@ abstract public class AutoListPage extends WebPage {
 	public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		ChainWriter out,
+		Html html,
 		WebPageLayout layout
 	) throws IOException, SQLException {
-		layout.startContent(out, req, resp, 1, getPreferredContentWidth(req));
-		layout.printContentTitle(out, req, resp, this, 1);
-		layout.printContentHorizontalDivider(out, req, resp, 1, false);
-		layout.startContentLine(out, req, resp, 1, null, null);
-		printContentStart(out, req, resp);
+		layout.startContent(html, req, resp, 1, getPreferredContentWidth(req));
+		layout.printContentTitle(html, req, resp, this, 1);
+		layout.printContentHorizontalDivider(html, req, resp, 1, false);
+		layout.startContentLine(html, req, resp, 1, null, null);
+		printContentStart(html, req, resp);
 		try {
-			out.print("<table cellpadding='0' cellspacing='10'>\n"
+			html.out.write("<table cellpadding='0' cellspacing='10'>\n"
 					+ "  <tbody>\n");
-			printPageList(out, req, resp, this, layout);
-			out.print("  </tbody>\n"
+			printPageList(html, req, resp, this, layout);
+			html.out.write("  </tbody>\n"
 					+ "</table>\n");
 		} finally { // TODO: Remove all these finallys?  Or add back to startHtml/endHtml
-			layout.endContentLine(out, req, resp, 1, false);
-			layout.endContent(this, out, req, resp, 1);
+			layout.endContentLine(html, req, resp, 1, false);
+			layout.endContent(this, html, req, resp, 1);
 		}
 	}
 
@@ -82,7 +83,7 @@ abstract public class AutoListPage extends WebPage {
 	 */
 	@SuppressWarnings("NoopMethodInAbstractClass")
 	public void printContentStart(
-		ChainWriter out,
+		Html html,
 		WebSiteRequest req,
 		HttpServletResponse resp
 	) throws IOException, SQLException {
@@ -91,15 +92,17 @@ abstract public class AutoListPage extends WebPage {
 	/**
 	 * Prints a list of pages.
 	 */
-	public static void printPageList(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, WebPage[] pages, WebPageLayout layout) throws IOException, SQLException {
+	public static void printPageList(Html html, WebSiteRequest req, HttpServletResponse resp, WebPage[] pages, WebPageLayout layout) throws IOException, SQLException {
 		int len = pages.length;
 		for (int c = 0; c < len; c++) {
 			WebPage page = pages[c];
-			out.print("    <tr>\n"
-					+ "      <td style='white-space:nowrap'><a class='aoLightLink' href='").textInXmlAttribute(req==null?"":req.getEncodedURL(page, resp)).print("'>").textInXhtml(page.getShortTitle()).print("</a>\n"
+			html.out.write("    <tr>\n"
+					+ "      <td style='white-space:nowrap'><a class='aoLightLink' href='");
+			if(req != null) encodeTextInXhtmlAttribute(req.getEncodedURL(page, resp), html.out);
+			html.out.write("'>"); html.text(page.getShortTitle()).out.write("</a>\n"
 					+ "      </td>\n"
 					+ "      <td style='width:12px; white-space:nowrap'>&#160;</td>\n"
-					+ "      <td style='white-space:nowrap'>").textInXhtml(page.getDescription()).print("</td>\n"
+					+ "      <td style='white-space:nowrap'>"); html.text(page.getDescription()).out.write("</td>\n"
 					+ "    </tr>\n");
 		}
 	}
@@ -107,7 +110,7 @@ abstract public class AutoListPage extends WebPage {
 	/**
 	 * Prints an unordered list of the available pages.
 	 */
-	public static void printPageList(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, WebPage parent, WebPageLayout layout) throws IOException, SQLException {
-		printPageList(out, req, resp, parent.getCachedPages(req, resp), layout);
+	public static void printPageList(Html html, WebSiteRequest req, HttpServletResponse resp, WebPage parent, WebPageLayout layout) throws IOException, SQLException {
+		printPageList(html, req, resp, parent.getCachedPages(req, resp), layout);
 	}
 }

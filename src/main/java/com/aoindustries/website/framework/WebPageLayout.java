@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2015, 2016, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2015, 2016, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,11 +22,7 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.encoding.ChainWriter;
-import com.aoindustries.encoding.Doctype;
-import com.aoindustries.encoding.Serialization;
-import com.aoindustries.encoding.servlet.DoctypeEE;
-import com.aoindustries.encoding.servlet.SerializationEE;
+import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
 import com.aoindustries.html.Html;
 import com.aoindustries.net.URIEncoder;
 import com.aoindustries.web.resources.registry.Registry;
@@ -86,38 +82,24 @@ abstract public class WebPageLayout {
 	/**
 	 * Writes all of the HTML preceding the content of the page,
 	 * whether the page is in a frameset or not.
-	 * <p>
-	 * Both the {@link Serialization} and {@link Doctype} may have been set
-	 * on the request, and these must be considered in the HTML generation.
-	 * </p>
-	 *
-	 * @see SerializationEE#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
-	 * @see DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
 	 */
 	abstract public void startHTML(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		ChainWriter out,
+		Html html,
 		String onload
 	) throws ServletException, IOException, SQLException;
 
 	/**
 	 * Writes all of the HTML following the content of the page,
 	 * whether the page is in a frameset or not.
-	 * <p>
-	 * Both the {@link Serialization} and {@link Doctype} may have been set
-	 * on the request, and these must be considered in the HTML generation.
-	 * </p>
-	 *
-	 * @see SerializationEE#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
-	 * @see DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
 	 */
 	abstract public void endHTML(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		ChainWriter out
+		Html html
 	) throws ServletException, IOException, SQLException;
 
 	/**
@@ -125,61 +107,49 @@ abstract public class WebPageLayout {
 	 * additional search form named <code>"search_two"</code>, with two fields named
 	 * <code>"search_query"</code> and <code>"search_target"</code>.
 	 *
-	 * <p>
-	 * Both the {@link Serialization} and {@link Doctype} may have been set
-	 * on the request, and these must be considered in the HTML generation.
-	 * </p>
-	 *
-	 * @see SerializationEE#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
-	 * @see DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
-	 *
 	 * @see WebPage#doPostWithSearch(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
-	public void printSearchOutput(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) throws IOException, SQLException {
-		Html html = page.getHtml(req, resp, out);
-		startContent(out, req, resp, 1, 600);
-		printContentTitle(out, req, resp, "Search Results", 1);
-		printContentHorizontalDivider(out, req, resp, 1, false);
-		startContentLine(out, req, resp, 1, "center", null);
-		beginLightArea(req, resp, out, null, "300", true);
-		out.print("      <form action=\"\" id=\"search_two\" method=\"post\">\n");
+	public void printSearchOutput(WebPage page, Html html, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) throws IOException, SQLException {
+		startContent(html, req, resp, 1, 600);
+		printContentTitle(html, req, resp, "Search Results", 1);
+		printContentHorizontalDivider(html, req, resp, 1, false);
+		startContentLine(html, req, resp, 1, "center", null);
+		beginLightArea(req, resp, html, null, "300", true);
+		html.out.write("      <form action=\"\" id=\"search_two\" method=\"post\">\n");
 		req.printFormFields(html);
-		out.print("        <table cellspacing=\"0\" cellpadding=\"0\"><tr><td style=\"white-space:nowrap\">\n"
-				+ "          Word(s) to search for: ");
+		html.out.write("        <table cellspacing=\"0\" cellpadding=\"0\"><tr><td style=\"white-space:nowrap\">\n"
+				+ "          "); html.text("Word(s) to search for:"); html.out.write(' ');
 		html.input.text().size(24).name("search_query").value(query).__().br__().nl();
-		out.print("          Search Location: ");
+		html.out.write("          "); html.text("Search Location:"); html.out.write(' ');
 		html.input.radio().name("search_target").value("entire_site").checked(isEntireSite).__();
-		out.print(" Entire Site&#160;&#160;&#160;");
+		html.out.write(' '); html.text("Entire Site"); html.out.write("&#160;&#160;&#160;");
 		html.input.radio().name("search_target").value("this_area").checked(!isEntireSite).__();
-		// TODO: html.text methods (or innerText / innerHTML?)
-		out.print(" This Area");
+		html.out.write(' '); html.text("This Area");
 		html.br__().nl();
-			out.print("          ");
-			html.br__().nl();
-			out.print("          <div style=\"text-align:center\">");
-			html.input.submit().clazz("ao_button").value(" Search ").__();
-			out.print("</div>\n"
-				+ "        </td></tr></table>\n"
-				+ "      </form>\n"
+		html.out.write("          ");
+		html.br__().nl();
+		html.out.write("          <div style=\"text-align:center\">");
+		html.input.submit().clazz("ao_button").value(" Search ").__();
+		html.out.write("</div>\n"
+			+ "        </td></tr></table>\n"
+			+ "      </form>\n"
 		);
-		endLightArea(req, resp, out);
-		endContentLine(out, req, resp, 1, false);
-		printContentHorizontalDivider(out, req, resp, 1, false);
-		startContentLine(out, req, resp, 1, "center", null);
+		endLightArea(req, resp, html);
+		endContentLine(html, req, resp, 1, false);
+		printContentHorizontalDivider(html, req, resp, 1, false);
+		startContentLine(html, req, resp, 1, "center", null);
 		if (results.isEmpty()) {
 			if (words.length > 0) {
-				out.print(
-					  "      <b>No matches found</b>\n"
-				);
+				html.out.write("      <b>"); html.text("No matches found"); html.out.write("</b>\n");
 			}
 		} else {
-			beginLightArea(req, resp, out);
-			out.print("  <table cellspacing=\"0\" cellpadding=\"0\" class=\"aoLightRow\">\n"
+			beginLightArea(req, resp, html);
+			html.out.write("  <table cellspacing=\"0\" cellpadding=\"0\" class=\"aoLightRow\">\n"
 					+ "    <tr>\n"
-					+ "      <th style=\"white-space:nowrap\">% Match</th>\n"
-					+ "      <th style=\"white-space:nowrap\">Title</th>\n"
+					+ "      <th style=\"white-space:nowrap\">"); html.text("% Match"); html.out.write("</th>\n"
+					+ "      <th style=\"white-space:nowrap\">"); html.text("Title"); html.out.write("</th>\n"
 					+ "      <th style=\"white-space:nowrap\">&#160;</th>\n"
-					+ "      <th style=\"white-space:nowrap\">Description</th>\n"
+					+ "      <th style=\"white-space:nowrap\">"); html.text("Description"); html.out.write("</th>\n"
 					+ "    </tr>\n"
 			);
 
@@ -195,91 +165,91 @@ abstract public class WebPageLayout {
 				String url=result.getUrl();
 				String title=result.getTitle();
 				String description=result.getDescription();
-				out.print("    <tr class=\"").print(rowClass).print("\">\n"
-						+ "      <td style=\"white-space:nowrap; text-align:center\">").print(Math.round(99 * result.getProbability() / highest)).print("%</td>\n"
-						+ "      <td style=\"white-space:nowrap; text-align:left\"><a class=\""+linkClass+"\" href=\"")
-					.textInXmlAttribute(
-						resp.encodeURL(
-							URIEncoder.encodeURI(
-								req.getContextPath() + url
-							)
+				html.out.write("    <tr class=\""); html.out.write(rowClass); html.out.write("\">\n"
+						+ "      <td style=\"white-space:nowrap; text-align:center\">"); html.text(Math.round(99 * result.getProbability() / highest) + "%"); html.out.write("</td>\n"
+						+ "      <td style=\"white-space:nowrap; text-align:left\"><a class=\""); html.out.write(linkClass); html.out.write("\" href=\"");
+				encodeTextInXhtmlAttribute(
+					resp.encodeURL(
+						URIEncoder.encodeURI(
+							req.getContextPath() + url
 						)
-					).print("\">").print(title.length()==0?"&#160;":title).print("</a></td>\n"
+					),
+					html.out
+				);
+				html.out.write("\">"); html.text(title); html.out.write("</a></td>\n"
 						+ "      <td style=\"white-space:nowrap\">&#160;&#160;&#160;</td>\n"
-						+ "      <td style=\"white-space:nowrap; text-align:left\">").print(description.length()==0?"&#160;":description).print("</td>\n"
+						+ "      <td style=\"white-space:nowrap; text-align:left\">"); html.text(description); html.out.write("</td>\n"
 						+ "    </tr>\n");
 			}
-			out.print(
-				  "  </table>\n"
-			);
-			endLightArea(req, resp, out);
+			html.out.write("  </table>\n");
+			endLightArea(req, resp, html);
 		}
-		endContentLine(out, req, resp, 1, false);
-		endContent(page, out, req, resp, 1);
+		endContentLine(html, req, resp, 1, false);
+		endContent(page, html, req, resp, 1);
 	}
 
 	/**
 	 * Starts the content area of a page.
 	 */
-	final public void startContent(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int contentColumns, int preferredWidth) throws IOException, SQLException {
-		startContent(out, req, resp, new int[] {contentColumns}, preferredWidth);
+	final public void startContent(Html html, WebSiteRequest req, HttpServletResponse resp, int contentColumns, int preferredWidth) throws IOException, SQLException {
+		startContent(html, req, resp, new int[] {contentColumns}, preferredWidth);
 	}
 
 	/**
 	 * Starts the content area of a page.
 	 */
-	abstract public void startContent(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) throws IOException, SQLException;
+	abstract public void startContent(Html html, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) throws IOException, SQLException;
 
 	/**
 	 * Prints a horizontal divider of the provided colspan.
 	 */
-	final public void printContentHorizontalDivider(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int colspan, boolean endsInternal) throws IOException, SQLException {
-		printContentHorizontalDivider(out, req, resp, new int[] {colspan}, endsInternal);
+	final public void printContentHorizontalDivider(Html html, WebSiteRequest req, HttpServletResponse resp, int colspan, boolean endsInternal) throws IOException, SQLException {
+		printContentHorizontalDivider(html, req, resp, new int[] {colspan}, endsInternal);
 	}
 
 	/**
 	 * Prints a horizontal divider of the provided colspan.
 	 */
-	abstract public void printContentHorizontalDivider(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int[] colspansAndDirections, boolean endsInternal) throws IOException, SQLException;
+	abstract public void printContentHorizontalDivider(Html html, WebSiteRequest req, HttpServletResponse resp, int[] colspansAndDirections, boolean endsInternal) throws IOException, SQLException;
 
 	/**
 	 * Prints the title of the page in one row in the content area.
 	 */
-	final public void printContentTitle(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, WebPage page, int contentColumns) throws IOException, SQLException {
-		printContentTitle(out, req, resp, page.getTitle(), contentColumns);
+	final public void printContentTitle(Html html, WebSiteRequest req, HttpServletResponse resp, WebPage page, int contentColumns) throws IOException, SQLException {
+		printContentTitle(html, req, resp, page.getTitle(), contentColumns);
 	}
 
 	/**
 	 * Prints the title of the page in one row in the content area.
 	 */
-	abstract public void printContentTitle(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) throws IOException, SQLException;
+	abstract public void printContentTitle(Html html, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) throws IOException, SQLException;
 
 	/**
 	 * Starts one line of content with the initial colspan set to the provided colspan.
 	 */
-	abstract public void startContentLine(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int colspan, String align, String width) throws IOException, SQLException;
+	abstract public void startContentLine(Html html, WebSiteRequest req, HttpServletResponse resp, int colspan, String align, String width) throws IOException, SQLException;
 
 	/**
 	 * Ends one part of a line and starts the next.
 	 */
-	abstract public void printContentVerticalDivider(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align, String width) throws IOException, SQLException;
+	abstract public void printContentVerticalDivider(Html html, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align, String width) throws IOException, SQLException;
 
 	/**
 	 * Ends one line of content.
 	 */
-	abstract public void endContentLine(ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int rowspan, boolean endsInternal) throws IOException, SQLException;
+	abstract public void endContentLine(Html html, WebSiteRequest req, HttpServletResponse resp, int rowspan, boolean endsInternal) throws IOException, SQLException;
 
 	/**
 	 * Ends the content area of a page.
 	 */
-	final public void endContent(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int contentColumns) throws IOException, SQLException {
-		endContent(page, out, req, resp, new int[] {contentColumns});
+	final public void endContent(WebPage page, Html html, WebSiteRequest req, HttpServletResponse resp, int contentColumns) throws IOException, SQLException {
+		endContent(page, html, req, resp, new int[] {contentColumns});
 	}
 
 	/**
 	 * Ends the content area of a page.
 	 */
-	abstract public void endContent(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) throws IOException, SQLException;
+	abstract public void endContent(WebPage page, Html html, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) throws IOException, SQLException;
 
 	/**
 	 * The background color for the page or <code>-1</code> for browser default.
@@ -319,45 +289,44 @@ abstract public class WebPageLayout {
 	/**
 	 * Begins a lighter colored area of the site.
 	 */
-	final public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out) throws IOException {
-		beginLightArea(req, resp, out, null, null, false);
+	final public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, Html html) throws IOException {
+		beginLightArea(req, resp, html, null, null, false);
 	}
 
 	/**
 	 * Begins a lighter colored area of the site.
 	 */
-	abstract public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, String align, String width, boolean nowrap) throws IOException;
+	abstract public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, Html html, String align, String width, boolean nowrap) throws IOException;
 
 	/**
 	 * Ends a lighter area of the site.
 	 */
-	abstract public void endLightArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out) throws IOException;
+	abstract public void endLightArea(WebSiteRequest req, HttpServletResponse resp, Html html) throws IOException;
 
 	/**
 	 * Begins an area with a white background.
 	 */
-	final public void beginWhiteArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out) throws IOException {
-		beginWhiteArea(req, resp, out, null, null, false);
+	final public void beginWhiteArea(WebSiteRequest req, HttpServletResponse resp, Html html) throws IOException {
+		beginWhiteArea(req, resp, html, null, null, false);
 	}
 
 	/**
 	 * Begins a lighter colored area of the site.
 	 */
-	abstract public void beginWhiteArea(WebSiteRequest req, HttpServletResponse response, ChainWriter out, String align, String width, boolean nowrap) throws IOException;
+	abstract public void beginWhiteArea(WebSiteRequest req, HttpServletResponse response, Html html, String align, String width, boolean nowrap) throws IOException;
 
 	/**
 	 * Ends a lighter area of the site.
 	 */
-	abstract public void endWhiteArea(WebSiteRequest req, HttpServletResponse resp, ChainWriter out) throws IOException;
+	abstract public void endWhiteArea(WebSiteRequest req, HttpServletResponse resp, Html html) throws IOException;
 
 	/**
 	 * Each layout has a name.
 	 */
 	abstract public String getName();
 
-	public boolean printWebPageLayoutSelector(WebPage page, ChainWriter out, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+	public boolean printWebPageLayoutSelector(WebPage page, Html html, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		if(layoutChoices.length>=2) {
-			Html html = page.getHtml(req, resp, out);
 			html.script().out(script -> {
 				script.append("function selectLayout(layout) {\n");
 				for(String choice : layoutChoices) {
@@ -367,37 +336,36 @@ abstract public class WebPageLayout {
 				}
 				script.append('}');
 			}).__().nl();
-			out.print("<form action=\"#\" style=\"display:inline\"><div style=\"display:inline\">\n"
+			html.out.write("<form action=\"#\" style=\"display:inline\"><div style=\"display:inline\">\n"
 				+ "  <select name=\"layout_selector\" onchange=\"selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);\">\n");
 			for(String choice : layoutChoices) {
-				out.print("    ");
+				html.out.write("    ");
 				html.option().value(choice).selected(choice.equalsIgnoreCase(getName())).text__(choice).nl();
 			}
-			out.print("  </select>\n"
+			html.out.write("  </select>\n"
 				+ "</div></form>\n");
 			return true;
 		} else return false;
 	}
 
-	protected void printJavaScriptIncludes(WebSiteRequest req, HttpServletResponse resp, ChainWriter out, WebPage page) throws IOException, SQLException {
+	protected void printJavaScriptIncludes(WebSiteRequest req, HttpServletResponse resp, Html html, WebPage page) throws IOException, SQLException {
 		Object O = page.getJavaScriptSrc(req);
 		if (O != null) {
-			Html html = page.getHtml(req, resp, out);
 			if (O instanceof String[]) {
 				String[] SA = (String[]) O;
 				int len = SA.length;
 				for (int c = 0; c < len; c++) {
-					out.write("    ");
+					html.out.write("    ");
 					html.script().src(req.getEncodedURLForPath('/'+SA[c], null, false, resp)).__().nl();
 				}
 			} else if(O instanceof Class) {
-				out.write("    ");
+				html.out.write("    ");
 				html.script().src(req.getEncodedURL(((Class<?>)O).asSubclass(WebPage.class), null, resp)).__().nl();
 			} else if(O instanceof WebPage) {
-				out.write("    ");
+				html.out.write("    ");
 				html.script().src(req.getEncodedURL((WebPage)O, resp)).__().nl();
 			} else {
-				out.write("    ");
+				html.out.write("    ");
 				html.script().src(req.getEncodedURLForPath('/'+O.toString(), null, false, resp)).__().nl();
 			}
 		}
