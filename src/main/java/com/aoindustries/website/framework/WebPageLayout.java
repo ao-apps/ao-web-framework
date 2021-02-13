@@ -118,22 +118,17 @@ abstract public class WebPageLayout {
 		html.out.write("      <form action=\"\" id=\"search_two\" method=\"post\">\n");
 		req.printFormFields(html);
 		html.out.write("        <table cellspacing=\"0\" cellpadding=\"0\"><tr><td style=\"white-space:nowrap\">\n"
-				+ "          "); html.text("Word(s) to search for:"); html.out.write(' ');
-		html.input.text().size(24).name("search_query").value(query).__().br__().nl();
-		html.out.write("          "); html.text("Search Location:"); html.out.write(' ');
-		html.input.radio().name("search_target").value("entire_site").checked(isEntireSite).__();
-		html.out.write(' '); html.text("Entire Site"); html.out.write("&#160;&#160;&#160;");
-		html.input.radio().name("search_target").value("this_area").checked(!isEntireSite).__();
-		html.out.write(' '); html.text("This Area");
-		html.br__().nl();
-		html.out.write("          ");
-		html.br__().nl();
-		html.out.write("          <div style=\"text-align:center\">");
-		html.input.submit().clazz("ao_button").value(" Search ").__();
-		html.out.write("</div>\n"
-			+ "        </td></tr></table>\n"
-			+ "      </form>\n"
-		);
+		+ "          "); html.text("Word(s) to search for:"); html.out.write(' ');
+		html.input.text().size(24).name("search_query").value(query).__().br__().out.write("\n"
+		+ "          "); html.text("Search Location:"); html.out.write(' ');
+		html.input.radio().name("search_target").value("entire_site").checked(isEntireSite).__()
+		.out.write(' '); html.text("Entire Site"); html.out.write("&#160;&#160;&#160;");
+		html.input.radio().name("search_target").value("this_area").checked(!isEntireSite).__()
+		.out.write(' '); html.text("This Area").br__().out.write("\n"
+		+ "          "); html.br__().out.write("\n"
+		+ "          <div style=\"text-align:center\">"); html.input.submit().clazz("ao_button").value(" Search ").__().out.write("</div>\n"
+		+ "        </td></tr></table>\n"
+		+ "      </form>\n");
 		endLightArea(req, resp, html);
 		endContentLine(html, req, resp, 1, false);
 		printContentHorizontalDivider(html, req, resp, 1, false);
@@ -145,13 +140,12 @@ abstract public class WebPageLayout {
 		} else {
 			beginLightArea(req, resp, html);
 			html.out.write("  <table cellspacing=\"0\" cellpadding=\"0\" class=\"aoLightRow\">\n"
-					+ "    <tr>\n"
-					+ "      <th style=\"white-space:nowrap\">"); html.text("% Match"); html.out.write("</th>\n"
-					+ "      <th style=\"white-space:nowrap\">"); html.text("Title"); html.out.write("</th>\n"
-					+ "      <th style=\"white-space:nowrap\">&#160;</th>\n"
-					+ "      <th style=\"white-space:nowrap\">"); html.text("Description"); html.out.write("</th>\n"
-					+ "    </tr>\n"
-			);
+			+ "    <tr>\n"
+			+ "      <th style=\"white-space:nowrap\">"); html.text("% Match"); html.out.write("</th>\n"
+			+ "      <th style=\"white-space:nowrap\">"); html.text("Title"); html.out.write("</th>\n"
+			+ "      <th style=\"white-space:nowrap\">&#160;</th>\n"
+			+ "      <th style=\"white-space:nowrap\">"); html.text("Description"); html.out.write("</th>\n"
+			+ "    </tr>\n");
 
 			// Find the highest probability
 			float highest = results.get(0).getProbability();
@@ -162,12 +156,12 @@ abstract public class WebPageLayout {
 				String rowClass= (c & 1) == 0 ? "aoLightRow":"aoDarkRow";
 				String linkClass = (c & 1) == 0 ? "aoDarkLink":"aoLightLink";
 				SearchResult result = results.get(c);
-				String url=result.getUrl();
-				String title=result.getTitle();
-				String description=result.getDescription();
+				String url = result.getUrl();
+				String title = result.getTitle();
+				String description = result.getDescription();
 				html.out.write("    <tr class=\""); html.out.write(rowClass); html.out.write("\">\n"
-						+ "      <td style=\"white-space:nowrap; text-align:center\">"); html.text(Math.round(99 * result.getProbability() / highest) + "%"); html.out.write("</td>\n"
-						+ "      <td style=\"white-space:nowrap; text-align:left\"><a class=\""); html.out.write(linkClass); html.out.write("\" href=\"");
+				+ "      <td style=\"white-space:nowrap; text-align:center\">"); html.text(Math.round(99 * result.getProbability() / highest) + "%"); html.out.write("</td>\n"
+				+ "      <td style=\"white-space:nowrap; text-align:left\"><a class=\""); html.out.write(linkClass); html.out.write("\" href=\"");
 				encodeTextInXhtmlAttribute(
 					resp.encodeURL(
 						URIEncoder.encodeURI(
@@ -177,9 +171,9 @@ abstract public class WebPageLayout {
 					html.out
 				);
 				html.out.write("\">"); html.text(title); html.out.write("</a></td>\n"
-						+ "      <td style=\"white-space:nowrap\">&#160;&#160;&#160;</td>\n"
-						+ "      <td style=\"white-space:nowrap; text-align:left\">"); html.text(description); html.out.write("</td>\n"
-						+ "    </tr>\n");
+				+ "      <td style=\"white-space:nowrap\">&#160;&#160;&#160;</td>\n"
+				+ "      <td style=\"white-space:nowrap; text-align:left\">"); html.text(description); html.out.write("</td>\n"
+				+ "    </tr>\n");
 			}
 			html.out.write("  </table>\n");
 			endLightArea(req, resp, html);
@@ -326,7 +320,7 @@ abstract public class WebPageLayout {
 	abstract public String getName();
 
 	public boolean printWebPageLayoutSelector(WebPage page, Html html, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
-		if(layoutChoices.length>=2) {
+		if(layoutChoices.length >= 2) {
 			html.script().out(script -> {
 				script.append("function selectLayout(layout) {\n");
 				for(String choice : layoutChoices) {
@@ -335,15 +329,14 @@ abstract public class WebPageLayout {
 					).append(";\n");
 				}
 				script.append('}');
-			}).__().nl();
-			html.out.write("<form action=\"#\" style=\"display:inline\"><div style=\"display:inline\">\n"
-				+ "  <select name=\"layout_selector\" onchange=\"selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);\">\n");
+			}).__().out.write("\n"
+			+ "<form action=\"#\" style=\"display:inline\"><div style=\"display:inline\">\n"
+			+ "  <select name=\"layout_selector\" onchange=\"selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);\">\n");
 			for(String choice : layoutChoices) {
-				html.out.write("    ");
-				html.option().value(choice).selected(choice.equalsIgnoreCase(getName())).text__(choice).nl();
+				html.out.write("    "); html.option().value(choice).selected(choice.equalsIgnoreCase(getName())).text__(choice).nl();
 			}
 			html.out.write("  </select>\n"
-				+ "</div></form>\n");
+			+ "</div></form>\n");
 			return true;
 		} else return false;
 	}
@@ -355,18 +348,14 @@ abstract public class WebPageLayout {
 				String[] SA = (String[]) O;
 				int len = SA.length;
 				for (int c = 0; c < len; c++) {
-					html.out.write("    ");
-					html.script().src(req.getEncodedURLForPath('/'+SA[c], null, false, resp)).__().nl();
+					html.out.write("    "); html.script().src(req.getEncodedURLForPath('/'+SA[c], null, false, resp)).__().nl();
 				}
 			} else if(O instanceof Class) {
-				html.out.write("    ");
-				html.script().src(req.getEncodedURL(((Class<?>)O).asSubclass(WebPage.class), null, resp)).__().nl();
+				html.out.write("    "); html.script().src(req.getEncodedURL(((Class<?>)O).asSubclass(WebPage.class), null, resp)).__().nl();
 			} else if(O instanceof WebPage) {
-				html.out.write("    ");
-				html.script().src(req.getEncodedURL((WebPage)O, resp)).__().nl();
+				html.out.write("    "); html.script().src(req.getEncodedURL((WebPage)O, resp)).__().nl();
 			} else {
-				html.out.write("    ");
-				html.script().src(req.getEncodedURLForPath('/'+O.toString(), null, false, resp)).__().nl();
+				html.out.write("    "); html.script().src(req.getEncodedURLForPath('/'+O.toString(), null, false, resp)).__().nl();
 			}
 		}
 	}

@@ -268,11 +268,11 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see  ErrorReportingServlet#getUptime()
 	 */
 	final protected long getClassLastModified() throws IOException, SQLException {
-		String dir=getServletContext().getRealPath("/WEB-INF/classes");
-		if(dir!=null && dir.length()>0) {
+		String dir = getServletContext().getRealPath("/WEB-INF/classes");
+		if(dir != null && dir.length() > 0) {
 			// Try to get from the class file
-			long lastMod=new File(dir, getClass().getName().replace('.', File.separatorChar) + ".class").lastModified();
-			if(lastMod!=0 && lastMod!=-1) return lastMod;
+			long lastMod = new File(dir, getClass().getName().replace('.', File.separatorChar) + ".class").lastModified();
+			if(lastMod != 0 && lastMod != -1) return lastMod;
 		}
 		return getUptime();
 	}
@@ -299,10 +299,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 	final public long getLastModifiedRecursive(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		long time = getLastModified(req, resp);
 		WebPage[] children = getCachedChildren(req, resp);
-		int len=children.length;
+		int len = children.length;
 		for(int c=0; c<len; c++) {
 			long time2 = children[c].getLastModifiedRecursive(req, resp);
-			if(time2>time) time=time2;
+			if(time2 > time) time = time2;
 		}
 		return time;
 	}
@@ -314,11 +314,11 @@ abstract public class WebPage extends ErrorReportingServlet {
 		long time=file.lastModified();
 		if(file.isDirectory()) {
 			String[] list=file.list();
-			if(list!=null) {
-				int len=list.length;
+			if(list != null) {
+				int len = list.length;
 				for(int c=0; c<len; c++) {
-					long time2=getLastModifiedRecursive(new File(file, list[c]));
-					if (time2 > time) time=time2;
+					long time2 = getLastModifiedRecursive(new File(file, list[c]));
+					if (time2 > time) time = time2;
 				}
 			}
 		}
