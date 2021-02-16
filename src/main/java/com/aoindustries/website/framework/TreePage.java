@@ -127,7 +127,6 @@ abstract public class TreePage extends WebPage {
 					byte[] bytes=getImageBytes(imageNum, useSmooth);
 					try (OutputStream out = resp.getOutputStream()) {
 						out.write(bytes);
-						out.flush(); // TODO: Review all uses of flush/close
 					}
 				}
 			} catch(NumberFormatException err) {
@@ -271,30 +270,25 @@ abstract public class TreePage extends WebPage {
 		int scrollToY = Integer.parseInt(req.getParameter("scroll_to_y"));
 
 		Html html = getHTML(req, resp);
-		try {
-			WebPageLayout layout = getWebPageLayout(req);
-			layout.startHTML(
-				this,
-				req,
-				resp,
-				html,
-				scrollToX >= 0 ? ("window.scrollTo(" + scrollToX + ", " + scrollToY + ");") : null
-			);
+		WebPageLayout layout = getWebPageLayout(req);
+		layout.startHTML(
+			this,
+			req,
+			resp,
+			html,
+			scrollToX >= 0 ? ("window.scrollTo(" + scrollToX + ", " + scrollToY + ");") : null
+		);
 
-			int treeLen = tree.size();
-			boolean[] opened = new boolean[treeLen];
-			for (int c = 0; c < treeLen; c++) {
-				opened[c] = Boolean.parseBoolean(req.getParameter("opened_" + c));
-			}
-
-			// Print the new table
-			handleRequest(html, req, resp, tree, scrollToX, scrollToY, opened);
-
-			layout.endHTML(this, req, resp, html);
-		} finally {
-			html.out.flush();
-			html.out.close();
+		int treeLen = tree.size();
+		boolean[] opened = new boolean[treeLen];
+		for (int c = 0; c < treeLen; c++) {
+			opened[c] = Boolean.parseBoolean(req.getParameter("opened_" + c));
 		}
+
+		// Print the new table
+		handleRequest(html, req, resp, tree, scrollToX, scrollToY, opened);
+
+		layout.endHTML(this, req, resp, html);
 	}
 
 	/**

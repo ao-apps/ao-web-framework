@@ -554,13 +554,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 		try {
 			Doctype oldDoctype = DoctypeEE.replace(req, getDoctype(req));
 			try {
-				Html html = getHTML(req, resp);
-				try {
-					doGet(req, resp, html);
-				} finally {
-					html.out.flush();
-					html.out.close();
-				}
+				doGet(req, resp, getHTML(req, resp));
 			} finally {
 				DoctypeEE.set(req, oldDoctype);
 			}
@@ -725,34 +719,29 @@ abstract public class WebPage extends ErrorReportingServlet {
 				Doctype oldDoctype = DoctypeEE.replace(req, getDoctype(req));
 				try {
 					Html html = getHTML(req, resp);
-					try {
-						WebPageLayout layout = getWebPageLayout(req);
-						layout.startHTML(this, req, resp, html, "document.forms." + SEARCH_TWO + "." + WebSiteRequest.SEARCH_QUERY + ".select(); document.forms." + SEARCH_TWO + "." + WebSiteRequest.SEARCH_QUERY + ".focus();");
+					WebPageLayout layout = getWebPageLayout(req);
+					layout.startHTML(this, req, resp, html, "document.forms." + SEARCH_TWO + "." + WebSiteRequest.SEARCH_QUERY + ".select(); document.forms." + SEARCH_TWO + "." + WebSiteRequest.SEARCH_QUERY + ".focus();");
 
-						boolean entire_site = searchTarget.equals(WebSiteRequest.SEARCH_ENTIRE_SITE);
-						WebPage target = entire_site ? getRootPage() : this;
+					boolean entire_site = searchTarget.equals(WebSiteRequest.SEARCH_ENTIRE_SITE);
+					WebPage target = entire_site ? getRootPage() : this;
 
-						// If the target contains no pages, use its parent
-						if(target.getCachedChildren(req, resp).length == 0) target=target.getParent();
+					// If the target contains no pages, use its parent
+					if(target.getCachedChildren(req, resp).length == 0) target=target.getParent();
 
-						// Get the list of words to search for
-						String[] words=Strings.split(query.replace('.', ' '));
+					// Get the list of words to search for
+					String[] words=Strings.split(query.replace('.', ' '));
 
-						List<SearchResult> results=new ArrayList<>();
-						if(words.length>0) {
-							// Perform the search
-							target.search(words, req, resp, results, new CharArrayWriter(), new HashSet<>());
-							Collections.sort(results);
-							//Strings.sortObjectsAndFloatDescending(results, 1, 5);
-						}
-
-						layout.printSearchOutput(this, html, req, resp, query, entire_site, results, words);
-
-						layout.endHTML(this, req, resp, html);
-					} finally {
-						html.out.flush();
-						html.out.close();
+					List<SearchResult> results=new ArrayList<>();
+					if(words.length>0) {
+						// Perform the search
+						target.search(words, req, resp, results, new CharArrayWriter(), new HashSet<>());
+						Collections.sort(results);
+						//Strings.sortObjectsAndFloatDescending(results, 1, 5);
 					}
+
+					layout.printSearchOutput(this, html, req, resp, query, entire_site, results, words);
+
+					layout.endHTML(this, req, resp, html);
 				} finally {
 					DoctypeEE.set(req, oldDoctype);
 				}
@@ -786,13 +775,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 		try {
 			Doctype oldDoctype = DoctypeEE.replace(req, getDoctype(req));
 			try {
-				Html html = getHTML(req, resp);
-				try {
-					doPost(req, resp, html);
-				} finally {
-					html.out.flush(); // TODO: These flushes are not necessary
-					html.out.close();
-				}
+				doPost(req, resp, getHTML(req, resp));
 			} finally {
 				DoctypeEE.set(req, oldDoctype);
 			}
@@ -1543,7 +1526,6 @@ abstract public class WebPage extends ErrorReportingServlet {
 				} finally {
 					RegistryEE.Page.set(req, oldPageRegistry);
 				}
-				html.out.flush();
 				String content = buffer.toString();
 				size = buffer.size();
 
@@ -1606,7 +1588,6 @@ abstract public class WebPage extends ErrorReportingServlet {
 							} finally {
 								RegistryEE.Page.set(req, oldPageRegistry);
 							}
-							html.out.flush();
 							String content = buffer.toString();
 
 							// Remove all the indexed words
