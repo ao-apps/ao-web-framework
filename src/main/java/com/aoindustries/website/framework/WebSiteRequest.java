@@ -67,6 +67,64 @@ import javax.servlet.http.Part;
  */
 public class WebSiteRequest extends HttpServletRequestWrapper {
 
+	/**
+	 * Parameter the contains the search query for in-site search on the current page.
+	 */
+	public static final String SEARCH_QUERY = "search_query";
+
+	/**
+	 * Parameter that contains the search target (current {@link #SEARCH_ENTIRE_SITE} or {@link #SEARCH_THIS_AREA}).
+	 */
+	public static final String SEARCH_TARGET = "search_target";
+
+	/**
+	 * Parameter value for {@link #SEARCH_TARGET} to search the entire site.
+	 */
+	public static final String SEARCH_ENTIRE_SITE = "entire_site";
+
+	/**
+	 * Parameter value for {@link #SEARCH_TARGET} to search the current area of the site.
+	 */
+	public static final String SEARCH_THIS_AREA = "this_area";
+
+	/**
+	 * Parameter that selects the {@link WebPageLayout}.
+	 */
+	// Matches aoweb-struts/core/Constants.LAYOUT
+	public static final String LAYOUT = "layout";
+
+	/**
+	 * Parameter name used for logout requests.
+	 * Will perform logout when has a value that parses to {@link Boolean#TRUE}.
+	 *
+	 * @see  Boolean#parseBoolean(java.lang.String)
+	 */
+	public static final String LOGOUT_REQUESTED = "logout_requested";
+
+	/**
+	 * Parameter name used for login requests.
+	 * Will perform login when has a value that parses to {@link Boolean#TRUE}.
+	 *
+	 * @see  Boolean#parseBoolean(java.lang.String)
+	 */
+	public static final String LOGIN_REQUESTED = "login_requested";
+
+	/**
+	 * Parameter that contains the login username during authentication.
+	 */
+	public static final String LOGIN_USERNAME = "login_username";
+
+	/**
+	 * Parameter that contains the login password during authentication.
+	 */
+	public static final String LOGIN_PASSWORD = "login_password";
+
+	/**
+	 * The parameter that flags search engine.
+	 */
+	// TODO: Is this still used?  How?
+	public static final String SEARCH_ENGINE = "search_engine";
+
 	private static final Logger logger = Logger.getLogger(WebSiteRequest.class.getName());
 
 	/**
@@ -402,7 +460,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 			if(fragment != null) url += fragment;
 			return url;
 		} catch(ClassNotFoundException err) {
-			throw new IOException("Unable to load class: "+classname, err);
+			throw new IOException("Unable to load class: " + classname, err);
 		}
 	}
 
@@ -544,8 +602,8 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	}
 
 	protected boolean appendSettings(Set<String> finishedParams, boolean hasQuery, StringBuilder url) {
-		boolean searchEngine = Boolean.parseBoolean(getParameter("search_engine"));
-		if(searchEngine) hasQuery = appendParam(url, "search_engine", "true", finishedParams, hasQuery);
+		boolean searchEngine = Boolean.parseBoolean(getParameter(SEARCH_ENGINE));
+		if(searchEngine) hasQuery = appendParam(url, SEARCH_ENGINE, Boolean.toString(true), finishedParams, hasQuery);
 		return hasQuery;
 	}
 
@@ -782,7 +840,9 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * Prints the hidden variables that contain all of the current settings.
 	 */
 	public void printFormFields(Html html) throws IOException {
-		if(Boolean.parseBoolean(req.getParameter("search_engine"))) printHiddenField(html, "search_engine", "true");
+		if(Boolean.parseBoolean(req.getParameter(SEARCH_ENGINE))) {
+			printHiddenField(html, SEARCH_ENGINE, Boolean.toString(true));
+		}
 	}
 
 	/**

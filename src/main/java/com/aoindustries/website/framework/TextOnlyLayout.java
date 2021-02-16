@@ -61,6 +61,9 @@ import javax.servlet.http.HttpServletResponse;
 // TODO: Probably not worth it for this legacy system?  Could they converge?
 public class TextOnlyLayout extends WebPageLayout {
 
+	// Matches TextSkin.NAME
+	public static final String NAME = "Text";
+
 	/**
 	 * The name of the {@linkplain com.aoindustries.web.resources.servlet.RegistryEE.Application application-scope}
 	 * group that will be used for text layout web resources.
@@ -316,7 +319,7 @@ public class TextOnlyLayout extends WebPageLayout {
 			encodeTextInXhtmlAttribute(req.getEncodedURL(page, resp), html.out);
 			html.out.write("\"><div style=\"display:inline\">");
 			req.printFormFields(html);
-			html.input.hidden().name("logout_requested").value(true).__()
+			html.input.hidden().name(WebSiteRequest.LOGOUT_REQUESTED).value(true).__()
 			.input.submit__("Logout").out.write("</div></form>\n");
 		} else {
 			html.out.write("          "); html.hr__().out.write("\n"
@@ -324,7 +327,7 @@ public class TextOnlyLayout extends WebPageLayout {
 			encodeTextInXhtmlAttribute(req.getEncodedURL(page, resp), html.out);
 			html.out.write("\"><div style=\"display:inline\">");
 			req.printFormFields(html);
-			html.input.hidden().name("login_requested").value(true).__()
+			html.input.hidden().name(WebSiteRequest.LOGIN_REQUESTED).value(true).__()
 			.input.submit__("Login").out.write("</div></form>\n");
 		}
 		html.out.write("          "); html.hr__().out.write("\n"
@@ -335,10 +338,10 @@ public class TextOnlyLayout extends WebPageLayout {
 			+ "            "); html.text("Search:"); html.out.write(" <form id=\"search_site\" style=\"display:inline\" method=\"post\" action=\"");
 			encodeTextInXhtmlAttribute(req.getEncodedURL(page, resp), html.out);
 			html.out.write("\"><div style=\"display:inline\">\n"
-			+ "              "); html.input.hidden().name("search_target").value("entire_site").__().nl();
+			+ "              "); html.input.hidden().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).__().nl();
 		}
 		req.printFormFields(html);
-		html.out.write("              "); html.input.text().name("search_query").size(12).maxlength(255).__().out.write("\n"
+		html.out.write("              "); html.input.text().name(WebSiteRequest.SEARCH_QUERY).size(12).maxlength(255).__().out.write("\n"
 		+ "            </div></form>"); html.br__().out.write("\n"
 		+ "          </div>\n"
 		+ "          "); html.hr__().out.write("\n"
@@ -600,14 +603,14 @@ public class TextOnlyLayout extends WebPageLayout {
 		if(copyright != null && !(copyright = copyright.trim()).isEmpty()) {
 			html.out.write("  <tr><td");
 			if(totalColumns != 1) html.out.append(" colspan=\"").append(Integer.toString(totalColumns)).append('"');
-			html.out.write(" style=\"text-align:center\"><span style=\"font-size:x-small\">"); html.text(copyright);html.out.write("</span></td></tr>\n");
+			html.out.write(" style=\"text-align:center\"><span style=\"font-size:x-small\">"); html.text(copyright); html.out.write("</span></td></tr>\n");
 		}
 		html.out.write("</table>\n");
 	}
 
 	@Override
 	public String getName() {
-		return "Text";
+		return NAME;
 	}
 
 	public WebPage[] getCommonPages(WebPage page, WebSiteRequest req) throws IOException, SQLException {

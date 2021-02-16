@@ -74,6 +74,11 @@ import javax.servlet.http.HttpServletResponse;
  */
 abstract public class WebPage extends ErrorReportingServlet {
 
+	/**
+	 * The name of the search form during per-page searches.
+	 */
+	public static final String SEARCH_TWO = "search_two";
+
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -117,6 +122,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 */
 	private final List<int[]> searchCounts=new ArrayList<>();
 
+	// TODO: Use standard java regular expressions, or a full HTML parser for extraction
 	public static final RE reHTMLPattern;
 	//private static RE reWordPattern;
 	static {
@@ -132,7 +138,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * The output may be cached for greater throughput.
 	 * @see  #doGet(WebSiteRequest,HttpServletResponse)
 	 */
-	private Map<Object,OutputCacheEntry> outputCache;
+	private Map<Object,OutputCacheEntry> outputCache; // TODO: unused
 
 	/**
 	 * Configures the {@linkplain com.aoindustries.web.resources.servlet.RegistryEE.Page page-scope web resources} that this page uses.
@@ -200,7 +206,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *       via {@link #getWebSiteRequest(javax.servlet.http.HttpServletRequest)}.</li>
 	 *   <li>Resolves the current instance of {@link WebPage}
 	 *       via {@link #getWebPage(java.lang.Class, com.aoindustries.website.framework.WebSiteRequest)}.</li>
-	 *   <li>Handles any login request (parameter "login_requested"="true")
+	 *   <li>Handles any login request (parameter {@link WebSiteRequest#LOGIN_REQUESTED}="true")
 	 *       by returning {@code -1} for unknown.</li>
 	 *   <li>Resolves the current {@link WebSiteUser}
 	 *       via {@link WebSiteRequest#getWebSiteUser(javax.servlet.http.HttpServletResponse)} (if any).
@@ -221,7 +227,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 		WebSiteRequest req = getWebSiteRequest(httpReq);
 		WebPage page = getWebPage(getClass(), req);
 
-		if(Boolean.parseBoolean(req.getParameter("login_requested"))) {
+		if(Boolean.parseBoolean(req.getParameter(WebSiteRequest.LOGIN_REQUESTED))) {
 			return -1;
 		}
 		WebSiteUser user;
@@ -472,9 +478,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *       via {@link #getWebSiteRequest(javax.servlet.http.HttpServletRequest)}.</li>
 	 *   <li>Resolves the current instance of {@link WebPage}
 	 *       via {@link #getWebPage(java.lang.Class, com.aoindustries.website.framework.WebSiteRequest)}.</li>
-	 *   <li>Handles any logout request (parameter "logout_request"="true")
+	 *   <li>Handles any logout request (parameter {@link WebSiteRequest#LOGOUT_REQUESTED}="true")
 	 *       via {@link WebSiteRequest#logout()}.</li>
-	 *   <li>Handles any login request (parameter "login_requested"="true")
+	 *   <li>Handles any login request (parameter {@link WebSiteRequest#LOGIN_REQUESTED}="true")
 	 *       by invoking {@link WebPage#printLoginForm(com.aoindustries.website.framework.WebPage, com.aoindustries.security.LoginException, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
 	 *       and stops here.</li>
 	 *   <li>Resolves the current {@link WebSiteUser}
@@ -498,11 +504,11 @@ abstract public class WebPage extends ErrorReportingServlet {
 		WebSiteRequest req = getWebSiteRequest(httpReq);
 		WebPage page = getWebPage(getClass(), req);
 		// Logout when requested
-		boolean isLogout = Boolean.parseBoolean(req.getParameter("logout_requested")); // TODO: No magic value here, constant where best
+		boolean isLogout = Boolean.parseBoolean(req.getParameter(WebSiteRequest.LOGOUT_REQUESTED));
 		if(isLogout) req.logout(resp);
 
-		if(Boolean.parseBoolean(req.getParameter("login_requested"))) {
-			// TODO: robots header on "login_requested"
+		if(Boolean.parseBoolean(req.getParameter(WebSiteRequest.LOGIN_REQUESTED))) {
+			// TODO: robots header on WebSiteRequest.LOGIN_REQUESTED
 			page.printLoginForm(page, new LoginException("Please Login"), req, resp);
 			return;
 		}
@@ -632,9 +638,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *       via {@link #getWebSiteRequest(javax.servlet.http.HttpServletRequest)}.</li>
 	 *   <li>Resolves the current instance of {@link WebPage}
 	 *       via {@link #getWebPage(java.lang.Class, com.aoindustries.website.framework.WebSiteRequest)}.</li>
-	 *   <li>Handles any logout request (parameter "logout_request"="true")
+	 *   <li>Handles any logout request (parameter {@link WebSiteRequest#LOGOUT_REQUESTED}="true")
 	 *       via {@link WebSiteRequest#logout()}.</li>
-	 *   <li>Handles any login request (parameter "login_requested"="true")
+	 *   <li>Handles any login request (parameter {@link WebSiteRequest#LOGIN_REQUESTED}="true")
 	 *       by invoking {@link WebPage#printLoginForm(com.aoindustries.website.framework.WebPage, com.aoindustries.security.LoginException, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
 	 *       and stops here.</li>
 	 *   <li>Resolves the current {@link WebSiteUser}
@@ -648,8 +654,8 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *   <li>If {@linkplain #getRedirectURL(com.aoindustries.website.framework.WebSiteRequest) is a redirect},
 	 *       {@linkplain HttpServletUtil#sendRedirect(int, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.String, com.aoindustries.net.URIParameters, boolean, boolean) sends the redirect}
 	 *       of the {@linkplain #getRedirectType() correct type} and stops here.</li>
-	 *   <li>Avoid unexpected POST action after a (re)login: If has parameteter "login_requested"="true"
-	 *       or both "login_username" and "login_password" parameters, dispatch to
+	 *   <li>Avoid unexpected POST action after a (re)login: If has parameter {@link WebSiteRequest#LOGIN_REQUESTED}="true"
+	 *       or both {@link WebSiteRequest#LOGIN_USERNAME} and {@link WebSiteRequest#LOGIN_PASSWORD} parameters, dispatch to
 	 *       {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
 	 *       and stop here.</li>
 	 *   <li>Finally, dispatches the request to {@link #doPostWithSearch(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}.</li>
@@ -663,10 +669,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 		WebSiteRequest req = getWebSiteRequest(httpReq);
 		WebPage page = getWebPage(getClass(), req);
 		// Logout when requested
-		boolean isLogout = Boolean.parseBoolean(req.getParameter("logout_requested")); // TODO: No magic value here, constant where best
+		boolean isLogout = Boolean.parseBoolean(req.getParameter(WebSiteRequest.LOGOUT_REQUESTED));
 		if(isLogout) req.logout(resp);
 
-		if(Boolean.parseBoolean(req.getParameter("login_requested"))) {
+		if(Boolean.parseBoolean(req.getParameter(WebSiteRequest.LOGIN_REQUESTED))) {
 			page.printLoginForm(page, new LoginException("Please Login"), req, resp);
 			return;
 		}
@@ -697,8 +703,8 @@ abstract public class WebPage extends ErrorReportingServlet {
 		if(
 			isLogout
 			|| (
-				req.getParameter("login_username") != null // TODO: No magic values
-				&& req.getParameter("login_password") != null // TODO: No magic values
+				req.getParameter(WebSiteRequest.LOGIN_USERNAME) != null
+				&& req.getParameter(WebSiteRequest.LOGIN_PASSWORD) != null
 			)
 		) {
 			page.doGet(req, resp);
@@ -709,16 +715,16 @@ abstract public class WebPage extends ErrorReportingServlet {
 
 	/**
 	 * Handles any search posts, sends everything else on to {@link #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}.
-	 * The search assumes the search parameters of <code>search_query</code> and <code>search_target</code>.  Both
-	 * these values must be present for a search to be performed.  Search target may be either <code>"this_area"</code>
-	 * or <code>"entire_site"</code>, defaulting to <code>"area"</code> for any other value.
+	 * The search assumes the search parameters of {@link WebSiteRequest#SEARCH_QUERY} and {@link WebSiteRequest#SEARCH_TARGET}.  Both
+	 * these values must be present for a search to be performed.  Search target may be either {@link WebSiteRequest#SEARCH_THIS_AREA}
+	 * or {@link WebSiteRequest#SEARCH_ENTIRE_SITE}, defaulting to {@link WebSiteRequest#SEARCH_THIS_AREA} for any other value.
 	 *
 	 * @see #reportingDoPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 * @see #doPost(WebSiteRequest,HttpServletResponse)
 	 */
 	protected void doPostWithSearch(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
-		String query = req.getParameter("search_query");
-		String searchTarget = req.getParameter("search_target");
+		String query = req.getParameter(WebSiteRequest.SEARCH_QUERY);
+		String searchTarget = req.getParameter(WebSiteRequest.SEARCH_TARGET);
 		if(query != null && searchTarget != null) {
 			Serialization serialization = getSerialization(req);
 			Serialization oldSerialization = SerializationEE.replace(req, serialization);
@@ -728,9 +734,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 					Html html = getHTML(req, resp);
 					try {
 						WebPageLayout layout = getWebPageLayout(req);
-						layout.startHTML(this, req, resp, html, "document.forms.search_two.search_query.select(); document.forms.search_two.search_query.focus();");
+						layout.startHTML(this, req, resp, html, "document.forms." + SEARCH_TWO + "." + WebSiteRequest.SEARCH_QUERY + ".select(); document.forms." + SEARCH_TWO + "." + WebSiteRequest.SEARCH_QUERY + ".focus();");
 
-						boolean entire_site = searchTarget.equals("entire_site");
+						boolean entire_site = searchTarget.equals(WebSiteRequest.SEARCH_ENTIRE_SITE);
 						WebPage target = entire_site ? getRootPage() : this;
 
 						// If the target contains no pages, use its parent
@@ -791,7 +797,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 				try {
 					doPost(req, resp, html);
 				} finally {
-					html.out.flush();
+					html.out.flush(); // TODO: These flushes are not necessary
 					html.out.close();
 				}
 			} finally {
@@ -1575,7 +1581,11 @@ abstract public class WebPage extends ErrorReportingServlet {
 				}
 
 				if (totalMatches > 0) {
-					size += keywords.length() + description.length() + title.length() + author.length();
+					size +=
+						(keywords == null ? 0 : keywords.length())
+						+ (description == null ? 0 : description.length())
+						+ (title == null ? 0 : title.length())
+						+ (author == null ? 0 : author.length());
 				}
 			} else {
 				// Rebuild the search index if no longer valid

@@ -105,8 +105,8 @@ abstract public class WebPageLayout {
 
 	/**
 	 * Prints the content HTML that shows the output of a search.  This output must include an
-	 * additional search form named <code>"search_two"</code>, with two fields named
-	 * <code>"search_query"</code> and <code>"search_target"</code>.
+	 * additional search form named {@link WebPage#SEARCH_TWO}, with two fields named
+	 * {@link WebSiteRequest#SEARCH_QUERY} and {@link WebSiteRequest#SEARCH_TARGET}.
 	 *
 	 * @see WebPage#doPostWithSearch(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
@@ -116,15 +116,15 @@ abstract public class WebPageLayout {
 		printContentHorizontalDivider(html, req, resp, 1, false);
 		startContentLine(html, req, resp, 1, "center", null);
 		beginLightArea(req, resp, html, null, "300", true);
-		html.out.write("      <form action=\"\" id=\"search_two\" method=\"post\">\n");
+		html.out.write("      <form action=\"\" id=\"" + WebPage.SEARCH_TWO + "\" method=\"post\">\n");
 		req.printFormFields(html);
 		html.out.write("        <table cellspacing=\"0\" cellpadding=\"0\"><tr><td style=\"white-space:nowrap\">\n"
 		+ "          "); html.text("Word(s) to search for:"); html.out.write(' ');
-		html.input.text().size(24).name("search_query").value(query).__().br__().out.write("\n"
+		html.input.text().size(24).name(WebSiteRequest.SEARCH_QUERY).value(query).__().br__().out.write("\n"
 		+ "          "); html.text("Search Location:"); html.out.write(' ');
-		html.input.radio().name("search_target").value("entire_site").checked(isEntireSite).__()
+		html.input.radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).checked(isEntireSite).__()
 		.out.write(' '); html.text("Entire Site"); html.out.write("&#160;&#160;&#160;");
-		html.input.radio().name("search_target").value("this_area").checked(!isEntireSite).__()
+		html.input.radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_THIS_AREA).checked(!isEntireSite).__()
 		.out.write(' '); html.text("This Area").br__().out.write("\n"
 		+ "          "); html.br__().out.write("\n"
 		+ "          <div style=\"text-align:center\">"); html.input.submit().clazz("ao_button").value(" Search ").__().out.write("</div>\n"
@@ -326,7 +326,7 @@ abstract public class WebPageLayout {
 				script.append("function selectLayout(layout) {\n");
 				for(String choice : layoutChoices) {
 					script.append("  if(layout==").text(choice).append(") window.top.location.href=").text(
-						req.getEncodedURL(page, URIParametersMap.of("layout", choice), resp)
+						req.getEncodedURL(page, URIParametersMap.of(WebSiteRequest.LAYOUT, choice), resp)
 					).append(";\n");
 				}
 				script.append('}');
