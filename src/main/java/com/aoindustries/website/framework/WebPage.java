@@ -585,10 +585,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see WebPageLayout#endHTML(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Html)
 	 */
 	// TODO: We could have a NullHtmlWriter that does not write any HTML tags or attributes, but just the text body.
-	// TODO: Then there could be a search-specific request object, instead of null, which is used during searches.
-	// TODO: This NullHtmlWriter could wrap something that skips HTML tags (in case of direct writes - is possible through Html abstraction)
-	// TODO: Finally, this could all go to a writer that builds word indexes on-the-fly.
-	// TODO: This could support deferred attributes (at least in a servlet context), to avoid processing attributes that will be discarded
+	//       Then there could be a search-specific request object, instead of null, which is used during searches.
+	//       This NullHtmlWriter could wrap something that skips HTML tags (in case of direct writes - is possible through Html abstraction)
+	//       Finally, this could all go to a writer that builds word indexes on-the-fly.
+	//       This could support deferred attributes (at least in a servlet context), to avoid processing attributes that will be discarded
 	public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,

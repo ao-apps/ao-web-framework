@@ -57,8 +57,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author  AO Industries, Inc.
  */
 // TODO: Move into own mircoproject (also split into ao-web-framework-html)?
-// TODO: This would start to decompose this in a way like we're doing in SemanticCMS 2.
-// TODO: Probably not worth it for this legacy system?  Could they converge?
+//       This would start to decompose this in a way like we're doing in SemanticCMS 2.
+//       Probably not worth it for this legacy system?  Could they converge?
 public class TextOnlyLayout extends WebPageLayout {
 
 	// Matches TextSkin.NAME
@@ -203,7 +203,7 @@ public class TextOnlyLayout extends WebPageLayout {
 		// Mobile support
 		html.out.write("    "); html.meta(Meta.Name.VIEWPORT).content("width=device-width, initial-scale=1.0").__().out.write("\n"
 		// TODO: This is probably only appropriate for single-page applications!
-		// TODO: See https://medium.com/@firt/dont-use-ios-web-app-meta-tag-irresponsibly-in-your-progressive-web-apps-85d70f4438cb
+		//       See https://medium.com/@firt/dont-use-ios-web-app-meta-tag-irresponsibly-in-your-progressive-web-apps-85d70f4438cb
 		+ "    "); html.meta(Meta.Name.APPLE_MOBILE_WEB_APP_CAPABLE).content("yes").__().out.write("\n"
 		+ "    "); html.meta(Meta.Name.APPLE_MOBILE_WEB_APP_STATUS_BAR_STYLE).content("black").__().nl();
 		// Authors
