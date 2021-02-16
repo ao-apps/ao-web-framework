@@ -55,16 +55,13 @@ abstract public class AutoListPage extends WebPage {
 			layout.printContentHorizontalDivider(html, req, resp, 1, false);
 			layout.startContentLine(html, req, resp, 1, null, null);
 			printContentStart(html, req, resp);
-			try {
-				html.out.write("<table cellpadding='0' cellspacing='10'>\n"
-						+ "  <tbody>\n");
-				printPageList(html, req, resp, this, layout);
-				html.out.write("  </tbody>\n"
-						+ "</table>\n");
-			} finally { // TODO: Remove all these finallys?  Or add back to startHtml/endHtml
-				layout.endContentLine(html, req, resp, 1, false);
-				layout.endContent(this, html, req, resp, 1);
-			}
+			html.out.write("<table cellpadding='0' cellspacing='10'>\n"
+					+ "  <tbody>\n");
+			printPageList(html, req, resp, this, layout);
+			html.out.write("  </tbody>\n"
+					+ "</table>\n");
+			layout.endContentLine(html, req, resp, 1, false);
+			layout.endContent(this, html, req, resp, 1);
 		}
 	}
 

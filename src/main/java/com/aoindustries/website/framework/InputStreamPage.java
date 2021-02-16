@@ -47,22 +47,16 @@ abstract public class InputStreamPage extends WebPage {
 		WebPageLayout layout
 	) throws IOException, SQLException {
 		layout.startContent(html, req, resp, 1, getPreferredContentWidth(req));
-		try {
-			layout.printContentTitle(html, req, resp, this, 1);
-			layout.printContentHorizontalDivider(html, req, resp, 1, false);
-			layout.startContentLine(html, req, resp, 1, null, null);
-			try {
-				// TODO: getEncoding (getCharacterEncoding) method on WebPage, with default Html.Encoding
-				// TODO: Encoding here, read as Reader
-				try (InputStream in = getInputStream()) {
-					printStream(html, req, resp, in);
-				}
-			} finally {
-				layout.endContentLine(html, req, resp, 1, false);
-			}
-		} finally {
-			layout.endContent(this, html, req, resp, 1);
+		layout.printContentTitle(html, req, resp, this, 1);
+		layout.printContentHorizontalDivider(html, req, resp, 1, false);
+		layout.startContentLine(html, req, resp, 1, null, null);
+		// TODO: getEncoding (getCharacterEncoding) method on WebPage, with default Html.Encoding
+		// TODO: Encoding here, read as Reader
+		try (InputStream in = getInputStream()) {
+			printStream(html, req, resp, in);
 		}
+		layout.endContentLine(html, req, resp, 1, false);
+		layout.endContent(this, html, req, resp, 1);
 	}
 
 	/**
