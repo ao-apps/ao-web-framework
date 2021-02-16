@@ -831,11 +831,6 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 		return isLinux;
 	}
 
-	@Override
-	public boolean isSecure() {
-		return req.isSecure() || req.getServerPort() == 443 || req.getRequestURI().contains("/https/"); // TODO: This old /https/ still required?
-	}
-
 	/**
 	 * Prints the hidden variables that contain all of the current settings.
 	 */
