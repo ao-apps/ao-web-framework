@@ -119,12 +119,6 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 */
 	public static final String LOGIN_PASSWORD = "login_password";
 
-	/**
-	 * The parameter that flags search engine.
-	 */
-	// TODO: Is this still used?  How?
-	public static final String SEARCH_ENGINE = "search_engine";
-
 	private static final Logger logger = Logger.getLogger(WebSiteRequest.class.getName());
 
 	/**
@@ -602,8 +596,6 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	}
 
 	protected boolean appendSettings(Set<String> finishedParams, boolean hasQuery, StringBuilder url) {
-		boolean searchEngine = Boolean.parseBoolean(getParameter(SEARCH_ENGINE));
-		if(searchEngine) hasQuery = appendParam(url, SEARCH_ENGINE, Boolean.toString(true), finishedParams, hasQuery);
 		return hasQuery;
 	}
 
@@ -835,9 +827,6 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * Prints the hidden variables that contain all of the current settings.
 	 */
 	public void printFormFields(Html html) throws IOException {
-		if(Boolean.parseBoolean(req.getParameter(SEARCH_ENGINE))) {
-			printHiddenField(html, SEARCH_ENGINE, Boolean.toString(true));
-		}
 	}
 
 	/**
