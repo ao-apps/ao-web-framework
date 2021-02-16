@@ -126,12 +126,6 @@ abstract public class WebPage extends ErrorReportingServlet {
 	//private static Pattern reWordPattern = Pattern.compile("(\\w*)");
 
 	/**
-	 * The output may be cached for greater throughput.
-	 * @see  #doGet(WebSiteRequest,HttpServletResponse)
-	 */
-	private Map<Object,OutputCacheEntry> outputCache; // TODO: unused
-
-	/**
 	 * Configures the {@linkplain com.aoindustries.web.resources.servlet.RegistryEE.Page page-scope web resources} that this page uses.
 	 * <p>
 	 * Implementers should call <code>super.configureResources(…)</code> as a matter of convention, despite this default implementation doing nothing.
