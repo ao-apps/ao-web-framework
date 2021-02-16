@@ -52,7 +52,6 @@ public class RedirectWebPage extends WebPage {
 	 *
 	 * @param  path  the context-relative path, with a preceding slash (/)
 	 */
-	// TODO: Isn't servletcontext set like other pages already?
 	public RedirectWebPage(ServletContext context, WebPage parent, String path, int redirectType, String description, String keywords, String navImageAlt, String title) {
 		super();
 		setServletContext(context);
