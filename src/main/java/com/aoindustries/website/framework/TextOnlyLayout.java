@@ -151,16 +151,6 @@ public class TextOnlyLayout extends WebPageLayout {
 		+ "</table>\n");
 	}
 
-	/**
-	 * Until version 3.0 there will not be a getStatus method on the HttpServletResponse class.
-	 * To allow code to detect the current status, anytime the status is set one should
-	 * also set the request attribute of this name to a java.lang.Integer of the status.
-	 *
-	 * Matches value in com.aoindustries.website.Constants.HTTP_SERVLET_RESPONSE_STATUS for
-	 * interoperability between the frameworks.
-	 */
-	public static final String HTTP_SERVLET_RESPONSE_STATUS = "httpServletResponseStatus";
-
 	@Override
 	@SuppressWarnings("deprecation")
 	public void startHTML(
@@ -170,11 +160,7 @@ public class TextOnlyLayout extends WebPageLayout {
 		Html html,
 		String onload
 	) throws ServletException, IOException, SQLException {
-		boolean isOkResponseStatus;
-		{
-			Integer responseStatus = (Integer)req.getAttribute(HTTP_SERVLET_RESPONSE_STATUS);
-			isOkResponseStatus = (responseStatus == null || responseStatus == HttpServletResponse.SC_OK);
-		}
+		boolean isOkResponseStatus = (resp.getStatus() == HttpServletResponse.SC_OK);
 		ServletContext servletContext = req.getServletContext();
 		String trackingId = getGoogleAnalyticsNewTrackingCode(servletContext);
 		// Write doctype
