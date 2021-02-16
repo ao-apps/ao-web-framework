@@ -78,6 +78,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 */
 	public static final String SEARCH_TWO = "search_two";
 
+	private static final String ROBOTS_HEADER_NAME = "X-Robots-Tag";
+	private static final String ROBOTS_HEADER_VALUE = "noindex, nofollow";
+
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -495,7 +498,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 		if(isLogout) req.logout(resp);
 
 		if(Boolean.parseBoolean(req.getParameter(WebSiteRequest.LOGIN_REQUESTED))) {
-			// TODO: robots header on WebSiteRequest.LOGIN_REQUESTED
+			if(!resp.containsHeader(ROBOTS_HEADER_NAME)) {
+				resp.setHeader(ROBOTS_HEADER_NAME, ROBOTS_HEADER_VALUE);
+			}
 			page.printLoginForm(page, new LoginException("Please Login"), req, resp);
 			return;
 		}
@@ -654,6 +659,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 		if(isLogout) req.logout(resp);
 
 		if(Boolean.parseBoolean(req.getParameter(WebSiteRequest.LOGIN_REQUESTED))) {
+			if(!resp.containsHeader(ROBOTS_HEADER_NAME)) {
+				resp.setHeader(ROBOTS_HEADER_NAME, ROBOTS_HEADER_VALUE);
+			}
 			page.printLoginForm(page, new LoginException("Please Login"), req, resp);
 			return;
 		}
