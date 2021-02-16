@@ -160,7 +160,6 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 											<includes>element-list, package-list</includes>
 											<outputDirectory>${project.build.directory}/offlineLinks/com.aoindustries/ao-web-resources-servlet</outputDirectory>
 										</artifactItem>
-										<!-- No apidocs: <groupId>gnu-regexp</groupId><artifactId>gnu-regexp</artifactId> -->
 										<!-- ao-javadoc-offline: <groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId> -->
 										<!-- ao-javadoc-offline: <groupId>javax.servlet.jsp</groupId><artifactId>javax.servlet.jsp-api</artifactId> -->
 									</artifactItems>
@@ -222,7 +221,6 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 									<url>https://aoindustries.com/ao-web-resources/servlet/apidocs/</url>
 									<location>${project.build.directory}/offlineLinks/com.aoindustries/ao-web-resources-servlet</location>
 								</offlineLink>
-								<!-- No apidocs: <groupId>gnu-regexp</groupId><artifactId>gnu-regexp</artifactId> -->
 								<!-- Java EE: <groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId> -->
 								<!-- Java EE: <groupId>javax.servlet.jsp</groupId><artifactId>javax.servlet.jsp-api</artifactId> -->
 								<!-- Java SE -->
@@ -284,10 +282,6 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 			</dependency>
 			<dependency>
 				<groupId>com.aoindustries</groupId><artifactId>ao-web-resources-servlet</artifactId><version>0.1.0${POST-SNAPSHOT}</version>
-			</dependency>
-			<dependency>
-				<!-- TODO: Remove this, use standard Java regular expressions -->
-				<groupId>gnu-regexp</groupId><artifactId>gnu-regexp</artifactId><version>1.1.4</version>
 			</dependency>
 			<!-- javaee-web-api-bom: <groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId> -->
 			<!-- javaee-web-api-bom: <groupId>javax.servlet.jsp</groupId><artifactId>javax.servlet.jsp-api</artifactId> -->
@@ -371,10 +365,6 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		</dependency>
 		<dependency>
 			<groupId>com.aoindustries</groupId><artifactId>ao-web-resources-servlet</artifactId>
-		</dependency>
-		<dependency>
-			<!-- TODO: Remove this, use standard Java regular expressions -->
-			<groupId>gnu-regexp</groupId><artifactId>gnu-regexp</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId>

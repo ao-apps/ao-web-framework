@@ -28,9 +28,7 @@ import com.aoindustries.encoding.Serialization;
 import com.aoindustries.encoding.servlet.DoctypeEE;
 import com.aoindustries.encoding.servlet.EncodingContextEE;
 import com.aoindustries.encoding.servlet.SerializationEE;
-import com.aoindustries.exception.WrappedException;
 import com.aoindustries.html.Html;
-import com.aoindustries.io.AoByteArrayOutputStream;
 import com.aoindustries.lang.Strings;
 import com.aoindustries.net.EmptyURIParameters;
 import com.aoindustries.net.URIParameters;
@@ -40,22 +38,23 @@ import com.aoindustries.servlet.http.HttpServletUtil;
 import com.aoindustries.web.resources.registry.Registry;
 import com.aoindustries.web.resources.servlet.PageServlet;
 import com.aoindustries.web.resources.servlet.RegistryEE;
-import gnu.regexp.RE;
-import gnu.regexp.REException;
+import java.io.CharArrayWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.regex.Pattern;
 import javax.security.auth.login.LoginException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -122,17 +121,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 */
 	private final List<int[]> searchCounts=new ArrayList<>();
 
-	// TODO: Use standard java regular expressions, or a full HTML parser for extraction
-	public static final RE reHTMLPattern;
-	//private static RE reWordPattern;
-	static {
-		try {
-			reHTMLPattern = new RE("<.*?>");
-			//reWordPattern = new RE("(\\w*)");
-		} catch (REException e) {
-			throw new WrappedException(e);
-		}
-	}
+	// TODO: Use a full HTML parser for extraction, JTidy or newer alternative
+	public static final Pattern reHTMLPattern = Pattern.compile("<[^>]*>");
+	//private static Pattern reWordPattern = Pattern.compile("(\\w*)");
 
 	/**
 	 * The output may be cached for greater throughput.
@@ -153,7 +144,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 
 	private void addSearchWords(String words, int weight) {
 		// Remove HTML
-		words=reHTMLPattern.substituteAll(words, " ");
+		// if(words.contains("<PRE>")) System.err.println("BEFORE: " + words);
+		words = reHTMLPattern.matcher(words).replaceAll(" ");
+		// if(words.contains("<PRE>")) System.err.println("AFTER.: " + words);
 
 		// Iterate through all the words in the content
 		StringTokenizer st=new StringTokenizer(words, " ");
@@ -748,7 +741,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 						List<SearchResult> results=new ArrayList<>();
 						if(words.length>0) {
 							// Perform the search
-							target.search(words, req, resp, results, new AoByteArrayOutputStream(), new SortedArrayList<>());
+							target.search(words, req, resp, results, new CharArrayWriter(), new HashSet<>());
 							Collections.sort(results);
 							//Strings.sortObjectsAndFloatDescending(results, 1, 5);
 						}
@@ -1489,7 +1482,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @param  words     all of the words that must match
 	 * @param  req       the <code>WebSiteRequest</code> containing the users preferences
 	 * @param  results   the <code>ArrayList</code> that contains the results
-	 * @param  bytes     the <code>SearchOutputStream</code> to use for internal processing
+	 * @param  buffer    the <code>SearchOutputStream</code> to use for internal processing
 	 *
 	 * @see  #standardSearch
 	 */
@@ -1498,10 +1491,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 		WebSiteRequest req,
 		HttpServletResponse response,
 		List<SearchResult> results,
-		AoByteArrayOutputStream bytes,
-		List<WebPage> finishedPages
+		CharArrayWriter buffer,
+		Set<WebPage> finishedPages
 	) throws ServletException, IOException, SQLException {
-		standardSearch(words, req, response, results, bytes, finishedPages);
+		standardSearch(words, req, response, results, buffer, finishedPages);
 	}
 
 	/**
@@ -1514,10 +1507,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		List<SearchResult> results,
-		AoByteArrayOutputStream bytes,
-		List<WebPage> finishedPages
+		CharArrayWriter buffer,
+		Set<WebPage> finishedPages
 	) throws ServletException, IOException, SQLException {
-		if(!finishedPages.contains(this)) {
+		if(finishedPages.add(this)) {
 			String title = null;
 			String description = null;
 			String author = null;
@@ -1537,9 +1530,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 				String keywords = getKeywords();
 
 				// Get the HTML content
-				bytes.reset();
+				buffer.reset();
 				// TODO: EncodingContext based on page settings, or XML always for search?
-				Html html = new Html(new OutputStreamWriter(bytes, Html.ENCODING));
+				Html html = new Html(buffer);
 				// Isolate page-scope registry
 				Registry oldPageRegistry = RegistryEE.Page.get(req);
 				try {
@@ -1551,8 +1544,8 @@ abstract public class WebPage extends ErrorReportingServlet {
 					RegistryEE.Page.set(req, oldPageRegistry);
 				}
 				html.out.flush();
-				byte[] content = bytes.getInternalByteArray();
-				size = bytes.size();
+				String content = buffer.toString();
+				size = buffer.size();
 
 				int len = words.length;
 				for (int c = 0; c < len; c++) {
@@ -1568,7 +1561,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 						+ (title == null ? 0 : (Strings.countOccurrences(title, word) * 5))
 
 						// Add the content with weight 1
-						+ Strings.countOccurrences(content, size, word)
+						+ Strings.countOccurrences(content, word)
 
 						// Add the author with weight 1
 						+ (author == null ? 0 : Strings.countOccurrences(author, word));
@@ -1600,9 +1593,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 							String keywords = getKeywords();
 
 							// Get the HTML content
-							bytes.reset();
+							buffer.reset();
 							// TODO: EncodingContext based on page settings, or XML always for search?
-							Html html = new Html(new OutputStreamWriter(bytes, Html.ENCODING));
+							Html html = new Html(buffer);
 							// Isolate page-scope registry
 							Registry oldPageRegistry = RegistryEE.Page.get(req);
 							try {
@@ -1614,30 +1607,33 @@ abstract public class WebPage extends ErrorReportingServlet {
 								RegistryEE.Page.set(req, oldPageRegistry);
 							}
 							html.out.flush();
-							byte[] bcontent = bytes.getInternalByteArray();
-							size = bytes.size();
-							String content = new String(bcontent, 0, size);
+							String content = buffer.toString();
 
 							// Remove all the indexed words
 							searchWords.clear();
 							searchCounts.clear();
 
 							// Add the keywords with weight 10
-							addSearchWords(keywords, 10);
+							if(keywords != null) addSearchWords(keywords, 10);
 
 							// Add the description with weight 5
-							addSearchWords(description, 5);
+							if(description != null) addSearchWords(description, 5);
 
 							// Add the title with weight 5
-							addSearchWords(title, 5);
+							if(title != null) addSearchWords(title, 5);
 
 							// Add the content with weight 1
 							addSearchWords(content, 1);
 
 							// Add the author with weight 1
-							addSearchWords(author, 1);
+							if(author != null) addSearchWords(author, 1);
 
-							searchByteCount = size + keywords.length() + description.length() + title.length() + author.length();
+							searchByteCount =
+								content.length()
+								+ (keywords == null ? 0 : keywords.length())
+								+ (description == null ? 0 : description.length())
+								+ (title == null ? 0 : title.length())
+								+ (author == null ? 0 : author.length());
 							//searchWords.trimToSize();
 							//searchCounts.trimToSize();
 							this.searchLastModified = mySearchLastModified;
@@ -1692,14 +1688,11 @@ abstract public class WebPage extends ErrorReportingServlet {
 				);
 			}
 
-			// Flag as done
-			finishedPages.add(this);
-
 			// Search recursively
 			WebPage[] children = getCachedChildren(req, resp);
 			int len = children.length;
 			for (int c = 0; c < len; c++) {
-				children[c].search(words, req, resp, results, bytes, finishedPages);
+				children[c].search(words, req, resp, results, buffer, finishedPages);
 			}
 		}
 	}

@@ -25,10 +25,11 @@ package com.aoindustries.website.framework;
 import com.aoindustries.collections.SortedArrayList;
 import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
 import com.aoindustries.html.Html;
-import com.aoindustries.io.AoByteArrayOutputStream;
+import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -84,8 +85,8 @@ abstract public class DumpURLs extends WebPage {
 		WebSiteRequest req,
 		HttpServletResponse response,
 		List<SearchResult> results,
-		AoByteArrayOutputStream bytes,
-		List<WebPage> finishedPages
+		CharArrayWriter buffer,
+		Set<WebPage> finishedPages
 	) {
 	}
 
