@@ -72,7 +72,7 @@ abstract public class AutoSiteMap extends TreePage {
 		HttpServletResponse resp,
 		Html html
 	) throws ServletException, IOException, SQLException {
-		if(req != null) super.doGet(req, resp, html); // TODO: A search layout that does almost nothing
+		if(req != null) super.doGet(req, resp, html);
 	}
 
 	@Override
