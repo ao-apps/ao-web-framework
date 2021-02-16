@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Reads everything from an input stream and puts it into a page.
+ * The input stream must be encoded as {@link Html#ENCODING}.
  *
  * @author  AO Industries, Inc.
  */
@@ -50,8 +51,6 @@ abstract public class InputStreamPage extends WebPage {
 		layout.printContentTitle(html, req, resp, this, 1);
 		layout.printContentHorizontalDivider(html, req, resp, 1, false);
 		layout.startContentLine(html, req, resp, 1, null, null);
-		// TODO: getEncoding (getCharacterEncoding) method on WebPage, with default Html.Encoding
-		// TODO: Encoding here, read as Reader
 		try (InputStream in = getInputStream()) {
 			printStream(html, req, resp, in);
 		}
@@ -69,6 +68,6 @@ abstract public class InputStreamPage extends WebPage {
 	}
 
 	public static void printStreamStatic(Html html, InputStream in) throws IOException {
-		IoUtils.copy(new InputStreamReader(in), html.out);
+		IoUtils.copy(new InputStreamReader(in, Html.ENCODING), html.out);
 	}
 }
