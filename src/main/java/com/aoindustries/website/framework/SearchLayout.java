@@ -84,7 +84,6 @@ public class SearchLayout extends WebPageLayout {
 	@Override
 	public void printContentTitle(Html html, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) {
 		// Do nothing
-		// TODO: Should we write the title, encoded?  Or is the title used directly by the search indexing anyway?
 	}
 
 	@Override
