@@ -36,18 +36,6 @@ abstract public class DescriptionAutoListPage extends AutoListPage {
 
 	private static final long serialVersionUID = 1L;
 
-	public DescriptionAutoListPage() {
-		super();
-	}
-
-	public DescriptionAutoListPage(WebSiteRequest req) {
-		super(req);
-	}
-
-	public DescriptionAutoListPage(Object param) {
-		super(param);
-	}
-
 	/**
 	 * Prints the content that will be put before the auto-generated list.
 	 */

@@ -44,18 +44,6 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 
 	private static final long serialVersionUID = 1L;
 
-	public HTMLInputStreamPage() {
-		super();
-	}
-
-	public HTMLInputStreamPage(WebSiteRequest req) {
-		super(req);
-	}
-
-	public HTMLInputStreamPage(Object param) {
-		super(param);
-	}
-
 	@Override
 	public void printStream(Html html, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws IOException, SQLException {
 		printHTMLStream(html, req, resp, getWebPageLayout(req), in, "aoLightLink");

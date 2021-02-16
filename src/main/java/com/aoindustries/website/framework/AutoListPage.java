@@ -42,18 +42,6 @@ abstract public class AutoListPage extends WebPage {
 	 */
 	public static final int NUM_COLS = 3;
 
-	public AutoListPage() {
-		super();
-	}
-
-	public AutoListPage(WebSiteRequest req) {
-		super(req);
-	}
-
-	public AutoListPage(Object param) {
-		super(param);
-	}
-
 	@Override
 	public void doGet(
 		WebSiteRequest req,
@@ -61,20 +49,22 @@ abstract public class AutoListPage extends WebPage {
 		Html html,
 		WebPageLayout layout
 	) throws IOException, SQLException {
-		layout.startContent(html, req, resp, 1, getPreferredContentWidth(req));
-		layout.printContentTitle(html, req, resp, this, 1);
-		layout.printContentHorizontalDivider(html, req, resp, 1, false);
-		layout.startContentLine(html, req, resp, 1, null, null);
-		printContentStart(html, req, resp);
-		try {
-			html.out.write("<table cellpadding='0' cellspacing='10'>\n"
-					+ "  <tbody>\n");
-			printPageList(html, req, resp, this, layout);
-			html.out.write("  </tbody>\n"
-					+ "</table>\n");
-		} finally { // TODO: Remove all these finallys?  Or add back to startHtml/endHtml
-			layout.endContentLine(html, req, resp, 1, false);
-			layout.endContent(this, html, req, resp, 1);
+		if(req != null) {
+			layout.startContent(html, req, resp, 1, getPreferredContentWidth(req));
+			layout.printContentTitle(html, req, resp, this, 1);
+			layout.printContentHorizontalDivider(html, req, resp, 1, false);
+			layout.startContentLine(html, req, resp, 1, null, null);
+			printContentStart(html, req, resp);
+			try {
+				html.out.write("<table cellpadding='0' cellspacing='10'>\n"
+						+ "  <tbody>\n");
+				printPageList(html, req, resp, this, layout);
+				html.out.write("  </tbody>\n"
+						+ "</table>\n");
+			} finally { // TODO: Remove all these finallys?  Or add back to startHtml/endHtml
+				layout.endContentLine(html, req, resp, 1, false);
+				layout.endContent(this, html, req, resp, 1);
+			}
 		}
 	}
 
@@ -111,6 +101,6 @@ abstract public class AutoListPage extends WebPage {
 	 * Prints an unordered list of the available pages.
 	 */
 	public static void printPageList(Html html, WebSiteRequest req, HttpServletResponse resp, WebPage parent, WebPageLayout layout) throws IOException, SQLException {
-		printPageList(html, req, resp, parent.getCachedChildren(req, resp), layout);
+		if(req != null) printPageList(html, req, resp, parent.getCachedChildren(req, resp), layout);
 	}
 }

@@ -33,6 +33,8 @@ import com.aoindustries.html.Html;
 import com.aoindustries.io.AoByteArrayOutputStream;
 import com.aoindustries.lang.Strings;
 import com.aoindustries.net.EmptyURIParameters;
+import com.aoindustries.net.URIParameters;
+import com.aoindustries.servlet.ServletRequestParameters;
 import com.aoindustries.servlet.ServletUtil;
 import com.aoindustries.servlet.http.HttpServletUtil;
 import com.aoindustries.web.resources.registry.Registry;
@@ -52,6 +54,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import javax.security.auth.login.LoginException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -75,16 +79,16 @@ abstract public class WebPage extends ErrorReportingServlet {
 	/**
 	 * An empty array of <code>WebPage</code> objects to be used in returning no web pages.
 	 */
-	protected static final WebPage[] emptyWebPageArray=new WebPage[0];
+	protected static final WebPage[] emptyWebPageArray = new WebPage[0];
 
 	/**
 	 * Caches instances of <code>WebPage</code> for reuse.  The storage is a
-	 * <code>HashMap</code> of <code>ArrayList</code>s, keyed on classname.
+	 * <code>HashMap</code> of <code>ArrayList</code>s, keyed on class.
 	 *
 	 * @see  #getWebPage(ServletContext,Class,WebSiteRequest)
 	 * @see  #getWebPage(ServletContext,Class,Object)
 	 */
-	private static final Map<String,List<WebPage>> webPageCache=new HashMap<>();
+	private static final Map<Class<?>,List<WebPage>> webPageCache = new HashMap<>();
 
 	/**
 	 * Stores a cache of the list of child pages, once created.
@@ -124,31 +128,11 @@ abstract public class WebPage extends ErrorReportingServlet {
 		}
 	}
 
-	private static final Class<?>[] getWebPageRequestParams={
-		WebSiteRequest.class
-	};
-
-	private static final Class<?>[] getWebPageObjectParams={
-		Object.class
-	};
-
 	/**
 	 * The output may be cached for greater throughput.
 	 * @see  #doGet(WebSiteRequest,HttpServletResponse)
 	 */
 	private Map<Object,OutputCacheEntry> outputCache;
-
-	public WebPage() {
-		super();
-	}
-
-	public WebPage(WebSiteRequest req) {
-		super();
-	}
-
-	public WebPage(Object param) {
-		super();
-	}
 
 	/**
 	 * Configures the {@linkplain com.aoindustries.web.resources.servlet.RegistryEE.Page page-scope web resources} that this page uses.
@@ -991,7 +975,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @see #getShortTitle()
 	 * @see #getNavImageSuffix(com.aoindustries.website.framework.WebSiteRequest)
-	 * @see #getNavImageURL(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, java.lang.Object)
+	 * @see #getNavImageURL(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.net.URIParameters)
 	 */
 	public String getNavImageAlt(WebSiteRequest req) throws IOException, SQLException {
 		return getShortTitle();
@@ -1003,7 +987,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * the beginning is truncated and <code>...</code> appended so that both fit the image.
 	 *
 	 * @see #getNavImageAlt(com.aoindustries.website.framework.WebSiteRequest)
-	 * @see #getNavImageURL(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, java.lang.Object)
+	 * @see #getNavImageURL(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.net.URIParameters)
 	 */
 	public String getNavImageSuffix(WebSiteRequest req) throws IOException, SQLException {
 		return null;
@@ -1012,10 +996,13 @@ abstract public class WebPage extends ErrorReportingServlet {
 	/**
 	 * Gets the URL associated with a nav image, fully encoded.
 	 *
+	 * @param  params  Only adds a value when the name has not already been added to the URL.
+	 *                 This does not support multiple values, only the first is used.
+	 *
 	 * @see #getNavImageAlt(com.aoindustries.website.framework.WebSiteRequest)
 	 * @see #getNavImageSuffix(com.aoindustries.website.framework.WebSiteRequest)
 	 */
-	public String getNavImageURL(WebSiteRequest req, HttpServletResponse resp, Object params) throws IOException, SQLException {
+	public String getNavImageURL(WebSiteRequest req, HttpServletResponse resp, URIParameters params) throws IOException, SQLException {
 		return req.getEncodedURL(this, params, resp);
 	}
 
@@ -1149,16 +1136,77 @@ abstract public class WebPage extends ErrorReportingServlet {
 
 	/**
 	 * Gets parameters that are added to the query string of URLs generated for this page.
+	 *
+	 * @return  The parameters, may be {@code null} or empty when none.
+	 *
+	 * @see  EmptyURIParameters#getInstance()
 	 */
-	public Object getURLParams(WebSiteRequest req) throws IOException, SQLException {
+	public URIParameters getURLParams(WebSiteRequest req) throws IOException, SQLException {
 		return null;
 	}
 
 	/**
-	 * @see  #getWebPage(ServletContext,Class,WebSiteRequest)
+	 * @see  #getWebPage(javax.servlet.ServletContext, java.lang.Class, com.aoindustries.website.framework.WebSiteRequest)
 	 */
 	public WebPage getWebPage(Class<? extends WebPage> clazz, WebSiteRequest req) throws IOException {
 		return getWebPage(getServletContext(), clazz, req);
+	}
+
+	/**
+	 * Placeholder value used when constructor not found since concurrent maps do not allow null keys.
+	 */
+	private static final Constructor<? extends WebPage> NO_SUCH_CONSTRUCTOR;
+	static {
+		try {
+			NO_SUCH_CONSTRUCTOR = WebPage.class.getConstructor();
+		} catch(NoSuchMethodException e) {
+			throw new ExceptionInInitializerError(e);
+		}
+	}
+
+	private static final ConcurrentMap<Class<? extends WebPage>,Constructor<? extends WebPage>> requestConstructors = new ConcurrentHashMap<>();
+	@SuppressWarnings("unchecked")
+	private static <W extends WebPage> Constructor<W> getRequestConstructor(Class<W> clazz) {
+		Constructor<?> con = (Constructor)requestConstructors.get(clazz);
+		if(con == null) {
+			try {
+				con = clazz.getConstructor(WebSiteRequest.class);
+			} catch(NoSuchMethodException e) {
+				con = NO_SUCH_CONSTRUCTOR;
+			}
+			requestConstructors.put(clazz, (Constructor)con);
+		}
+		return (con == NO_SUCH_CONSTRUCTOR) ? null : (Constructor)con;
+	}
+
+	private static final ConcurrentMap<Class<? extends WebPage>,Constructor<? extends WebPage>> paramsConstructors = new ConcurrentHashMap<>();
+	@SuppressWarnings("unchecked")
+	private static <W extends WebPage> Constructor<W> getParamsConstructor(Class<W> clazz) {
+		Constructor<?> con = (Constructor)paramsConstructors.get(clazz);
+		if(con == null) {
+			try {
+				con = clazz.getConstructor(URIParameters.class);
+			} catch(NoSuchMethodException e) {
+				con = NO_SUCH_CONSTRUCTOR;
+			}
+			paramsConstructors.put(clazz, (Constructor)con);
+		}
+		return (con == NO_SUCH_CONSTRUCTOR) ? null : (Constructor)con;
+	}
+
+	private static final ConcurrentMap<Class<? extends WebPage>,Constructor<? extends WebPage>> defaultConstructors = new ConcurrentHashMap<>();
+	@SuppressWarnings("unchecked")
+	private static <W extends WebPage> Constructor<W> getDefaultConstructor(Class<W> clazz) {
+		Constructor<?> con = (Constructor)defaultConstructors.get(clazz);
+		if(con == null) {
+			try {
+				con = clazz.getConstructor();
+			} catch(NoSuchMethodException e) {
+				con = NO_SUCH_CONSTRUCTOR;
+			}
+			defaultConstructors.put(clazz, (Constructor)con);
+		}
+		return (con == NO_SUCH_CONSTRUCTOR) ? null : (Constructor)con;
 	}
 
 	/**
@@ -1168,6 +1216,15 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * <p>
 	 * Unless caching is disabled, the generated pages are stored in a
 	 * cache and resolved using the pages <code>isHandler</code> method.
+	 * </p>
+	 * <p>
+	 * When creating a new instance of {@link WebPage}, searches for constructors in the following order:
+	 * </p>
+	 * <ol>
+	 * <li>Single argument {@link WebSiteRequest}, given the request.</li>
+	 * <li>Single argument {@link URIParameters}, given a {@link ServletRequestParameters} wrapper around request.</li>
+	 * <li>No-args constructor.</li>
+	 * </ol>
 	 *
 	 * @param  context  the context the servlet will be run in
 	 * @param  clazz  the <code>Class</code> to get an instance of
@@ -1180,38 +1237,71 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see  #isHandler(WebSiteRequest)
 	 */
 	public static WebPage getWebPage(ServletContext context, Class<? extends WebPage> clazz, WebSiteRequest req) throws IOException {
+		if(context == null) throw new IllegalArgumentException("context is null");
 		synchronized(webPageCache) {
-			if(context==null) throw new IllegalArgumentException("context is null");
-			String classname=clazz.getName();
 			// First look for a match in the cache
-			List<WebPage> list=webPageCache.get(classname);
-			if(list!=null) {
-				int size=list.size();
-				for(int c=0;c<size;c++) {
-					WebPage page=list.get(c);
-					if(page.getClass()==clazz && page.isHandler(req)) return page;
+			List<WebPage> cached = webPageCache.get(clazz);
+			if(cached != null) {
+				for(WebPage page : cached) {
+					assert page.getClass() == clazz;
+					if(page.isHandler(req)) return page;
 				}
 			}
 
 			// Make a new instance and store in cache
-			try {
-				Constructor<? extends WebPage> con=clazz.getConstructor(getWebPageRequestParams);
-				WebPage page=con.newInstance(new Object[] {req});
-				page.setServletContext(context);
-				if(list==null) webPageCache.put(classname, list=new ArrayList<>());
-				list.add(page);
-				return page;
-			} catch (ClassCastException | ReflectiveOperationException e) {
-				throw new IOException("Unable to getWebPage: "+clazz.getName()+", classname="+classname+", req="+req, e);
+			WebPage page;
+			Constructor<? extends WebPage> con = getRequestConstructor(clazz);
+			if(con != null) {
+				try {
+					page = con.newInstance(req);
+				} catch (Error | RuntimeException | ReflectiveOperationException e) {
+					throw new IOException("Unable to getWebPage: " + clazz.getName() + ", req=" + req, e);
+				}
+			} else {
+				con = getParamsConstructor(clazz);
+				if(con != null) {
+					URIParameters params = new ServletRequestParameters(req);
+					try {
+						page = con.newInstance(params);
+					} catch (Error | RuntimeException | ReflectiveOperationException e) {
+						throw new IOException("Unable to getWebPage: " + clazz.getName() + ", params=" + params, e);
+					}
+				} else {
+					con = getDefaultConstructor(clazz);
+					if(con != null) {
+						try {
+							page = con.newInstance();
+						} catch (Error | RuntimeException | ReflectiveOperationException e) {
+							throw new IOException("Unable to getWebPage: " + clazz.getName(), e);
+						}
+					} else {
+						throw new IOException("No constructor found for getWebPage: " + clazz.getName());
+					}
+				}
 			}
+			page.setServletContext(context);
+			if(cached == null) webPageCache.put(clazz, cached = new ArrayList<>());
+			cached.add(page);
+			return page;
 		}
 	}
 
 	/**
-	 * @see  #getWebPage(ServletContext,Class,Object)
+	 * @param  params  The parameters used to select the right instance.
+	 *
+	 * @see  #getWebPage(javax.servlet.ServletContext, java.lang.Class, com.aoindustries.net.URIParameters)
 	 */
-	public WebPage getWebPage(Class<? extends WebPage> clazz, Object param) throws IOException {
-		return getWebPage(getServletContext(), clazz, param);
+	public WebPage getWebPage(Class<? extends WebPage> clazz, URIParameters params) throws IOException {
+		return getWebPage(getServletContext(), clazz, params);
+	}
+
+	/**
+	 * Gets a web page given no parameters.
+	 *
+	 * @see  #getWebPage(java.lang.Class, com.aoindustries.net.URIParameters)
+	 */
+	public WebPage getWebPage(Class<? extends WebPage> clazz) throws IOException {
+		return getWebPage(clazz, (URIParameters)null);
 	}
 
 	/**
@@ -1221,43 +1311,86 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * <p>
 	 * Unless caching is disabled, the generated pages are stored in a
 	 * cache and resolved using the pages <code>isHander</code> method.
+	 * </p>
+	 * <ol>
+	 * <li>Single argument {@link URIParameters}, given the parameters.</li>
+	 * <li>No-args constructor.</li>
+	 * </ol>
 	 *
 	 * @param  context  the context the servlet will be run in
-	 * @param  clazz  the <code>Class</code> to get an instance of
-	 * @param  params  the parameters used to select the right instance
+	 * @param  params  The parameters used to select the right instance.
 	 *
 	 * @return  a <code>WebPage</code> object of the given class that matches the request settings
 	 *
 	 * @exception  IllegalArgumentException if unable to create the instance
 	 *
-	 * @see  #isHandler(Object)
+	 * @see  #isHandler(com.aoindustries.net.URIParameters)
 	 */
-	public static WebPage getWebPage(ServletContext context, Class<? extends WebPage> clazz, Object params) throws IOException {
+	// TODO: Deprecate for lambda version
+	public static WebPage getWebPage(ServletContext context, Class<? extends WebPage> clazz, URIParameters params) throws IOException {
+		if(params == null) params = EmptyURIParameters.getInstance();
 		synchronized(webPageCache) {
-			String classname=clazz.getName();
 			// First look for a match in the cache
-			List<WebPage> list=webPageCache.get(classname);
-			if(list!=null) {
-				int size=list.size();
-				for(int c=0;c<size;c++) {
-					WebPage page=list.get(c);
-					if(page==null) throw new NullPointerException("page is null");
-					if(page.getClass()==clazz && page.isHandler(params)) return page;
+			List<WebPage> cached = webPageCache.get(clazz);
+			if(cached != null) {
+				for(WebPage page : cached) {
+					assert page.getClass() == clazz;
+					if(page.isHandler(params)) return page;
 				}
 			}
 
 			// Make a new instance and store in cache
-			try {
-				Constructor<? extends WebPage> con=clazz.getConstructor(getWebPageObjectParams);
-				WebPage page=con.newInstance(new Object[] {params});
-				page.setServletContext(context);
-				if(list==null) webPageCache.put(classname, list=new ArrayList<>());
-				list.add(page);
-				return page;
-			} catch (ClassCastException | ReflectiveOperationException e) {
-				throw new IOException("Unable to getWebPage: "+clazz.getName()+", classname="+classname+", params="+params, e);
+			WebPage page;
+			Constructor<? extends WebPage> con = getParamsConstructor(clazz);
+			if(con != null) {
+				try {
+					page = con.newInstance(params);
+				} catch (Error | RuntimeException | ReflectiveOperationException e) {
+					throw new IOException("Unable to getWebPage: " + clazz.getName() + ", params=" + params, e);
+				}
+			} else {
+				con = getDefaultConstructor(clazz);
+				if(con != null) {
+					try {
+						page = con.newInstance();
+					} catch (Error | RuntimeException | ReflectiveOperationException e) {
+						throw new IOException("Unable to getWebPage: " + clazz.getName(), e);
+					}
+				} else {
+					throw new IOException("No constructor found for getWebPage: " + clazz.getName());
+				}
 			}
+			page.setServletContext(context);
+			if(cached == null) webPageCache.put(clazz, cached = new ArrayList<>());
+			cached.add(page);
+			return page;
 		}
+	}
+
+	/**
+	 * Gets an instance of <code>WebPage</code> given the <code>Class</code>.
+	 * Instances returned should never have the <code>init</code> method
+	 * called and should allocate a minimal set of resources.
+	 * <p>
+	 * Unless caching is disabled, the generated pages are stored in a
+	 * cache and resolved using the pages <code>isHander</code> method.
+	 * </p>
+	 * <ol>
+	 * <li>Single argument {@link URIParameters}, given empty parameters.</li>
+	 * <li>No-args constructor.</li>
+	 * </ol>
+	 *
+	 * @param  context  the context the servlet will be run in
+	 *
+	 * @return  a <code>WebPage</code> object of the given class that matches the request settings
+	 *
+	 * @exception  IllegalArgumentException if unable to create the instance
+	 *
+	 * @see  #getWebPage(javax.servlet.ServletContext, java.lang.Class, com.aoindustries.net.URIParameters)
+	 */
+	// TODO: Deprecate for lambda version
+	public static WebPage getWebPage(ServletContext context, Class<? extends WebPage> clazz) throws IOException {
+		return getWebPage(context, clazz, (URIParameters)null);
 	}
 
 	/**
@@ -1306,23 +1439,26 @@ abstract public class WebPage extends ErrorReportingServlet {
 
 	/**
 	 * Determines if this page is the instance that should handle a particular request.
-	 * By default returns <code>true</code>, meaning it is a handler for all requests
-	 * for this <code>Class</code>.
+	 * <p>
+	 * By default calls {@link #isHandler(com.aoindustries.net.URIParameters)}, wrapping request in
+	 * {@link ServletRequestParameters}.  When no request, uses {@link EmptyURIParameters}.
 	 *
-	 * @see  #getWebPage(ServletContext,Class,WebSiteRequest)
+	 * @see  #getWebPage(javax.servlet.ServletContext, java.lang.Class, com.aoindustries.website.framework.WebSiteRequest)
 	 */
 	public boolean isHandler(WebSiteRequest req) {
-		return true;
+		return isHandler((req == null) ? EmptyURIParameters.getInstance() : new ServletRequestParameters(req));
 	}
 
 	/**
 	 * Determines if this page is the instance that represents a certain set of parameters.
+	 * <p>
 	 * By default returns <code>true</code>, meaning it is a handler for any parameters
 	 * for this <code>Class</code>.
+	 * </p>
 	 *
-	 * @see  #getWebPage(ServletContext,Class,Object)
+	 * @see  #getWebPage(javax.servlet.ServletContext, java.lang.Class, com.aoindustries.net.URIParameters)
 	 */
-	public boolean isHandler(Object O) {
+	public boolean isHandler(URIParameters params) {
 		return true;
 	}
 
@@ -1417,19 +1553,19 @@ abstract public class WebPage extends ErrorReportingServlet {
 					String word = words[c];
 					int wordMatch =
 						// Add the keywords with weight 10
-						Strings.countOccurrences(keywords, word) * 10
+						(keywords == null ? 0 : (Strings.countOccurrences(keywords, word) * 10))
 
 						// Add the description with weight 5
-						+Strings.countOccurrences(description, word) * 5
+						+ (description == null ? 0 : (Strings.countOccurrences(description, word) * 5))
 
 						// Add the title with weight 5
-						+Strings.countOccurrences(title, word) * 5
+						+ (title == null ? 0 : (Strings.countOccurrences(title, word) * 5))
 
 						// Add the content with weight 1
-						+Strings.countOccurrences(content, size, word)
+						+ Strings.countOccurrences(content, size, word)
 
 						// Add the author with weight 1
-						+Strings.countOccurrences(author, word);
+						+ (author == null ? 0 : Strings.countOccurrences(author, word));
 
 					if (wordMatch == 0) {
 						totalMatches = 0;

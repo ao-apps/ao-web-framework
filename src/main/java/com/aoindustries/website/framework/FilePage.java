@@ -38,18 +38,6 @@ abstract public class FilePage extends WebPage {
 
 	private static final long serialVersionUID = 1L;
 
-	public FilePage() {
-		super();
-	}
-
-	public FilePage(WebSiteRequest req) {
-		super(req);
-	}
-
-	public FilePage(Object param) {
-		super(param);
-	}
-
 	@Override
 	public void doGet(
 		WebSiteRequest req,

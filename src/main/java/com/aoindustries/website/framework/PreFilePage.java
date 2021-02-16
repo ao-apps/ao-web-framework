@@ -36,18 +36,6 @@ public abstract class PreFilePage extends FilePage {
 
 	private static final long serialVersionUID = 1L;
 
-	public PreFilePage() {
-		super();
-	}
-
-	public PreFilePage(WebSiteRequest req) {
-		super(req);
-	}
-
-	public PreFilePage(Object param) {
-		super(param);
-	}
-
 	@Override
 	public void doGet(
 		WebSiteRequest req,

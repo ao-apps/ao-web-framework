@@ -29,6 +29,7 @@ import com.aoindustries.io.ContentType;
 import com.aoindustries.io.IoUtils;
 import com.aoindustries.lang.EmptyArrays;
 import com.aoindustries.net.URIEncoder;
+import com.aoindustries.net.URIParametersMap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -107,18 +108,6 @@ abstract public class TreePage extends WebPage {
 			}
 			return bytes;
 		}
-	}
-
-	public TreePage() {
-		super();
-	}
-
-	public TreePage(WebSiteRequest req) {
-		super(req);
-	}
-
-	public TreePage(Object param) {
-		super(param);
 	}
 
 	@Override
@@ -429,7 +418,7 @@ abstract public class TreePage extends WebPage {
 									}
 								}
 								html.img()
-									.src(req.getEncodedURL(this, "image_num=" + (hasMore ? 1 : 0), resp))
+									.src(req.getEncodedURL(this, URIParametersMap.of("image_num", (hasMore ? 1 : 0)), resp))
 									.style("border:0px; display:inline; vertical-align:bottom")
 									.width(IMAGE_WIDTH)
 									.height(IMAGE_HEIGHT)
@@ -482,10 +471,11 @@ abstract public class TreePage extends WebPage {
 										.src(
 											req.getEncodedURL(
 												this,
-												"image_num=" + (
+												URIParametersMap.of(
+													"image_num",
 													opened[c]
-													? (hasMore ? 4 : (c > 0 ? 5 : 9))
-													: (hasMore ? 6 : (c > 0 ? 7 : 8))
+														? (hasMore ? 4 : (c > 0 ? 5 : 9))
+														: (hasMore ? 6 : (c > 0 ? 7 : 8))
 												),
 												resp
 											)
@@ -499,7 +489,7 @@ abstract public class TreePage extends WebPage {
 										.src(
 											req.getEncodedURL(
 												this,
-												"image_num=" + (hasMore ? 2 : 3),
+												URIParametersMap.of("image_num", (hasMore ? 2 : 3)),
 												resp
 											)
 										).style("vertical-align:bottom; border:0px; display:inline")
@@ -509,7 +499,7 @@ abstract public class TreePage extends WebPage {
 										.__();
 								}
 								html.img()
-									.src(req.getEncodedURL(this, "image_num=0", resp))
+									.src(req.getEncodedURL(this, URIParametersMap.of("image_num", 0), resp))
 									.style("vertical-align:bottom; border:0px; display:inline")
 									.width(4)
 									.height(IMAGE_HEIGHT)
@@ -546,7 +536,7 @@ abstract public class TreePage extends WebPage {
 						html.out.write("</td></tr></table></td>\n"
 								+ "      <td style='white-space:nowrap; width:20px'>");
 						html.img()
-							.src(req.getEncodedURL(this, "image_num=0", resp))
+							.src(req.getEncodedURL(this, URIParametersMap.of("image_num", 0), resp))
 							.style("vertical-align:bottom; border:0px; display:inline")
 							.width(20)
 							.height(1)

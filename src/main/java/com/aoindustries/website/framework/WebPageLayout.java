@@ -25,6 +25,7 @@ package com.aoindustries.website.framework;
 import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
 import com.aoindustries.html.Html;
 import com.aoindustries.net.URIEncoder;
+import com.aoindustries.net.URIParametersMap;
 import com.aoindustries.web.resources.registry.Registry;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -325,7 +326,7 @@ abstract public class WebPageLayout {
 				script.append("function selectLayout(layout) {\n");
 				for(String choice : layoutChoices) {
 					script.append("  if(layout==").text(choice).append(") window.top.location.href=").text(
-						req.getEncodedURL(page, "layout="+choice, resp)
+						req.getEncodedURL(page, URIParametersMap.of("layout", choice), resp)
 					).append(";\n");
 				}
 				script.append('}');

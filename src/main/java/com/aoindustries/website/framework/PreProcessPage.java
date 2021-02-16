@@ -36,18 +36,6 @@ public abstract class PreProcessPage extends ProcessPage {
 
 	private static final long serialVersionUID = 1L;
 
-	public PreProcessPage() {
-		super();
-	}
-
-	public PreProcessPage(WebSiteRequest req) {
-		super(req);
-	}
-
-	public PreProcessPage(Object param) {
-		super(param);
-	}
-
 	@Override
 	public void doGet(
 		WebSiteRequest req,

@@ -1,6 +1,6 @@
 /*
  * aoweb-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,10 +22,12 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.collections.SortedArrayList;
 import com.aoindustries.html.Html;
 import com.aoindustries.lang.Strings;
+import com.aoindustries.net.URIDecoder;
 import com.aoindustries.net.URIEncoder;
+import com.aoindustries.net.URIParameters;
+import com.aoindustries.net.URIParametersMap;
 import com.aoindustries.net.URIParser;
 import com.aoindustries.security.Identifier;
 import com.aoindustries.servlet.http.HttpServletUtil;
@@ -41,11 +43,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.security.auth.login.LoginException;
@@ -321,53 +325,79 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	}
 
 	/**
-	 * Appends the parameters to a URL.
-	 * Parameters should already be URL encoded but not XML encoded.
+	 * Appends an already-encoded parameter to a URL.
+	 *
+	 * @param  encodedName   the encoded name
+	 * @param  encodedValue  the encoded value
 	 */
-	protected static boolean appendParams(StringBuilder SB, Object optParam, List<String> finishedParams, boolean alreadyAppended) {
-		if (optParam != null) {
-			if (optParam instanceof String) {
-				List<String> nameValuePairs=Strings.split((String)optParam, '&');
-				int len=nameValuePairs.size();
-				for(int i=0;i<len;i++) {
-					SB.append(alreadyAppended?'&':'?');
-					String S=nameValuePairs.get(i);
-					int pos=S.indexOf('=');
-					if(pos==-1) {
-						SB.append(S);
-						alreadyAppended=true;
-					} else {
-						String name=S.substring(0, pos);
-						if(!finishedParams.contains(name)) {
-							SB.append(S);
-							finishedParams.add(name);
-							alreadyAppended=true;
-						}
-					}
-				}
-			} else if (optParam instanceof String[]) {
-				String[] SA = (String[]) optParam;
-				int len = SA.length;
-				for (int c = 0; c < len; c += 2) {
-					String name=SA[c];
-					if(!finishedParams.contains(name)) {
-						SB.append(alreadyAppended?'&':'?').append(name).append('=').append(SA[c + 1]);
-						finishedParams.add(name);
-						alreadyAppended=true;
-					}
-				}
-			} else throw new IllegalArgumentException("Unsupported type for optParam: " + optParam.getClass().getName());
+	protected static boolean appendEncodedParam(StringBuilder url, String encodedName, String encodedValue, boolean hasQuery) {
+		assert encodedName.equals(URIEncoder.encodeURIComponent(URIDecoder.decodeURIComponent(encodedName)));
+		url.append(hasQuery ? '&' : '?').append(encodedName);
+		if(encodedValue != null) {
+			assert encodedValue.equals(URIEncoder.encodeURIComponent(URIDecoder.decodeURIComponent(encodedValue)));
+			url.append('=').append(encodedValue);
 		}
-		return alreadyAppended;
+		return true;
+	}
+
+	/**
+	 * Appends a parameter to a URL.
+	 *
+	 * @param  name   the raw, unencoded name
+	 * @param  value  the raw, unencoded value
+	 */
+	protected static boolean appendParam(StringBuilder url, String name, String value, boolean hasQuery) {
+		url.append(hasQuery ? '&' : '?');
+		URIEncoder.encodeURIComponent(name, url);
+		url.append('=');
+		URIEncoder.encodeURIComponent(value, url);
+		return true;
+	}
+
+	/**
+	 * Appends a parameter to a URL.
+	 *
+	 * @param  name   the raw, unencoded name
+	 * @param  value  the raw, unencoded value
+	 *
+	 * @param  finishedParams  Only adds a value when the name has not already been added to the URL.
+	 *                         This does not support multiple values, only the first is used.
+	 */
+	protected static boolean appendParam(StringBuilder url, String name, String value, Set<String> finishedParams, boolean hasQuery) {
+		if(finishedParams.add(name)) {
+			hasQuery = appendParam(url, name, value, hasQuery);
+		}
+		return hasQuery;
+	}
+
+	/**
+	 * Appends the parameters to a URL.
+	 *
+	 * @param  finishedParams  Only adds a value when the name has not already been added to the URL.
+	 *                         This does not support multiple values, only the first is used.
+	 */
+	protected static boolean appendParams(StringBuilder url, URIParameters params, Set<String> finishedParams, boolean hasQuery) {
+		if (params != null) {
+			Iterator<String> names = params.getParameterNames();
+			while(names.hasNext()) {
+				String name = names.next();
+				if(finishedParams.add(name)) {
+					hasQuery = appendParam(url, name, params.getParameter(name), hasQuery);
+				}
+			}
+		}
+		return hasQuery;
 	}
 
 	/**
 	 * Gets a context-relative URL given its classname and optional parameters/fragment.
-	 * Parameters should already be URL encoded but not XML encoded.
+	 *
+	 * @param  params  Only adds a value when the name has not already been added to the URL.
+	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getURLForClass(String classname, String params, String fragment) throws IOException, SQLException {
+	public String getURLForClass(String classname, URIParameters params, String fragment) throws IOException, SQLException {
 		try {
-			Class<? extends WebPage> clazz=Class.forName(classname).asSubclass(WebPage.class);
+			Class<? extends WebPage> clazz = Class.forName(classname).asSubclass(WebPage.class);
 			String url = getURL(clazz, params);
 			if(fragment != null) url += fragment;
 			return url;
@@ -377,14 +407,17 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	}
 
 	/**
-	 * {@linkplain #getURLForClass(java.lang.String, java.lang.String, java.lang.String) Gets the URL}, including:
+	 * {@linkplain #getURLForClass(java.lang.String, com.aoindustries.net.URIParameters, java.lang.String) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
 	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
+	 *
+	 * @param  params  Only adds a value when the name has not already been added to the URL.
+	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getEncodedURLForClass(String classname, String params, String fragment, HttpServletResponse resp) throws IOException, SQLException {
+	public String getEncodedURLForClass(String classname, URIParameters params, String fragment, HttpServletResponse resp) throws IOException, SQLException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
 				getContextPath() + getURLForClass(classname, params, fragment)
@@ -394,21 +427,26 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 
 	/**
 	 * Gets a context-relative URL given its classname and optional parameters.
-	 * Parameters should already be URL encoded but not XML encoded.
+	 *
+	 * @param  params  Only adds a value when the name has not already been added to the URL.
+	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getURLForClass(String classname, String params) throws IOException, SQLException {
+	public String getURLForClass(String classname, URIParameters params) throws IOException, SQLException {
 		return getURLForClass(classname, params, null);
 	}
 
 	/**
-	 * {@linkplain #getURLForClass(java.lang.String, java.lang.String) Gets the URL}, including:
+	 * {@linkplain #getURLForClass(java.lang.String, com.aoindustries.net.URIParameters) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
 	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
+	 *
+	 * @param  params  Only adds a value when the name has not already been added to the URL.
+	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getEncodedURLForClass(String classname, String params, HttpServletResponse resp) throws IOException, SQLException {
+	public String getEncodedURLForClass(String classname, URIParameters params, HttpServletResponse resp) throws IOException, SQLException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
 				getContextPath() + getURLForClass(classname, params)
@@ -444,7 +482,11 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 				fragment = classAndParamsFragment.substring(pos + 1);
 			}
 		}
-		return getURLForClass(className, params, fragment);
+		return getURLForClass(
+			className,
+			(params == null || params.isEmpty()) ? null : new URIParametersMap(params),
+			fragment
+		);
 	}
 
 	/**
@@ -465,39 +507,46 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 
 	/**
 	 * Gets the context-relative URL, optionally with the settings embedded.
-	 * Parameters should already be URL encoded but not XML encoded.
-	 * 
-	 * @param  path  the context-relative path
+	 *
+	 * @param  params  Only adds a value when the name has not already been added to the URL.
+	 *                 This does not support multiple values, only the first is used.
+	 *
+	 * @param  path  the context-relative path, with a beginning slash
 	 */
-	public String getURLForPath(String path, Object optParam, boolean keepSettings) throws IOException {
-		StringBuilder SB=new StringBuilder();
-		SB.append(path);
-		List<String> finishedParams=new SortedArrayList<>();
-		boolean alreadyAppended=appendParams(SB, optParam, finishedParams, false);
-		if(keepSettings) appendSettings(finishedParams, alreadyAppended, SB);
-		return SB.toString();
+	public String getURLForPath(String path, URIParameters params, boolean keepSettings) throws IOException {
+		StringBuilder url = new StringBuilder();
+		url.append(path);
+		Set<String> finishedParams = new HashSet<>();
+		boolean hasQuery = appendParams(url, params, finishedParams, false);
+		if(keepSettings) /*hasQuery = */appendSettings(finishedParams, hasQuery, url);
+		return url.toString();
 	}
 
 	/**
-	 * {@linkplain #getURLForPath(java.lang.String, java.lang.Object, boolean) Gets the URL}, including:
+	 * {@linkplain #getURLForPath(java.lang.String, com.aoindustries.net.URIParameters, boolean) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
 	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
+	 *
+	 * @param  path  the context-relative path, with a beginning slash
+	 *
+	 * @param  params  Only adds a value when the name has not already been added to the URL.
+	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getEncodedURLForPath(String path, Object optParam, boolean keepSettings, HttpServletResponse resp) throws IOException {
+	public String getEncodedURLForPath(String path, URIParameters params, boolean keepSettings, HttpServletResponse resp) throws IOException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
-				getContextPath() + getURLForPath(path, optParam, keepSettings)
+				getContextPath() + getURLForPath(path, params, keepSettings)
 			)
 		);
 	}
 
-	protected boolean appendSettings(List<String> finishedParams, boolean alreadyAppended, StringBuilder SB) {
+	protected boolean appendSettings(Set<String> finishedParams, boolean hasQuery, StringBuilder url) {
 		boolean searchEngine = Boolean.parseBoolean(getParameter("search_engine"));
-		if(searchEngine) alreadyAppended=appendParams(SB, new String[] {"search_engine", "true"}, finishedParams, alreadyAppended);
-		return alreadyAppended;
+		if(searchEngine) hasQuery = appendParam(url, "search_engine", "true", finishedParams, hasQuery);
+		return hasQuery;
 	}
 
 	@Override
@@ -520,7 +569,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * Gets the context-relative URL to a web page.
 	 */
 	public String getURL(WebPage page) throws IOException, SQLException {
-		return getURL(page, (Object)null);
+		return getURL(page, (URIParameters)null);
 	}
 
 	/**
@@ -541,65 +590,75 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 
 	/**
 	 * Gets the context-relative URL to a web page.
-	 * Parameters should already be URL encoded but not yet XML encoded.
+	 *
+	 * @param  params  Only adds a value when the name has not already been added to the URL.
+	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getURL(WebPage page, Object optParam) throws IOException, SQLException {
-		List<String> finishedParams=new SortedArrayList<>();
-		StringBuilder SB = new StringBuilder();
-		SB.append(page.getURLPath());
-		boolean alreadyAppended=appendParams(SB, optParam, finishedParams, false);
-		alreadyAppended=appendParams(SB, page.getURLParams(this), finishedParams, alreadyAppended);
+	public String getURL(WebPage page, URIParameters params) throws IOException, SQLException {
+		Set<String> finishedParams = new HashSet<>();
+		StringBuilder url = new StringBuilder();
+		url.append(page.getURLPath());
+		boolean hasQuery = appendParams(url, params, finishedParams, false);
+		hasQuery = appendParams(url, page.getURLParams(this), finishedParams, hasQuery);
 
-		/*alreadyAppended=*/appendSettings(finishedParams, alreadyAppended, SB);
+		/*hasQuery = */appendSettings(finishedParams, hasQuery, url);
 
-		return SB.toString();
+		return url.toString();
 	}
 
 	/**
-	 * {@linkplain #getURL(com.aoindustries.website.framework.WebPage, java.lang.Object) Gets the URL}, including:
+	 * {@linkplain #getURL(com.aoindustries.website.framework.WebPage, com.aoindustries.net.URIParameters) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
 	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
+	 *
+	 * @param  params  Only adds a value when the name has not already been added to the URL.
+	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getEncodedURL(WebPage page, Object optParam, HttpServletResponse resp) throws IOException, SQLException {
+	public String getEncodedURL(WebPage page, URIParameters params, HttpServletResponse resp) throws IOException, SQLException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
-				getContextPath() + getURL(page, optParam)
+				getContextPath() + getURL(page, params)
 			)
 		);
 	}
 
 	/**
 	 * Gets the context-relative URL to a web page.
-	 * Parameters should already be URL encoded but not yet XML encoded.
+	 *
+	 * @param  params  Only adds a value when the name has not already been added to the URL.
+	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getURL(Class<? extends WebPage> clazz, Object param) throws IOException, SQLException {
+	public String getURL(Class<? extends WebPage> clazz, URIParameters params) throws IOException, SQLException {
 		return getURL(
-			WebPage.getWebPage(sourcePage.getServletContext(), clazz, param),
-			param
+			WebPage.getWebPage(sourcePage.getServletContext(), clazz, params),
+			params
 		);
 	}
 
 	/**
-	 * {@linkplain #getURL(java.lang.Class, java.lang.Object) Gets the URL}, including:
+	 * {@linkplain #getURL(java.lang.Class, com.aoindustries.net.URIParameters) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
 	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
+	 *
+	 * @param  params  Only adds a value when the name has not already been added to the URL.
+	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getEncodedURL(Class<? extends WebPage> clazz, Object param, HttpServletResponse resp) throws IOException, SQLException {
+	public String getEncodedURL(Class<? extends WebPage> clazz, URIParameters params, HttpServletResponse resp) throws IOException, SQLException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
-				getContextPath() + getURL(clazz, param)
+				getContextPath() + getURL(clazz, params)
 			)
 		);
 	}
 
 	public String getURL(Class<? extends WebPage> clazz) throws IOException, SQLException {
-		return getURL(clazz, (Object)null);
+		return getURL(clazz, (URIParameters)null);
 	}
 
 	/**
@@ -621,39 +680,59 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	/**
 	 * Gets the URL String with the given parameters embedded, keeping the current settings.
 	 *
-	 * @param  path            the context-relative URL, with a beginning slash
-	 * @param  optParam       any number of additional parameters.  This parameter can accept several types of
-	 *                        objects.  The following is a list of supported objects and a brief description of its
-	 *                        behavior.
-	 *                        Parameters should already be URL encoded but not yet XML encoded.
-	 *                        <ul>
-	 *                          <li>
-	 *                            <code>String</code> - appended to the end of the parameters, assumed to be in the
-	 *                            format name=value
-	 *                          </li>
-	 *                          <li>
-	 *                            <code>String[]</code> - name and value pairs, the first element of each pair is the
-	 *                            name, the second is the value
-	 *                          </li>
-	 *                        </ul>
-	 * @exception  IllegalArgumentException  if <code>optParam</code> is not a supported object
+	 * @param  path  the context-relative path, with a beginning slash
+	 *
+	 * @param  params  Only adds a value when the name has not already been added to the URL.
+	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getURLForPath(String path, Object optParam) throws IOException {
-		return getURLForPath(path, optParam, true);
+	public String getURLForPath(String path, URIParameters params) throws IOException {
+		return getURLForPath(path, params, true);
 	}
 
 	/**
-	 * {@linkplain #getURLForPath(java.lang.String, java.lang.Object) Gets the URL}, including:
+	 * Gets the URL String, keeping the current settings.
+	 *
+	 * @param  path  the context-relative path, with a beginning slash
+	 */
+	public String getURLForPath(String path) throws IOException {
+		return getURLForPath(path, (URIParameters)null);
+	}
+
+	/**
+	 * {@linkplain #getURLForPath(java.lang.String, com.aoindustries.net.URIParameters) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
 	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
+	 *
+	 * @param  path  the context-relative path, with a beginning slash
+	 *
+	 * @param  params  Only adds a value when the name has not already been added to the URL.
+	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getEncodedURLForPath(String path, Object optParam, HttpServletResponse resp) throws IOException {
+	public String getEncodedURLForPath(String path, URIParameters params, HttpServletResponse resp) throws IOException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
-				getContextPath() + getURLForPath(path, optParam)
+				getContextPath() + getURLForPath(path, params)
+			)
+		);
+	}
+
+	/**
+	 * {@linkplain #getURLForPath(java.lang.String) Gets the URL}, including:
+	 * <ol>
+	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
+	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
+	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
+	 * </ol>
+	 *
+	 * @param  path  the context-relative path, with a beginning slash
+	 */
+	public String getEncodedURLForPath(String path, HttpServletResponse resp) throws IOException {
+		return resp.encodeURL(
+			URIEncoder.encodeURI(
+				getContextPath() + getURLForPath(path)
 			)
 		);
 	}
@@ -676,8 +755,8 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	public boolean isBlackBerry() {
 		if(!isBlackBerryDone) {
 			String agent = req.getHeader("user-agent");
-			isBlackBerry=agent != null && agent.startsWith("BlackBerry");
-			isBlackBerryDone=true;
+			isBlackBerry = (agent != null) && agent.startsWith("BlackBerry");
+			isBlackBerryDone = true;
 		}
 		return isBlackBerry;
 	}
@@ -688,15 +767,15 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	public boolean isLinux() {
 		if(!isLinuxDone) {
 			String agent = req.getHeader("user-agent");
-			isLinux=agent == null || agent.toLowerCase(Locale.ROOT).contains("linux");
-			isLinuxDone=true;
+			isLinux = (agent == null) || agent.toLowerCase(Locale.ROOT).contains("linux");
+			isLinuxDone = true;
 		}
 		return isLinux;
 	}
 
 	@Override
 	public boolean isSecure() {
-		return req.isSecure() || req.getServerPort()==443 || req.getRequestURI().contains("/https/");
+		return req.isSecure() || req.getServerPort() == 443 || req.getRequestURI().contains("/https/"); // TODO: This old /https/ still required?
 	}
 
 	/**

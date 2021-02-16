@@ -41,18 +41,6 @@ abstract public class DumpURLs extends WebPage {
 
 	private static final long serialVersionUID = 1L;
 
-	public DumpURLs() {
-		super();
-	}
-
-	public DumpURLs(WebSiteRequest req) {
-		super(req);
-	}
-
-	public DumpURLs(Object param) {
-		super(param);
-	}
-
 	@Override
 	public void doGet(
 		WebSiteRequest req,

@@ -39,18 +39,6 @@ abstract public class InputStreamPage extends WebPage {
 
 	private static final long serialVersionUID = 1L;
 
-	public InputStreamPage() {
-		super();
-	}
-
-	public InputStreamPage(WebSiteRequest req) {
-		super(req);
-	}
-
-	public InputStreamPage(Object param) {
-		super(param);
-	}
-
 	@Override
 	public void doGet(
 		WebSiteRequest req,

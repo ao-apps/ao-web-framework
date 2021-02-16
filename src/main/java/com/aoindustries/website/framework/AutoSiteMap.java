@@ -41,18 +41,6 @@ abstract public class AutoSiteMap extends TreePage {
 
 	private static final long serialVersionUID = 1L;
 
-	public AutoSiteMap() {
-		super();
-	}
-
-	public AutoSiteMap(WebSiteRequest req) {
-		super(req);
-	}
-
-	public AutoSiteMap(Object param) {
-		super(param);
-	}
-
 	/**
 	 * Recursively builds the list of all sites.
 	 */
