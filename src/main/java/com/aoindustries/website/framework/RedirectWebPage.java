@@ -22,7 +22,7 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.html.Html;
+import com.aoindustries.html.Document;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.servlet.ServletContext;
@@ -81,7 +81,7 @@ public class RedirectWebPage extends WebPage {
 	final public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Html html
+		Document document
 	) throws ServletException, IOException, SQLException {
 		// resp null during search
 		if(resp != null) resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
@@ -94,7 +94,7 @@ public class RedirectWebPage extends WebPage {
 	final public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Html html,
+		Document document,
 		WebPageLayout layout
 	) throws ServletException, IOException, SQLException {
 		// resp null during search
@@ -108,7 +108,7 @@ public class RedirectWebPage extends WebPage {
 	final public void doPost(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Html html
+		Document document
 	) throws ServletException, IOException, SQLException {
 		resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 	}
@@ -120,7 +120,7 @@ public class RedirectWebPage extends WebPage {
 	final public void doPost(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Html html,
+		Document document,
 		WebPageLayout layout
 	) throws ServletException, IOException, SQLException {
 		resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);

@@ -23,7 +23,7 @@
 package com.aoindustries.website.framework;
 
 import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
-import com.aoindustries.html.Html;
+import com.aoindustries.html.Document;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.servlet.http.HttpServletResponse;
@@ -46,22 +46,22 @@ abstract public class AutoListPage extends WebPage {
 	public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Html html,
+		Document document,
 		WebPageLayout layout
 	) throws IOException, SQLException {
 		if(req != null) {
-			layout.startContent(html, req, resp, 1, getPreferredContentWidth(req));
-			layout.printContentTitle(html, req, resp, this, 1);
-			layout.printContentHorizontalDivider(html, req, resp, 1, false);
-			layout.startContentLine(html, req, resp, 1, null, null);
-			printContentStart(html, req, resp);
-			html.out.write("<table cellpadding='0' cellspacing='10'>\n"
+			layout.startContent(document, req, resp, 1, getPreferredContentWidth(req));
+			layout.printContentTitle(document, req, resp, this, 1);
+			layout.printContentHorizontalDivider(document, req, resp, 1, false);
+			layout.startContentLine(document, req, resp, 1, null, null);
+			printContentStart(document, req, resp);
+			document.out.write("<table cellpadding='0' cellspacing='10'>\n"
 					+ "  <tbody>\n");
-			printPageList(html, req, resp, this, layout);
-			html.out.write("  </tbody>\n"
+			printPageList(document, req, resp, this, layout);
+			document.out.write("  </tbody>\n"
 					+ "</table>\n");
-			layout.endContentLine(html, req, resp, 1, false);
-			layout.endContent(this, html, req, resp, 1);
+			layout.endContentLine(document, req, resp, 1, false);
+			layout.endContent(this, document, req, resp, 1);
 		}
 	}
 
@@ -70,7 +70,7 @@ abstract public class AutoListPage extends WebPage {
 	 */
 	@SuppressWarnings("NoopMethodInAbstractClass")
 	public void printContentStart(
-		Html html,
+		Document document,
 		WebSiteRequest req,
 		HttpServletResponse resp
 	) throws IOException, SQLException {
@@ -79,17 +79,17 @@ abstract public class AutoListPage extends WebPage {
 	/**
 	 * Prints a list of pages.
 	 */
-	public static void printPageList(Html html, WebSiteRequest req, HttpServletResponse resp, WebPage[] pages, WebPageLayout layout) throws IOException, SQLException {
+	public static void printPageList(Document document, WebSiteRequest req, HttpServletResponse resp, WebPage[] pages, WebPageLayout layout) throws IOException, SQLException {
 		int len = pages.length;
 		for (int c = 0; c < len; c++) {
 			WebPage page = pages[c];
-			html.out.write("    <tr>\n"
+			document.out.write("    <tr>\n"
 					+ "      <td style='white-space:nowrap'><a class='aoLightLink' href='");
-			if(req != null) encodeTextInXhtmlAttribute(req.getEncodedURL(page, resp), html.out);
-			html.out.write("'>"); html.text(page.getShortTitle()).out.write("</a>\n"
+			if(req != null) encodeTextInXhtmlAttribute(req.getEncodedURL(page, resp), document.out);
+			document.out.write("'>"); document.text(page.getShortTitle()).out.write("</a>\n"
 					+ "      </td>\n"
 					+ "      <td style='width:12px; white-space:nowrap'>&#160;</td>\n"
-					+ "      <td style='white-space:nowrap'>"); html.text(page.getDescription()).out.write("</td>\n"
+					+ "      <td style='white-space:nowrap'>"); document.text(page.getDescription()).out.write("</td>\n"
 					+ "    </tr>\n");
 		}
 	}
@@ -97,7 +97,7 @@ abstract public class AutoListPage extends WebPage {
 	/**
 	 * Prints an unordered list of the available pages.
 	 */
-	public static void printPageList(Html html, WebSiteRequest req, HttpServletResponse resp, WebPage parent, WebPageLayout layout) throws IOException, SQLException {
-		if(req != null) printPageList(html, req, resp, parent.getCachedChildren(req, resp), layout);
+	public static void printPageList(Document document, WebSiteRequest req, HttpServletResponse resp, WebPage parent, WebPageLayout layout) throws IOException, SQLException {
+		if(req != null) printPageList(document, req, resp, parent.getCachedChildren(req, resp), layout);
 	}
 }

@@ -22,7 +22,7 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.html.Html;
+import com.aoindustries.html.Document;
 import com.aoindustries.lang.Strings;
 import com.aoindustries.net.URIDecoder;
 import com.aoindustries.net.URIEncoder;
@@ -826,14 +826,14 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	/**
 	 * Prints the hidden variables that contain all of the current settings.
 	 */
-	public void printFormFields(Html html) throws IOException {
+	public void printFormFields(Document document) throws IOException {
 	}
 
 	/**
 	 * Prints the hidden variables that contain all of the current settings.
 	 */
-	protected static void printHiddenField(Html html, String name, String value) throws IOException {
-		html.input.hidden().name(name).value(value).__().nl();
+	protected static void printHiddenField(Document document, String name, String value) throws IOException {
+		document.input.hidden().name(name).value(value).__().nl();
 	}
 
 	public List<UploadedFile> getUploadedFiles() {

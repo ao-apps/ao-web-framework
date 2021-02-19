@@ -22,7 +22,7 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.html.Html;
+import com.aoindustries.html.Document;
 import com.aoindustries.io.IoUtils;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Reads everything from an input stream and puts it into a page.
- * The input stream must be encoded as {@link Html#ENCODING}.
+ * The input stream must be encoded as {@link Document#ENCODING}.
  *
  * @author  AO Industries, Inc.
  */
@@ -44,18 +44,18 @@ abstract public class InputStreamPage extends WebPage {
 	public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Html html,
+		Document document,
 		WebPageLayout layout
 	) throws IOException, SQLException {
-		layout.startContent(html, req, resp, 1, getPreferredContentWidth(req));
-		layout.printContentTitle(html, req, resp, this, 1);
-		layout.printContentHorizontalDivider(html, req, resp, 1, false);
-		layout.startContentLine(html, req, resp, 1, null, null);
+		layout.startContent(document, req, resp, 1, getPreferredContentWidth(req));
+		layout.printContentTitle(document, req, resp, this, 1);
+		layout.printContentHorizontalDivider(document, req, resp, 1, false);
+		layout.startContentLine(document, req, resp, 1, null, null);
 		try (InputStream in = getInputStream()) {
-			printStream(html, req, resp, in);
+			printStream(document, req, resp, in);
 		}
-		layout.endContentLine(html, req, resp, 1, false);
-		layout.endContent(this, html, req, resp, 1);
+		layout.endContentLine(document, req, resp, 1, false);
+		layout.endContent(this, document, req, resp, 1);
 	}
 
 	/**
@@ -63,11 +63,11 @@ abstract public class InputStreamPage extends WebPage {
 	 */
 	public abstract InputStream getInputStream() throws IOException;
 
-	public void printStream(Html html, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws IOException, SQLException {
-		printStreamStatic(html, in);
+	public void printStream(Document document, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws IOException, SQLException {
+		printStreamStatic(document, in);
 	}
 
-	public static void printStreamStatic(Html html, InputStream in) throws IOException {
-		IoUtils.copy(new InputStreamReader(in, Html.ENCODING), html.out);
+	public static void printStreamStatic(Document document, InputStream in) throws IOException {
+		IoUtils.copy(new InputStreamReader(in, Document.ENCODING), document.out);
 	}
 }

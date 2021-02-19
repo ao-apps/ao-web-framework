@@ -24,7 +24,7 @@ package com.aoindustries.website.framework;
 
 import com.aoindustries.collections.SortedArrayList;
 import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
-import com.aoindustries.html.Html;
+import com.aoindustries.html.Document;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -46,15 +46,15 @@ abstract public class DumpURLs extends WebPage {
 	public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Html html,
+		Document document,
 		WebPageLayout layout
 	) throws IOException, SQLException {
-		html.out.write("The following is a list of all unique servlet URLs in the site and may be used to add this site to\n"
+		document.out.write("The following is a list of all unique servlet URLs in the site and may be used to add this site to\n"
 				+ "search engines:\n"
 				+ "<pre>\n");
 		WebPage page = getRootPage();
-		printURLs(req, resp, html, page, new SortedArrayList<>());
-		html.out.write("</pre>\n");
+		printURLs(req, resp, document, page, new SortedArrayList<>());
+		document.out.write("</pre>\n");
 	}
 
 	@Override
@@ -100,20 +100,20 @@ abstract public class DumpURLs extends WebPage {
 		return "List URLs";
 	}
 
-	private void printURLs(WebSiteRequest req, HttpServletResponse resp, Html html, WebPage page, List<WebPage> finishedPages) throws IOException, SQLException {
+	private void printURLs(WebSiteRequest req, HttpServletResponse resp, Document document, WebPage page, List<WebPage> finishedPages) throws IOException, SQLException {
 		if(!finishedPages.contains(page)) {
-			html.out.write("<a class='aoLightLink' href='");
-			encodeTextInXhtmlAttribute(req.getEncodedURL(page, resp), html.out);
-			html.out.write("'>");
-			html.text(req.getURL(page));
-			html.out.write("</a>\n");
+			document.out.write("<a class='aoLightLink' href='");
+			encodeTextInXhtmlAttribute(req.getEncodedURL(page, resp), document.out);
+			document.out.write("'>");
+			document.text(req.getURL(page));
+			document.out.write("</a>\n");
 
 			finishedPages.add(page);
 
 			WebPage[] children = page.getCachedChildren(req, resp);
 			int len = children.length;
 			for (int c = 0; c < len; c++) {
-				printURLs(req, resp, html, children[c], finishedPages);
+				printURLs(req, resp, document, children[c], finishedPages);
 			}
 		}
 	}

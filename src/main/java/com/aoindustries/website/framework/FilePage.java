@@ -22,7 +22,7 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.html.Html;
+import com.aoindustries.html.Document;
 import com.aoindustries.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
@@ -42,10 +42,10 @@ abstract public class FilePage extends WebPage {
 	public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Html html,
+		Document document,
 		WebPageLayout layout
 	) throws IOException, SQLException {
-		printFile(html, getFile());
+		printFile(document, getFile());
 	}
 
 	/**
@@ -58,7 +58,7 @@ abstract public class FilePage extends WebPage {
 		return Math.max(super.getLastModified(req, resp), getFile().lastModified());
 	}
 
-	public static void printFile(Html html, File file) throws IOException {
-		FileUtils.copy(file, html.out);
+	public static void printFile(Document document, File file) throws IOException {
+		FileUtils.copy(file, document.out);
 	}
 }

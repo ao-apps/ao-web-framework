@@ -22,7 +22,7 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.html.Html;
+import com.aoindustries.html.Document;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.servlet.http.HttpServletResponse;
@@ -40,11 +40,11 @@ public abstract class PreProcessPage extends ProcessPage {
 	public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Html html,
+		Document document,
 		WebPageLayout layout
 	) throws IOException, SQLException {
-		html.out.write("<pre>");
-		super.doGet(req, resp, html, layout);
-		html.out.write("</pre>\n");
+		document.out.write("<pre>");
+		super.doGet(req, resp, document, layout);
+		document.out.write("</pre>\n");
 	}
 }

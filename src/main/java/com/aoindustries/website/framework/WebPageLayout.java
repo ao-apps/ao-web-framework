@@ -23,7 +23,7 @@
 package com.aoindustries.website.framework;
 
 import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
-import com.aoindustries.html.Html;
+import com.aoindustries.html.Document;
 import com.aoindustries.net.URIEncoder;
 import com.aoindustries.net.URIParametersMap;
 import com.aoindustries.web.resources.registry.Registry;
@@ -88,7 +88,7 @@ abstract public class WebPageLayout {
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Html html,
+		Document document,
 		String onload
 	) throws ServletException, IOException, SQLException;
 
@@ -100,7 +100,7 @@ abstract public class WebPageLayout {
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Html html
+		Document document
 	) throws ServletException, IOException, SQLException;
 
 	/**
@@ -110,42 +110,42 @@ abstract public class WebPageLayout {
 	 *
 	 * @see WebPage#doPostWithSearch(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
-	public void printSearchOutput(WebPage page, Html html, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) throws IOException, SQLException {
-		startContent(html, req, resp, 1, 600);
-		printContentTitle(html, req, resp, "Search Results", 1);
-		printContentHorizontalDivider(html, req, resp, 1, false);
-		startContentLine(html, req, resp, 1, "center", null);
-		beginLightArea(req, resp, html, null, "300", true);
-		html.out.write("      <form action=\"\" id=\"" + WebPage.SEARCH_TWO + "\" method=\"post\">\n");
-		req.printFormFields(html);
-		html.out.write("        <table cellspacing=\"0\" cellpadding=\"0\"><tr><td style=\"white-space:nowrap\">\n"
-		+ "          "); html.text("Word(s) to search for:"); html.out.write(' ');
-		html.input.text().size(24).name(WebSiteRequest.SEARCH_QUERY).value(query).__().br__().out.write("\n"
-		+ "          "); html.text("Search Location:"); html.out.write(' ');
-		html.input.radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).checked(isEntireSite).__()
-		.out.write(' '); html.text("Entire Site"); html.out.write("&#160;&#160;&#160;");
-		html.input.radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_THIS_AREA).checked(!isEntireSite).__()
-		.out.write(' '); html.text("This Area").br__().out.write("\n"
-		+ "          "); html.br__().out.write("\n"
-		+ "          <div style=\"text-align:center\">"); html.input.submit().clazz("ao_button").value(" Search ").__().out.write("</div>\n"
+	public void printSearchOutput(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) throws IOException, SQLException {
+		startContent(document, req, resp, 1, 600);
+		printContentTitle(document, req, resp, "Search Results", 1);
+		printContentHorizontalDivider(document, req, resp, 1, false);
+		startContentLine(document, req, resp, 1, "center", null);
+		beginLightArea(req, resp, document, null, "300", true);
+		document.out.write("      <form action=\"\" id=\"" + WebPage.SEARCH_TWO + "\" method=\"post\">\n");
+		req.printFormFields(document);
+		document.out.write("        <table cellspacing=\"0\" cellpadding=\"0\"><tr><td style=\"white-space:nowrap\">\n"
+		+ "          "); document.text("Word(s) to search for:"); document.out.write(' ');
+		document.input.text().size(24).name(WebSiteRequest.SEARCH_QUERY).value(query).__().br__().out.write("\n"
+		+ "          "); document.text("Search Location:"); document.out.write(' ');
+		document.input.radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).checked(isEntireSite).__()
+		.out.write(' '); document.text("Entire Site"); document.out.write("&#160;&#160;&#160;");
+		document.input.radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_THIS_AREA).checked(!isEntireSite).__()
+		.out.write(' '); document.text("This Area").br__().out.write("\n"
+		+ "          "); document.br__().out.write("\n"
+		+ "          <div style=\"text-align:center\">"); document.input.submit().clazz("ao_button").value(" Search ").__().out.write("</div>\n"
 		+ "        </td></tr></table>\n"
 		+ "      </form>\n");
-		endLightArea(req, resp, html);
-		endContentLine(html, req, resp, 1, false);
-		printContentHorizontalDivider(html, req, resp, 1, false);
-		startContentLine(html, req, resp, 1, "center", null);
+		endLightArea(req, resp, document);
+		endContentLine(document, req, resp, 1, false);
+		printContentHorizontalDivider(document, req, resp, 1, false);
+		startContentLine(document, req, resp, 1, "center", null);
 		if (results.isEmpty()) {
 			if (words.length > 0) {
-				html.out.write("      <b>"); html.text("No matches found"); html.out.write("</b>\n");
+				document.out.write("      <b>"); document.text("No matches found"); document.out.write("</b>\n");
 			}
 		} else {
-			beginLightArea(req, resp, html);
-			html.out.write("  <table cellspacing=\"0\" cellpadding=\"0\" class=\"aoLightRow\">\n"
+			beginLightArea(req, resp, document);
+			document.out.write("  <table cellspacing=\"0\" cellpadding=\"0\" class=\"aoLightRow\">\n"
 			+ "    <tr>\n"
-			+ "      <th style=\"white-space:nowrap\">"); html.text("% Match"); html.out.write("</th>\n"
-			+ "      <th style=\"white-space:nowrap\">"); html.text("Title"); html.out.write("</th>\n"
+			+ "      <th style=\"white-space:nowrap\">"); document.text("% Match"); document.out.write("</th>\n"
+			+ "      <th style=\"white-space:nowrap\">"); document.text("Title"); document.out.write("</th>\n"
 			+ "      <th style=\"white-space:nowrap\">&#160;</th>\n"
-			+ "      <th style=\"white-space:nowrap\">"); html.text("Description"); html.out.write("</th>\n"
+			+ "      <th style=\"white-space:nowrap\">"); document.text("Description"); document.out.write("</th>\n"
 			+ "    </tr>\n");
 
 			// Find the highest probability
@@ -160,91 +160,91 @@ abstract public class WebPageLayout {
 				String url = result.getUrl();
 				String title = result.getTitle();
 				String description = result.getDescription();
-				html.out.write("    <tr class=\""); html.out.write(rowClass); html.out.write("\">\n"
-				+ "      <td style=\"white-space:nowrap; text-align:center\">"); html.text(Math.round(99 * result.getProbability() / highest) + "%"); html.out.write("</td>\n"
-				+ "      <td style=\"white-space:nowrap; text-align:left\"><a class=\""); html.out.write(linkClass); html.out.write("\" href=\"");
+				document.out.write("    <tr class=\""); document.out.write(rowClass); document.out.write("\">\n"
+				+ "      <td style=\"white-space:nowrap; text-align:center\">"); document.text(Math.round(99 * result.getProbability() / highest) + "%"); document.out.write("</td>\n"
+				+ "      <td style=\"white-space:nowrap; text-align:left\"><a class=\""); document.out.write(linkClass); document.out.write("\" href=\"");
 				encodeTextInXhtmlAttribute(
 					resp.encodeURL(
 						URIEncoder.encodeURI(
 							req.getContextPath() + url
 						)
 					),
-					html.out
+					document.out
 				);
-				html.out.write("\">"); html.text(title); html.out.write("</a></td>\n"
+				document.out.write("\">"); document.text(title); document.out.write("</a></td>\n"
 				+ "      <td style=\"white-space:nowrap\">&#160;&#160;&#160;</td>\n"
-				+ "      <td style=\"white-space:nowrap; text-align:left\">"); html.text(description); html.out.write("</td>\n"
+				+ "      <td style=\"white-space:nowrap; text-align:left\">"); document.text(description); document.out.write("</td>\n"
 				+ "    </tr>\n");
 			}
-			html.out.write("  </table>\n");
-			endLightArea(req, resp, html);
+			document.out.write("  </table>\n");
+			endLightArea(req, resp, document);
 		}
-		endContentLine(html, req, resp, 1, false);
-		endContent(page, html, req, resp, 1);
+		endContentLine(document, req, resp, 1, false);
+		endContent(page, document, req, resp, 1);
 	}
 
 	/**
 	 * Starts the content area of a page.
 	 */
-	final public void startContent(Html html, WebSiteRequest req, HttpServletResponse resp, int contentColumns, int preferredWidth) throws IOException, SQLException {
-		startContent(html, req, resp, new int[] {contentColumns}, preferredWidth);
+	final public void startContent(Document document, WebSiteRequest req, HttpServletResponse resp, int contentColumns, int preferredWidth) throws IOException, SQLException {
+		startContent(document, req, resp, new int[] {contentColumns}, preferredWidth);
 	}
 
 	/**
 	 * Starts the content area of a page.
 	 */
-	abstract public void startContent(Html html, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) throws IOException, SQLException;
+	abstract public void startContent(Document document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) throws IOException, SQLException;
 
 	/**
 	 * Prints a horizontal divider of the provided colspan.
 	 */
-	final public void printContentHorizontalDivider(Html html, WebSiteRequest req, HttpServletResponse resp, int colspan, boolean endsInternal) throws IOException, SQLException {
-		printContentHorizontalDivider(html, req, resp, new int[] {colspan}, endsInternal);
+	final public void printContentHorizontalDivider(Document document, WebSiteRequest req, HttpServletResponse resp, int colspan, boolean endsInternal) throws IOException, SQLException {
+		printContentHorizontalDivider(document, req, resp, new int[] {colspan}, endsInternal);
 	}
 
 	/**
 	 * Prints a horizontal divider of the provided colspan.
 	 */
-	abstract public void printContentHorizontalDivider(Html html, WebSiteRequest req, HttpServletResponse resp, int[] colspansAndDirections, boolean endsInternal) throws IOException, SQLException;
+	abstract public void printContentHorizontalDivider(Document document, WebSiteRequest req, HttpServletResponse resp, int[] colspansAndDirections, boolean endsInternal) throws IOException, SQLException;
 
 	/**
 	 * Prints the title of the page in one row in the content area.
 	 */
-	final public void printContentTitle(Html html, WebSiteRequest req, HttpServletResponse resp, WebPage page, int contentColumns) throws IOException, SQLException {
-		printContentTitle(html, req, resp, page.getTitle(), contentColumns);
+	final public void printContentTitle(Document document, WebSiteRequest req, HttpServletResponse resp, WebPage page, int contentColumns) throws IOException, SQLException {
+		printContentTitle(document, req, resp, page.getTitle(), contentColumns);
 	}
 
 	/**
 	 * Prints the title of the page in one row in the content area.
 	 */
-	abstract public void printContentTitle(Html html, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) throws IOException, SQLException;
+	abstract public void printContentTitle(Document document, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) throws IOException, SQLException;
 
 	/**
 	 * Starts one line of content with the initial colspan set to the provided colspan.
 	 */
-	abstract public void startContentLine(Html html, WebSiteRequest req, HttpServletResponse resp, int colspan, String align, String width) throws IOException, SQLException;
+	abstract public void startContentLine(Document document, WebSiteRequest req, HttpServletResponse resp, int colspan, String align, String width) throws IOException, SQLException;
 
 	/**
 	 * Ends one part of a line and starts the next.
 	 */
-	abstract public void printContentVerticalDivider(Html html, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align, String width) throws IOException, SQLException;
+	abstract public void printContentVerticalDivider(Document document, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align, String width) throws IOException, SQLException;
 
 	/**
 	 * Ends one line of content.
 	 */
-	abstract public void endContentLine(Html html, WebSiteRequest req, HttpServletResponse resp, int rowspan, boolean endsInternal) throws IOException, SQLException;
+	abstract public void endContentLine(Document document, WebSiteRequest req, HttpServletResponse resp, int rowspan, boolean endsInternal) throws IOException, SQLException;
 
 	/**
 	 * Ends the content area of a page.
 	 */
-	final public void endContent(WebPage page, Html html, WebSiteRequest req, HttpServletResponse resp, int contentColumns) throws IOException, SQLException {
-		endContent(page, html, req, resp, new int[] {contentColumns});
+	final public void endContent(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp, int contentColumns) throws IOException, SQLException {
+		endContent(page, document, req, resp, new int[] {contentColumns});
 	}
 
 	/**
 	 * Ends the content area of a page.
 	 */
-	abstract public void endContent(WebPage page, Html html, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) throws IOException, SQLException;
+	abstract public void endContent(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) throws IOException, SQLException;
 
 	/**
 	 * The background color for the page or <code>-1</code> for browser default.
@@ -284,45 +284,45 @@ abstract public class WebPageLayout {
 	/**
 	 * Begins a lighter colored area of the site.
 	 */
-	final public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, Html html) throws IOException {
-		beginLightArea(req, resp, html, null, null, false);
+	final public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, Document document) throws IOException {
+		beginLightArea(req, resp, document, null, null, false);
 	}
 
 	/**
 	 * Begins a lighter colored area of the site.
 	 */
-	abstract public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, Html html, String align, String width, boolean nowrap) throws IOException;
+	abstract public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, Document document, String align, String width, boolean nowrap) throws IOException;
 
 	/**
 	 * Ends a lighter area of the site.
 	 */
-	abstract public void endLightArea(WebSiteRequest req, HttpServletResponse resp, Html html) throws IOException;
+	abstract public void endLightArea(WebSiteRequest req, HttpServletResponse resp, Document document) throws IOException;
 
 	/**
 	 * Begins an area with a white background.
 	 */
-	final public void beginWhiteArea(WebSiteRequest req, HttpServletResponse resp, Html html) throws IOException {
-		beginWhiteArea(req, resp, html, null, null, false);
+	final public void beginWhiteArea(WebSiteRequest req, HttpServletResponse resp, Document document) throws IOException {
+		beginWhiteArea(req, resp, document, null, null, false);
 	}
 
 	/**
 	 * Begins a lighter colored area of the site.
 	 */
-	abstract public void beginWhiteArea(WebSiteRequest req, HttpServletResponse response, Html html, String align, String width, boolean nowrap) throws IOException;
+	abstract public void beginWhiteArea(WebSiteRequest req, HttpServletResponse response, Document document, String align, String width, boolean nowrap) throws IOException;
 
 	/**
 	 * Ends a lighter area of the site.
 	 */
-	abstract public void endWhiteArea(WebSiteRequest req, HttpServletResponse resp, Html html) throws IOException;
+	abstract public void endWhiteArea(WebSiteRequest req, HttpServletResponse resp, Document document) throws IOException;
 
 	/**
 	 * Each layout has a name.
 	 */
 	abstract public String getName();
 
-	public boolean printWebPageLayoutSelector(WebPage page, Html html, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+	public boolean printWebPageLayoutSelector(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
 		if(layoutChoices.length >= 2) {
-			html.script().out(script -> {
+			document.script().out(script -> {
 				script.append("function selectLayout(layout) {\n");
 				for(String choice : layoutChoices) {
 					script.append("  if(layout==").text(choice).append(") window.top.location.href=").text(
@@ -334,29 +334,29 @@ abstract public class WebPageLayout {
 			+ "<form action=\"#\" style=\"display:inline\"><div style=\"display:inline\">\n"
 			+ "  <select name=\"layout_selector\" onchange=\"selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);\">\n");
 			for(String choice : layoutChoices) {
-				html.out.write("    "); html.option().value(choice).selected(choice.equalsIgnoreCase(getName())).text__(choice).nl();
+				document.out.write("    "); document.option().value(choice).selected(choice.equalsIgnoreCase(getName())).text__(choice).nl();
 			}
-			html.out.write("  </select>\n"
+			document.out.write("  </select>\n"
 			+ "</div></form>\n");
 			return true;
 		} else return false;
 	}
 
-	protected void printJavaScriptIncludes(WebSiteRequest req, HttpServletResponse resp, Html html, WebPage page) throws IOException, SQLException {
+	protected void printJavaScriptIncludes(WebSiteRequest req, HttpServletResponse resp, Document document, WebPage page) throws IOException, SQLException {
 		Object O = page.getJavaScriptSrc(req);
 		if (O != null) {
 			if (O instanceof String[]) {
 				String[] SA = (String[]) O;
 				int len = SA.length;
 				for (int c = 0; c < len; c++) {
-					html.out.write("    "); html.script().src(req.getEncodedURLForPath('/'+SA[c], null, false, resp)).__().nl();
+					document.out.write("    "); document.script().src(req.getEncodedURLForPath('/'+SA[c], null, false, resp)).__().nl();
 				}
 			} else if(O instanceof Class) {
-				html.out.write("    "); html.script().src(req.getEncodedURL(((Class<?>)O).asSubclass(WebPage.class), null, resp)).__().nl();
+				document.out.write("    "); document.script().src(req.getEncodedURL(((Class<?>)O).asSubclass(WebPage.class), null, resp)).__().nl();
 			} else if(O instanceof WebPage) {
-				html.out.write("    "); html.script().src(req.getEncodedURL((WebPage)O, resp)).__().nl();
+				document.out.write("    "); document.script().src(req.getEncodedURL((WebPage)O, resp)).__().nl();
 			} else {
-				html.out.write("    "); html.script().src(req.getEncodedURLForPath('/'+O.toString(), null, false, resp)).__().nl();
+				document.out.write("    "); document.script().src(req.getEncodedURLForPath('/'+O.toString(), null, false, resp)).__().nl();
 			}
 		}
 	}

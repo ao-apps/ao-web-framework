@@ -22,7 +22,7 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.html.Html;
+import com.aoindustries.html.Document;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.servlet.http.HttpServletResponse;
@@ -41,10 +41,10 @@ abstract public class DescriptionAutoListPage extends AutoListPage {
 	 */
 	@Override
 	public void printContentStart(
-		Html html,
+		Document document,
 		WebSiteRequest req,
 		HttpServletResponse resp
 	) throws IOException, SQLException {
-		html.text(getDescription());
+		document.text(getDescription());
 	}
 }
