@@ -305,16 +305,16 @@ public class TextOnlyLayout extends WebPageLayout {
 			encodeTextInXhtmlAttribute(req.getEncodedURL(page, resp), document.out);
 			document.out.write("\"><div style=\"display:inline\">");
 			req.printFormFields(document);
-			document.input.hidden().name(WebSiteRequest.LOGOUT_REQUESTED).value(true).__()
-			.input.submit__("Logout").out.write("</div></form>\n");
+			document.input().hidden().name(WebSiteRequest.LOGOUT_REQUESTED).value(true).__()
+			.input().submit__("Logout").out.write("</div></form>\n");
 		} else {
 			document.out.write("          "); document.hr__().out.write("\n"
 			+ "          Login: <form style=\"display:inline\" id=\"login_form\" method=\"post\" action=\"");
 			encodeTextInXhtmlAttribute(req.getEncodedURL(page, resp), document.out);
 			document.out.write("\"><div style=\"display:inline\">");
 			req.printFormFields(document);
-			document.input.hidden().name(WebSiteRequest.LOGIN_REQUESTED).value(true).__()
-			.input.submit__("Login").out.write("</div></form>\n");
+			document.input().hidden().name(WebSiteRequest.LOGIN_REQUESTED).value(true).__()
+			.input().submit__("Login").out.write("</div></form>\n");
 		}
 		document.out.write("          "); document.hr__().out.write("\n"
 		+ "          <div style=\"white-space:nowrap\">\n");
@@ -324,10 +324,10 @@ public class TextOnlyLayout extends WebPageLayout {
 			+ "            "); document.text("Search:"); document.out.write(" <form id=\"search_site\" style=\"display:inline\" method=\"post\" action=\"");
 			encodeTextInXhtmlAttribute(req.getEncodedURL(page, resp), document.out);
 			document.out.write("\"><div style=\"display:inline\">\n"
-			+ "              "); document.input.hidden().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).__().nl();
+			+ "              "); document.input().hidden().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).__().nl();
 		}
 		req.printFormFields(document);
-		document.out.write("              "); document.input.text().name(WebSiteRequest.SEARCH_QUERY).size(12).maxlength(255).__().out.write("\n"
+		document.out.write("              "); document.input().text().name(WebSiteRequest.SEARCH_QUERY).size(12).maxlength(255).__().out.write("\n"
 		+ "            </div></form>"); document.br__().out.write("\n"
 		+ "          </div>\n"
 		+ "          "); document.hr__().out.write("\n"

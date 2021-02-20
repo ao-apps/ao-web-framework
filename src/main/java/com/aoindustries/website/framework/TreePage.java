@@ -345,12 +345,12 @@ abstract public class TreePage extends WebPage {
 		document.out.write("<form action='' id='tree_form' method='post'><div>\n");
 		req.printFormFields(document);
 		document.out.write("  ");
-		document.input.hidden().name("scroll_to_x").value(scrollToX).__().nl();
+		document.input().hidden().name("scroll_to_x").value(scrollToX).__().nl();
 		document.out.write("  ");
-		document.input.hidden().name("scroll_to_y").value(scrollToY).__().nl();
+		document.input().hidden().name("scroll_to_y").value(scrollToY).__().nl();
 		for(int c=0; c<treeLen; c++) {
 			document.out.write("  ");
-			document.input.hidden().name("opened_" + c).value(opened[c]).__().nl();
+			document.input().hidden().name("opened_" + c).value(opened[c]).__().nl();
 		}
 
 		// Display the tree in a table with links for opening/closing the different parts

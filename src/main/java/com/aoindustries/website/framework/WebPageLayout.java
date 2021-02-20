@@ -120,14 +120,14 @@ abstract public class WebPageLayout {
 		req.printFormFields(document);
 		document.out.write("        <table cellspacing=\"0\" cellpadding=\"0\"><tr><td style=\"white-space:nowrap\">\n"
 		+ "          "); document.text("Word(s) to search for:"); document.out.write(' ');
-		document.input.text().size(24).name(WebSiteRequest.SEARCH_QUERY).value(query).__().br__().out.write("\n"
+		document.input().text().size(24).name(WebSiteRequest.SEARCH_QUERY).value(query).__().br__().out.write("\n"
 		+ "          "); document.text("Search Location:"); document.out.write(' ');
-		document.input.radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).checked(isEntireSite).__()
+		document.input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).checked(isEntireSite).__()
 		.out.write(' '); document.text("Entire Site"); document.out.write("&#160;&#160;&#160;");
-		document.input.radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_THIS_AREA).checked(!isEntireSite).__()
+		document.input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_THIS_AREA).checked(!isEntireSite).__()
 		.out.write(' '); document.text("This Area").br__().out.write("\n"
 		+ "          "); document.br__().out.write("\n"
-		+ "          <div style=\"text-align:center\">"); document.input.submit().clazz("ao_button").value(" Search ").__().out.write("</div>\n"
+		+ "          <div style=\"text-align:center\">"); document.input().submit().clazz("ao_button").value(" Search ").__().out.write("</div>\n"
 		+ "        </td></tr></table>\n"
 		+ "      </form>\n");
 		endLightArea(req, resp, document);
