@@ -496,7 +496,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	@Override
 	public void printContentTitle(Document document, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) throws IOException {
 		startContentLine(document, req, resp, contentColumns, "center", null);
-		document.out.write("<h1>"); document.text(title).out.write("</h1>\n");
+		document.h1__(title).nl();
 		endContentLine(document, req, resp, 1, false);
 	}
 
