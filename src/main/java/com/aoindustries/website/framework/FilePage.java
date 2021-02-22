@@ -26,7 +26,7 @@ import com.aoindustries.html.Document;
 import com.aoindustries.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -44,7 +44,7 @@ abstract public class FilePage extends WebPage {
 		HttpServletResponse resp,
 		Document document,
 		WebPageLayout layout
-	) throws IOException, SQLException {
+	) throws ServletException, IOException {
 		printFile(document, getFile());
 	}
 
@@ -54,7 +54,7 @@ abstract public class FilePage extends WebPage {
 	public abstract File getFile() throws IOException;
 
 	@Override
-	public long getLastModified(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+	public long getLastModified(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		return Math.max(super.getLastModified(req, resp), getFile().lastModified());
 	}
 

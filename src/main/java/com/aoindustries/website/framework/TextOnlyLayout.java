@@ -41,7 +41,6 @@ import com.aoindustries.web.resources.registry.Style;
 import com.aoindustries.web.resources.renderer.Renderer;
 import com.aoindustries.web.resources.servlet.RegistryEE;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletContext;
@@ -159,7 +158,7 @@ public class TextOnlyLayout extends WebPageLayout {
 		HttpServletResponse resp,
 		Document document,
 		String onload
-	) throws ServletException, IOException, SQLException {
+	) throws ServletException, IOException {
 		boolean isOkResponseStatus = (resp.getStatus() == HttpServletResponse.SC_OK);
 		ServletContext servletContext = req.getServletContext();
 		String trackingId = getGoogleAnalyticsNewTrackingCode(servletContext);
@@ -427,7 +426,7 @@ public class TextOnlyLayout extends WebPageLayout {
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		Document document
-	) throws ServletException, IOException, SQLException {
+	) throws ServletException, IOException {
 		document.out.write("        </td>\n"
 		+ "      </tr>\n"
 		+ "    </table>\n"
@@ -576,7 +575,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	 * Ends the content area of a page.
 	 */
 	@Override
-	public void endContent(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) throws IOException, SQLException {
+	public void endContent(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) throws ServletException, IOException {
 		int totalColumns=0;
 		for(int c = 0; c < contentColumnSpans.length; c++) {
 			if(c > 0) totalColumns += 1;
@@ -599,16 +598,16 @@ public class TextOnlyLayout extends WebPageLayout {
 		return NAME;
 	}
 
-	public WebPage[] getCommonPages(WebPage page, WebSiteRequest req) throws IOException, SQLException {
+	public WebPage[] getCommonPages(WebPage page, WebSiteRequest req) throws ServletException, IOException {
 		return null;
 	}
 
-	public void printLogo(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+	public void printLogo(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 	}
 
 	/**
 	 * Prints content below the related pages area on the left.
 	 */
-	public void printBelowRelatedPages(Document document, WebSiteRequest req) throws IOException, SQLException {
+	public void printBelowRelatedPages(Document document, WebSiteRequest req) throws ServletException, IOException {
 	}
 }

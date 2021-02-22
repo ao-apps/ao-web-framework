@@ -25,7 +25,7 @@ package com.aoindustries.website.framework;
 import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
 import com.aoindustries.html.Document;
 import java.io.IOException;
-import java.sql.SQLException;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -48,7 +48,7 @@ abstract public class AutoListPage extends WebPage {
 		HttpServletResponse resp,
 		Document document,
 		WebPageLayout layout
-	) throws IOException, SQLException {
+	) throws ServletException, IOException {
 		if(req != null) {
 			layout.startContent(document, req, resp, 1, getPreferredContentWidth(req));
 			layout.printContentTitle(document, req, resp, this, 1);
@@ -73,13 +73,13 @@ abstract public class AutoListPage extends WebPage {
 		Document document,
 		WebSiteRequest req,
 		HttpServletResponse resp
-	) throws IOException, SQLException {
+	) throws ServletException, IOException {
 	}
 
 	/**
 	 * Prints a list of pages.
 	 */
-	public static void printPageList(Document document, WebSiteRequest req, HttpServletResponse resp, WebPage[] pages, WebPageLayout layout) throws IOException, SQLException {
+	public static void printPageList(Document document, WebSiteRequest req, HttpServletResponse resp, WebPage[] pages, WebPageLayout layout) throws ServletException, IOException {
 		int len = pages.length;
 		for (int c = 0; c < len; c++) {
 			WebPage page = pages[c];
@@ -97,7 +97,7 @@ abstract public class AutoListPage extends WebPage {
 	/**
 	 * Prints an unordered list of the available pages.
 	 */
-	public static void printPageList(Document document, WebSiteRequest req, HttpServletResponse resp, WebPage parent, WebPageLayout layout) throws IOException, SQLException {
+	public static void printPageList(Document document, WebSiteRequest req, HttpServletResponse resp, WebPage parent, WebPageLayout layout) throws ServletException, IOException {
 		if(req != null) printPageList(document, req, resp, parent.getCachedChildren(req, resp), layout);
 	}
 }

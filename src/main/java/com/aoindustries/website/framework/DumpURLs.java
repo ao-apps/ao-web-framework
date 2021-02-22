@@ -27,9 +27,9 @@ import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextIn
 import com.aoindustries.html.Document;
 import java.io.CharArrayWriter;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -48,7 +48,7 @@ abstract public class DumpURLs extends WebPage {
 		HttpServletResponse resp,
 		Document document,
 		WebPageLayout layout
-	) throws IOException, SQLException {
+	) throws ServletException, IOException {
 		document.out.write("The following is a list of all unique servlet URLs in the site and may be used to add this site to\n"
 				+ "search engines:\n"
 				+ "<pre>\n");
@@ -71,7 +71,7 @@ abstract public class DumpURLs extends WebPage {
 	 * The last modified time is -1 to always reload the list.
 	 */
 	@Override
-	public long getLastModified(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+	public long getLastModified(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		return -1;
 	}
 
@@ -91,7 +91,7 @@ abstract public class DumpURLs extends WebPage {
 	}
 
 	@Override
-	public long getSearchLastModified() throws IOException, SQLException {
+	public long getSearchLastModified() throws ServletException, IOException {
 		return getClassLastModified();
 	}
 
@@ -100,7 +100,7 @@ abstract public class DumpURLs extends WebPage {
 		return "List URLs";
 	}
 
-	private void printURLs(WebSiteRequest req, HttpServletResponse resp, Document document, WebPage page, List<WebPage> finishedPages) throws IOException, SQLException {
+	private void printURLs(WebSiteRequest req, HttpServletResponse resp, Document document, WebPage page, List<WebPage> finishedPages) throws ServletException, IOException {
 		if(!finishedPages.contains(page)) {
 			document.out.write("<a class='aoLightLink' href='");
 			encodeTextInXhtmlAttribute(req.getEncodedURL(page, resp), document.out);

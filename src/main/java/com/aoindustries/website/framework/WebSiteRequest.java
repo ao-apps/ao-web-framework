@@ -38,7 +38,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.security.SecureRandom;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -318,7 +317,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	private boolean isLinuxDone;
 
 	@SuppressWarnings("OverridableMethodCallInConstructor")
-	public WebSiteRequest(WebPage sourcePage, HttpServletRequest req) throws ServletException, IOException, SQLException {
+	public WebSiteRequest(WebPage sourcePage, HttpServletRequest req) throws ServletException, IOException {
 		super(req);
 		this.sourcePage = sourcePage;
 		this.req = req;
@@ -447,7 +446,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * @param  params  Only adds a value when the name has not already been added to the URL.
 	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getURLForClass(String classname, URIParameters params, String fragment) throws IOException, SQLException {
+	public String getURLForClass(String classname, URIParameters params, String fragment) throws ServletException, IOException {
 		try {
 			Class<? extends WebPage> clazz = Class.forName(classname).asSubclass(WebPage.class);
 			String url = getURL(clazz, params);
@@ -469,7 +468,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * @param  params  Only adds a value when the name has not already been added to the URL.
 	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getEncodedURLForClass(String classname, URIParameters params, String fragment, HttpServletResponse resp) throws IOException, SQLException {
+	public String getEncodedURLForClass(String classname, URIParameters params, String fragment, HttpServletResponse resp) throws ServletException, IOException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
 				getContextPath() + getURLForClass(classname, params, fragment)
@@ -483,7 +482,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * @param  params  Only adds a value when the name has not already been added to the URL.
 	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getURLForClass(String classname, URIParameters params) throws IOException, SQLException {
+	public String getURLForClass(String classname, URIParameters params) throws ServletException, IOException {
 		return getURLForClass(classname, params, null);
 	}
 
@@ -498,7 +497,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * @param  params  Only adds a value when the name has not already been added to the URL.
 	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getEncodedURLForClass(String classname, URIParameters params, HttpServletResponse resp) throws IOException, SQLException {
+	public String getEncodedURLForClass(String classname, URIParameters params, HttpServletResponse resp) throws ServletException, IOException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
 				getContextPath() + getURLForClass(classname, params)
@@ -510,7 +509,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * Gets a context-relative URL from a String containing a classname and optional parameters/fragment.
 	 * Parameters and fragment should already be URL encoded but not XML encoded.
 	 */
-	public String getURLForClass(String classAndParamsFragment) throws IOException, SQLException {
+	public String getURLForClass(String classAndParamsFragment) throws ServletException, IOException {
 		String className, params, fragment;
 		int pos = URIParser.getPathEnd(classAndParamsFragment);
 		if(pos >= classAndParamsFragment.length()) {
@@ -549,7 +548,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 */
-	public String getEncodedURLForClass(String classAndParamsFragment, HttpServletResponse resp) throws IOException, SQLException {
+	public String getEncodedURLForClass(String classAndParamsFragment, HttpServletResponse resp) throws ServletException, IOException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
 				getContextPath() + getURLForClass(classAndParamsFragment)
@@ -618,7 +617,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	/**
 	 * Gets the context-relative URL to a web page.
 	 */
-	public String getURL(WebPage page) throws IOException, SQLException {
+	public String getURL(WebPage page) throws ServletException, IOException {
 		return getURL(page, (URIParameters)null);
 	}
 
@@ -630,7 +629,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 */
-	public String getEncodedURL(WebPage page, HttpServletResponse resp) throws IOException, SQLException {
+	public String getEncodedURL(WebPage page, HttpServletResponse resp) throws ServletException, IOException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
 				getContextPath() + getURL(page)
@@ -644,7 +643,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * @param  params  Only adds a value when the name has not already been added to the URL.
 	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getURL(WebPage page, URIParameters params) throws IOException, SQLException {
+	public String getURL(WebPage page, URIParameters params) throws ServletException, IOException {
 		Set<String> finishedParams = new HashSet<>();
 		StringBuilder url = new StringBuilder();
 		url.append(page.getURLPath());
@@ -667,7 +666,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * @param  params  Only adds a value when the name has not already been added to the URL.
 	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getEncodedURL(WebPage page, URIParameters params, HttpServletResponse resp) throws IOException, SQLException {
+	public String getEncodedURL(WebPage page, URIParameters params, HttpServletResponse resp) throws ServletException, IOException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
 				getContextPath() + getURL(page, params)
@@ -681,7 +680,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * @param  params  Only adds a value when the name has not already been added to the URL.
 	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getURL(Class<? extends WebPage> clazz, URIParameters params) throws IOException, SQLException {
+	public String getURL(Class<? extends WebPage> clazz, URIParameters params) throws ServletException, IOException {
 		return getURL(
 			WebPage.getWebPage(sourcePage.getServletContext(), clazz, params),
 			params
@@ -699,7 +698,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * @param  params  Only adds a value when the name has not already been added to the URL.
 	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getEncodedURL(Class<? extends WebPage> clazz, URIParameters params, HttpServletResponse resp) throws IOException, SQLException {
+	public String getEncodedURL(Class<? extends WebPage> clazz, URIParameters params, HttpServletResponse resp) throws ServletException, IOException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
 				getContextPath() + getURL(clazz, params)
@@ -707,7 +706,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 		);
 	}
 
-	public String getURL(Class<? extends WebPage> clazz) throws IOException, SQLException {
+	public String getURL(Class<? extends WebPage> clazz) throws ServletException, IOException {
 		return getURL(clazz, (URIParameters)null);
 	}
 
@@ -719,7 +718,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 */
-	public String getEncodedURL(Class<? extends WebPage> clazz, HttpServletResponse resp) throws IOException, SQLException {
+	public String getEncodedURL(Class<? extends WebPage> clazz, HttpServletResponse resp) throws ServletException, IOException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
 				getContextPath() + getURL(clazz)
@@ -878,14 +877,14 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 *
 	 * @exception LoginException if an invalid login attempt is made or the user credentials are not found
 	 */
-	public WebSiteUser getWebSiteUser(HttpServletResponse resp) throws IOException, SQLException, LoginException {
+	public WebSiteUser getWebSiteUser(HttpServletResponse resp) throws ServletException, IOException, LoginException {
 		return null;
 	}
 
 	/**
 	 * Determines if the user is currently logged in.
 	 */
-	public boolean isLoggedIn() throws IOException, SQLException {
+	public boolean isLoggedIn() throws ServletException, IOException {
 		try {
 			return getWebSiteUser(null)!=null;
 		} catch(LoginException err) {

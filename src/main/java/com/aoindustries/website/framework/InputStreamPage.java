@@ -27,7 +27,7 @@ import com.aoindustries.io.IoUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.sql.SQLException;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -46,7 +46,7 @@ abstract public class InputStreamPage extends WebPage {
 		HttpServletResponse resp,
 		Document document,
 		WebPageLayout layout
-	) throws IOException, SQLException {
+	) throws ServletException, IOException {
 		layout.startContent(document, req, resp, 1, getPreferredContentWidth(req));
 		layout.printContentTitle(document, req, resp, this, 1);
 		layout.printContentHorizontalDivider(document, req, resp, 1, false);
@@ -63,7 +63,7 @@ abstract public class InputStreamPage extends WebPage {
 	 */
 	public abstract InputStream getInputStream() throws IOException;
 
-	public void printStream(Document document, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws IOException, SQLException {
+	public void printStream(Document document, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
 		printStreamStatic(document, in);
 	}
 

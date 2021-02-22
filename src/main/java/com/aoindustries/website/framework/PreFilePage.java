@@ -24,7 +24,7 @@ package com.aoindustries.website.framework;
 
 import com.aoindustries.html.Document;
 import java.io.IOException;
-import java.sql.SQLException;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -42,7 +42,7 @@ public abstract class PreFilePage extends FilePage {
 		HttpServletResponse resp,
 		Document document,
 		WebPageLayout layout
-	) throws IOException, SQLException {
+	) throws ServletException, IOException {
 		document.out.write("<pre>");
 		super.doGet(req, resp, document, layout);
 		document.out.write("</pre>\n");

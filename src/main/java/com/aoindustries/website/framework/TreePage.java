@@ -33,7 +33,6 @@ import com.aoindustries.net.URIParametersMap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -111,7 +110,7 @@ abstract public class TreePage extends WebPage {
 	}
 
 	@Override
-	public void doGet(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+	public void doGet(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String S=req.getParameter("image_num");
 		if(S == null) {
 			super.doGet(req, resp);
@@ -135,7 +134,7 @@ abstract public class TreePage extends WebPage {
 	}
 
 	@Override
-	public long getSearchLastModified() throws IOException, SQLException {
+	public long getSearchLastModified() throws ServletException, IOException {
 		return getClassLastModified();
 	}
 
@@ -152,7 +151,7 @@ abstract public class TreePage extends WebPage {
 		HttpServletResponse resp,
 		Document document,
 		WebPageLayout layout
-	) throws IOException, SQLException {
+	) throws ServletException, IOException {
 		List<? extends TreePageData> tree = getTree(req, resp);
 		String mode;
 		if(displayText(req)) {
@@ -260,7 +259,7 @@ abstract public class TreePage extends WebPage {
 	public void doPost(
 		WebSiteRequest req,
 		HttpServletResponse resp
-	) throws ServletException, IOException, SQLException {
+	) throws ServletException, IOException {
 		List<? extends TreePageData> tree = getTree(req, resp);
 
 		// Get the scroll to position
@@ -292,7 +291,7 @@ abstract public class TreePage extends WebPage {
 	/**
 	 * Gets the tree to be displayed.  Each row consists of three elements: path, href, description
 	 */
-	abstract protected List<? extends TreePageData> getTree(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException;
+	abstract protected List<? extends TreePageData> getTree(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException;
 
 	/**
 	 * Handles the interactive form of this page.
@@ -305,7 +304,7 @@ abstract public class TreePage extends WebPage {
 		int scrollToX,
 		int scrollToY,
 		boolean[] opened
-	) throws IOException, SQLException {
+	) throws ServletException, IOException {
 		WebPageLayout layout=getWebPageLayout(req);
 		layout.startContent(document, req, resp, 1, getPreferredContentWidth(req));
 		layout.printContentTitle(document, req, resp, this, 1);
@@ -566,7 +565,7 @@ abstract public class TreePage extends WebPage {
 		return paths;
 	}
 
-	private boolean displayText(WebSiteRequest req) throws IOException, SQLException {
+	private boolean displayText(WebSiteRequest req) throws ServletException, IOException {
 		// A search being performed
 		if(req==null) return true;
 

@@ -43,7 +43,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -168,21 +167,21 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * Determines if the provided user can access the page.  Defaults
 	 * to inheriting the behavior of the parent page.
 	 */
-	public boolean canAccess(WebSiteUser user) throws IOException, SQLException {
+	public boolean canAccess(WebSiteUser user) throws ServletException, IOException {
 		return getParent().canAccess(user);
 	}
 
 	/**
 	 * Prints the form that is used to login.
 	 */
-	public void printLoginForm(WebPage page, LoginException loginException, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+	public void printLoginForm(WebPage page, LoginException loginException, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		getParent().printLoginForm(page, loginException, req, resp);
 	}
 
 	/**
 	 * Prints the unauthorized page message.
 	 */
-	public void printUnauthorizedPage(WebPage page, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+	public void printUnauthorizedPage(WebPage page, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		getParent().printUnauthorizedPage(page, req, resp);
 	}
 
@@ -213,7 +212,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see #getLastModified(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
-	final protected long reportingGetLastModified(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+	final protected long reportingGetLastModified(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException, IOException {
 		WebSiteRequest req = getWebSiteRequest(httpReq);
 		WebPage page = getWebPage(getClass(), req);
 
@@ -237,7 +236,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	/**
 	 * The <code>getLastModified</code> defaults to {@code -1}.
 	 */
-	public long getLastModified(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+	public long getLastModified(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		return -1;
 	}
 
@@ -247,7 +246,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @see  ErrorReportingServlet#getUptime()
 	 */
-	final protected long getClassLastModified() throws IOException, SQLException {
+	final protected long getClassLastModified() throws ServletException, IOException {
 		String dir = getServletContext().getRealPath("/WEB-INF/classes");
 		if(dir != null && dir.length() > 0) {
 			// Try to get from the class file
@@ -260,7 +259,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	/**
 	 * Gets the most recent last modified time of this page and its immediate children.
 	 */
-	public long getWebPageAndChildrenLastModified(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+	public long getWebPageAndChildrenLastModified(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		WebPage[] children = getCachedChildren(req, resp);
 		int len = children.length;
 		long mostRecent = getClassLastModified();
@@ -276,7 +275,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	/**
 	 * Recursively gets the most recent modification time.
 	 */
-	final public long getLastModifiedRecursive(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+	final public long getLastModifiedRecursive(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		long time = getLastModified(req, resp);
 		WebPage[] children = getCachedChildren(req, resp);
 		int len = children.length;
@@ -311,7 +310,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * no search index is built.  This defaults to be a call to <code>getLastModified</code>
 	 * with null {@link WebSiteRequest} and {@link HttpServletResponse}.
 	 */
-	public long getSearchLastModified() throws IOException, SQLException {
+	public long getSearchLastModified() throws ServletException, IOException {
 		return getLastModified(null, null);
 	}
 
@@ -490,7 +489,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see #doGet(WebSiteRequest,HttpServletResponse)
 	 */
 	@Override
-	final protected void reportingDoGet(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+	final protected void reportingDoGet(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException, IOException {
 		WebSiteRequest req = getWebSiteRequest(httpReq);
 		WebPage page = getWebPage(getClass(), req);
 		// Logout when requested
@@ -547,7 +546,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see #getDoctype(com.aoindustries.website.framework.WebSiteRequest)
 	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Document)
 	 */
-	public void doGet(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+	public void doGet(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		Serialization serialization = getSerialization(req);
 		Serialization oldSerialization = SerializationEE.replace(req, serialization);
 		try {
@@ -586,7 +585,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		Document document
-	) throws ServletException, IOException, SQLException {
+	) throws ServletException, IOException {
 		WebPageLayout layout = getWebPageLayout(req);
 		layout.startHTML(this, req, resp, document, null);
 		doGet(req, resp, document, layout);
@@ -609,7 +608,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 		HttpServletResponse resp,
 		Document document,
 		WebPageLayout layout
-	) throws ServletException, IOException, SQLException {
+	) throws ServletException, IOException {
 	}
 
 	// </editor-fold>
@@ -651,7 +650,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see #doPostWithSearch(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
-	final protected void reportingDoPost(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+	final protected void reportingDoPost(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException, IOException {
 		WebSiteRequest req = getWebSiteRequest(httpReq);
 		WebPage page = getWebPage(getClass(), req);
 		// Logout when requested
@@ -711,7 +710,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see #reportingDoPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 * @see #doPost(WebSiteRequest,HttpServletResponse)
 	 */
-	protected void doPostWithSearch(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+	protected void doPostWithSearch(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String query = req.getParameter(WebSiteRequest.SEARCH_QUERY);
 		String searchTarget = req.getParameter(WebSiteRequest.SEARCH_TARGET);
 		if(query != null && searchTarget != null) {
@@ -771,7 +770,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see #getDoctype(com.aoindustries.website.framework.WebSiteRequest)
 	 * @see #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Document)
 	 */
-	public void doPost(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+	public void doPost(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		Serialization serialization = getSerialization(req);
 		Serialization oldSerialization = SerializationEE.replace(req, serialization);
 		try {
@@ -805,7 +804,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		Document document
-	) throws ServletException, IOException, SQLException {
+	) throws ServletException, IOException {
 		WebPageLayout layout = getWebPageLayout(req);
 		layout.startHTML(this, req, resp, document, null);
 		doPost(req, resp, document, layout);
@@ -828,7 +827,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 		HttpServletResponse resp,
 		Document document,
 		WebPageLayout layout
-	) throws ServletException, IOException, SQLException {
+	) throws ServletException, IOException {
 		doGet(req, resp, document, layout);
 	}
 
@@ -879,14 +878,14 @@ abstract public class WebPage extends ErrorReportingServlet {
 	/**
 	 * Gets the author of this page.  By default, the author of the parent page is used.
 	 */
-	public String getAuthor() throws IOException, SQLException {
+	public String getAuthor() throws ServletException, IOException {
 		return getParent().getAuthor();
 	}
 
 	/**
 	 * Gets the URL for the author of this page.  By default, the URL of the author of the parent page is used.
 	 */
-	public String getAuthorHref(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+	public String getAuthorHref(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		return getParent().getAuthorHref(req, resp);
 	}
 
@@ -897,7 +896,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @see  WebPageLayout
 	 */
-	public int getPreferredContentWidth(WebSiteRequest req) throws IOException, SQLException {
+	public int getPreferredContentWidth(WebSiteRequest req) throws ServletException, IOException {
 		return getParent().getPreferredContentWidth(req);
 	}
 
@@ -915,14 +914,14 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * Gets the description of this page.  By default, the description of the parent page is used.
 	 * May not contain HTML.
 	 */
-	public String getDescription() throws IOException, SQLException {
+	public String getDescription() throws ServletException, IOException {
 		return getParent().getDescription();
 	}
 
 	/**
 	 * Gets the root page in the web page hierarchy.  The root page has no parent.
 	 */
-	public final WebPage getRootPage() throws IOException, SQLException {
+	public final WebPage getRootPage() throws ServletException, IOException {
 		WebPage page = this;
 		WebPage parent;
 		while ((parent = page.getParent()) != null) {
@@ -940,7 +939,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *          a <code>String</code> for one,
 	 *          or <code>null</code> for none
 	 */
-	public Object getJavaScriptSrc(WebSiteRequest req) throws IOException, SQLException {
+	public Object getJavaScriptSrc(WebSiteRequest req) throws ServletException, IOException {
 		return null;
 	}
 
@@ -948,7 +947,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * Gets the keywords for this page.  By default, the keywords of the parent page are used.
 	 */
 	// TODO: Is it correct to use keywords of parent?
-	public String getKeywords() throws IOException, SQLException {
+	public String getKeywords() throws ServletException, IOException {
 		return getParent().getKeywords();
 	}
 
@@ -961,7 +960,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see #getNavImageSuffix(com.aoindustries.website.framework.WebSiteRequest)
 	 * @see #getNavImageURL(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.net.URIParameters)
 	 */
-	public String getNavImageAlt(WebSiteRequest req) throws IOException, SQLException {
+	public String getNavImageAlt(WebSiteRequest req) throws ServletException, IOException {
 		return getShortTitle();
 	}
 
@@ -973,7 +972,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see #getNavImageAlt(com.aoindustries.website.framework.WebSiteRequest)
 	 * @see #getNavImageURL(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.net.URIParameters)
 	 */
-	public String getNavImageSuffix(WebSiteRequest req) throws IOException, SQLException {
+	public String getNavImageSuffix(WebSiteRequest req) throws ServletException, IOException {
 		return null;
 	}
 
@@ -986,14 +985,14 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see #getNavImageAlt(com.aoindustries.website.framework.WebSiteRequest)
 	 * @see #getNavImageSuffix(com.aoindustries.website.framework.WebSiteRequest)
 	 */
-	public String getNavImageURL(WebSiteRequest req, HttpServletResponse resp, URIParameters params) throws IOException, SQLException {
+	public String getNavImageURL(WebSiteRequest req, HttpServletResponse resp, URIParameters params) throws ServletException, IOException {
 		return req.getEncodedURL(this, params, resp);
 	}
 
 	/**
 	 * Gets the index of this page in the parents list of children pages.
 	 */
-	final public int getPageIndexInParent(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+	final public int getPageIndexInParent(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		WebPage[] siblings = getParent().getCachedChildren(req, resp);
 		int len=siblings.length;
 		for(int c = 0; c < len; c++) {
@@ -1008,7 +1007,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @return  the <code>WebPage</code> or <code>null</code> if not found
 	 */
-	final public WebPage getNextPage(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+	final public WebPage getNextPage(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		WebPage parent=getParent();
 		if (parent!=null) {
 			WebPage[] siblings = parent.getCachedChildren(req, resp);
@@ -1029,7 +1028,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @return  the <code>WebPage</code> or <code>null</code> if not found
 	 */
-	final public WebPage getPreviousPage(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+	final public WebPage getPreviousPage(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		WebPage parent = getParent();
 		if (parent != null) {
 			WebPage[] siblings = parent.getCachedChildren(req, resp);
@@ -1067,7 +1066,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @see  #getChildren(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
-	synchronized public WebPage[] getCachedChildren(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+	synchronized public WebPage[] getCachedChildren(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		WebPage[] children = this.cachedChildren;
 		if(children == null) this.cachedChildren = children = getChildren(req, resp);
 		return children;
@@ -1076,7 +1075,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	/**
 	 * Gets the parent of this page or <code>null</code> for none.
 	 */
-	public abstract WebPage getParent() throws IOException, SQLException;
+	public abstract WebPage getParent() throws ServletException, IOException;
 
 	/**
 	 * Gets the absolute or context-relative URL to direct to.
@@ -1085,7 +1084,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @return  the context-relative or absolute URL to redirect to or <code>null</code> for
 	 *          no redirect.
 	 */
-	public String getRedirectURL(WebSiteRequest req) throws IOException, SQLException {
+	public String getRedirectURL(WebSiteRequest req) throws ServletException, IOException {
 		return null;
 	}
 
@@ -1104,7 +1103,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @see  #getTitle
 	 */
-	public String getShortTitle() throws IOException, SQLException{
+	public String getShortTitle() throws ServletException, IOException{
 		return getTitle();
 	}
 
@@ -1114,7 +1113,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @return  the page title
 	 */
-	public String getTitle() throws IOException, SQLException {
+	public String getTitle() throws ServletException, IOException {
 		return getParent().getTitle();
 	}
 
@@ -1125,7 +1124,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @see  EmptyURIParameters#getInstance()
 	 */
-	public URIParameters getURLParams(WebSiteRequest req) throws IOException, SQLException {
+	public URIParameters getURLParams(WebSiteRequest req) throws ServletException, IOException {
 		return null;
 	}
 
@@ -1398,7 +1397,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @return  the <code>WebPageLayout</code>
 	 */
 	// TODO: Review uses, should be much fewer now (only from this class?)
-	public WebPageLayout getWebPageLayout(WebSiteRequest req) throws IOException, SQLException {
+	public WebPageLayout getWebPageLayout(WebSiteRequest req) throws ServletException, IOException {
 		// Search index building
 		if(req == null) return SearchLayout.getInstance();
 		return getParent().getWebPageLayout(req);
@@ -1415,9 +1414,8 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see  #getCachedChildren(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 * @see  #emptyWebPageArray
 	 */
-	// TODO: Allow ServletException here, too.  More generally, allow ServletException instead of SQLException
 	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Empty array is unmodifiable
-	protected WebPage[] getChildren(WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+	protected WebPage[] getChildren(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		return emptyWebPageArray;
 	}
 
@@ -1450,7 +1448,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * Gets the <code>WebSiteRequest</code> that handles authentication and other details
 	 * of this site.
 	 */
-	abstract protected WebSiteRequest getWebSiteRequest(HttpServletRequest req) throws ServletException, IOException, SQLException;
+	abstract protected WebSiteRequest getWebSiteRequest(HttpServletRequest req) throws ServletException, IOException;
 
 	/**
 	 * Searches this WebPage and all of its subordinate pages, returning the matches
@@ -1478,7 +1476,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 		List<SearchResult> results,
 		CharArrayWriter buffer,
 		Set<WebPage> finishedPages
-	) throws ServletException, IOException, SQLException {
+	) throws ServletException, IOException {
 		standardSearch(words, req, response, results, buffer, finishedPages);
 	}
 
@@ -1494,7 +1492,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 		List<SearchResult> results,
 		CharArrayWriter buffer,
 		Set<WebPage> finishedPages
-	) throws ServletException, IOException, SQLException {
+	) throws ServletException, IOException {
 		if(finishedPages.add(this)) {
 			String title = null;
 			String description = null;
@@ -1691,7 +1689,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	/**
 	 * Determines whether or not to display the page in the left navigation.
 	 */
-	public boolean useNavImage() throws IOException, SQLException {
+	public boolean useNavImage() throws ServletException, IOException {
 		return true;
 	}
 
@@ -1732,14 +1730,14 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *          https://wiki.whatwg.org/wiki/MetaExtensions
 	 *          http://dublincore.org/documents/dcmi-terms/
 	 */
-	public String getCopyright(WebSiteRequest req, HttpServletResponse resp, WebPage requestPage) throws IOException, SQLException {
+	public String getCopyright(WebSiteRequest req, HttpServletResponse resp, WebPage requestPage) throws ServletException, IOException {
 		return getParent().getCopyright(req, resp, requestPage);
 	}
 
 	/**
 	 * Gets the context-relative path for the URL
 	 */
-	public String getURLPath() throws IOException, SQLException {
+	public String getURLPath() throws ServletException, IOException {
 		return '/'+generateURLPath(this);
 	}
 
@@ -1748,14 +1746,14 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * The default behavior is to ask the parent to generate the URL.  Therefore the
 	 * top-level <code>WebPage</code> of a site must implement this method.
 	 */
-	public String generateURLPath(WebPage page) throws IOException, SQLException {
+	public String generateURLPath(WebPage page) throws ServletException, IOException {
 		return getParent().generateURLPath(page);
 	}
 
 	/**
 	 * Gets the URL pattern for this page as used in <code>web.xml</code>.
 	 */
-	public String getURLPattern() throws IOException, SQLException {
+	public String getURLPattern() throws ServletException, IOException {
 		return getURLPath();
 	}
 }

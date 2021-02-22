@@ -24,7 +24,6 @@ package com.aoindustries.website.framework;
 
 import com.aoindustries.html.Document;
 import java.io.IOException;
-import java.sql.SQLException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -65,7 +64,7 @@ public class RedirectWebPage extends WebPage {
 	}
 
 	@Override
-	protected WebSiteRequest getWebSiteRequest(HttpServletRequest req) throws ServletException, IOException, SQLException {
+	protected WebSiteRequest getWebSiteRequest(HttpServletRequest req) throws ServletException, IOException {
 		return new WebSiteRequest(this, req);
 	}
 
@@ -82,7 +81,7 @@ public class RedirectWebPage extends WebPage {
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		Document document
-	) throws ServletException, IOException, SQLException {
+	) throws ServletException, IOException {
 		// resp null during search
 		if(resp != null) resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 	}
@@ -96,7 +95,7 @@ public class RedirectWebPage extends WebPage {
 		HttpServletResponse resp,
 		Document document,
 		WebPageLayout layout
-	) throws ServletException, IOException, SQLException {
+	) throws ServletException, IOException {
 		// resp null during search
 		if(resp != null) resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 	}
@@ -109,7 +108,7 @@ public class RedirectWebPage extends WebPage {
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		Document document
-	) throws ServletException, IOException, SQLException {
+	) throws ServletException, IOException {
 		resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 	}
 
@@ -122,12 +121,12 @@ public class RedirectWebPage extends WebPage {
 		HttpServletResponse resp,
 		Document document,
 		WebPageLayout layout
-	) throws ServletException, IOException, SQLException {
+	) throws ServletException, IOException {
 		resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 	}
 
 	@Override
-	public String getRedirectURL(WebSiteRequest req) throws IOException, SQLException {
+	public String getRedirectURL(WebSiteRequest req) throws ServletException, IOException {
 		return path;
 	}
 

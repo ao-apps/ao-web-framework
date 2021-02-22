@@ -24,7 +24,7 @@ package com.aoindustries.website.framework;
 
 import com.aoindustries.html.Document;
 import java.io.IOException;
-import java.sql.SQLException;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -44,7 +44,7 @@ abstract public class DescriptionAutoListPage extends AutoListPage {
 		Document document,
 		WebSiteRequest req,
 		HttpServletResponse resp
-	) throws IOException, SQLException {
+	) throws ServletException, IOException {
 		document.text(getDescription());
 	}
 }

@@ -27,7 +27,6 @@ import com.aoindustries.io.IoUtils;
 import com.aoindustries.lang.Throwables;
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.sql.SQLException;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
@@ -186,21 +185,21 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 	/**
 	 * @see javax.servlet.http.HttpServlet#doGet(HttpServletRequest,HttpServletResponse)
 	 */
-	protected void reportingDoGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, SQLException, IOException {
+	protected void reportingDoGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		super.doGet(req, resp);
 	}
 
 	/**
 	 * @see javax.servlet.http.HttpServlet#doPost(HttpServletRequest,HttpServletResponse)
 	 */
-	protected void reportingDoPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, SQLException, IOException {
+	protected void reportingDoPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		super.doPost(req, resp);
 	}
 
 	/**
 	 * @see javax.servlet.http.HttpServlet#getLastModified(HttpServletRequest)
 	 */
-	protected long reportingGetLastModified(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
+	protected long reportingGetLastModified(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		return super.getLastModified(req);
 	}
 

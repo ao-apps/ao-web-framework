@@ -28,7 +28,6 @@ import com.aoindustries.net.URIEncoder;
 import com.aoindustries.net.URIParametersMap;
 import com.aoindustries.web.resources.registry.Registry;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -90,7 +89,7 @@ abstract public class WebPageLayout {
 		HttpServletResponse resp,
 		Document document,
 		String onload
-	) throws ServletException, IOException, SQLException;
+	) throws ServletException, IOException;
 
 	/**
 	 * Writes all of the HTML following the content of the page,
@@ -101,7 +100,7 @@ abstract public class WebPageLayout {
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		Document document
-	) throws ServletException, IOException, SQLException;
+	) throws ServletException, IOException;
 
 	/**
 	 * Prints the content HTML that shows the output of a search.  This output must include an
@@ -110,7 +109,7 @@ abstract public class WebPageLayout {
 	 *
 	 * @see WebPage#doPostWithSearch(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
-	public void printSearchOutput(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) throws IOException, SQLException {
+	public void printSearchOutput(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) throws ServletException, IOException {
 		startContent(document, req, resp, 1, 600);
 		printContentTitle(document, req, resp, "Search Results", 1);
 		printContentHorizontalDivider(document, req, resp, 1, false);
@@ -186,65 +185,65 @@ abstract public class WebPageLayout {
 	/**
 	 * Starts the content area of a page.
 	 */
-	final public void startContent(Document document, WebSiteRequest req, HttpServletResponse resp, int contentColumns, int preferredWidth) throws IOException, SQLException {
+	final public void startContent(Document document, WebSiteRequest req, HttpServletResponse resp, int contentColumns, int preferredWidth) throws ServletException, IOException {
 		startContent(document, req, resp, new int[] {contentColumns}, preferredWidth);
 	}
 
 	/**
 	 * Starts the content area of a page.
 	 */
-	abstract public void startContent(Document document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) throws IOException, SQLException;
+	abstract public void startContent(Document document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) throws ServletException, IOException;
 
 	/**
 	 * Prints a horizontal divider of the provided colspan.
 	 */
-	final public void printContentHorizontalDivider(Document document, WebSiteRequest req, HttpServletResponse resp, int colspan, boolean endsInternal) throws IOException, SQLException {
+	final public void printContentHorizontalDivider(Document document, WebSiteRequest req, HttpServletResponse resp, int colspan, boolean endsInternal) throws ServletException, IOException {
 		printContentHorizontalDivider(document, req, resp, new int[] {colspan}, endsInternal);
 	}
 
 	/**
 	 * Prints a horizontal divider of the provided colspan.
 	 */
-	abstract public void printContentHorizontalDivider(Document document, WebSiteRequest req, HttpServletResponse resp, int[] colspansAndDirections, boolean endsInternal) throws IOException, SQLException;
+	abstract public void printContentHorizontalDivider(Document document, WebSiteRequest req, HttpServletResponse resp, int[] colspansAndDirections, boolean endsInternal) throws ServletException, IOException;
 
 	/**
 	 * Prints the title of the page in one row in the content area.
 	 */
-	final public void printContentTitle(Document document, WebSiteRequest req, HttpServletResponse resp, WebPage page, int contentColumns) throws IOException, SQLException {
+	final public void printContentTitle(Document document, WebSiteRequest req, HttpServletResponse resp, WebPage page, int contentColumns) throws ServletException, IOException {
 		printContentTitle(document, req, resp, page.getTitle(), contentColumns);
 	}
 
 	/**
 	 * Prints the title of the page in one row in the content area.
 	 */
-	abstract public void printContentTitle(Document document, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) throws IOException, SQLException;
+	abstract public void printContentTitle(Document document, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) throws ServletException, IOException;
 
 	/**
 	 * Starts one line of content with the initial colspan set to the provided colspan.
 	 */
-	abstract public void startContentLine(Document document, WebSiteRequest req, HttpServletResponse resp, int colspan, String align, String width) throws IOException, SQLException;
+	abstract public void startContentLine(Document document, WebSiteRequest req, HttpServletResponse resp, int colspan, String align, String width) throws ServletException, IOException;
 
 	/**
 	 * Ends one part of a line and starts the next.
 	 */
-	abstract public void printContentVerticalDivider(Document document, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align, String width) throws IOException, SQLException;
+	abstract public void printContentVerticalDivider(Document document, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align, String width) throws ServletException, IOException;
 
 	/**
 	 * Ends one line of content.
 	 */
-	abstract public void endContentLine(Document document, WebSiteRequest req, HttpServletResponse resp, int rowspan, boolean endsInternal) throws IOException, SQLException;
+	abstract public void endContentLine(Document document, WebSiteRequest req, HttpServletResponse resp, int rowspan, boolean endsInternal) throws ServletException, IOException;
 
 	/**
 	 * Ends the content area of a page.
 	 */
-	final public void endContent(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp, int contentColumns) throws IOException, SQLException {
+	final public void endContent(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp, int contentColumns) throws ServletException, IOException {
 		endContent(page, document, req, resp, new int[] {contentColumns});
 	}
 
 	/**
 	 * Ends the content area of a page.
 	 */
-	abstract public void endContent(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) throws IOException, SQLException;
+	abstract public void endContent(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) throws ServletException, IOException;
 
 	/**
 	 * The background color for the page or <code>-1</code> for browser default.
@@ -320,7 +319,7 @@ abstract public class WebPageLayout {
 	 */
 	abstract public String getName();
 
-	public boolean printWebPageLayoutSelector(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp) throws IOException, SQLException {
+	public boolean printWebPageLayoutSelector(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		if(layoutChoices.length >= 2) {
 			document.script().out(script -> {
 				script.append("function selectLayout(layout) {\n");
@@ -342,7 +341,7 @@ abstract public class WebPageLayout {
 		} else return false;
 	}
 
-	protected void printJavaScriptIncludes(WebSiteRequest req, HttpServletResponse resp, Document document, WebPage page) throws IOException, SQLException {
+	protected void printJavaScriptIncludes(WebSiteRequest req, HttpServletResponse resp, Document document, WebPage page) throws ServletException, IOException {
 		Object O = page.getJavaScriptSrc(req);
 		if (O != null) {
 			if (O instanceof String[]) {

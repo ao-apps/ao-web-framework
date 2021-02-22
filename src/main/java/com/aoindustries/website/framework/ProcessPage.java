@@ -24,7 +24,7 @@ package com.aoindustries.website.framework;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.SQLException;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -55,7 +55,7 @@ abstract public class ProcessPage extends InputStreamPage {
 	 * The search format of this page is indexed.
 	 */
 	@Override
-	public long getSearchLastModified() throws IOException, SQLException {
+	public long getSearchLastModified() throws ServletException, IOException {
 		return super.getLastModified(null, null);
 	}
 }

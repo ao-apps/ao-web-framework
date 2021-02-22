@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.sql.SQLException;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -45,7 +45,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void printStream(Document document, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws IOException, SQLException {
+	public void printStream(Document document, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
 		printHTMLStream(document, req, resp, getWebPageLayout(req), in, "aoLightLink");
 	}
 
@@ -76,7 +76,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 	 *   <li>@LINK_CLASS        The preferred link class for this element</li>
 	 * </ul>
 	 */
-	public static void printHTML(Document document, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, String htmlContent, String linkClass) throws IOException, SQLException {
+	public static void printHTML(Document document, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, String htmlContent, String linkClass) throws ServletException, IOException {
 		if(req == null) {
 			document.out.write(htmlContent);
 		} else {
@@ -133,7 +133,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 	/**
 	 * @see  #printHTML
 	 */
-	public static void printHTMLStream(Document document, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, InputStream in, String linkClass) throws IOException, SQLException {
+	public static void printHTMLStream(Document document, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, InputStream in, String linkClass) throws ServletException, IOException {
 		if(in==null) throw new NullPointerException("in is null");
 		Reader reader = new InputStreamReader(in);
 		if(req==null) {
