@@ -598,7 +598,7 @@ public class TextOnlyLayout extends WebPageLayout {
 		return NAME;
 	}
 
-	public WebPage[] getCommonPages(WebPage page, WebSiteRequest req) throws ServletException, IOException {
+	public WebPage[] getCommonPages(WebPage page, WebSiteRequest req) throws ServletException {
 		return null;
 	}
 

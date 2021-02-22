@@ -22,7 +22,7 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.html.Document;
+import com.aoindustries.html.FlowContent;
 import com.aoindustries.lang.Strings;
 import com.aoindustries.net.URIDecoder;
 import com.aoindustries.net.URIEncoder;
@@ -194,7 +194,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 
 	// TODO: One ConcurrentMap per ServletContext
 	private static final Map<Identifier,UploadedFile> uploadedFiles = new HashMap<>();
-	private Identifier getNextID() throws IOException {
+	private Identifier getNextID() {
 		synchronized(uploadedFiles) {
 			while(true) {
 				Identifier id = new Identifier(getSecureRandom());
@@ -317,7 +317,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	private boolean isLinuxDone;
 
 	@SuppressWarnings("OverridableMethodCallInConstructor")
-	public WebSiteRequest(WebPage sourcePage, HttpServletRequest req) throws ServletException, IOException {
+	public WebSiteRequest(WebPage sourcePage, HttpServletRequest req) throws ServletException {
 		super(req);
 		this.sourcePage = sourcePage;
 		this.req = req;
@@ -328,49 +328,53 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 			&& contentType.length() >= MULTIPART.length()
 			&& contentType.substring(0, MULTIPART.length()).equalsIgnoreCase(MULTIPART)
 		) {
-			boolean keepFiles = false;
 			try {
+				boolean keepFiles = false;
 				try {
-					// Determine the authentication info
-					WebSiteUser user = getWebSiteUser(null);
-					if(user != null) {
-						File uploadDirectory = getFileUploadDirectory(getServletContext());
-						keepFiles = true;
-						// Create an UploadedFile for each file in the MultipartRequest
-						reqUploadedFiles = new ArrayList<>();
-						for(Part part : req.getParts()) {
-							// Get a copy of the file in our upload directory
-							File file;
-							while(true) {
-								File newFile = new File(uploadDirectory, String.valueOf(getNextID()));
-								if(!newFile.exists()) {
-									file = newFile;
-									break;
+					try {
+						// Determine the authentication info
+						WebSiteUser user = getWebSiteUser(null);
+						if(user != null) {
+							File uploadDirectory = getFileUploadDirectory(getServletContext());
+							keepFiles = true;
+							// Create an UploadedFile for each file in the MultipartRequest
+							reqUploadedFiles = new ArrayList<>();
+							for(Part part : req.getParts()) {
+								// Get a copy of the file in our upload directory
+								File file;
+								while(true) {
+									File newFile = new File(uploadDirectory, String.valueOf(getNextID()));
+									if(!newFile.exists()) {
+										file = newFile;
+										break;
+									}
 								}
-							}
-							part.write(file.getCanonicalPath());
+								part.write(file.getCanonicalPath());
 
-							String filename = part.getName();
-							// Not necessary since there is a clean-up thread: file.deleteOnExit(); // JDK implementation builds an ever-growing set
-							UploadedFile uf = new UploadedFile(
-								HttpServletUtil.getSubmittedFileName(part),
-								file,
-								user,
-								getContentType(part, filename) // TODO: Should this be the submitted filename?
-							);
-							addUploadedFile(uf, sourcePage.getServletContext());
-							reqUploadedFiles.add(uf);
+								String filename = part.getName();
+								// Not necessary since there is a clean-up thread: file.deleteOnExit(); // JDK implementation builds an ever-growing set
+								UploadedFile uf = new UploadedFile(
+									HttpServletUtil.getSubmittedFileName(part),
+									file,
+									user,
+									getContentType(part, filename) // TODO: Should this be the submitted filename?
+								);
+								addUploadedFile(uf, sourcePage.getServletContext());
+								reqUploadedFiles.add(uf);
+							}
+						}
+					} catch(LoginException err) {
+						// Ignore the error, just allow the files to be cleaned up because keepFiles is still false
+					}
+				} finally {
+					if(!keepFiles) {
+						for(Part part : req.getParts()) {
+							part.delete();
 						}
 					}
-				} catch(LoginException err) {
-					// Ignore the error, just allow the files to be cleaned up because keepFiles is still false
 				}
-			} finally {
-				if(!keepFiles) {
-					for(Part part : req.getParts()) {
-						part.delete();
-					}
-				}
+			} catch(IOException e) {
+				throw new ServletException(e);
 			}
 		}
 	}
@@ -446,14 +450,14 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * @param  params  Only adds a value when the name has not already been added to the URL.
 	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getURLForClass(String classname, URIParameters params, String fragment) throws ServletException, IOException {
+	public String getURLForClass(String classname, URIParameters params, String fragment) throws ServletException {
 		try {
 			Class<? extends WebPage> clazz = Class.forName(classname).asSubclass(WebPage.class);
 			String url = getURL(clazz, params);
 			if(fragment != null) url += fragment;
 			return url;
 		} catch(ClassNotFoundException err) {
-			throw new IOException("Unable to load class: " + classname, err);
+			throw new ServletException("Unable to load class: " + classname, err);
 		}
 	}
 
@@ -468,7 +472,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * @param  params  Only adds a value when the name has not already been added to the URL.
 	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getEncodedURLForClass(String classname, URIParameters params, String fragment, HttpServletResponse resp) throws ServletException, IOException {
+	public String getEncodedURLForClass(String classname, URIParameters params, String fragment, HttpServletResponse resp) throws ServletException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
 				getContextPath() + getURLForClass(classname, params, fragment)
@@ -482,7 +486,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * @param  params  Only adds a value when the name has not already been added to the URL.
 	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getURLForClass(String classname, URIParameters params) throws ServletException, IOException {
+	public String getURLForClass(String classname, URIParameters params) throws ServletException {
 		return getURLForClass(classname, params, null);
 	}
 
@@ -497,7 +501,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * @param  params  Only adds a value when the name has not already been added to the URL.
 	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getEncodedURLForClass(String classname, URIParameters params, HttpServletResponse resp) throws ServletException, IOException {
+	public String getEncodedURLForClass(String classname, URIParameters params, HttpServletResponse resp) throws ServletException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
 				getContextPath() + getURLForClass(classname, params)
@@ -509,7 +513,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * Gets a context-relative URL from a String containing a classname and optional parameters/fragment.
 	 * Parameters and fragment should already be URL encoded but not XML encoded.
 	 */
-	public String getURLForClass(String classAndParamsFragment) throws ServletException, IOException {
+	public String getURLForClass(String classAndParamsFragment) throws ServletException {
 		String className, params, fragment;
 		int pos = URIParser.getPathEnd(classAndParamsFragment);
 		if(pos >= classAndParamsFragment.length()) {
@@ -548,7 +552,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 */
-	public String getEncodedURLForClass(String classAndParamsFragment, HttpServletResponse resp) throws ServletException, IOException {
+	public String getEncodedURLForClass(String classAndParamsFragment, HttpServletResponse resp) throws ServletException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
 				getContextPath() + getURLForClass(classAndParamsFragment)
@@ -564,7 +568,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 *
 	 * @param  path  the context-relative path, with a beginning slash
 	 */
-	public String getURLForPath(String path, URIParameters params, boolean keepSettings) throws IOException {
+	public String getURLForPath(String path, URIParameters params, boolean keepSettings) throws ServletException {
 		StringBuilder url = new StringBuilder();
 		url.append(path);
 		Set<String> finishedParams = new HashSet<>();
@@ -586,7 +590,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * @param  params  Only adds a value when the name has not already been added to the URL.
 	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getEncodedURLForPath(String path, URIParameters params, boolean keepSettings, HttpServletResponse resp) throws IOException {
+	public String getEncodedURLForPath(String path, URIParameters params, boolean keepSettings, HttpServletResponse resp) throws ServletException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
 				getContextPath() + getURLForPath(path, params, keepSettings)
@@ -617,7 +621,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	/**
 	 * Gets the context-relative URL to a web page.
 	 */
-	public String getURL(WebPage page) throws ServletException, IOException {
+	public String getURL(WebPage page) throws ServletException {
 		return getURL(page, (URIParameters)null);
 	}
 
@@ -629,7 +633,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 */
-	public String getEncodedURL(WebPage page, HttpServletResponse resp) throws ServletException, IOException {
+	public String getEncodedURL(WebPage page, HttpServletResponse resp) throws ServletException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
 				getContextPath() + getURL(page)
@@ -643,7 +647,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * @param  params  Only adds a value when the name has not already been added to the URL.
 	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getURL(WebPage page, URIParameters params) throws ServletException, IOException {
+	public String getURL(WebPage page, URIParameters params) throws ServletException {
 		Set<String> finishedParams = new HashSet<>();
 		StringBuilder url = new StringBuilder();
 		url.append(page.getURLPath());
@@ -666,7 +670,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * @param  params  Only adds a value when the name has not already been added to the URL.
 	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getEncodedURL(WebPage page, URIParameters params, HttpServletResponse resp) throws ServletException, IOException {
+	public String getEncodedURL(WebPage page, URIParameters params, HttpServletResponse resp) throws ServletException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
 				getContextPath() + getURL(page, params)
@@ -680,7 +684,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * @param  params  Only adds a value when the name has not already been added to the URL.
 	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getURL(Class<? extends WebPage> clazz, URIParameters params) throws ServletException, IOException {
+	public String getURL(Class<? extends WebPage> clazz, URIParameters params) throws ServletException {
 		return getURL(
 			WebPage.getWebPage(sourcePage.getServletContext(), clazz, params),
 			params
@@ -698,7 +702,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * @param  params  Only adds a value when the name has not already been added to the URL.
 	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getEncodedURL(Class<? extends WebPage> clazz, URIParameters params, HttpServletResponse resp) throws ServletException, IOException {
+	public String getEncodedURL(Class<? extends WebPage> clazz, URIParameters params, HttpServletResponse resp) throws ServletException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
 				getContextPath() + getURL(clazz, params)
@@ -706,7 +710,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 		);
 	}
 
-	public String getURL(Class<? extends WebPage> clazz) throws ServletException, IOException {
+	public String getURL(Class<? extends WebPage> clazz) throws ServletException {
 		return getURL(clazz, (URIParameters)null);
 	}
 
@@ -718,7 +722,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 */
-	public String getEncodedURL(Class<? extends WebPage> clazz, HttpServletResponse resp) throws ServletException, IOException {
+	public String getEncodedURL(Class<? extends WebPage> clazz, HttpServletResponse resp) throws ServletException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
 				getContextPath() + getURL(clazz)
@@ -734,7 +738,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * @param  params  Only adds a value when the name has not already been added to the URL.
 	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getURLForPath(String path, URIParameters params) throws IOException {
+	public String getURLForPath(String path, URIParameters params) throws ServletException {
 		return getURLForPath(path, params, true);
 	}
 
@@ -743,7 +747,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 *
 	 * @param  path  the context-relative path, with a beginning slash
 	 */
-	public String getURLForPath(String path) throws IOException {
+	public String getURLForPath(String path) throws ServletException {
 		return getURLForPath(path, (URIParameters)null);
 	}
 
@@ -760,7 +764,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * @param  params  Only adds a value when the name has not already been added to the URL.
 	 *                 This does not support multiple values, only the first is used.
 	 */
-	public String getEncodedURLForPath(String path, URIParameters params, HttpServletResponse resp) throws IOException {
+	public String getEncodedURLForPath(String path, URIParameters params, HttpServletResponse resp) throws ServletException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
 				getContextPath() + getURLForPath(path, params)
@@ -778,7 +782,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 *
 	 * @param  path  the context-relative path, with a beginning slash
 	 */
-	public String getEncodedURLForPath(String path, HttpServletResponse resp) throws IOException {
+	public String getEncodedURLForPath(String path, HttpServletResponse resp) throws ServletException {
 		return resp.encodeURL(
 			URIEncoder.encodeURI(
 				getContextPath() + getURLForPath(path)
@@ -825,15 +829,16 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	/**
 	 * Prints the hidden variables that contain all of the current settings.
 	 */
-	public void printFormFields(Document document) throws IOException {
+	public void printFormFields(FlowContent<?> form) throws ServletException, IOException {
 	}
 
-	/**
-	 * Prints the hidden variables that contain all of the current settings.
-	 */
-	protected static void printHiddenField(Document document, String name, String value) throws IOException {
-		document.input().hidden().name(name).value(value).__().nl();
-	}
+// Unused 2021-02-22:
+//	/**
+//	 * Prints the hidden variables that contain all of the current settings.
+//	 */
+//	protected static void printHiddenField(FlowContent<?> form form, String name, String value) throws IOException {
+//		form.input().hidden().name(name).value(value).__().getDocument().nl();
+//	}
 
 	public List<UploadedFile> getUploadedFiles() {
 		if(reqUploadedFiles==null) Collections.emptyList();
@@ -877,14 +882,14 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 *
 	 * @exception LoginException if an invalid login attempt is made or the user credentials are not found
 	 */
-	public WebSiteUser getWebSiteUser(HttpServletResponse resp) throws ServletException, IOException, LoginException {
+	public WebSiteUser getWebSiteUser(HttpServletResponse resp) throws ServletException, LoginException {
 		return null;
 	}
 
 	/**
 	 * Determines if the user is currently logged in.
 	 */
-	public boolean isLoggedIn() throws ServletException, IOException {
+	public boolean isLoggedIn() throws ServletException {
 		try {
 			return getWebSiteUser(null)!=null;
 		} catch(LoginException err) {

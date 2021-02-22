@@ -134,7 +134,7 @@ abstract public class TreePage extends WebPage {
 	}
 
 	@Override
-	public long getSearchLastModified() throws ServletException, IOException {
+	public long getSearchLastModified() throws ServletException {
 		return getClassLastModified();
 	}
 
@@ -291,7 +291,7 @@ abstract public class TreePage extends WebPage {
 	/**
 	 * Gets the tree to be displayed.  Each row consists of three elements: path, href, description
 	 */
-	abstract protected List<? extends TreePageData> getTree(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException;
+	abstract protected List<? extends TreePageData> getTree(WebSiteRequest req, HttpServletResponse resp) throws ServletException;
 
 	/**
 	 * Handles the interactive form of this page.
@@ -565,7 +565,7 @@ abstract public class TreePage extends WebPage {
 		return paths;
 	}
 
-	private boolean displayText(WebSiteRequest req) throws ServletException, IOException {
+	private boolean displayText(WebSiteRequest req) throws ServletException {
 		// A search being performed
 		if(req==null) return true;
 

@@ -71,7 +71,7 @@ abstract public class DumpURLs extends WebPage {
 	 * The last modified time is -1 to always reload the list.
 	 */
 	@Override
-	public long getLastModified(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	public long getLastModified(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
 		return -1;
 	}
 
@@ -91,7 +91,7 @@ abstract public class DumpURLs extends WebPage {
 	}
 
 	@Override
-	public long getSearchLastModified() throws ServletException, IOException {
+	public long getSearchLastModified() throws ServletException {
 		return getClassLastModified();
 	}
 

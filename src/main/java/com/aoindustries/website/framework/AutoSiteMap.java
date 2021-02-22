@@ -43,7 +43,7 @@ abstract public class AutoSiteMap extends TreePage {
 	/**
 	 * Recursively builds the list of all sites.
 	 */
-	private void buildData(Deque<String> path, WebPage page, List<TreePageData> data, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	private void buildData(Deque<String> path, WebPage page, List<TreePageData> data, WebSiteRequest req, HttpServletResponse resp) throws ServletException {
 		if(isVisible(page)) {
 			path.add(page.getShortTitle());
 			WebPage[] children = page.getCachedChildren(req, resp);
@@ -75,7 +75,7 @@ abstract public class AutoSiteMap extends TreePage {
 	}
 
 	@Override
-	final protected List<? extends TreePageData> getTree(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	final protected List<? extends TreePageData> getTree(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
 		WebPage home=getRootPage();
 		List<TreePageData> data=new ArrayList<>();
 		buildData(new ArrayDeque<>(), home, data, req, resp);

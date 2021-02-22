@@ -37,7 +37,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T22:08:31-0500"
-		dateModified="2021-02-22T07:29:32-06:00"
+		dateModified="2021-02-22T10:42:18-06:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -90,6 +90,10 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 						<code>WebPage(URIParameters)</code>, which, in-turn, falls-back to <code>WebPage()</code>.
 					</li>
 					<li>Removed uses of <code>SQLException</code> in favor of <code>ServletException</code>.</li>
+					<li>
+						Removed uses of <code>IOException</code> where neither configuration of the response nor output
+						to client are expected.
+					</li>
 				</ul>
 			</changelog:release>
 		</c:if>

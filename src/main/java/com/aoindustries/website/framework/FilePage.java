@@ -54,8 +54,12 @@ abstract public class FilePage extends WebPage {
 	public abstract File getFile() throws IOException;
 
 	@Override
-	public long getLastModified(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		return Math.max(super.getLastModified(req, resp), getFile().lastModified());
+	public long getLastModified(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
+		try {
+			return Math.max(super.getLastModified(req, resp), getFile().lastModified());
+		} catch(IOException e) {
+			throw new ServletException(e);
+		}
 	}
 
 	public static void printFile(Document document, File file) throws IOException {

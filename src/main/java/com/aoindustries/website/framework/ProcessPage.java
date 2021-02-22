@@ -55,7 +55,7 @@ abstract public class ProcessPage extends InputStreamPage {
 	 * The search format of this page is indexed.
 	 */
 	@Override
-	public long getSearchLastModified() throws ServletException, IOException {
+	public long getSearchLastModified() throws ServletException {
 		return super.getLastModified(null, null);
 	}
 }

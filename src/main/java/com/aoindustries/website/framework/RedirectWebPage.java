@@ -64,7 +64,7 @@ public class RedirectWebPage extends WebPage {
 	}
 
 	@Override
-	protected WebSiteRequest getWebSiteRequest(HttpServletRequest req) throws ServletException, IOException {
+	protected WebSiteRequest getWebSiteRequest(HttpServletRequest req) throws ServletException {
 		return new WebSiteRequest(this, req);
 	}
 
@@ -126,7 +126,7 @@ public class RedirectWebPage extends WebPage {
 	}
 
 	@Override
-	public String getRedirectURL(WebSiteRequest req) throws ServletException, IOException {
+	public String getRedirectURL(WebSiteRequest req) throws ServletException {
 		return path;
 	}
 
