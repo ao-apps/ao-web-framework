@@ -185,6 +185,7 @@ abstract public class WebPageLayout {
 	/**
 	 * Starts the content area of a page.
 	 */
+	// TODO: Lambda-friend variants of this and similar methods, that would call start, lambda, end
 	final public void startContent(Document document, WebSiteRequest req, HttpServletResponse resp, int contentColumns, int preferredWidth) throws ServletException, IOException {
 		startContent(document, req, resp, new int[] {contentColumns}, preferredWidth);
 	}
@@ -192,6 +193,7 @@ abstract public class WebPageLayout {
 	/**
 	 * Starts the content area of a page.
 	 */
+	// TODO: Return TBody<TODO> that would be used by lambda consumer
 	abstract public void startContent(Document document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) throws ServletException, IOException;
 
 	/**

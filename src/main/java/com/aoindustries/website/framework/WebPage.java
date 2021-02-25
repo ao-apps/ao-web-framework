@@ -29,6 +29,7 @@ import com.aoindustries.encoding.servlet.DoctypeEE;
 import com.aoindustries.encoding.servlet.EncodingContextEE;
 import com.aoindustries.encoding.servlet.SerializationEE;
 import com.aoindustries.html.Document;
+import com.aoindustries.html.servlet.DocumentEE;
 import com.aoindustries.lang.Strings;
 import com.aoindustries.net.EmptyURIParameters;
 import com.aoindustries.net.URIParameters;
@@ -340,6 +341,18 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
+	 * Gets the {@linkplain Document#setIndent(boolean) indentation setting} to use for this page.
+	 * Defaults to {@link DocumentEE#getIndent(javax.servlet.ServletContext, javax.servlet.ServletRequest)}.
+	 *
+	 * @param req  {@code null} during search
+	 *
+	 * @see Document#setIndent(boolean)
+	 */
+	protected boolean getIndent(WebSiteRequest req) {
+		return (req == null) ? false : DocumentEE.getIndent(getServletContext(), req);
+	}
+
+	/**
 	 * Prepares for output and returns the {@link Document}.
 	 * <ol>
 	 *   <li>{@linkplain ServletResponse#resetBuffer() clears the output buffer}.</li>
@@ -376,7 +389,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 			}
 		}
 		Doctype doctype = getDoctype(req);
-		return new Document(
+		Document document = new Document(
 			new EncodingContextEE(
 				getServletContext(),
 				req,
@@ -393,6 +406,8 @@ abstract public class WebPage extends ErrorReportingServlet {
 			},
 			resp.getWriter()
 		);
+		document.setIndent(getIndent(req));
+		return document;
 	}
 
 	/**
@@ -1516,6 +1531,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 				buffer.reset();
 				// TODO: EncodingContext based on page settings, or XML always for search?
 				Document document = new Document(buffer);
+				document.setIndent(false); // Do not indent during search capture
 				// Isolate page-scope registry
 				Registry oldPageRegistry = RegistryEE.Page.get(req);
 				try {
@@ -1578,6 +1594,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 							buffer.reset();
 							// TODO: EncodingContext based on page settings, or XML always for search?
 							Document document = new Document(buffer);
+							document.setIndent(false); // Do not indent during search capture
 							// Isolate page-scope registry
 							Registry oldPageRegistry = RegistryEE.Page.get(req);
 							try {
