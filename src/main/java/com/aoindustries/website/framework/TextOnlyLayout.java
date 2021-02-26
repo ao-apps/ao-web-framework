@@ -27,9 +27,10 @@ import com.aoindustries.encoding.Doctype;
 import static com.aoindustries.encoding.JavaScriptInXhtmlAttributeEncoder.encodeJavaScriptInXhtmlAttribute;
 import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
 import com.aoindustries.html.Document;
-import com.aoindustries.html.Link;
-import com.aoindustries.html.Meta;
-import com.aoindustries.html.Script;
+import com.aoindustries.html.LINK;
+import com.aoindustries.html.META;
+import com.aoindustries.html.SCRIPT;
+import com.aoindustries.html.STYLE;
 import com.aoindustries.html.util.GoogleAnalytics;
 import static com.aoindustries.lang.Strings.trimNullIfEmpty;
 import static com.aoindustries.taglib.AttributeUtils.appendWidthStyle;
@@ -170,15 +171,15 @@ public class TextOnlyLayout extends WebPageLayout {
 		+ "  <head>\n");
 		// If this is not the default layout, then robots noindex
 		if(!isOkResponseStatus || !getName().equals(getLayoutChoices()[0])) {
-			document.out.write("    "); document.meta(Meta.Name.ROBOTS).content("noindex, nofollow").__().nl();
+			document.out.write("    "); document.meta(META.Name.ROBOTS).content("noindex, nofollow").__().nl();
 		}
 		if(document.doctype == Doctype.HTML5) {
 			document.out.write("    "); document.meta().charset(resp.getCharacterEncoding()).__().nl();
 		} else {
-			document.out.write("    "); document.meta(Meta.HttpEquiv.CONTENT_TYPE).content(resp.getContentType()).__().out.write("\n"
+			document.out.write("    "); document.meta(META.HttpEquiv.CONTENT_TYPE).content(resp.getContentType()).__().out.write("\n"
 			// Default style language
-			+ "    "); document.meta(Meta.HttpEquiv.CONTENT_STYLE_TYPE).content(com.aoindustries.html.Style.Type.TEXT_CSS).__().out.write("\n"
-			+ "    "); document.meta(Meta.HttpEquiv.CONTENT_SCRIPT_TYPE).content(Script.Type.TEXT_JAVASCRIPT).__().nl();
+			+ "    "); document.meta(META.HttpEquiv.CONTENT_STYLE_TYPE).content(STYLE.Type.TEXT_CSS).__().out.write("\n"
+			+ "    "); document.meta(META.HttpEquiv.CONTENT_SCRIPT_TYPE).content(SCRIPT.Type.TEXT_JAVASCRIPT).__().nl();
 		}
 		if(document.doctype == Doctype.HTML5) {
 			GoogleAnalytics.writeGlobalSiteTag(document, trackingId);
@@ -186,20 +187,20 @@ public class TextOnlyLayout extends WebPageLayout {
 			GoogleAnalytics.writeAnalyticsJs(document, trackingId);
 		}
 		// Mobile support
-		document.out.write("    "); document.meta(Meta.Name.VIEWPORT).content("width=device-width, initial-scale=1.0").__().out.write("\n"
+		document.out.write("    "); document.meta(META.Name.VIEWPORT).content("width=device-width, initial-scale=1.0").__().out.write("\n"
 		// TODO: This is probably only appropriate for single-page applications!
 		//       See https://medium.com/@firt/dont-use-ios-web-app-meta-tag-irresponsibly-in-your-progressive-web-apps-85d70f4438cb
-		+ "    "); document.meta(Meta.Name.APPLE_MOBILE_WEB_APP_CAPABLE).content("yes").__().out.write("\n"
-		+ "    "); document.meta(Meta.Name.APPLE_MOBILE_WEB_APP_STATUS_BAR_STYLE).content("black").__().nl();
+		+ "    "); document.meta(META.Name.APPLE_MOBILE_WEB_APP_CAPABLE).content("yes").__().out.write("\n"
+		+ "    "); document.meta(META.Name.APPLE_MOBILE_WEB_APP_STATUS_BAR_STYLE).content("black").__().nl();
 		// Authors
 		// TODO: dcterms copyright
 		String author = page.getAuthor();
 		if(author != null && !(author = author.trim()).isEmpty()) {
-			document.out.write("    "); document.meta(Meta.Name.AUTHOR).content(author).__().nl();
+			document.out.write("    "); document.meta(META.Name.AUTHOR).content(author).__().nl();
 		}
 		String authorHref = page.getAuthorHref(req, resp);
 		if(authorHref != null && !(authorHref = authorHref.trim()).isEmpty()) {
-			document.out.write("    "); document.link(Link.Rel.AUTHOR).href(authorHref).__().nl();
+			document.out.write("    "); document.link(LINK.Rel.AUTHOR).href(authorHref).__().nl();
 		}
 		document.out.write("    <title>");
 		// No more page stack, just show current page only
@@ -220,11 +221,11 @@ public class TextOnlyLayout extends WebPageLayout {
 		document.out.write("</title>\n");
 		String description = page.getDescription();
 		if(description != null && !(description = description.trim()).isEmpty()) {
-			document.out.write("    "); document.meta(Meta.Name.DESCRIPTION).content(description).__().nl();
+			document.out.write("    "); document.meta(META.Name.DESCRIPTION).content(description).__().nl();
 		}
 		String keywords = page.getKeywords();
 		if(keywords != null && !(keywords = keywords.trim()).isEmpty()) {
-			document.out.write("    "); document.meta(Meta.Name.KEYWORDS).content(keywords).__().nl();
+			document.out.write("    "); document.meta(META.Name.KEYWORDS).content(keywords).__().nl();
 		}
 		// TODO: Review HTML 4/HTML 5 differences from here
 		String copyright = page.getCopyright(req, resp, page);
