@@ -23,6 +23,7 @@
 package com.aoindustries.website.framework;
 
 import com.aoindustries.html.FlowContent;
+import com.aoindustries.io.ContentType;
 import com.aoindustries.lang.Strings;
 import com.aoindustries.net.URIDecoder;
 import com.aoindustries.net.URIEncoder;
@@ -321,12 +322,11 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 		super(req);
 		this.sourcePage = sourcePage;
 		this.req = req;
-		final String MULTIPART = "multipart/form-data";
 		String contentType=req.getHeader("content-type");
 		if (
 			contentType != null
-			&& contentType.length() >= MULTIPART.length()
-			&& contentType.substring(0, MULTIPART.length()).equalsIgnoreCase(MULTIPART)
+			&& contentType.length() >= ContentType.FORM_DATA.length()
+			&& contentType.substring(0, ContentType.FORM_DATA.length()).equalsIgnoreCase(ContentType.FORM_DATA)
 		) {
 			try {
 				boolean keepFiles = false;
