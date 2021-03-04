@@ -829,7 +829,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	/**
 	 * Prints the hidden variables that contain all of the current settings.
 	 */
-	public void printFormFields(FlowContent<?> form) throws IOException {
+	public void printFormFields(FlowContent<?> form) throws ServletException, IOException {
 	}
 
 // Unused 2021-02-22:
