@@ -22,7 +22,8 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.html.Document;
+import com.aoindustries.html.Content;
+import com.aoindustries.html.FlowContent;
 import com.aoindustries.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
@@ -42,10 +43,10 @@ abstract public class FilePage extends WebPage {
 	public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Document document,
-		WebPageLayout layout
+		WebPageLayout layout,
+		FlowContent<?> flow
 	) throws ServletException, IOException {
-		printFile(document, getFile());
+		printFile(flow, getFile());
 	}
 
 	/**
@@ -62,7 +63,7 @@ abstract public class FilePage extends WebPage {
 		}
 	}
 
-	public static void printFile(Document document, File file) throws IOException {
-		FileUtils.copy(file, document.out);
+	public static void printFile(Content<?> content, File file) throws IOException {
+		FileUtils.copy(file, content.getDocument().out);
 	}
 }

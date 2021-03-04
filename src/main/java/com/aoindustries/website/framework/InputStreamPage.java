@@ -22,7 +22,9 @@
  */
 package com.aoindustries.website.framework;
 
+import com.aoindustries.html.Content;
 import com.aoindustries.html.Document;
+import com.aoindustries.html.FlowContent;
 import com.aoindustries.io.IoUtils;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,9 +46,10 @@ abstract public class InputStreamPage extends WebPage {
 	public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Document document,
-		WebPageLayout layout
+		WebPageLayout layout,
+		FlowContent<?> flow
 	) throws ServletException, IOException {
+		Document document = flow.getDocument();
 		layout.startContent(document, req, resp, 1, getPreferredContentWidth(req));
 		layout.printContentTitle(document, req, resp, this, 1);
 		layout.printContentHorizontalDivider(document, req, resp, 1, false);
@@ -63,11 +66,11 @@ abstract public class InputStreamPage extends WebPage {
 	 */
 	public abstract InputStream getInputStream() throws IOException;
 
-	public void printStream(Document document, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
-		printStreamStatic(document, in);
+	public void printStream(FlowContent<?> flow, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
+		printStreamStatic(flow, in);
 	}
 
-	public static void printStreamStatic(Document document, InputStream in) throws IOException {
-		IoUtils.copy(new InputStreamReader(in, Document.ENCODING), document.out);
+	public static void printStreamStatic(Content<?> content, InputStream in) throws IOException {
+		IoUtils.copy(new InputStreamReader(in, Document.ENCODING), content.getDocument().out);
 	}
 }

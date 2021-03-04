@@ -23,8 +23,9 @@
 package com.aoindustries.website.framework;
 
 import com.aoindustries.encoding.MediaWriter;
-import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
 import com.aoindustries.html.Document;
+import com.aoindustries.html.FlowContent;
+import com.aoindustries.html.attributes.Enum.Method;
 import com.aoindustries.io.ContentType;
 import com.aoindustries.io.IoUtils;
 import com.aoindustries.lang.EmptyArrays;
@@ -149,8 +150,8 @@ abstract public class TreePage extends WebPage {
 	public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Document document,
-		WebPageLayout layout
+		WebPageLayout layout,
+		FlowContent<?> flow
 	) throws ServletException, IOException {
 		List<? extends TreePageData> tree = getTree(req, resp);
 		String mode;
@@ -171,86 +172,83 @@ abstract public class TreePage extends WebPage {
 				width+=3;
 				if(width>longest) longest=width;
 			}
-
-			document.out.write("<pre>\n");
-
-			String[] last = EmptyArrays.EMPTY_STRING_ARRAY;
-			for (int c = 0; c < treeLen; c++) {
-				int width = 0;
-				String[] path = paths[c];
-				int pathLen = path.length;
-				int max = Math.min(pathLen - 1, last.length);
-				int pos = 0;
-				for (; pos < max; pos++) {
-					if (last[pos].equals(path[pos])) {
-						if (pos > 0) {
-							boolean hasMore = false;
-							for (int d = c + 1; d < treeLen; d++) {
-								int end = pos;
-								for (int e = 0; e < end; e++) {
-									if (paths[d][e].equals(path[e])) {
-										if (e == (end - 1) && !paths[d][end].equals(path[end])) {
-											hasMore = true;
-											break;
-										}
-									} else break;
+			int longest_ = longest;
+			flow.pre__(pre -> {
+				String[] last = EmptyArrays.EMPTY_STRING_ARRAY;
+				for (int c = 0; c < treeLen; c++) {
+					int width = 0;
+					String[] path = paths[c];
+					int pathLen = path.length;
+					int max = Math.min(pathLen - 1, last.length);
+					int pos = 0;
+					for (; pos < max; pos++) {
+						if (last[pos].equals(path[pos])) {
+							if (pos > 0) {
+								boolean hasMore = false;
+								for (int d = c + 1; d < treeLen; d++) {
+									int end = pos;
+									for (int e = 0; e < end; e++) {
+										if (paths[d][e].equals(path[e])) {
+											if (e == (end - 1) && !paths[d][end].equals(path[end])) {
+												hasMore = true;
+												break;
+											}
+										} else break;
+									}
 								}
+								pre.text(hasMore ? "|  " : "   ");
+								width += 3;
 							}
-							document.out.write(hasMore ? "|  " : "   ");
+							int len2 = last[pos].length();
+							// TODO: pre.sp(len2)
+							for (int d = 0; d < len2; d++) {
+								pre.getDocument().out.write(' ');
+							}
+							width += len2;
+						} else break;
+					}
+					for (; pos < pathLen; pos++) {
+						String p = path[pos];
+						if (pos > 0 && p.length() > 0) {
+							pre.text("+--");
 							width += 3;
 						}
-						int len2 = last[pos].length();
-						for (int d = 0; d < len2; d++) {
-							document.out.write(' ');
-						}
-						width += len2;
-					} else break;
-				}
-				for (; pos < pathLen; pos++) {
-					String p = path[pos];
-					if (pos > 0 && p.length() > 0) {
-						document.out.write("+--");
-						width += 3;
-					}
-					String href;
-					if (pos == (path[pathLen-1].length()==0?(pathLen-2):(pathLen-1)) && (href = tree.get(c).getUrl()) != null) {
-						document.out.write("<a href='");
-						encodeTextInXhtmlAttribute(
-							resp.encodeURL(
-								URIEncoder.encodeURI(
-									req.getContextPath() + href
+						String href;
+						if (pos == (path[pathLen-1].length()==0?(pathLen-2):(pathLen-1)) && (href = tree.get(c).getUrl()) != null) {
+							pre.a(
+								resp.encodeURL(
+									URIEncoder.encodeURI(
+										req.getContextPath() + href
+									)
 								)
-							),
-							document.out
-						);
-						document.out.write("'>"); document.text(p); document.out.write("</a>");
-					} else {
-						document.text(p);
+							).__(p);
+						} else {
+							pre.text(p);
+						}
+						if (
+							p.length() > 0
+							&& (
+								pos < (pathLen - 1)
+								|| tree.get(c).hasChildren()
+							)
+						) {
+							pre.text('/');
+						} else {
+							pre.getDocument().out.write(' '); // TODO: pre.sp()
+						}
+						width += p.length() + 1;
 					}
-					if (
-						p.length() > 0
-						&& (
-							pos < (pathLen - 1)
-							|| tree.get(c).hasChildren()
-						)
-					) {
-						document.out.write('/');
-					} else {
-						document.out.write(' ');
+					// TODO: pre.sp(longest_ - width)
+					for (; width < longest_; width++) {
+						pre.getDocument().out.write(' ');
 					}
-					width += p.length() + 1;
-				}
-				for (; width < longest; width++) {
-					document.out.write(' ');
-				}
-				String description=tree.get(c).getDescription();
-				if(description != null) document.text(description).nl();
+					pre.text(tree.get(c).getDescription()).nl();
 
-				last = path;
-			}
-			document.out.write("</pre>\n");
+					last = path;
+				}
+			});
 		} else {
-			handleRequest(document, req, resp, tree, -1, -1, null);
+			handleRequest(flow, req, resp, layout, tree, -1, -1, null);
 		}
 	}
 
@@ -268,24 +266,23 @@ abstract public class TreePage extends WebPage {
 
 		Document document = getDocument(req, resp);
 		WebPageLayout layout = getWebPageLayout(req);
-		layout.startHTML(
+		layout.doPage(
 			this,
 			req,
 			resp,
 			document,
-			scrollToX >= 0 ? ("window.scrollTo(" + scrollToX + ", " + scrollToY + ");") : null
+			scrollToX >= 0 ? ("window.scrollTo(" + scrollToX + ", " + scrollToY + ");") : null,
+			flow -> {
+				int treeLen = tree.size();
+				boolean[] opened = new boolean[treeLen];
+				for (int c = 0; c < treeLen; c++) {
+					opened[c] = Boolean.parseBoolean(req.getParameter("opened_" + c));
+				}
+
+				// Print the new table
+				handleRequest(document, req, resp, layout, tree, scrollToX, scrollToY, opened);
+			}
 		);
-
-		int treeLen = tree.size();
-		boolean[] opened = new boolean[treeLen];
-		for (int c = 0; c < treeLen; c++) {
-			opened[c] = Boolean.parseBoolean(req.getParameter("opened_" + c));
-		}
-
-		// Print the new table
-		handleRequest(document, req, resp, tree, scrollToX, scrollToY, opened);
-
-		layout.endHTML(this, req, resp, document);
 	}
 
 	/**
@@ -297,15 +294,16 @@ abstract public class TreePage extends WebPage {
 	 * Handles the interactive form of this page.
 	 */
 	private void handleRequest(
-		Document document,
+		FlowContent<?> flow,
 		WebSiteRequest req,
 		HttpServletResponse resp,
+		WebPageLayout layout,
 		List<? extends TreePageData> tree,
 		int scrollToX,
 		int scrollToY,
 		boolean[] opened
 	) throws ServletException, IOException {
-		WebPageLayout layout=getWebPageLayout(req);
+		Document document = flow.getDocument();
 		layout.startContent(document, req, resp, 1, getPreferredContentWidth(req));
 		layout.printContentTitle(document, req, resp, this, 1);
 		layout.printContentHorizontalDivider(document, req, resp, 1, false);
@@ -321,6 +319,7 @@ abstract public class TreePage extends WebPage {
 			opened = new boolean[treeLen];
 			if (treeLen > 0) opened[0] = true;
 		}
+		boolean[] opened_ = opened;
 
 		// Write the javascript that controls the form
 		try (MediaWriter script = document.script().out__()) {
@@ -341,207 +340,212 @@ abstract public class TreePage extends WebPage {
 		document.nl();
 
 		// Write the form containing the current settings
-		document.out.write("<form action='' id='tree_form' method='post'><div>\n");
-		req.printFormFields(document);
-		document.out.write("  ");
-		document.input().hidden().name("scroll_to_x").value(scrollToX).__().nl();
-		document.out.write("  ");
-		document.input().hidden().name("scroll_to_y").value(scrollToY).__().nl();
-		for(int c=0; c<treeLen; c++) {
-			document.out.write("  ");
-			document.input().hidden().name("opened_" + c).value(opened[c]).__().nl();
-		}
-
-		// Display the tree in a table with links for opening/closing the different parts
-		document.out.write("  <table cellspacing='0' cellpadding='0'>\n");
-
-		String[] last = EmptyArrays.EMPTY_STRING_ARRAY;
-		for (int c = 0; c < treeLen; c++) {
-			String[] path = paths[c];
-			int pathLen = path.length;
-
-			// Every parent must be open for this to be visible
-			boolean visible = true;
-			Loop2 :
-				for (int d = 0; d < (pathLen - 1); d++) {
-					// Find the first row that has all the path up to current step
-					for (int e = 0; e < c; e++) {
-						String[] parentpath = paths[e];
-						if (parentpath.length > d) {
-							boolean isParent = true;
-							for (int f = 0; f <= d; f++) {
-								if (!parentpath[f].equals(path[f])) {
-									isParent = false;
-									break;
-								}
-							}
-							if (isParent) {
-								if (!opened[e]) {
-									visible = false;
-									break Loop2;
-								}
-								break;
-							}
-						}
-					}
+		flow.form("").id("tree_form").method(Method.Value.POST).__(form -> form
+			.div__(div -> {
+				req.printFormFields(div);
+				div.input().hidden().name("scroll_to_x").value(scrollToX).__().nl()
+				.input().hidden().name("scroll_to_y").value(scrollToY).__().nl();
+				for(int c=0; c<treeLen; c++) {
+					div.input().hidden().name("opened_" + c).value(opened_[c]).__().nl();
 				}
-				if (visible) {
-					document.out.write("    <tr>\n"
-							+ "      <td style='white-space:nowrap; border:0px;'><table cellspacing='0' cellpadding='0'><tr><td style='white-space:nowrap; border:0px;'>");
 
-					int max = Math.min(pathLen - 1, last.length);
-					int pos = 0;
+				// Display the tree in a table with links for opening/closing the different parts
+				div.table().cellspacing(0).cellpadding(0).__(table -> {
+					String[] last = EmptyArrays.EMPTY_STRING_ARRAY;
+					for (int c = 0; c < treeLen; c++) {
+						int c_ = c;
+						String[] path = paths[c];
+						final int pathLen = path.length;
 
-					// Skip the part of the path that is already displayed by the parent
-					for (; pos < max; pos++) {
-						if (last[pos].equals(path[pos])) {
-							boolean hasMore = false;
-							for (int d = c + 1; d < treeLen; d++) {
-								int end = pos;
-								for (int e = 0; e < end; e++) {
-									if (paths[d][e].equals(path[e])) {
-										if (e == (end - 1) && !paths[d][end].equals(path[end])) {
-											hasMore = true;
-											break;
-										}
-									} else break;
-								}
-							}
-							document.img()
-								.src(req.getEncodedURL(this, URIParametersMap.of("image_num", (hasMore ? 1 : 0)), resp))
-								.style("border:0px; display:inline; vertical-align:bottom")
-								.width(IMAGE_WIDTH)
-								.height(IMAGE_HEIGHT)
-								.alt("")
-								.__();
-						} else break;
-					}
-
-					// Display the remaining part of the path
-					for(; pos < pathLen; pos++) {
-						if(path[pos].length()>0) {
-							// Determine has sub items
-							boolean hasSub = false;
-							if (c < (treeLen - 1)) {
-								String[] next_path = paths[c + 1];
-								if (next_path.length >= pathLen) {
-									hasSub = true;
-									for (int e = 0; e < pathLen; e++) {
-										String tempPath=path[e];
-										if(tempPath.length()>0 && !tempPath.equals(next_path[e])) {
-											hasSub = false;
+						// Every parent must be open for this to be visible
+						boolean visible = true;
+					Loop2 :
+						for (int d = 0; d < (pathLen - 1); d++) {
+							// Find the first row that has all the path up to current step
+							for (int e = 0; e < c; e++) {
+								String[] parentpath = paths[e];
+								if (parentpath.length > d) {
+									boolean isParent = true;
+									for (int f = 0; f <= d; f++) {
+										if (!parentpath[f].equals(path[f])) {
+											isParent = false;
 											break;
 										}
 									}
-								}
-							}
-
-							// Determine if the line continues farther down
-							boolean hasMore = false;
-							for (int d = c; d < treeLen; d++) {
-								int end = pos;
-								for (int e = 0; e < end; e++) {
-									if (paths[d][e].equals(path[e])) {
-										if (e == (end - 1) && !paths[d][end].equals(path[end])) {
-											hasMore = true;
-											break;
+									if (isParent) {
+										if (!opened_[e]) {
+											visible = false;
+											break Loop2;
 										}
-									} else break;
+										break;
+									}
 								}
 							}
-
-							if(hasSub) {
-								document.out
-									.append("<a href='javascript:")
-									.append(opened[c] ? "closeNode(" : "openNode(")
-									.append(Integer.toString(c))
-									.append(");'>");
-								document.img()
-									.alt(opened[c] ? "Close" : "Open")
-									.src(
-										req.getEncodedURL(
-											this,
-											URIParametersMap.of(
-												"image_num",
-												opened[c]
-													? (hasMore ? 4 : (c > 0 ? 5 : 9))
-													: (hasMore ? 6 : (c > 0 ? 7 : 8))
-											),
-											resp
-										)
-									).style("vertical-align:bottom; border:0px; display:inline")
-									.width(IMAGE_WIDTH)
-									.height(IMAGE_HEIGHT)
-									.__();
-								document.out.write("</a>");
-							} else {
-								document.img()
-									.src(
-										req.getEncodedURL(
-											this,
-											URIParametersMap.of("image_num", (hasMore ? 2 : 3)),
-											resp
-										)
-									).style("vertical-align:bottom; border:0px; display:inline")
-									.width(IMAGE_WIDTH)
-									.height(IMAGE_HEIGHT)
-									.alt("")
-									.__();
-							}
-							document.img()
-								.src(req.getEncodedURL(this, URIParametersMap.of("image_num", 0), resp))
-								.style("vertical-align:bottom; border:0px; display:inline")
-								.width(4)
-								.height(IMAGE_HEIGHT)
-								.alt("")
-								.__();
-							document.out.write("</td><td style='white-space:nowrap'>");
 						}
+						if (visible) {
+							String[] last_ = last;
+							table.tr__(tr -> tr
+								.td().style("white-space:nowrap", "border:0px").__(td -> td
+									.table().cellspacing(0).cellpadding(0).__(table2 -> table2
+										.tr__(tr2 -> tr2
+											.td().style("white-space:nowrap", "border:0px").__(td2 -> {
+												int max = Math.min(pathLen - 1, last_.length);
+												int pos = 0;
 
-						boolean useCodeFont=useCodeFont(req);
-						if (useCodeFont) document.out.write("<code>");
-						String href;
-						if(
-							(
-								(pathLen>=2 && pos==(pathLen-2) && path[pathLen-1].length()==0)
-								|| (pos==(pathLen-1) && path[pathLen-1].length()>0)
-							) && (href = tree.get(c).getUrl()) != null
-						) {
-							document.out.write("<a class='aoLightLink' href='");
-							encodeTextInXhtmlAttribute(
-								resp.encodeURL(
-									URIEncoder.encodeURI(
-										req.getContextPath() + href
+												// Skip the part of the path that is already displayed by the parent
+												for (; pos < max; pos++) {
+													if (last_[pos].equals(path[pos])) {
+														boolean hasMore = false;
+														for (int d = c_ + 1; d < treeLen; d++) {
+															int end = pos;
+															for (int e = 0; e < end; e++) {
+																if (paths[d][e].equals(path[e])) {
+																	if (e == (end - 1) && !paths[d][end].equals(path[end])) {
+																		hasMore = true;
+																		break;
+																	}
+																} else break;
+															}
+														}
+														td2.img()
+															.src(req.getEncodedURL(this, URIParametersMap.of("image_num", (hasMore ? 1 : 0)), resp))
+															.style("border:0px", "display:inline", "vertical-align:bottom")
+															.width(IMAGE_WIDTH)
+															.height(IMAGE_HEIGHT)
+															.alt("")
+														.__();
+													} else break;
+												}
+
+												// Display the remaining part of the path
+												for(; pos < pathLen; pos++) {
+													if(path[pos].length()>0) {
+														// Determine has sub items
+														boolean hasSub = false;
+														if (c_ < (treeLen - 1)) {
+															String[] next_path = paths[c_ + 1];
+															if (next_path.length >= pathLen) {
+																hasSub = true;
+																for (int e = 0; e < pathLen; e++) {
+																	String tempPath=path[e];
+																	if(tempPath.length()>0 && !tempPath.equals(next_path[e])) {
+																		hasSub = false;
+																		break;
+																	}
+																}
+															}
+														}
+
+														// Determine if the line continues farther down
+														final boolean hasMore;
+														{
+															boolean found = false;
+															for (int d = c_; d < treeLen; d++) {
+																int end = pos;
+																for (int e = 0; e < end; e++) {
+																	if (paths[d][e].equals(path[e])) {
+																		if (e == (end - 1) && !paths[d][end].equals(path[end])) {
+																			found = true;
+																			break;
+																		}
+																	} else break;
+																}
+															}
+															hasMore = found;
+														}
+
+														if(hasSub) {
+															td2.a().href(
+																"javascript:"
+																+ (opened_[c_] ? "closeNode(" : "openNode(")
+																+ c_
+																+ ");"
+															).__(a -> a
+																.img()
+																	.alt(opened_[c_] ? "Close" : "Open")
+																	.src(
+																		req.getEncodedURL(
+																			this,
+																			URIParametersMap.of(
+																				"image_num",
+																				opened_[c_]
+																					? (hasMore ? 4 : (c_ > 0 ? 5 : 9))
+																					: (hasMore ? 6 : (c_ > 0 ? 7 : 8))
+																			),
+																			resp
+																		)
+																	).style("vertical-align:bottom", "border:0px", "display:inline")
+																	.width(IMAGE_WIDTH)
+																	.height(IMAGE_HEIGHT)
+																.__()
+															);
+														} else {
+															td2.img()
+																.src(
+																	req.getEncodedURL(
+																		this,
+																		URIParametersMap.of("image_num", (hasMore ? 2 : 3)),
+																		resp
+																	)
+																).style("vertical-align", "bottom; border:0px", "display:inline")
+																.width(IMAGE_WIDTH)
+																.height(IMAGE_HEIGHT)
+																.alt("")
+															.__();
+														}
+														td2.img()
+															.src(req.getEncodedURL(this, URIParametersMap.of("image_num", 0), resp))
+															.style("vertical-align:bottom", "border:0px", "display:inline")
+															.width(4)
+															.height(IMAGE_HEIGHT)
+															.alt("")
+														.__();
+														// TODO: Dirty hack, closing and opening new TD without using API
+														document.out.write("</td><td style='white-space:nowrap'>");
+													}
+
+													boolean useCodeFont=useCodeFont(req);
+													if (useCodeFont) document.out.write("<code>");
+													String href;
+													if(
+														(
+															(pathLen>=2 && pos==(pathLen-2) && path[pathLen-1].length()==0)
+															|| (pos==(pathLen-1) && path[pathLen-1].length()>0)
+														) && (href = tree.get(c_).getUrl()) != null
+													) {
+														td2.a().clazz("aoLightLink").href(
+															resp.encodeURL(
+																URIEncoder.encodeURI(
+																	req.getContextPath() + href
+																)
+															)
+														).__(path[pos]);
+													} else if(!path[pos].isEmpty()) {
+														td2.text(path[pos]);
+													}
+													if(useCodeFont) document.out.write("</code>");
+												}
+											})
+										)
 									)
-								),
-								document.out
+								)
+								.td().style("white-space:nowrap", "width:20px").__(td -> td
+									.img()
+										.src(req.getEncodedURL(this, URIParametersMap.of("image_num", 0), resp))
+										.style("vertical-align:bottom", "border:0px", "display:inline")
+										.width(20)
+										.height(1)
+										.alt("")
+										.__()
+								)
+								.td().style("white-space:nowrap").__(tree.get(c_).getDescription())
 							);
-							document.out.write("'>"); document.text(path[pos]); document.out.write("</a>");
-						} else if(!path[pos].isEmpty()) {
-							document.text(path[pos]);
+							last = path;
 						}
-						if(useCodeFont) document.out.write("</code>");
 					}
-
-					document.out.write("</td></tr></table></td>\n"
-							+ "      <td style='white-space:nowrap; width:20px'>");
-					document.img()
-						.src(req.getEncodedURL(this, URIParametersMap.of("image_num", 0), resp))
-						.style("vertical-align:bottom; border:0px; display:inline")
-						.width(20)
-						.height(1)
-						.alt("")
-						.__();
-					document.out.write("</td>\n"
-							+ "      <td style='white-space:nowrap'>");
-					document.text(tree.get(c).getDescription()).out.write("</td>\n"
-							+ "    </tr>\n");
-					last = path;
-				}
-		}
-
-		document.out.write("  </table>\n"
-				+ "</div></form>\n");
+				});
+			})
+		);
 		layout.endContentLine(document, req, resp, 1, false);
 		layout.endContent(this, document, req, resp, 1);
 	}

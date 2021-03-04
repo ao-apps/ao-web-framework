@@ -22,11 +22,11 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.collections.SortedArrayList;
-import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
-import com.aoindustries.html.Document;
+import com.aoindustries.html.FlowContent;
+import com.aoindustries.html.PhrasingContent;
 import java.io.CharArrayWriter;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.servlet.ServletException;
@@ -46,15 +46,14 @@ abstract public class DumpURLs extends WebPage {
 	public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Document document,
-		WebPageLayout layout
+		WebPageLayout layout,
+		FlowContent<?> flow
 	) throws ServletException, IOException {
-		document.out.write("The following is a list of all unique servlet URLs in the site and may be used to add this site to\n"
-				+ "search engines:\n"
-				+ "<pre>\n");
-		WebPage page = getRootPage();
-		printURLs(req, resp, document, page, new SortedArrayList<>());
-		document.out.write("</pre>\n");
+		flow.text(
+			"The following is a list of all unique servlet URLs in the site and may be used to add this site to\n"
+			+ "search engines:"
+		)
+		.pre__(pre -> printURLs(req, resp, pre, getRootPage(), new HashSet<>()));
 	}
 
 	@Override
@@ -100,20 +99,14 @@ abstract public class DumpURLs extends WebPage {
 		return "List URLs";
 	}
 
-	private void printURLs(WebSiteRequest req, HttpServletResponse resp, Document document, WebPage page, List<WebPage> finishedPages) throws ServletException, IOException {
-		if(!finishedPages.contains(page)) {
-			document.out.write("<a class='aoLightLink' href='");
-			encodeTextInXhtmlAttribute(req.getEncodedURL(page, resp), document.out);
-			document.out.write("'>");
-			document.text(req.getURL(page));
-			document.out.write("</a>\n");
+	private void printURLs(WebSiteRequest req, HttpServletResponse resp, PhrasingContent<?> pre, WebPage page, Set<WebPage> finishedPages) throws ServletException, IOException {
+		boolean doNl = !finishedPages.isEmpty();
+		if(finishedPages.add(page)) {
+			if(doNl) pre.nl();
+			pre.a().clazz("aoLightLink").href(req.getEncodedURL(page, resp)).__(req.getURL(page));
 
-			finishedPages.add(page);
-
-			WebPage[] children = page.getCachedChildren(req, resp);
-			int len = children.length;
-			for (int c = 0; c < len; c++) {
-				printURLs(req, resp, document, children[c], finishedPages);
+			for (WebPage child : page.getCachedChildren(req, resp)) {
+				printURLs(req, resp, pre, child, finishedPages);
 			}
 		}
 	}

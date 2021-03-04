@@ -24,6 +24,7 @@ package com.aoindustries.website.framework;
 
 import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
 import com.aoindustries.html.Document;
+import com.aoindustries.html.FlowContent;
 import com.aoindustries.io.IoUtils;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,8 +46,8 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void printStream(Document document, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
-		printHTMLStream(document, req, resp, getWebPageLayout(req), in, "aoLightLink");
+	public void printStream(FlowContent<?> flow, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
+		printHTMLStream(flow, req, resp, getWebPageLayout(req), in, "aoLightLink");
 	}
 
 	/**
@@ -76,7 +77,8 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 	 *   <li>@LINK_CLASS        The preferred link class for this element</li>
 	 * </ul>
 	 */
-	public static void printHTML(Document document, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, String htmlContent, String linkClass) throws ServletException, IOException {
+	public static void printHTML(FlowContent<?> flow, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, String htmlContent, String linkClass) throws ServletException, IOException {
+		Document document = flow.getDocument();
 		if(req == null) {
 			document.out.write(htmlContent);
 		} else {
@@ -133,8 +135,9 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 	/**
 	 * @see  #printHTML
 	 */
-	public static void printHTMLStream(Document document, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, InputStream in, String linkClass) throws ServletException, IOException {
+	public static void printHTMLStream(FlowContent<?> flow, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, InputStream in, String linkClass) throws ServletException, IOException {
 		if(in==null) throw new NullPointerException("in is null");
+		Document document = flow.getDocument();
 		Reader reader = new InputStreamReader(in);
 		if(req==null) {
 			IoUtils.copy(reader, document.out);

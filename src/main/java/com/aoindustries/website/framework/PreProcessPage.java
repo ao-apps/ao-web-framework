@@ -22,8 +22,9 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.html.Document;
+import com.aoindustries.html.FlowContent;
 import java.io.IOException;
+import java.io.InputStream;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
@@ -37,14 +38,7 @@ public abstract class PreProcessPage extends ProcessPage {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void doGet(
-		WebSiteRequest req,
-		HttpServletResponse resp,
-		Document document,
-		WebPageLayout layout
-	) throws ServletException, IOException {
-		document.out.write("<pre>");
-		super.doGet(req, resp, document, layout);
-		document.out.write("</pre>\n");
+	public void printStream(FlowContent<?> flow, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
+		flow.pre__(pre -> printStreamStatic(pre, in));
 	}
 }

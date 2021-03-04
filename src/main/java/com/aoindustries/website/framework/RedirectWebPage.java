@@ -23,6 +23,7 @@
 package com.aoindustries.website.framework;
 
 import com.aoindustries.html.Document;
+import com.aoindustries.html.FlowContent;
 import java.io.IOException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -93,8 +94,8 @@ public class RedirectWebPage extends WebPage {
 	final public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Document document,
-		WebPageLayout layout
+		WebPageLayout layout,
+		FlowContent<?> flow
 	) throws ServletException, IOException {
 		// resp null during search
 		if(resp != null) resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
@@ -119,8 +120,8 @@ public class RedirectWebPage extends WebPage {
 	final public void doPost(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Document document,
-		WebPageLayout layout
+		WebPageLayout layout,
+		FlowContent<?> flow
 	) throws ServletException, IOException {
 		resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 	}

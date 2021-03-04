@@ -22,8 +22,9 @@
  */
 package com.aoindustries.website.framework;
 
-import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
 import com.aoindustries.html.Document;
+import com.aoindustries.html.FlowContent;
+import com.aoindustries.html.Union_TBODY_THEAD_TFOOT;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -46,20 +47,21 @@ abstract public class AutoListPage extends WebPage {
 	public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Document document,
-		WebPageLayout layout
+		WebPageLayout layout,
+		FlowContent<?> flow
 	) throws ServletException, IOException {
 		if(req != null) {
+			Document document = flow.getDocument();
 			layout.startContent(document, req, resp, 1, getPreferredContentWidth(req));
 			layout.printContentTitle(document, req, resp, this, 1);
 			layout.printContentHorizontalDivider(document, req, resp, 1, false);
 			layout.startContentLine(document, req, resp, 1, null, null);
 			printContentStart(document, req, resp);
-			document.out.write("<table cellpadding='0' cellspacing='10'>\n"
-					+ "  <tbody>\n");
-			printPageList(document, req, resp, this, layout);
-			document.out.write("  </tbody>\n"
-					+ "</table>\n");
+			flow.table().cellpadding(0).cellspacing(10).__(table -> table
+				.tbody__(tbody ->
+					printPageList(tbody, req, resp, this, layout)
+				)
+			);
 			layout.endContentLine(document, req, resp, 1, false);
 			layout.endContent(this, document, req, resp, 1);
 		}
@@ -79,25 +81,24 @@ abstract public class AutoListPage extends WebPage {
 	/**
 	 * Prints a list of pages.
 	 */
-	public static void printPageList(Document document, WebSiteRequest req, HttpServletResponse resp, WebPage[] pages, WebPageLayout layout) throws ServletException, IOException {
+	public static void printPageList(Union_TBODY_THEAD_TFOOT<?> tbody, WebSiteRequest req, HttpServletResponse resp, WebPage[] pages, WebPageLayout layout) throws ServletException, IOException {
 		int len = pages.length;
 		for (int c = 0; c < len; c++) {
 			WebPage page = pages[c];
-			document.out.write("    <tr>\n"
-					+ "      <td style='white-space:nowrap'><a class='aoLightLink' href='");
-			if(req != null) encodeTextInXhtmlAttribute(req.getEncodedURL(page, resp), document.out);
-			document.out.write("'>"); document.text(page.getShortTitle()).out.write("</a>\n"
-					+ "      </td>\n"
-					+ "      <td style='width:12px; white-space:nowrap'>&#160;</td>\n"
-					+ "      <td style='white-space:nowrap'>"); document.text(page.getDescription()).out.write("</td>\n"
-					+ "    </tr>\n");
+			tbody.tr__(tr -> tr
+				.td().style("white-space:nowrap").__(td -> td
+					.a().clazz("aoLightLink").href(req == null ? null : req.getEncodedURL(page, resp)).__(page.getShortTitle())
+				)
+				.td().style("width:12px", "white-space:nowrap").__("\u00A0")
+				.td().style("white-space:nowrap").__(page.getDescription())
+			);
 		}
 	}
 
 	/**
 	 * Prints an unordered list of the available pages.
 	 */
-	public static void printPageList(Document document, WebSiteRequest req, HttpServletResponse resp, WebPage parent, WebPageLayout layout) throws ServletException, IOException {
-		if(req != null) printPageList(document, req, resp, parent.getCachedChildren(req, resp), layout);
+	public static void printPageList(Union_TBODY_THEAD_TFOOT<?> tbody, WebSiteRequest req, HttpServletResponse resp, WebPage parent, WebPageLayout layout) throws ServletException, IOException {
+		if(req != null) printPageList(tbody, req, resp, parent.getCachedChildren(req, resp), layout);
 	}
 }

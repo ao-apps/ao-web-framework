@@ -23,6 +23,7 @@
 package com.aoindustries.website.framework;
 
 import com.aoindustries.html.Document;
+import com.aoindustries.html.FlowContent;
 import com.aoindustries.lang.EmptyArrays;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
@@ -46,7 +47,7 @@ public class SearchLayout extends WebPageLayout {
 	}
 
 	@Override
-	public void startHTML(
+	public Document startPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
@@ -54,20 +55,21 @@ public class SearchLayout extends WebPageLayout {
 		String onload
 	) {
 		// Do nothing
+		return document;
 	}
 
 	@Override
-	public void endHTML(
+	public void endPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Document document
+		FlowContent<?> flow
 	) {
 		// Do nothing
 	}
 
 	@Override
-	final public void printSearchOutput(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) {
+	final public void printSearchOutput(WebPage page, FlowContent<?> flow, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) {
 		throw new AssertionError("This should never be called within a search sub-request");
 	}
 
@@ -132,7 +134,7 @@ public class SearchLayout extends WebPageLayout {
 	}
 
 	@Override
-	final public boolean printWebPageLayoutSelector(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp) {
+	final public boolean printWebPageLayoutSelector(WebPage page, FlowContent<?> flow, WebSiteRequest req, HttpServletResponse resp) {
 		throw new AssertionError("This should never be called within a search sub-request");
 	}
 

@@ -22,7 +22,7 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.html.Document;
+import com.aoindustries.html.FlowContent;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -40,11 +40,9 @@ public abstract class PreFilePage extends FilePage {
 	public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Document document,
-		WebPageLayout layout
+		WebPageLayout layout,
+		FlowContent<?> flow
 	) throws ServletException, IOException {
-		document.out.write("<pre>");
-		super.doGet(req, resp, document, layout);
-		document.out.write("</pre>\n");
+		flow.pre__(pre -> printFile(pre, getFile()));
 	}
 }

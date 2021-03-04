@@ -22,8 +22,11 @@
  */
 package com.aoindustries.website.framework;
 
-import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
 import com.aoindustries.html.Document;
+import com.aoindustries.html.FlowContent;
+import com.aoindustries.html.attributes.Enum.Method;
+import com.aoindustries.io.function.IOConsumerE;
+import com.aoindustries.io.function.IORunnableE;
 import com.aoindustries.net.URIEncoder;
 import com.aoindustries.net.URIParametersMap;
 import com.aoindustries.web.resources.registry.Registry;
@@ -82,8 +85,12 @@ abstract public class WebPageLayout {
 	/**
 	 * Writes all of the HTML preceding the content of the page,
 	 * whether the page is in a frameset or not.
+	 *
+	 * @return  The {@link FlowContent} that should be used to write the page contents.
+	 *          This is also given to {@link #endPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.FlowContent)}
+	 *          to finish the template.
 	 */
-	abstract public void startHTML(
+	abstract public FlowContent<?> startPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
@@ -94,13 +101,58 @@ abstract public class WebPageLayout {
 	/**
 	 * Writes all of the HTML following the content of the page,
 	 * whether the page is in a frameset or not.
+	 *
+	 * @param  flow  The {@link FlowContent} that was returned by
+	 *               {@link #startPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Document, java.lang.String)}.
 	 */
-	abstract public void endHTML(
+	abstract public void endPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Document document
+		FlowContent<?> flow
 	) throws ServletException, IOException;
+
+	/**
+	 * {@linkplain #startPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Document, java.lang.String) Starts the page},
+	 * invokes the given page body, then
+	 * {@linkplain #endPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.FlowContent) ends the page}.
+	 *
+	 * @see  #startPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Document, java.lang.String)
+	 * @see  #endPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.FlowContent)
+	 */
+	public <Ex extends Throwable> void doPage(
+		WebPage page,
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		Document document,
+		String onload,
+		IOConsumerE<? super FlowContent<?>, Ex> body
+	) throws ServletException, IOException, Ex {
+		FlowContent<?> flow = startPage(page, req, resp, document, onload);
+		if(body != null) body.accept(flow);
+		endPage(page, req, resp, flow);
+	}
+
+	/**
+	 * {@linkplain #startPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Document, java.lang.String) Starts the page},
+	 * invokes the given page body, then
+	 * {@linkplain #endPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.FlowContent) ends the page}.
+	 *
+	 * @see  #startPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Document, java.lang.String)
+	 * @see  #endPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.FlowContent)
+	 */
+	public <Ex extends Throwable> void doPage(
+		WebPage page,
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		Document document,
+		String onload,
+		IORunnableE<Ex> body
+	) throws ServletException, IOException, Ex {
+		FlowContent<?> flow = startPage(page, req, resp, document, onload);
+		if(body != null) body.run();
+		endPage(page, req, resp, flow);
+	}
 
 	/**
 	 * Prints the content HTML that shows the output of a search.  This output must include an
@@ -109,73 +161,77 @@ abstract public class WebPageLayout {
 	 *
 	 * @see WebPage#doPostWithSearch(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
-	public void printSearchOutput(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) throws ServletException, IOException {
+	public void printSearchOutput(WebPage page, FlowContent<?> flow, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) throws ServletException, IOException {
+		Document document = flow.getDocument();
 		startContent(document, req, resp, 1, 600);
 		printContentTitle(document, req, resp, "Search Results", 1);
 		printContentHorizontalDivider(document, req, resp, 1, false);
 		startContentLine(document, req, resp, 1, "center", null);
 		beginLightArea(req, resp, document, null, "300", true);
-		document.out.write("      <form action=\"\" id=\"" + WebPage.SEARCH_TWO + "\" method=\"post\">\n");
-		req.printFormFields(document);
-		document.out.write("        <table cellspacing=\"0\" cellpadding=\"0\"><tr><td style=\"white-space:nowrap\">\n"
-		+ "          "); document.text("Word(s) to search for:"); document.out.write(' ');
-		document.input().text().size(24).name(WebSiteRequest.SEARCH_QUERY).value(query).__().br__().out.write("\n"
-		+ "          "); document.text("Search Location:"); document.out.write(' ');
-		document.input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).checked(isEntireSite).__()
-		.out.write(' '); document.text("Entire Site"); document.out.write("&#160;&#160;&#160;");
-		document.input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_THIS_AREA).checked(!isEntireSite).__()
-		.out.write(' '); document.text("This Area").br__().out.write("\n"
-		+ "          "); document.br__().out.write("\n"
-		+ "          <div style=\"text-align:center\">"); document.input().submit().clazz("ao_button").value(" Search ").__().out.write("</div>\n"
-		+ "        </td></tr></table>\n"
-		+ "      </form>\n");
+		flow.form("").id(WebPage.SEARCH_TWO).method(Method.Value.POST).__(form -> {
+			req.printFormFields(form);
+			form.table().cellspacing(0).cellpadding(0).__(table -> table
+				.tr__(tr -> tr
+					.td().style("white-space:nowrap").__(td -> td
+						.text("Word(s) to search for: ")
+						.input().text().size(24).name(WebSiteRequest.SEARCH_QUERY).value(query).__().br__()
+						.text("Search Location: ").input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).checked(isEntireSite).__()
+						.text(" Entire Site\u00A0\u00A0\u00A0").input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_THIS_AREA).checked(!isEntireSite).__()
+						.text(" This Area").br__()
+						.br__()
+						.div().style("text-align:center").__(div -> div
+							.input().submit().clazz("ao_button").value(" Search ").__()
+						)
+					)
+				)
+			);
+		});
 		endLightArea(req, resp, document);
 		endContentLine(document, req, resp, 1, false);
 		printContentHorizontalDivider(document, req, resp, 1, false);
 		startContentLine(document, req, resp, 1, "center", null);
 		if (results.isEmpty()) {
 			if (words.length > 0) {
-				document.out.write("      <b>"); document.text("No matches found"); document.out.write("</b>\n");
+				flow.b__("No matches found");
 			}
 		} else {
 			beginLightArea(req, resp, document);
-			document.out.write("  <table cellspacing=\"0\" cellpadding=\"0\" class=\"aoLightRow\">\n"
-			+ "    <tr>\n"
-			+ "      <th style=\"white-space:nowrap\">"); document.text("% Match"); document.out.write("</th>\n"
-			+ "      <th style=\"white-space:nowrap\">"); document.text("Title"); document.out.write("</th>\n"
-			+ "      <th style=\"white-space:nowrap\">&#160;</th>\n"
-			+ "      <th style=\"white-space:nowrap\">"); document.text("Description"); document.out.write("</th>\n"
-			+ "    </tr>\n");
-
-			// Find the highest probability
-			float highest = results.get(0).getProbability();
-
-			// Display the results
-			int size = results.size();
-			for (int c = 0; c < size; c++) {
-				String rowClass= (c & 1) == 0 ? "aoLightRow":"aoDarkRow";
-				String linkClass = (c & 1) == 0 ? "aoDarkLink":"aoLightLink";
-				SearchResult result = results.get(c);
-				String url = result.getUrl();
-				String title = result.getTitle();
-				String description = result.getDescription();
-				document.out.write("    <tr class=\""); document.out.write(rowClass); document.out.write("\">\n"
-				+ "      <td style=\"white-space:nowrap; text-align:center\">"); document.text(Math.round(99 * result.getProbability() / highest) + "%"); document.out.write("</td>\n"
-				+ "      <td style=\"white-space:nowrap; text-align:left\"><a class=\""); document.out.write(linkClass); document.out.write("\" href=\"");
-				encodeTextInXhtmlAttribute(
-					resp.encodeURL(
-						URIEncoder.encodeURI(
-							req.getContextPath() + url
-						)
-					),
-					document.out
+			flow.table().cellspacing(0).cellpadding(0).clazz("aoLightRow").__(table -> {
+				table.tr__(tr -> tr
+					.th().style("white-space:nowrap").__("% Match")
+					.th().style("white-space:nowrap").__("Title")
+					.th().style("white-space:nowrap").__("\u00A0")
+					.th().style("white-space:nowrap").__("Description")
 				);
-				document.out.write("\">"); document.text(title); document.out.write("</a></td>\n"
-				+ "      <td style=\"white-space:nowrap\">&#160;&#160;&#160;</td>\n"
-				+ "      <td style=\"white-space:nowrap; text-align:left\">"); document.text(description); document.out.write("</td>\n"
-				+ "    </tr>\n");
-			}
-			document.out.write("  </table>\n");
+
+				// Find the highest probability
+				float highest = results.get(0).getProbability();
+
+				// Display the results
+				int size = results.size();
+				for (int c = 0; c < size; c++) {
+					String rowClass= (c & 1) == 0 ? "aoLightRow":"aoDarkRow";
+					String linkClass = (c & 1) == 0 ? "aoDarkLink":"aoLightLink";
+					SearchResult result = results.get(c);
+					String url = result.getUrl();
+					String title = result.getTitle();
+					String description = result.getDescription();
+					table.tr().clazz(rowClass).__(tr -> tr
+						.td().style("white-space:nowrap", "text-align:center").__(Math.round(99 * result.getProbability() / highest) + "%")
+						.td().style("white-space:nowrap", "text-align:left").__(td -> td
+							.a().clazz(linkClass).href(
+								resp.encodeURL(
+									URIEncoder.encodeURI(
+										req.getContextPath() + url
+									)
+								)
+							).__(title)
+						)
+						.td().style("white-space:nowrap").__("\u00A0\u00A0\u00A0")
+						.td().style("white-space:nowrap", "text-align:left").__(description)
+					);
+				}
+			});
 			endLightArea(req, resp, document);
 		}
 		endContentLine(document, req, resp, 1, false);
@@ -321,24 +377,28 @@ abstract public class WebPageLayout {
 	 */
 	abstract public String getName();
 
-	public boolean printWebPageLayoutSelector(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	public boolean printWebPageLayoutSelector(WebPage page, FlowContent<?> flow, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		if(layoutChoices.length >= 2) {
-			document.script().out(script -> {
-				script.append("function selectLayout(layout) {\n");
+			flow.script().out(script -> {
+				script.indent().append("function selectLayout(layout) {").incDepth().nl();
 				for(String choice : layoutChoices) {
-					script.append("  if(layout==").text(choice).append(") window.top.location.href=").text(
+					script.indent().append("if(layout==").text(choice).append(") window.top.location.href=").text(
 						req.getEncodedURL(page, URIParametersMap.of(WebSiteRequest.LAYOUT, choice), resp)
-					).append(";\n");
+					).append(';').nl();
 				}
-				script.append('}');
-			}).__().out.write("\n"
-			+ "<form action=\"#\" style=\"display:inline\"><div style=\"display:inline\">\n"
-			+ "  <select name=\"layout_selector\" onchange=\"selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);\">\n");
-			for(String choice : layoutChoices) {
-				document.out.write("    "); document.option().value(choice).selected(choice.equalsIgnoreCase(getName())).text__(choice).nl();
-			}
-			document.out.write("  </select>\n"
-			+ "</div></form>\n");
+				script.decDepth().indent().append('}');
+			}).__()
+			.form("#").style("display:inline").__(form -> form
+				.div().style("display:inline").__(div -> div
+					// TODO: Constant for "layout_selector"?
+					// TODO: onchange event
+					.select().name("layout_selector").attribute("onchange", "selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);").__(select -> {
+						for(String choice : layoutChoices) {
+							select.option().value(choice).selected(choice.equalsIgnoreCase(getName())).text__(choice);
+						}
+					})
+				)
+			);
 			return true;
 		} else return false;
 	}
