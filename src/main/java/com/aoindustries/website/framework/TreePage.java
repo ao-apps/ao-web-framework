@@ -23,8 +23,10 @@
 package com.aoindustries.website.framework;
 
 import com.aoindustries.encoding.MediaWriter;
+import com.aoindustries.html.CODE_c;
 import com.aoindustries.html.Document;
 import com.aoindustries.html.FlowContent;
+import com.aoindustries.html.PhrasingContent;
 import com.aoindustries.html.attributes.Enum.Method;
 import com.aoindustries.io.ContentType;
 import com.aoindustries.io.IoUtils;
@@ -505,7 +507,15 @@ abstract public class TreePage extends WebPage {
 													}
 
 													boolean useCodeFont=useCodeFont(req);
-													if (useCodeFont) document.out.write("<code>");
+													CODE_c<?> code;
+													PhrasingContent<?> phrasing;
+													if (useCodeFont) {
+														code = td2.code_c();
+														phrasing = code;
+													} else {
+														code = null;
+														phrasing = td2;
+													}
 													String href;
 													if(
 														(
@@ -513,7 +523,7 @@ abstract public class TreePage extends WebPage {
 															|| (pos==(pathLen-1) && path[pathLen-1].length()>0)
 														) && (href = tree.get(c_).getUrl()) != null
 													) {
-														td2.a().clazz("aoLightLink").href(
+														phrasing.a().clazz("aoLightLink").href(
 															resp.encodeURL(
 																URIEncoder.encodeURI(
 																	req.getContextPath() + href
@@ -521,9 +531,9 @@ abstract public class TreePage extends WebPage {
 															)
 														).__(path[pos]);
 													} else if(!path[pos].isEmpty()) {
-														td2.text(path[pos]);
+														phrasing.text(path[pos]);
 													}
-													if(useCodeFont) document.out.write("</code>");
+													if(code != null) code.__();
 												}
 											})
 										)
