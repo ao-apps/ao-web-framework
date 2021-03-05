@@ -38,7 +38,7 @@ public abstract class PreProcessPage extends ProcessPage {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void printStream(FlowContent<?> flow, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
+	public <__ extends FlowContent<__>> void printStream(__ flow, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
 		flow.pre__(pre -> printStreamStatic(pre, in));
 	}
 }

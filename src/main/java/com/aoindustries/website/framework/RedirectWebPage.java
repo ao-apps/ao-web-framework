@@ -91,11 +91,11 @@ public class RedirectWebPage extends WebPage {
 	 * Never do GET, redirect-only.
 	 */
 	@Override
-	final public void doGet(
+	final public <__ extends FlowContent<__>> void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,
-		FlowContent<?> flow
+		__ flow
 	) throws ServletException, IOException {
 		// resp null during search
 		if(resp != null) resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
@@ -117,11 +117,11 @@ public class RedirectWebPage extends WebPage {
 	 * Never do POST, redirect-only.
 	 */
 	@Override
-	final public void doPost(
+	final public <__ extends FlowContent<__>> void doPost(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,
-		FlowContent<?> flow
+		__ flow
 	) throws ServletException, IOException {
 		resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 	}

@@ -43,11 +43,11 @@ abstract public class InputStreamPage extends WebPage {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void doGet(
+	public <__ extends FlowContent<__>> void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,
-		FlowContent<?> flow
+		__ flow
 	) throws ServletException, IOException {
 		Document document = flow.getDocument();
 		layout.startContent(document, req, resp, 1, getPreferredContentWidth(req));
@@ -66,7 +66,7 @@ abstract public class InputStreamPage extends WebPage {
 	 */
 	public abstract InputStream getInputStream() throws IOException;
 
-	public void printStream(FlowContent<?> flow, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
+	public <__ extends FlowContent<__>> void printStream(__ flow, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
 		printStreamStatic(flow, in);
 	}
 

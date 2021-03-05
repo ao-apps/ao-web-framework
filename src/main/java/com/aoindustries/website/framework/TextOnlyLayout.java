@@ -157,7 +157,7 @@ public class TextOnlyLayout extends WebPageLayout {
 
 	@Override
 	@SuppressWarnings("deprecation")
-	public FlowContent<?> startPage(
+	public <__ extends FlowContent<__>> __ startPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
@@ -416,7 +416,9 @@ public class TextOnlyLayout extends WebPageLayout {
 							})
 						);
 					}
-		return tdc;
+		// TODO: Why is cast required here?
+		@SuppressWarnings("unchecked") __ flow = (__)tdc;
+		return flow;
 	}
 
 	/**
@@ -428,11 +430,11 @@ public class TextOnlyLayout extends WebPageLayout {
 	}
 
 	@Override
-	public void endPage(
+	public <__ extends FlowContent<__>> void endPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		FlowContent<?> flow
+		__ flow
 	) throws ServletException, IOException {
 		@SuppressWarnings("unchecked")
 		TD_c<TR_c<TABLE_c<Document>>> tdc = (TD_c<TR_c<TABLE_c<Document>>>)flow;
@@ -613,12 +615,12 @@ public class TextOnlyLayout extends WebPageLayout {
 		return null;
 	}
 
-	public void printLogo(WebPage page, FlowContent<?> td, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	public <__ extends FlowContent<__>> void printLogo(WebPage page, __ td, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 	}
 
 	/**
 	 * Prints content below the related pages area on the left.
 	 */
-	public void printBelowRelatedPages(FlowContent<?> td, WebSiteRequest req) throws ServletException, IOException {
+	public <__ extends FlowContent<__>> void printBelowRelatedPages(__ td, WebSiteRequest req) throws ServletException, IOException {
 	}
 }

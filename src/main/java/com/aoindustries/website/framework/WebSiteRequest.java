@@ -829,14 +829,14 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	/**
 	 * Prints the hidden variables that contain all of the current settings.
 	 */
-	public void printFormFields(FlowContent<?> form) throws ServletException, IOException {
+	public <__ extends FlowContent<__>> void printFormFields(__ form) throws ServletException, IOException {
 	}
 
 // Unused 2021-02-22:
 //	/**
 //	 * Prints the hidden variables that contain all of the current settings.
 //	 */
-//	protected static void printHiddenField(FlowContent<?> form form, String name, String value) throws IOException {
+//	protected static <__ extends FlowContent<__>> void printHiddenField(__ form form, String name, String value) throws IOException {
 //		form.input().hidden().name(name).value(value).__().getDocument().nl();
 //	}
 

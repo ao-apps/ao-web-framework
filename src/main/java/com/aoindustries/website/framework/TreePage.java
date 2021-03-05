@@ -147,11 +147,11 @@ abstract public class TreePage extends WebPage {
 	}
 
 	@Override
-	public void doGet(
+	public <__ extends FlowContent<__>> void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,
-		FlowContent<?> flow
+		__ flow
 	) throws ServletException, IOException {
 		List<? extends TreePageData> tree = getTree(req, resp);
 		String mode;
@@ -293,8 +293,8 @@ abstract public class TreePage extends WebPage {
 	/**
 	 * Handles the interactive form of this page.
 	 */
-	private void handleRequest(
-		FlowContent<?> flow,
+	private <__ extends FlowContent<__>> void handleRequest(
+		__ flow,
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,

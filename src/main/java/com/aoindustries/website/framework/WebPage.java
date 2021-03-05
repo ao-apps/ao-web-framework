@@ -616,11 +616,11 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Document)
 	 */
 	@SuppressWarnings("NoopMethodInAbstractClass")
-	public void doGet(
+	public <__ extends FlowContent<__>> void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,
-		FlowContent<?> flow
+		__ flow
 	) throws ServletException, IOException {
 	}
 
@@ -832,11 +832,11 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Document)
 	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.website.framework.WebPageLayout, com.aoindustries.html.FlowContent)
 	 */
-	public void doPost(
+	public <__ extends FlowContent<__>> void doPost(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,
-		FlowContent<?> flow
+		__ flow
 	) throws ServletException, IOException {
 		doGet(req, resp, layout, flow);
 	}

@@ -90,7 +90,7 @@ abstract public class WebPageLayout {
 	 *          This is also given to {@link #endPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.FlowContent)}
 	 *          to finish the template.
 	 */
-	abstract public FlowContent<?> startPage(
+	abstract public <__ extends FlowContent<__>> __ startPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
@@ -105,11 +105,11 @@ abstract public class WebPageLayout {
 	 * @param  flow  The {@link FlowContent} that was returned by
 	 *               {@link #startPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Document, java.lang.String)}.
 	 */
-	abstract public void endPage(
+	abstract public <__ extends FlowContent<__>> void endPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		FlowContent<?> flow
+		__ flow
 	) throws ServletException, IOException;
 
 	/**
@@ -120,15 +120,15 @@ abstract public class WebPageLayout {
 	 * @see  #startPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Document, java.lang.String)
 	 * @see  #endPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.FlowContent)
 	 */
-	public <Ex extends Throwable> void doPage(
+	public <__ extends FlowContent<__>, Ex extends Throwable> void doPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		Document document,
 		String onload,
-		IOConsumerE<? super FlowContent<?>, Ex> body
+		IOConsumerE<? super __, Ex> body
 	) throws ServletException, IOException, Ex {
-		FlowContent<?> flow = startPage(page, req, resp, document, onload);
+		__ flow = startPage(page, req, resp, document, onload);
 		if(body != null) body.accept(flow);
 		endPage(page, req, resp, flow);
 	}
@@ -141,7 +141,7 @@ abstract public class WebPageLayout {
 	 * @see  #startPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Document, java.lang.String)
 	 * @see  #endPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.FlowContent)
 	 */
-	public <Ex extends Throwable> void doPage(
+	public <__ extends FlowContent<__>, Ex extends Throwable> void doPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
@@ -149,7 +149,7 @@ abstract public class WebPageLayout {
 		String onload,
 		IORunnableE<Ex> body
 	) throws ServletException, IOException, Ex {
-		FlowContent<?> flow = startPage(page, req, resp, document, onload);
+		__ flow = startPage(page, req, resp, document, onload);
 		if(body != null) body.run();
 		endPage(page, req, resp, flow);
 	}
@@ -161,7 +161,7 @@ abstract public class WebPageLayout {
 	 *
 	 * @see WebPage#doPostWithSearch(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
-	public void printSearchOutput(WebPage page, FlowContent<?> flow, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) throws ServletException, IOException {
+	public <__ extends FlowContent<__>> void printSearchOutput(WebPage page, __ flow, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) throws ServletException, IOException {
 		Document document = flow.getDocument();
 		startContent(document, req, resp, 1, 600);
 		printContentTitle(document, req, resp, "Search Results", 1);
@@ -377,7 +377,7 @@ abstract public class WebPageLayout {
 	 */
 	abstract public String getName();
 
-	public boolean printWebPageLayoutSelector(WebPage page, FlowContent<?> flow, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	public <__ extends FlowContent<__>> boolean printWebPageLayoutSelector(WebPage page, __ flow, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		if(layoutChoices.length >= 2) {
 			flow.script().out(script -> {
 				script.indent().append("function selectLayout(layout) {").incDepth().nl();

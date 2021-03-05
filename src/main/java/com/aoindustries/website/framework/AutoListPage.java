@@ -44,11 +44,11 @@ abstract public class AutoListPage extends WebPage {
 	public static final int NUM_COLS = 3;
 
 	@Override
-	public void doGet(
+	public <__ extends FlowContent<__>> void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,
-		FlowContent<?> flow
+		__ flow
 	) throws ServletException, IOException {
 		if(req != null) {
 			Document document = flow.getDocument();

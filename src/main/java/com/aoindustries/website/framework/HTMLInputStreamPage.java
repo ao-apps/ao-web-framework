@@ -46,7 +46,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void printStream(FlowContent<?> flow, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
+	public <__ extends FlowContent<__>> void printStream(__ flow, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
 		printHTMLStream(flow, req, resp, getWebPageLayout(req), in, "aoLightLink");
 	}
 
@@ -77,7 +77,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 	 *   <li>@LINK_CLASS        The preferred link class for this element</li>
 	 * </ul>
 	 */
-	public static void printHTML(FlowContent<?> flow, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, String htmlContent, String linkClass) throws ServletException, IOException {
+	public static <__ extends FlowContent<__>> void printHTML(__ flow, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, String htmlContent, String linkClass) throws ServletException, IOException {
 		Document document = flow.getDocument();
 		if(req == null) {
 			document.out.write(htmlContent);
@@ -135,7 +135,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 	/**
 	 * @see  #printHTML
 	 */
-	public static void printHTMLStream(FlowContent<?> flow, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, InputStream in, String linkClass) throws ServletException, IOException {
+	public static <__ extends FlowContent<__>> void printHTMLStream(__ flow, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, InputStream in, String linkClass) throws ServletException, IOException {
 		if(in==null) throw new NullPointerException("in is null");
 		Document document = flow.getDocument();
 		Reader reader = new InputStreamReader(in);

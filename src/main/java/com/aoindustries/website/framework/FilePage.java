@@ -40,11 +40,11 @@ abstract public class FilePage extends WebPage {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void doGet(
+	public <__ extends FlowContent<__>> void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,
-		FlowContent<?> flow
+		__ flow
 	) throws ServletException, IOException {
 		printFile(flow, getFile());
 	}

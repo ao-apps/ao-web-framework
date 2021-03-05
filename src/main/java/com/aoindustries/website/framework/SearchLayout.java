@@ -47,7 +47,7 @@ public class SearchLayout extends WebPageLayout {
 	}
 
 	@Override
-	public Document startPage(
+	public <__ extends FlowContent<__>> __ startPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
@@ -55,21 +55,23 @@ public class SearchLayout extends WebPageLayout {
 		String onload
 	) {
 		// Do nothing
-		return document;
+		// TODO: Why is cast required here?
+		@SuppressWarnings("unchecked") __ flow = (__)document;
+		return flow;
 	}
 
 	@Override
-	public void endPage(
+	public <__ extends FlowContent<__>> void endPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		FlowContent<?> flow
+		__ flow
 	) {
 		// Do nothing
 	}
 
 	@Override
-	final public void printSearchOutput(WebPage page, FlowContent<?> flow, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) {
+	final public <__ extends FlowContent<__>> void printSearchOutput(WebPage page, __ flow, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) {
 		throw new AssertionError("This should never be called within a search sub-request");
 	}
 
@@ -134,7 +136,7 @@ public class SearchLayout extends WebPageLayout {
 	}
 
 	@Override
-	final public boolean printWebPageLayoutSelector(WebPage page, FlowContent<?> flow, WebSiteRequest req, HttpServletResponse resp) {
+	final public <__ extends FlowContent<__>> boolean printWebPageLayoutSelector(WebPage page, __ flow, WebSiteRequest req, HttpServletResponse resp) {
 		throw new AssertionError("This should never be called within a search sub-request");
 	}
 

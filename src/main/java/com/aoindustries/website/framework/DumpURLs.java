@@ -43,11 +43,11 @@ abstract public class DumpURLs extends WebPage {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void doGet(
+	public <__ extends FlowContent<__>> void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,
-		FlowContent<?> flow
+		__ flow
 	) throws ServletException, IOException {
 		flow.text(
 			"The following is a list of all unique servlet URLs in the site and may be used to add this site to\n"
