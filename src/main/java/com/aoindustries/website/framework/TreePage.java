@@ -202,10 +202,7 @@ abstract public class TreePage extends WebPage {
 								width += 3;
 							}
 							int len2 = last[pos].length();
-							// TODO: pre.sp(len2)
-							for (int d = 0; d < len2; d++) {
-								pre.getDocument().out.write(' ');
-							}
+							pre.sp(len2);
 							width += len2;
 						} else break;
 					}
@@ -236,15 +233,11 @@ abstract public class TreePage extends WebPage {
 						) {
 							pre.text('/');
 						} else {
-							pre.getDocument().out.write(' '); // TODO: pre.sp()
+							pre.sp();
 						}
 						width += p.length() + 1;
 					}
-					// TODO: pre.sp(longest_ - width)
-					for (; width < longest_; width++) {
-						pre.getDocument().out.write(' ');
-					}
-					pre.text(tree.get(c).getDescription()).nl();
+					pre.sp(longest_ - width).text(tree.get(c).getDescription()).nl();
 
 					last = path;
 				}

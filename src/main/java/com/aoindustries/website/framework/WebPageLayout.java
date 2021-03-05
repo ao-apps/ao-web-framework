@@ -173,11 +173,11 @@ abstract public class WebPageLayout {
 			form.table().cellspacing(0).cellpadding(0).__(table -> table
 				.tr__(tr -> tr
 					.td().style("white-space:nowrap").__(td -> td
-						.text("Word(s) to search for: ")
+						.text("Word(s) to search for:").sp()
 						.input().text().size(24).name(WebSiteRequest.SEARCH_QUERY).value(query).__().br__()
-						.text("Search Location: ").input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).checked(isEntireSite).__()
-						.text(" Entire Site\u00A0\u00A0\u00A0").input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_THIS_AREA).checked(!isEntireSite).__()
-						.text(" This Area").br__()
+						.text("Search Location:").sp().input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).checked(isEntireSite).__()
+						.sp().text("Entire Site").nbsp(3).input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_THIS_AREA).checked(!isEntireSite).__()
+						.sp().text("This Area").br__()
 						.br__()
 						.div().style("text-align:center").__(div -> div
 							.input().submit().clazz("ao_button").value(" Search ").__()
