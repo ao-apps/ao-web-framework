@@ -410,14 +410,14 @@ abstract public class WebPageLayout {
 				String[] SA = (String[]) O;
 				int len = SA.length;
 				for (int c = 0; c < len; c++) {
-					document.out.write("    "); document.script().src(req.getEncodedURLForPath('/'+SA[c], null, false, resp)).__().nl();
+					document.script().src(req.getEncodedURLForPath('/'+SA[c], null, false, resp)).__();
 				}
 			} else if(O instanceof Class) {
-				document.out.write("    "); document.script().src(req.getEncodedURL(((Class<?>)O).asSubclass(WebPage.class), null, resp)).__().nl();
+				document.script().src(req.getEncodedURL(((Class<?>)O).asSubclass(WebPage.class), null, resp)).__();
 			} else if(O instanceof WebPage) {
-				document.out.write("    "); document.script().src(req.getEncodedURL((WebPage)O, resp)).__().nl();
+				document.script().src(req.getEncodedURL((WebPage)O, resp)).__();
 			} else {
-				document.out.write("    "); document.script().src(req.getEncodedURLForPath('/'+O.toString(), null, false, resp)).__().nl();
+				document.script().src(req.getEncodedURLForPath('/'+O.toString(), null, false, resp)).__();
 			}
 		}
 	}

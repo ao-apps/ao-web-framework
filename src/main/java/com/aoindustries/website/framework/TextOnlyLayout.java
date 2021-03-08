@@ -175,15 +175,16 @@ public class TextOnlyLayout extends WebPageLayout {
 		+ "  <head>\n");
 		// If this is not the default layout, then robots noindex
 		if(!isOkResponseStatus || !getName().equals(getLayoutChoices()[0])) {
-			document.out.write("    "); document.meta(META.Name.ROBOTS).content("noindex, nofollow").__().nl();
+			document.meta(META.Name.ROBOTS).content("noindex, nofollow").__();
 		}
 		if(document.doctype == Doctype.HTML5) {
-			document.out.write("    "); document.meta().charset(resp.getCharacterEncoding()).__().nl();
+			document.meta().charset(resp.getCharacterEncoding()).__();
 		} else {
-			document.out.write("    "); document.meta(META.HttpEquiv.CONTENT_TYPE).content(resp.getContentType()).__().out.write("\n"
-			// Default style language
-			+ "    "); document.meta(META.HttpEquiv.CONTENT_STYLE_TYPE).content(STYLE.Type.TEXT_CSS).__().out.write("\n"
-			+ "    "); document.meta(META.HttpEquiv.CONTENT_SCRIPT_TYPE).content(SCRIPT.Type.TEXT_JAVASCRIPT).__().nl();
+			document
+				.meta(META.HttpEquiv.CONTENT_TYPE).content(resp.getContentType()).__()
+				// Default style language
+				.meta(META.HttpEquiv.CONTENT_STYLE_TYPE).content(STYLE.Type.TEXT_CSS).__()
+				.meta(META.HttpEquiv.CONTENT_SCRIPT_TYPE).content(SCRIPT.Type.TEXT_JAVASCRIPT).__();
 		}
 		if(document.doctype == Doctype.HTML5) {
 			GoogleAnalytics.writeGlobalSiteTag(document, trackingId);
@@ -191,20 +192,21 @@ public class TextOnlyLayout extends WebPageLayout {
 			GoogleAnalytics.writeAnalyticsJs(document, trackingId);
 		}
 		// Mobile support
-		document.out.write("    "); document.meta(META.Name.VIEWPORT).content("width=device-width, initial-scale=1.0").__().out.write("\n"
-		// TODO: This is probably only appropriate for single-page applications!
-		//       See https://medium.com/@firt/dont-use-ios-web-app-meta-tag-irresponsibly-in-your-progressive-web-apps-85d70f4438cb
-		+ "    "); document.meta(META.Name.APPLE_MOBILE_WEB_APP_CAPABLE).content("yes").__().out.write("\n"
-		+ "    "); document.meta(META.Name.APPLE_MOBILE_WEB_APP_STATUS_BAR_STYLE).content("black").__().nl();
+		document
+			.meta(META.Name.VIEWPORT).content("width=device-width, initial-scale=1.0").__()
+			// TODO: This is probably only appropriate for single-page applications!
+			//       See https://medium.com/@firt/dont-use-ios-web-app-meta-tag-irresponsibly-in-your-progressive-web-apps-85d70f4438cb
+			.meta(META.Name.APPLE_MOBILE_WEB_APP_CAPABLE).content("yes").__()
+			.meta(META.Name.APPLE_MOBILE_WEB_APP_STATUS_BAR_STYLE).content("black").__();
 		// Authors
 		// TODO: dcterms copyright
 		String author = page.getAuthor();
 		if(author != null && !(author = author.trim()).isEmpty()) {
-			document.out.write("    "); document.meta(META.Name.AUTHOR).content(author).__().nl();
+			document.meta(META.Name.AUTHOR).content(author).__();
 		}
 		String authorHref = page.getAuthorHref(req, resp);
 		if(authorHref != null && !(authorHref = authorHref.trim()).isEmpty()) {
-			document.out.write("    "); document.link(LINK.Rel.AUTHOR).href(authorHref).__().nl();
+			document.link(LINK.Rel.AUTHOR).href(authorHref).__();
 		}
 		document.out.write("    <title>");
 		// No more page stack, just show current page only
@@ -225,17 +227,17 @@ public class TextOnlyLayout extends WebPageLayout {
 		document.out.write("</title>\n");
 		String description = page.getDescription();
 		if(description != null && !(description = description.trim()).isEmpty()) {
-			document.out.write("    "); document.meta(META.Name.DESCRIPTION).content(description).__().nl();
+			document.meta(META.Name.DESCRIPTION).content(description).__();
 		}
 		String keywords = page.getKeywords();
 		if(keywords != null && !(keywords = keywords.trim()).isEmpty()) {
-			document.out.write("    "); document.meta(META.Name.KEYWORDS).content(keywords).__().nl();
+			document.meta(META.Name.KEYWORDS).content(keywords).__();
 		}
 		// TODO: Review HTML 4/HTML 5 differences from here
 		String copyright = page.getCopyright(req, resp, page);
 		if(copyright != null && !(copyright = copyright.trim()).isEmpty()) {
 			// TODO: Dublin Core: https://stackoverflow.com/questions/6665312/is-the-copyright-meta-tag-valid-in-html5
-			document.out.write("    "); document.meta().name("copyright").content(copyright).__().nl();
+			document.meta().name("copyright").content(copyright).__();
 		}
 
 		// Configure layout resources
@@ -246,18 +248,18 @@ public class TextOnlyLayout extends WebPageLayout {
 		if(pageRegistry == null) throw new ServletException("page-scope registry not found.  WebPage.service(ServletRequest,ServletResponse) invoked?");
 		page.configureResources(servletContext, req, resp, this, pageRegistry);
 		// Render links
-		document.out.write("    "); Renderer.get(servletContext).renderStyles(
+		Renderer.get(servletContext).renderStyles(
 			req,
 			resp,
 			document,
-			"    ",
+			null, // unused
 			true, // registeredActivations
 			null, // No additional activations
 			requestRegistry, // request-scope
 			RegistryEE.Session.get(req.getSession(false)), // session-scope
 			pageRegistry
-		); document.nl()
-		.script().src(req.getEncodedURLForPath("/global.js", null, false, resp)).__().nl();
+		);
+		document.script().src(req.getEncodedURLForPath("/global.js", null, false, resp)).__();
 		printJavaScriptIncludes(req, resp, document, page);
 		// TODO: Canonical?
 		document.out.write("  </head>\n"
@@ -328,7 +330,7 @@ public class TextOnlyLayout extends WebPageLayout {
 						if(printWebPageLayoutSelector(page, div, req, resp)) div.br__();
 						div.text("Search: ").form().id("search_site").style("display:inline").method(Method.Value.POST).action(req.getEncodedURL(page, resp)).__(form -> form
 							.div().style("display:inline").__(div2 -> {
-								div2.input().hidden().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).__().nl();
+								div2.input().hidden().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).__().autoNl();
 								req.printFormFields(div2);
 								div2.input().text().name(WebSiteRequest.SEARCH_QUERY).size(12).maxlength(255).__();
 							})
@@ -443,7 +445,7 @@ public class TextOnlyLayout extends WebPageLayout {
 			.__()
 		.__();
 		document.out.write("  </body>\n");
-		HtmlTag.endHtmlTag(document.out); document.nl();
+		HtmlTag.endHtmlTag(document.out); document.autoNl();
 	}
 
 	/**
@@ -503,7 +505,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	@Override
 	public void printContentTitle(Document document, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) throws IOException {
 		startContentLine(document, req, resp, contentColumns, "center", null);
-		document.h1__(title).nl();
+		document.h1__(title);
 		endContentLine(document, req, resp, 1, false);
 	}
 

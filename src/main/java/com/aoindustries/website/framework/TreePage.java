@@ -330,18 +330,17 @@ abstract public class TreePage extends WebPage {
 				+ "    document.forms[\"tree_form\"].scroll_to_x.value=getPageXOffset(window);\n"
 				+ "    document.forms[\"tree_form\"].scroll_to_y.value=getPageYOffset(window);\n"
 				+ "    document.forms[\"tree_form\"].submit();\n"
-				+ "  }\n");
+				+ "  }");
 		}
-		document.nl();
 
 		// Write the form containing the current settings
 		flow.form("").id("tree_form").method(Method.Value.POST).__(form -> form
 			.div__(div -> {
 				req.printFormFields(div);
-				div.input().hidden().name("scroll_to_x").value(scrollToX).__().nl()
-				.input().hidden().name("scroll_to_y").value(scrollToY).__().nl();
+				div.input().hidden().name("scroll_to_x").value(scrollToX).__().autoNl()
+				.input().hidden().name("scroll_to_y").value(scrollToY).__().autoNl();
 				for(int c=0; c<treeLen; c++) {
-					div.input().hidden().name("opened_" + c).value(opened_[c]).__().nl();
+					div.input().hidden().name("opened_" + c).value(opened_[c]).__().autoNl();
 				}
 
 				// Display the tree in a table with links for opening/closing the different parts

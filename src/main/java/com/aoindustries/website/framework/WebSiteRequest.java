@@ -837,7 +837,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 //	 * Prints the hidden variables that contain all of the current settings.
 //	 */
 //	protected static <__ extends FlowContent<__>> void printHiddenField(__ form form, String name, String value) throws IOException {
-//		form.input().hidden().name(name).value(value).__().getDocument().nl();
+//		form.input().hidden().name(name).value(value).__().autoNl();
 //	}
 
 	public List<UploadedFile> getUploadedFiles() {

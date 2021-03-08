@@ -342,6 +342,18 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
+	 * Gets the {@linkplain Document#setAutonli(boolean) automatic newline and indentation setting} to use for this page.
+	 * Defaults to {@link DocumentEE#getAutonli(javax.servlet.ServletContext, javax.servlet.ServletRequest)}.
+	 *
+	 * @param req  {@code null} during search
+	 *
+	 * @see Document#setAutonli(boolean)
+	 */
+	protected boolean getAutonli(WebSiteRequest req) {
+		return (req == null) ? false : DocumentEE.getAutonli(getServletContext(), req);
+	}
+
+	/**
 	 * Gets the {@linkplain Document#setIndent(boolean) indentation setting} to use for this page.
 	 * Defaults to {@link DocumentEE#getIndent(javax.servlet.ServletContext, javax.servlet.ServletRequest)}.
 	 *
@@ -389,26 +401,27 @@ abstract public class WebPage extends ErrorReportingServlet {
 				resp.setHeader(headers[c], headers[c + 1]);
 			}
 		}
-		Doctype doctype = getDoctype(req);
-		Document document = new Document(
-			new EncodingContextEE(
-				getServletContext(),
-				req,
-				resp
-			) {
-				@Override
-				public Serialization getSerialization() {
-					return serialization;
-				}
-				@Override
-				public Doctype getDoctype() {
-					return doctype;
-				}
-			},
-			resp.getWriter()
-		);
-		document.setIndent(getIndent(req));
-		return document;
+		Doctype doctype = getDoctype(req); // Lookup once here for constant value.  Do not inline into the anonymous class below.
+		return
+			new Document(
+				new EncodingContextEE(
+					getServletContext(),
+					req,
+					resp
+				) {
+					@Override
+					public Serialization getSerialization() {
+						return serialization;
+					}
+					@Override
+					public Doctype getDoctype() {
+						return doctype;
+					}
+				},
+				resp.getWriter()
+			)
+			.setAutonli(getAutonli(req))
+			.setIndent(getIndent(req));
 	}
 
 	/**
@@ -1525,8 +1538,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 				// Get the HTML content
 				buffer.reset();
 				// TODO: EncodingContext based on page settings, or XML always for search?
-				Document document = new Document(buffer);
-				document.setIndent(false); // Do not indent during search capture
+				Document document =
+					new Document(buffer)
+					.setAutonli(false) // Do not auto-indent during search capture
+					.setIndent(false); // Do not indent during search capture
 				// Isolate page-scope registry
 				Registry oldPageRegistry = RegistryEE.Page.get(req);
 				try {
@@ -1588,8 +1603,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 							// Get the HTML content
 							buffer.reset();
 							// TODO: EncodingContext based on page settings, or XML always for search?
-							Document document = new Document(buffer);
-							document.setIndent(false); // Do not indent during search capture
+							Document document =
+								new Document(buffer)
+								.setAutonli(false) // Do not auto-indent during search capture
+								.setIndent(false); // Do not indent during search capture
 							// Isolate page-scope registry
 							Registry oldPageRegistry = RegistryEE.Page.get(req);
 							try {
