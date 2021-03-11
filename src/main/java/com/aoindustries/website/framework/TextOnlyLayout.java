@@ -25,7 +25,6 @@ package com.aoindustries.website.framework;
 import com.aoindustries.encoding.ChainWriter;
 import com.aoindustries.encoding.Doctype;
 import static com.aoindustries.encoding.JavaScriptInXhtmlAttributeEncoder.encodeJavaScriptInXhtmlAttribute;
-import com.aoindustries.html.Document;
 import com.aoindustries.html.FlowContent;
 import com.aoindustries.html.LINK;
 import com.aoindustries.html.META;
@@ -37,6 +36,7 @@ import com.aoindustries.html.TD;
 import com.aoindustries.html.TD_c;
 import com.aoindustries.html.TR_c;
 import com.aoindustries.html.attributes.Enum.Method;
+import com.aoindustries.html.servlet.DocumentEE;
 import com.aoindustries.html.util.GoogleAnalytics;
 import static com.aoindustries.lang.Strings.trimNullIfEmpty;
 import static com.aoindustries.taglib.AttributeUtils.appendWidthStyle;
@@ -105,7 +105,7 @@ public class TextOnlyLayout extends WebPageLayout {
 
 	// TODO: Return Content<?> and pass to endLightArea
 	@Override
-	public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, Document document, String align, String width, boolean nowrap) throws IOException {
+	public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document, String align, String width, boolean nowrap) throws IOException {
 		String align_ = trimNullIfEmpty(align);
 		String width_ = trimNullIfEmpty(width);
 		document.table().style(style -> {
@@ -123,7 +123,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	}
 
 	@Override
-	public void endLightArea(WebSiteRequest req, HttpServletResponse resp, Document document) throws IOException {
+	public void endLightArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document) throws IOException {
 		document.out.write("</td>\n"
 		+ "  </tr>\n"
 		+ "</table>\n");
@@ -131,7 +131,7 @@ public class TextOnlyLayout extends WebPageLayout {
 
 	// TODO: Return Content<?> and pass to endWhiteArea
 	@Override
-	public void beginWhiteArea(WebSiteRequest req, HttpServletResponse resp, Document document, String align, String width, boolean nowrap) throws IOException {
+	public void beginWhiteArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document, String align, String width, boolean nowrap) throws IOException {
 		String align_ = trimNullIfEmpty(align);
 		String width_ = trimNullIfEmpty(width);
 		document.table().style(style -> {
@@ -149,7 +149,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	}
 
 	@Override
-	public void endWhiteArea(WebSiteRequest req, HttpServletResponse resp, Document document) throws IOException {
+	public void endWhiteArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document) throws IOException {
 		document.out.write("</td>\n"
 		+ "  </tr>\n"
 		+ "</table>\n");
@@ -157,11 +157,11 @@ public class TextOnlyLayout extends WebPageLayout {
 
 	@Override
 	@SuppressWarnings("deprecation")
-	public <__ extends FlowContent<__>> __ startPage(
+	public <__ extends FlowContent<DocumentEE, __>> __ startPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Document document,
+		DocumentEE document,
 		String onload
 	) throws ServletException, IOException {
 		boolean isOkResponseStatus = (resp.getStatus() == HttpServletResponse.SC_OK);
@@ -300,7 +300,7 @@ public class TextOnlyLayout extends WebPageLayout {
 			document.out.write("    onload=\""); encodeJavaScriptInXhtmlAttribute(onload, document.out); document.out.write("\"\n");
 		}
 		document.out.write("  >\n");
-		TD_c<TR_c<TABLE_c<Document>>> tdc = document.table().cellspacing(10).cellpadding(0)._c()
+		TD_c<DocumentEE, TR_c<DocumentEE, TABLE_c<DocumentEE, DocumentEE>>> tdc = document.table().cellspacing(10).cellpadding(0)._c()
 			.tr_c()
 				.td().attribute("valign", "top").__(td -> {
 					printLogo(page, td, req, resp);
@@ -432,15 +432,15 @@ public class TextOnlyLayout extends WebPageLayout {
 	}
 
 	@Override
-	public <__ extends FlowContent<__>> void endPage(
+	public <__ extends FlowContent<DocumentEE, __>> void endPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		__ flow
 	) throws ServletException, IOException {
 		@SuppressWarnings("unchecked")
-		TD_c<TR_c<TABLE_c<Document>>> tdc = (TD_c<TR_c<TABLE_c<Document>>>)flow;
-		Document document =
+		TD_c<DocumentEE, TR_c<DocumentEE, TABLE_c<DocumentEE, DocumentEE>>> tdc = (TD_c<DocumentEE, TR_c<DocumentEE, TABLE_c<DocumentEE, DocumentEE>>>)flow;
+		DocumentEE document =
 				tdc.__()
 			.__()
 		.__();
@@ -453,8 +453,8 @@ public class TextOnlyLayout extends WebPageLayout {
 	 */
 	@Override
 	// TODO: Return value to be passed on to other methods
-	public void startContent(Document document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) throws IOException {
-		TABLE<Document> table = document.table().cellpadding(0).cellspacing(0);
+	public void startContent(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) throws IOException {
+		TABLE<DocumentEE, DocumentEE> table = document.table().cellpadding(0).cellspacing(0);
 		if(preferredWidth != -1) {
 			table.style(style -> style.append("width:").append(Integer.toString(preferredWidth)).append("px"));
 		}
@@ -474,7 +474,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	 * Prints a horizontal divider of the provided colspan.
 	 */
 	@Override
-	public void printContentHorizontalDivider(Document document, WebSiteRequest req, HttpServletResponse resp, int[] colspansAndDirections, boolean endsInternal) throws IOException {
+	public void printContentHorizontalDivider(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int[] colspansAndDirections, boolean endsInternal) throws IOException {
 		document.tr__(tr -> {
 			for(int c = 0; c < colspansAndDirections.length; c += 2) {
 				int direction = (c == 0) ? -1 : colspansAndDirections[c - 1];
@@ -503,7 +503,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	 * Prints the title of the page in one row in the content area.
 	 */
 	@Override
-	public void printContentTitle(Document document, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) throws IOException {
+	public void printContentTitle(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) throws IOException {
 		startContentLine(document, req, resp, contentColumns, "center", null);
 		document.h1__(title);
 		endContentLine(document, req, resp, 1, false);
@@ -514,10 +514,10 @@ public class TextOnlyLayout extends WebPageLayout {
 	 */
 	@Override
 	// TODO: Return value to be passed on to other methods
-	public void startContentLine(Document document, WebSiteRequest req, HttpServletResponse resp, int colspan, String align, String width) throws IOException {
+	public void startContentLine(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int colspan, String align, String width) throws IOException {
 		String align_ = trimNullIfEmpty(align);
 		String width_ = trimNullIfEmpty(width);
-		TD<TR_c<Document>> td = document.tr_c()
+		TD<DocumentEE, TR_c<DocumentEE, DocumentEE>> td = document.tr_c()
 			.td();
 			if(align_ != null || width_ != null) {
 				td.style(style -> {
@@ -539,7 +539,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	 */
 	// TODO: Accept and return value to be passed on to other methods
 	@Override
-	public void printContentVerticalDivider(Document document, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align, String width) throws IOException {
+	public void printContentVerticalDivider(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align, String width) throws IOException {
 		String align_ = trimNullIfEmpty(align);
 		String width_ = trimNullIfEmpty(width);
 		document.out.write("    </td>\n");
@@ -551,7 +551,7 @@ public class TextOnlyLayout extends WebPageLayout {
 				break;
 			default: throw new IllegalArgumentException("Unknown direction: " + direction);
 		}
-		TD<Document> td = document.td();
+		TD<DocumentEE, DocumentEE> td = document.td();
 		if(align_ != null || width_ != null) {
 			td.style(style -> {
 				if(align_ != null) {
@@ -575,7 +575,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	 */
 	// TODO: Accept value from other methods
 	@Override
-	public void endContentLine(Document document, WebSiteRequest req, HttpServletResponse resp, int rowspan, boolean endsInternal) throws IOException {
+	public void endContentLine(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int rowspan, boolean endsInternal) throws IOException {
 		document.out.write("    </td>\n"
 		+ "  </tr>\n");
 	}
@@ -585,7 +585,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	 */
 	// TODO: Accept value from other methods
 	@Override
-	public void endContent(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) throws ServletException, IOException {
+	public void endContent(WebPage page, DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) throws ServletException, IOException {
 		int totalColumns=0;
 		for(int c = 0; c < contentColumnSpans.length; c++) {
 			if(c > 0) totalColumns += 1;
@@ -617,12 +617,12 @@ public class TextOnlyLayout extends WebPageLayout {
 		return null;
 	}
 
-	public <__ extends FlowContent<__>> void printLogo(WebPage page, __ td, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	public <__ extends FlowContent<DocumentEE, __>> void printLogo(WebPage page, __ td, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 	}
 
 	/**
 	 * Prints content below the related pages area on the left.
 	 */
-	public <__ extends FlowContent<__>> void printBelowRelatedPages(__ td, WebSiteRequest req) throws ServletException, IOException {
+	public <__ extends FlowContent<DocumentEE, __>> void printBelowRelatedPages(__ td, WebSiteRequest req) throws ServletException, IOException {
 	}
 }

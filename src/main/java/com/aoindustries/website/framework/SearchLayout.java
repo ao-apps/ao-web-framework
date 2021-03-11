@@ -22,8 +22,8 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.html.Document;
 import com.aoindustries.html.FlowContent;
+import com.aoindustries.html.servlet.DocumentEE;
 import com.aoindustries.lang.EmptyArrays;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
@@ -47,11 +47,11 @@ public class SearchLayout extends WebPageLayout {
 	}
 
 	@Override
-	public <__ extends FlowContent<__>> __ startPage(
+	public <__ extends FlowContent<DocumentEE, __>> __ startPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Document document,
+		DocumentEE document,
 		String onload
 	) {
 		// Do nothing
@@ -61,7 +61,7 @@ public class SearchLayout extends WebPageLayout {
 	}
 
 	@Override
-	public <__ extends FlowContent<__>> void endPage(
+	public <__ extends FlowContent<DocumentEE, __>> void endPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
@@ -71,62 +71,62 @@ public class SearchLayout extends WebPageLayout {
 	}
 
 	@Override
-	final public <__ extends FlowContent<__>> void printSearchOutput(WebPage page, __ flow, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) {
+	final public <__ extends FlowContent<DocumentEE, __>> void printSearchOutput(WebPage page, __ flow, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) {
 		throw new AssertionError("This should never be called within a search sub-request");
 	}
 
 	@Override
-	public void startContent(Document document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) {
+	public void startContent(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) {
 		// Do nothing
 	}
 	
 	@Override
-	public void printContentHorizontalDivider(Document document, WebSiteRequest req, HttpServletResponse resp, int[] colspansAndDirections, boolean endsInternal) {
+	public void printContentHorizontalDivider(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int[] colspansAndDirections, boolean endsInternal) {
 		// Do nothing
 	}
 
 	@Override
-	public void printContentTitle(Document document, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) {
+	public void printContentTitle(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) {
 		// Do nothing
 	}
 
 	@Override
-	public void startContentLine(Document document, WebSiteRequest req, HttpServletResponse resp, int colspan, String align, String width) {
+	public void startContentLine(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int colspan, String align, String width) {
 		// Do nothing
 	}
 
 	@Override
-	public void printContentVerticalDivider(Document document, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align, String width) {
+	public void printContentVerticalDivider(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align, String width) {
 		// Do nothing
 	}
 
 	@Override
-	public void endContentLine(Document document, WebSiteRequest req, HttpServletResponse resp, int rowspan, boolean endsInternal) {
+	public void endContentLine(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int rowspan, boolean endsInternal) {
 		// Do nothing
 	}
 
 	@Override
-	public void endContent(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) {
+	public void endContent(WebPage page, DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) {
 		// Do nothing
 	}
 
 	@Override
-	public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, Document document, String align, String width, boolean nowrap) {
+	public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document, String align, String width, boolean nowrap) {
 		// Do nothing
 	}
 
 	@Override
-	public void endLightArea(WebSiteRequest req, HttpServletResponse resp, Document document) {
+	public void endLightArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document) {
 		// Do nothing
 	}
 
 	@Override
-	public void beginWhiteArea(WebSiteRequest req, HttpServletResponse resp, Document document, String align, String width, boolean nowrap) {
+	public void beginWhiteArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document, String align, String width, boolean nowrap) {
 		// Do nothing
 	}
 
 	@Override
-	public void endWhiteArea(WebSiteRequest req, HttpServletResponse resp, Document document) {
+	public void endWhiteArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document) {
 		// Do nothing
 	}
 
@@ -136,12 +136,12 @@ public class SearchLayout extends WebPageLayout {
 	}
 
 	@Override
-	final public <__ extends FlowContent<__>> boolean printWebPageLayoutSelector(WebPage page, __ flow, WebSiteRequest req, HttpServletResponse resp) {
+	final public <__ extends FlowContent<DocumentEE, __>> boolean printWebPageLayoutSelector(WebPage page, __ flow, WebSiteRequest req, HttpServletResponse resp) {
 		throw new AssertionError("This should never be called within a search sub-request");
 	}
 
 	@Override
-	protected void printJavaScriptIncludes(WebSiteRequest req, HttpServletResponse resp, Document document, WebPage page) {
+	protected void printJavaScriptIncludes(WebSiteRequest req, HttpServletResponse resp, DocumentEE document, WebPage page) {
 		// Do nothing
 	}
 }

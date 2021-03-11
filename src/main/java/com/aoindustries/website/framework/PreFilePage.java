@@ -23,6 +23,7 @@
 package com.aoindustries.website.framework;
 
 import com.aoindustries.html.FlowContent;
+import com.aoindustries.html.servlet.DocumentEE;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -37,7 +38,7 @@ public abstract class PreFilePage extends FilePage {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public <__ extends FlowContent<__>> void doGet(
+	public <__ extends FlowContent<DocumentEE, __>> void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,

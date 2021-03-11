@@ -23,6 +23,7 @@
 package com.aoindustries.website.framework;
 
 import com.aoindustries.html.FlowContent;
+import com.aoindustries.html.servlet.DocumentEE;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.servlet.ServletException;
@@ -38,7 +39,7 @@ public abstract class PreProcessPage extends ProcessPage {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public <__ extends FlowContent<__>> void printStream(__ flow, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
+	public <__ extends FlowContent<DocumentEE, __>> void printStream(__ flow, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
 		flow.pre__(pre -> printStreamStatic(pre, in));
 	}
 }

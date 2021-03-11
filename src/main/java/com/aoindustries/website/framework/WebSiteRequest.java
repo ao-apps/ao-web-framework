@@ -23,6 +23,7 @@
 package com.aoindustries.website.framework;
 
 import com.aoindustries.html.FlowContent;
+import com.aoindustries.html.servlet.DocumentEE;
 import com.aoindustries.io.ContentType;
 import com.aoindustries.lang.Strings;
 import com.aoindustries.net.URIDecoder;
@@ -163,12 +164,12 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 
 	private static class MimeTypeLock {}
 	private static final MimeTypeLock mimeTypeLock=new MimeTypeLock();
-	private static Map<String,String> mimeTypes;
+	private static Map<String, String> mimeTypes;
 	// TODO: Should client-provided content-type take priority?
 	private static String getContentType(Part part, String filename) throws IOException {
 		synchronized(mimeTypeLock) {
 			if(mimeTypes==null) {
-				Map<String,String> newMap=new HashMap<>();
+				Map<String, String> newMap=new HashMap<>();
 				try (BufferedReader in = new BufferedReader(new InputStreamReader(WebSiteRequest.class.getResourceAsStream("mime.types")))) {
 					String line;
 					while((line=in.readLine())!=null) {
@@ -194,7 +195,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	}
 
 	// TODO: One ConcurrentMap per ServletContext
-	private static final Map<Identifier,UploadedFile> uploadedFiles = new HashMap<>();
+	private static final Map<Identifier, UploadedFile> uploadedFiles = new HashMap<>();
 	private Identifier getNextID() {
 		synchronized(uploadedFiles) {
 			while(true) {
@@ -829,7 +830,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	/**
 	 * Prints the hidden variables that contain all of the current settings.
 	 */
-	public <__ extends FlowContent<__>> void printFormFields(__ form) throws ServletException, IOException {
+	public <__ extends FlowContent<DocumentEE, __>> void printFormFields(__ form) throws ServletException, IOException {
 	}
 
 // Unused 2021-02-22:

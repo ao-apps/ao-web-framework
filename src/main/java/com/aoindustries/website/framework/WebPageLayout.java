@@ -22,9 +22,9 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.html.Document;
 import com.aoindustries.html.FlowContent;
 import com.aoindustries.html.attributes.Enum.Method;
+import com.aoindustries.html.servlet.DocumentEE;
 import com.aoindustries.io.function.IOConsumerE;
 import com.aoindustries.io.function.IORunnableE;
 import com.aoindustries.net.URIEncoder;
@@ -90,11 +90,11 @@ abstract public class WebPageLayout {
 	 *          This is also given to {@link #endPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.FlowContent)}
 	 *          to finish the template.
 	 */
-	abstract public <__ extends FlowContent<__>> __ startPage(
+	abstract public <__ extends FlowContent<DocumentEE, __>> __ startPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Document document,
+		DocumentEE document,
 		String onload
 	) throws ServletException, IOException;
 
@@ -103,9 +103,9 @@ abstract public class WebPageLayout {
 	 * whether the page is in a frameset or not.
 	 *
 	 * @param  flow  The {@link FlowContent} that was returned by
-	 *               {@link #startPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Document, java.lang.String)}.
+	 *               {@link #startPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE, java.lang.String)}.
 	 */
-	abstract public <__ extends FlowContent<__>> void endPage(
+	abstract public <__ extends FlowContent<DocumentEE, __>> void endPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
@@ -113,18 +113,20 @@ abstract public class WebPageLayout {
 	) throws ServletException, IOException;
 
 	/**
-	 * {@linkplain #startPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Document, java.lang.String) Starts the page},
+	 * {@linkplain #startPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE, java.lang.String) Starts the page},
 	 * invokes the given page body, then
 	 * {@linkplain #endPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.FlowContent) ends the page}.
 	 *
-	 * @see  #startPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Document, java.lang.String)
+	 * @param  <Ex>  An arbitrary exception type that may be thrown
+	 *
+	 * @see  #startPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE, java.lang.String)
 	 * @see  #endPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.FlowContent)
 	 */
-	public <__ extends FlowContent<__>, Ex extends Throwable> void doPage(
+	public <__ extends FlowContent<DocumentEE, __>, Ex extends Throwable> void doPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Document document,
+		DocumentEE document,
 		String onload,
 		IOConsumerE<? super __, Ex> body
 	) throws ServletException, IOException, Ex {
@@ -134,18 +136,20 @@ abstract public class WebPageLayout {
 	}
 
 	/**
-	 * {@linkplain #startPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Document, java.lang.String) Starts the page},
+	 * {@linkplain #startPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE, java.lang.String) Starts the page},
 	 * invokes the given page body, then
 	 * {@linkplain #endPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.FlowContent) ends the page}.
 	 *
-	 * @see  #startPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Document, java.lang.String)
+	 * @param  <Ex>  An arbitrary exception type that may be thrown
+	 *
+	 * @see  #startPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE, java.lang.String)
 	 * @see  #endPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.FlowContent)
 	 */
-	public <__ extends FlowContent<__>, Ex extends Throwable> void doPage(
+	public <__ extends FlowContent<DocumentEE, __>, Ex extends Throwable> void doPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Document document,
+		DocumentEE document,
 		String onload,
 		IORunnableE<Ex> body
 	) throws ServletException, IOException, Ex {
@@ -161,8 +165,8 @@ abstract public class WebPageLayout {
 	 *
 	 * @see WebPage#doPostWithSearch(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
-	public <__ extends FlowContent<__>> void printSearchOutput(WebPage page, __ flow, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) throws ServletException, IOException {
-		Document document = flow.getDocument();
+	public <__ extends FlowContent<DocumentEE, __>> void printSearchOutput(WebPage page, __ flow, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) throws ServletException, IOException {
+		DocumentEE document = flow.getDocument();
 		startContent(document, req, resp, 1, 600);
 		printContentTitle(document, req, resp, "Search Results", 1);
 		printContentHorizontalDivider(document, req, resp, 1, false);
@@ -242,7 +246,7 @@ abstract public class WebPageLayout {
 	 * Starts the content area of a page.
 	 */
 	// TODO: Lambda-friend variants of this and similar methods, that would call start, lambda, end
-	final public void startContent(Document document, WebSiteRequest req, HttpServletResponse resp, int contentColumns, int preferredWidth) throws ServletException, IOException {
+	final public void startContent(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int contentColumns, int preferredWidth) throws ServletException, IOException {
 		startContent(document, req, resp, new int[] {contentColumns}, preferredWidth);
 	}
 
@@ -250,58 +254,58 @@ abstract public class WebPageLayout {
 	 * Starts the content area of a page.
 	 */
 	// TODO: Return TBody<TODO> that would be used by lambda consumer
-	abstract public void startContent(Document document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) throws ServletException, IOException;
+	abstract public void startContent(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) throws ServletException, IOException;
 
 	/**
 	 * Prints a horizontal divider of the provided colspan.
 	 */
-	final public void printContentHorizontalDivider(Document document, WebSiteRequest req, HttpServletResponse resp, int colspan, boolean endsInternal) throws ServletException, IOException {
+	final public void printContentHorizontalDivider(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int colspan, boolean endsInternal) throws ServletException, IOException {
 		printContentHorizontalDivider(document, req, resp, new int[] {colspan}, endsInternal);
 	}
 
 	/**
 	 * Prints a horizontal divider of the provided colspan.
 	 */
-	abstract public void printContentHorizontalDivider(Document document, WebSiteRequest req, HttpServletResponse resp, int[] colspansAndDirections, boolean endsInternal) throws ServletException, IOException;
+	abstract public void printContentHorizontalDivider(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int[] colspansAndDirections, boolean endsInternal) throws ServletException, IOException;
 
 	/**
 	 * Prints the title of the page in one row in the content area.
 	 */
-	final public void printContentTitle(Document document, WebSiteRequest req, HttpServletResponse resp, WebPage page, int contentColumns) throws ServletException, IOException {
+	final public void printContentTitle(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, WebPage page, int contentColumns) throws ServletException, IOException {
 		printContentTitle(document, req, resp, page.getTitle(), contentColumns);
 	}
 
 	/**
 	 * Prints the title of the page in one row in the content area.
 	 */
-	abstract public void printContentTitle(Document document, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) throws ServletException, IOException;
+	abstract public void printContentTitle(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) throws ServletException, IOException;
 
 	/**
 	 * Starts one line of content with the initial colspan set to the provided colspan.
 	 */
-	abstract public void startContentLine(Document document, WebSiteRequest req, HttpServletResponse resp, int colspan, String align, String width) throws ServletException, IOException;
+	abstract public void startContentLine(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int colspan, String align, String width) throws ServletException, IOException;
 
 	/**
 	 * Ends one part of a line and starts the next.
 	 */
-	abstract public void printContentVerticalDivider(Document document, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align, String width) throws ServletException, IOException;
+	abstract public void printContentVerticalDivider(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align, String width) throws ServletException, IOException;
 
 	/**
 	 * Ends one line of content.
 	 */
-	abstract public void endContentLine(Document document, WebSiteRequest req, HttpServletResponse resp, int rowspan, boolean endsInternal) throws ServletException, IOException;
+	abstract public void endContentLine(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int rowspan, boolean endsInternal) throws ServletException, IOException;
 
 	/**
 	 * Ends the content area of a page.
 	 */
-	final public void endContent(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp, int contentColumns) throws ServletException, IOException {
+	final public void endContent(WebPage page, DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int contentColumns) throws ServletException, IOException {
 		endContent(page, document, req, resp, new int[] {contentColumns});
 	}
 
 	/**
 	 * Ends the content area of a page.
 	 */
-	abstract public void endContent(WebPage page, Document document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) throws ServletException, IOException;
+	abstract public void endContent(WebPage page, DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) throws ServletException, IOException;
 
 	/**
 	 * The background color for the page or <code>-1</code> for browser default.
@@ -341,43 +345,43 @@ abstract public class WebPageLayout {
 	/**
 	 * Begins a lighter colored area of the site.
 	 */
-	final public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, Document document) throws IOException {
+	final public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document) throws IOException {
 		beginLightArea(req, resp, document, null, null, false);
 	}
 
 	/**
 	 * Begins a lighter colored area of the site.
 	 */
-	abstract public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, Document document, String align, String width, boolean nowrap) throws IOException;
+	abstract public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document, String align, String width, boolean nowrap) throws IOException;
 
 	/**
 	 * Ends a lighter area of the site.
 	 */
-	abstract public void endLightArea(WebSiteRequest req, HttpServletResponse resp, Document document) throws IOException;
+	abstract public void endLightArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document) throws IOException;
 
 	/**
 	 * Begins an area with a white background.
 	 */
-	final public void beginWhiteArea(WebSiteRequest req, HttpServletResponse resp, Document document) throws IOException {
+	final public void beginWhiteArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document) throws IOException {
 		beginWhiteArea(req, resp, document, null, null, false);
 	}
 
 	/**
 	 * Begins a lighter colored area of the site.
 	 */
-	abstract public void beginWhiteArea(WebSiteRequest req, HttpServletResponse response, Document document, String align, String width, boolean nowrap) throws IOException;
+	abstract public void beginWhiteArea(WebSiteRequest req, HttpServletResponse response, DocumentEE document, String align, String width, boolean nowrap) throws IOException;
 
 	/**
 	 * Ends a lighter area of the site.
 	 */
-	abstract public void endWhiteArea(WebSiteRequest req, HttpServletResponse resp, Document document) throws IOException;
+	abstract public void endWhiteArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document) throws IOException;
 
 	/**
 	 * Each layout has a name.
 	 */
 	abstract public String getName();
 
-	public <__ extends FlowContent<__>> boolean printWebPageLayoutSelector(WebPage page, __ flow, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	public <__ extends FlowContent<DocumentEE, __>> boolean printWebPageLayoutSelector(WebPage page, __ flow, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		if(layoutChoices.length >= 2) {
 			flow.script().out(script -> {
 				script.indent().append("function selectLayout(layout) {").incDepth().nl();
@@ -403,7 +407,7 @@ abstract public class WebPageLayout {
 		} else return false;
 	}
 
-	protected void printJavaScriptIncludes(WebSiteRequest req, HttpServletResponse resp, Document document, WebPage page) throws ServletException, IOException {
+	protected void printJavaScriptIncludes(WebSiteRequest req, HttpServletResponse resp, DocumentEE document, WebPage page) throws ServletException, IOException {
 		Object O = page.getJavaScriptSrc(req);
 		if (O != null) {
 			if (O instanceof String[]) {

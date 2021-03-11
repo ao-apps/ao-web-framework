@@ -24,10 +24,10 @@ package com.aoindustries.website.framework;
 
 import com.aoindustries.encoding.MediaWriter;
 import com.aoindustries.html.CODE_c;
-import com.aoindustries.html.Document;
 import com.aoindustries.html.FlowContent;
 import com.aoindustries.html.PhrasingContent;
 import com.aoindustries.html.attributes.Enum.Method;
+import com.aoindustries.html.servlet.DocumentEE;
 import com.aoindustries.io.ContentType;
 import com.aoindustries.io.IoUtils;
 import com.aoindustries.lang.EmptyArrays;
@@ -149,7 +149,7 @@ abstract public class TreePage extends WebPage {
 	}
 
 	@Override
-	public <__ extends FlowContent<__>> void doGet(
+	public <__ extends FlowContent<DocumentEE, __>> void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,
@@ -259,7 +259,7 @@ abstract public class TreePage extends WebPage {
 		int scrollToX = Integer.parseInt(req.getParameter("scroll_to_x"));
 		int scrollToY = Integer.parseInt(req.getParameter("scroll_to_y"));
 
-		Document document = getDocument(req, resp);
+		DocumentEE document = getDocument(req, resp);
 		WebPageLayout layout = getWebPageLayout(req);
 		layout.doPage(
 			this,
@@ -288,7 +288,7 @@ abstract public class TreePage extends WebPage {
 	/**
 	 * Handles the interactive form of this page.
 	 */
-	private <__ extends FlowContent<__>> void handleRequest(
+	private <__ extends FlowContent<DocumentEE, __>> void handleRequest(
 		__ flow,
 		WebSiteRequest req,
 		HttpServletResponse resp,
@@ -298,7 +298,7 @@ abstract public class TreePage extends WebPage {
 		int scrollToY,
 		boolean[] opened
 	) throws ServletException, IOException {
-		Document document = flow.getDocument();
+		DocumentEE document = flow.getDocument();
 		layout.startContent(document, req, resp, 1, getPreferredContentWidth(req));
 		layout.printContentTitle(document, req, resp, this, 1);
 		layout.printContentHorizontalDivider(document, req, resp, 1, false);
@@ -499,8 +499,8 @@ abstract public class TreePage extends WebPage {
 													}
 
 													boolean useCodeFont=useCodeFont(req);
-													CODE_c<?> code;
-													PhrasingContent<?> phrasing;
+													CODE_c<?, ?> code;
+													PhrasingContent<?, ?> phrasing;
 													if (useCodeFont) {
 														code = td2.code_c();
 														phrasing = code;

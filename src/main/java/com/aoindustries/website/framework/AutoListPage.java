@@ -22,9 +22,9 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.html.Document;
 import com.aoindustries.html.FlowContent;
 import com.aoindustries.html.Union_TBODY_THEAD_TFOOT;
+import com.aoindustries.html.servlet.DocumentEE;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -44,14 +44,14 @@ abstract public class AutoListPage extends WebPage {
 	public static final int NUM_COLS = 3;
 
 	@Override
-	public <__ extends FlowContent<__>> void doGet(
+	public <__ extends FlowContent<DocumentEE, __>> void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,
 		__ flow
 	) throws ServletException, IOException {
 		if(req != null) {
-			Document document = flow.getDocument();
+			DocumentEE document = flow.getDocument();
 			layout.startContent(document, req, resp, 1, getPreferredContentWidth(req));
 			layout.printContentTitle(document, req, resp, this, 1);
 			layout.printContentHorizontalDivider(document, req, resp, 1, false);
@@ -72,7 +72,7 @@ abstract public class AutoListPage extends WebPage {
 	 */
 	@SuppressWarnings("NoopMethodInAbstractClass")
 	public void printContentStart(
-		Document document,
+		DocumentEE document,
 		WebSiteRequest req,
 		HttpServletResponse resp
 	) throws ServletException, IOException {
@@ -81,7 +81,7 @@ abstract public class AutoListPage extends WebPage {
 	/**
 	 * Prints a list of pages.
 	 */
-	public static void printPageList(Union_TBODY_THEAD_TFOOT<?> tbody, WebSiteRequest req, HttpServletResponse resp, WebPage[] pages, WebPageLayout layout) throws ServletException, IOException {
+	public static void printPageList(Union_TBODY_THEAD_TFOOT<DocumentEE, ?> tbody, WebSiteRequest req, HttpServletResponse resp, WebPage[] pages, WebPageLayout layout) throws ServletException, IOException {
 		int len = pages.length;
 		for (int c = 0; c < len; c++) {
 			WebPage page = pages[c];
@@ -98,7 +98,7 @@ abstract public class AutoListPage extends WebPage {
 	/**
 	 * Prints an unordered list of the available pages.
 	 */
-	public static void printPageList(Union_TBODY_THEAD_TFOOT<?> tbody, WebSiteRequest req, HttpServletResponse resp, WebPage parent, WebPageLayout layout) throws ServletException, IOException {
+	public static void printPageList(Union_TBODY_THEAD_TFOOT<DocumentEE, ?> tbody, WebSiteRequest req, HttpServletResponse resp, WebPage parent, WebPageLayout layout) throws ServletException, IOException {
 		if(req != null) printPageList(tbody, req, resp, parent.getCachedChildren(req, resp), layout);
 	}
 }

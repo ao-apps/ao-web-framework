@@ -22,7 +22,7 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.html.Document;
+import com.aoindustries.html.servlet.DocumentEE;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -69,7 +69,7 @@ abstract public class AutoSiteMap extends TreePage {
 	public void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		Document document
+		DocumentEE document
 	) throws ServletException, IOException {
 		if(req != null) super.doGet(req, resp, document);
 	}

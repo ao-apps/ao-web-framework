@@ -22,9 +22,10 @@
  */
 package com.aoindustries.website.framework;
 
+import com.aoindustries.html.AnyDocument;
 import com.aoindustries.html.Content;
-import com.aoindustries.html.Document;
 import com.aoindustries.html.FlowContent;
+import com.aoindustries.html.servlet.DocumentEE;
 import com.aoindustries.io.IoUtils;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,7 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Reads everything from an input stream and puts it into a page.
- * The input stream must be encoded as {@link Document#ENCODING}.
+ * The input stream must be encoded as {@link AnyDocument#ENCODING}.
  *
  * @author  AO Industries, Inc.
  */
@@ -43,13 +44,13 @@ abstract public class InputStreamPage extends WebPage {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public <__ extends FlowContent<__>> void doGet(
+	public <__ extends FlowContent<DocumentEE, __>> void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,
 		__ flow
 	) throws ServletException, IOException {
-		Document document = flow.getDocument();
+		DocumentEE document = flow.getDocument();
 		layout.startContent(document, req, resp, 1, getPreferredContentWidth(req));
 		layout.printContentTitle(document, req, resp, this, 1);
 		layout.printContentHorizontalDivider(document, req, resp, 1, false);
@@ -66,11 +67,11 @@ abstract public class InputStreamPage extends WebPage {
 	 */
 	public abstract InputStream getInputStream() throws IOException;
 
-	public <__ extends FlowContent<__>> void printStream(__ flow, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
+	public <__ extends FlowContent<DocumentEE, __>> void printStream(__ flow, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
 		printStreamStatic(flow, in);
 	}
 
-	public static void printStreamStatic(Content<?> content, InputStream in) throws IOException {
-		IoUtils.copy(new InputStreamReader(in, Document.ENCODING), content.getDocument().out);
+	public static void printStreamStatic(Content<DocumentEE, ?> content, InputStream in) throws IOException {
+		IoUtils.copy(new InputStreamReader(in, AnyDocument.ENCODING), content.getDocument().out);
 	}
 }

@@ -23,8 +23,8 @@
 package com.aoindustries.website.framework;
 
 import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
-import com.aoindustries.html.Document;
 import com.aoindustries.html.FlowContent;
+import com.aoindustries.html.servlet.DocumentEE;
 import com.aoindustries.io.IoUtils;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,7 +46,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public <__ extends FlowContent<__>> void printStream(__ flow, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
+	public <__ extends FlowContent<DocumentEE, __>> void printStream(__ flow, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
 		printHTMLStream(flow, req, resp, getWebPageLayout(req), in, "aoLightLink");
 	}
 
@@ -69,16 +69,16 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 	 * Prints HTML content, parsing for special <code>@</code> tags.  Types of tags include:
 	 * <ul>
 	 *   <li>@URL(classname)    Loads a WebPage of the given class and builds a URL to it</li>
-	 *   <li>@BEGIN_LIGHT_AREA  Calls {@link WebPageLayout#beginLightArea(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Document)}</li>
-	 *   <li>@END_LIGHT_AREA    Calls {@link WebPageLayout#endLightArea(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.Document)}</li>
-	 *   <li>@END_CONTENT_LINE  Calls {@link WebPageLayout#endContentLine(com.aoindustries.html.Document, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, int, boolean)}</li>
-	 *   <li>@PRINT_CONTENT_HORIZONTAL_DIVIDER  Calls {@link WebPageLayout#printContentHorizontalDivider(com.aoindustries.html.Document, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, int, boolean)}</li>
-	 *   <li>@START_CONTENT_LINE  Calls {@link WebPageLayout#startContentLine(com.aoindustries.html.Document, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, int, java.lang.String, java.lang.String)}</li>
+	 *   <li>@BEGIN_LIGHT_AREA  Calls {@link WebPageLayout#beginLightArea(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE)}</li>
+	 *   <li>@END_LIGHT_AREA    Calls {@link WebPageLayout#endLightArea(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE)}</li>
+	 *   <li>@END_CONTENT_LINE  Calls {@link WebPageLayout#endContentLine(com.aoindustries.html.servlet.DocumentEE, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, int, boolean)}</li>
+	 *   <li>@PRINT_CONTENT_HORIZONTAL_DIVIDER  Calls {@link WebPageLayout#printContentHorizontalDivider(com.aoindustries.html.servlet.DocumentEE, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, int, boolean)}</li>
+	 *   <li>@START_CONTENT_LINE  Calls {@link WebPageLayout#startContentLine(com.aoindustries.html.servlet.DocumentEE, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, int, java.lang.String, java.lang.String)}</li>
 	 *   <li>@LINK_CLASS        The preferred link class for this element</li>
 	 * </ul>
 	 */
-	public static <__ extends FlowContent<__>> void printHTML(__ flow, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, String htmlContent, String linkClass) throws ServletException, IOException {
-		Document document = flow.getDocument();
+	public static <__ extends FlowContent<DocumentEE, __>> void printHTML(__ flow, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, String htmlContent, String linkClass) throws ServletException, IOException {
+		DocumentEE document = flow.getDocument();
 		if(req == null) {
 			document.out.write(htmlContent);
 		} else {
@@ -135,9 +135,9 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 	/**
 	 * @see  #printHTML
 	 */
-	public static <__ extends FlowContent<__>> void printHTMLStream(__ flow, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, InputStream in, String linkClass) throws ServletException, IOException {
+	public static <__ extends FlowContent<DocumentEE, __>> void printHTMLStream(__ flow, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, InputStream in, String linkClass) throws ServletException, IOException {
 		if(in==null) throw new NullPointerException("in is null");
-		Document document = flow.getDocument();
+		DocumentEE document = flow.getDocument();
 		Reader reader = new InputStreamReader(in);
 		if(req==null) {
 			IoUtils.copy(reader, document.out);
