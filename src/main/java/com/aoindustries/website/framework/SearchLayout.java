@@ -22,8 +22,8 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.html.FlowContent;
 import com.aoindustries.html.servlet.DocumentEE;
+import com.aoindustries.html.servlet.FlowContent;
 import com.aoindustries.lang.EmptyArrays;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
@@ -47,7 +47,7 @@ public class SearchLayout extends WebPageLayout {
 	}
 
 	@Override
-	public <__ extends FlowContent<DocumentEE, __>> __ startPage(
+	public <__ extends FlowContent<__>> __ startPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
@@ -61,7 +61,7 @@ public class SearchLayout extends WebPageLayout {
 	}
 
 	@Override
-	public <__ extends FlowContent<DocumentEE, __>> void endPage(
+	public <__ extends FlowContent<__>> void endPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
@@ -71,7 +71,7 @@ public class SearchLayout extends WebPageLayout {
 	}
 
 	@Override
-	final public <__ extends FlowContent<DocumentEE, __>> void printSearchOutput(WebPage page, __ flow, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) {
+	final public <__ extends FlowContent<__>> void printSearchOutput(WebPage page, __ flow, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) {
 		throw new AssertionError("This should never be called within a search sub-request");
 	}
 
@@ -136,7 +136,7 @@ public class SearchLayout extends WebPageLayout {
 	}
 
 	@Override
-	final public <__ extends FlowContent<DocumentEE, __>> boolean printWebPageLayoutSelector(WebPage page, __ flow, WebSiteRequest req, HttpServletResponse resp) {
+	final public <__ extends FlowContent<__>> boolean printWebPageLayoutSelector(WebPage page, __ flow, WebSiteRequest req, HttpServletResponse resp) {
 		throw new AssertionError("This should never be called within a search sub-request");
 	}
 

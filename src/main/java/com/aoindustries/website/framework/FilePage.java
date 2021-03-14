@@ -22,9 +22,8 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.html.Content;
-import com.aoindustries.html.FlowContent;
-import com.aoindustries.html.servlet.DocumentEE;
+import com.aoindustries.html.any.Content;
+import com.aoindustries.html.servlet.FlowContent;
 import com.aoindustries.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +40,7 @@ abstract public class FilePage extends WebPage {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public <__ extends FlowContent<DocumentEE, __>> void doGet(
+	public <__ extends FlowContent<__>> void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,
@@ -65,6 +64,6 @@ abstract public class FilePage extends WebPage {
 	}
 
 	public static void printFile(Content<?, ?> content, File file) throws IOException {
-		FileUtils.copy(file, content.getDocument().out);
+		FileUtils.copy(file, content.getUnsafe());
 	}
 }

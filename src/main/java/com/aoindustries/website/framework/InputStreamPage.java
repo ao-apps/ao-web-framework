@@ -22,10 +22,10 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.html.AnyDocument;
-import com.aoindustries.html.Content;
-import com.aoindustries.html.FlowContent;
+import com.aoindustries.html.any.AnyDocument;
+import com.aoindustries.html.any.Content;
 import com.aoindustries.html.servlet.DocumentEE;
+import com.aoindustries.html.servlet.FlowContent;
 import com.aoindustries.io.IoUtils;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,7 +44,7 @@ abstract public class InputStreamPage extends WebPage {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public <__ extends FlowContent<DocumentEE, __>> void doGet(
+	public <__ extends FlowContent<__>> void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,
@@ -67,11 +67,11 @@ abstract public class InputStreamPage extends WebPage {
 	 */
 	public abstract InputStream getInputStream() throws IOException;
 
-	public <__ extends FlowContent<DocumentEE, __>> void printStream(__ flow, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
+	public <__ extends FlowContent<__>> void printStream(__ flow, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
 		printStreamStatic(flow, in);
 	}
 
-	public static void printStreamStatic(Content<DocumentEE, ?> content, InputStream in) throws IOException {
-		IoUtils.copy(new InputStreamReader(in, AnyDocument.ENCODING), content.getDocument().out);
+	public static void printStreamStatic(Content<?, ?> content, InputStream in) throws IOException {
+		IoUtils.copy(new InputStreamReader(in, AnyDocument.ENCODING), content.getUnsafe());
 	}
 }

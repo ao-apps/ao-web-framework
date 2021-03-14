@@ -23,11 +23,11 @@
 package com.aoindustries.website.framework;
 
 import com.aoindustries.encoding.MediaWriter;
-import com.aoindustries.html.CODE_c;
-import com.aoindustries.html.FlowContent;
-import com.aoindustries.html.PhrasingContent;
-import com.aoindustries.html.attributes.Enum.Method;
+import com.aoindustries.html.any.attributes.Enum.Method;
+import com.aoindustries.html.servlet.CODE_c;
 import com.aoindustries.html.servlet.DocumentEE;
+import com.aoindustries.html.servlet.FlowContent;
+import com.aoindustries.html.servlet.PhrasingContent;
 import com.aoindustries.io.ContentType;
 import com.aoindustries.io.IoUtils;
 import com.aoindustries.lang.EmptyArrays;
@@ -149,7 +149,7 @@ abstract public class TreePage extends WebPage {
 	}
 
 	@Override
-	public <__ extends FlowContent<DocumentEE, __>> void doGet(
+	public <__ extends FlowContent<__>> void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,
@@ -288,7 +288,7 @@ abstract public class TreePage extends WebPage {
 	/**
 	 * Handles the interactive form of this page.
 	 */
-	private <__ extends FlowContent<DocumentEE, __>> void handleRequest(
+	private <__ extends FlowContent<__>> void handleRequest(
 		__ flow,
 		WebSiteRequest req,
 		HttpServletResponse resp,
@@ -499,8 +499,8 @@ abstract public class TreePage extends WebPage {
 													}
 
 													boolean useCodeFont=useCodeFont(req);
-													CODE_c<?, ?> code;
-													PhrasingContent<?, ?> phrasing;
+													CODE_c<?> code;
+													PhrasingContent<?> phrasing;
 													if (useCodeFont) {
 														code = td2.code_c();
 														phrasing = code;

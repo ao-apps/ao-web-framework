@@ -22,9 +22,9 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.html.FlowContent;
-import com.aoindustries.html.PhrasingContent;
 import com.aoindustries.html.servlet.DocumentEE;
+import com.aoindustries.html.servlet.FlowContent;
+import com.aoindustries.html.servlet.PhrasingContent;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.util.HashSet;
@@ -44,7 +44,7 @@ abstract public class DumpURLs extends WebPage {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public <__ extends FlowContent<DocumentEE, __>> void doGet(
+	public <__ extends FlowContent<__>> void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,
@@ -100,7 +100,7 @@ abstract public class DumpURLs extends WebPage {
 		return "List URLs";
 	}
 
-	private void printURLs(WebSiteRequest req, HttpServletResponse resp, PhrasingContent<DocumentEE, ?> pre, WebPage page, Set<WebPage> finishedPages) throws ServletException, IOException {
+	private void printURLs(WebSiteRequest req, HttpServletResponse resp, PhrasingContent<?> pre, WebPage page, Set<WebPage> finishedPages) throws ServletException, IOException {
 		boolean doNl = !finishedPages.isEmpty();
 		if(finishedPages.add(page)) {
 			if(doNl) pre.nl();

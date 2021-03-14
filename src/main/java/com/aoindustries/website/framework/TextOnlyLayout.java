@@ -25,22 +25,22 @@ package com.aoindustries.website.framework;
 import com.aoindustries.encoding.ChainWriter;
 import com.aoindustries.encoding.Doctype;
 import static com.aoindustries.encoding.JavaScriptInXhtmlAttributeEncoder.encodeJavaScriptInXhtmlAttribute;
-import com.aoindustries.html.FlowContent;
-import com.aoindustries.html.LINK;
-import com.aoindustries.html.META;
-import com.aoindustries.html.SCRIPT;
-import com.aoindustries.html.STYLE;
-import com.aoindustries.html.TABLE;
-import com.aoindustries.html.TABLE_c;
-import com.aoindustries.html.TD;
-import com.aoindustries.html.TD_c;
-import com.aoindustries.html.TR_c;
-import com.aoindustries.html.attributes.Enum.Method;
+import com.aoindustries.html.any.AnyLINK;
+import com.aoindustries.html.any.AnyMETA;
+import com.aoindustries.html.any.AnySCRIPT;
+import com.aoindustries.html.any.AnySTYLE;
+import com.aoindustries.html.any.attributes.Enum.Method;
 import com.aoindustries.html.servlet.DocumentEE;
+import com.aoindustries.html.servlet.FlowContent;
+import com.aoindustries.html.servlet.HTML_c;
+import com.aoindustries.html.servlet.TABLE;
+import com.aoindustries.html.servlet.TABLE_c;
+import com.aoindustries.html.servlet.TD;
+import com.aoindustries.html.servlet.TD_c;
+import com.aoindustries.html.servlet.TR_c;
 import com.aoindustries.html.util.GoogleAnalytics;
 import static com.aoindustries.lang.Strings.trimNullIfEmpty;
 import static com.aoindustries.taglib.AttributeUtils.appendWidthStyle;
-import com.aoindustries.taglib.GlobalAttributes;
 import com.aoindustries.taglib.HtmlTag;
 import com.aoindustries.web.resources.registry.Group;
 import com.aoindustries.web.resources.registry.Registry;
@@ -157,7 +157,7 @@ public class TextOnlyLayout extends WebPageLayout {
 
 	@Override
 	@SuppressWarnings("deprecation")
-	public <__ extends FlowContent<DocumentEE, __>> __ startPage(
+	public <__ extends FlowContent<__>> __ startPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
@@ -168,23 +168,24 @@ public class TextOnlyLayout extends WebPageLayout {
 		ServletContext servletContext = req.getServletContext();
 		String trackingId = getGoogleAnalyticsNewTrackingCode(servletContext);
 		// Write doctype
-		document.xmlDeclaration(resp.getCharacterEncoding());
+		document.xmlDeclaration();
 		document.doctype();
 		// Write <html>
-		HtmlTag.beginHtmlTag(resp, document.out, document.serialization, (GlobalAttributes)null); document.out.write("\n"
-		+ "  <head>\n");
+		//new Document(new StringWriter()).html().la
+		HTML_c<DocumentEE> html_c = document.html().lang()._c();
+		document.out.write("  <head>\n");
 		// If this is not the default layout, then robots noindex
 		if(!isOkResponseStatus || !getName().equals(getLayoutChoices()[0])) {
-			document.meta(META.Name.ROBOTS).content("noindex, nofollow").__();
+			document.meta(AnyMETA.Name.ROBOTS).content("noindex, nofollow").__();
 		}
 		if(document.doctype == Doctype.HTML5) {
 			document.meta().charset(resp.getCharacterEncoding()).__();
 		} else {
 			document
-				.meta(META.HttpEquiv.CONTENT_TYPE).content(resp.getContentType()).__()
+				.meta(AnyMETA.HttpEquiv.CONTENT_TYPE).content(resp.getContentType()).__()
 				// Default style language
-				.meta(META.HttpEquiv.CONTENT_STYLE_TYPE).content(STYLE.Type.TEXT_CSS).__()
-				.meta(META.HttpEquiv.CONTENT_SCRIPT_TYPE).content(SCRIPT.Type.TEXT_JAVASCRIPT).__();
+				.meta(AnyMETA.HttpEquiv.CONTENT_STYLE_TYPE).content(AnySTYLE.Type.TEXT_CSS).__()
+				.meta(AnyMETA.HttpEquiv.CONTENT_SCRIPT_TYPE).content(AnySCRIPT.Type.TEXT_JAVASCRIPT).__();
 		}
 		if(document.doctype == Doctype.HTML5) {
 			GoogleAnalytics.writeGlobalSiteTag(document, trackingId);
@@ -193,20 +194,20 @@ public class TextOnlyLayout extends WebPageLayout {
 		}
 		// Mobile support
 		document
-			.meta(META.Name.VIEWPORT).content("width=device-width, initial-scale=1.0").__()
+			.meta(AnyMETA.Name.VIEWPORT).content("width=device-width, initial-scale=1.0").__()
 			// TODO: This is probably only appropriate for single-page applications!
 			//       See https://medium.com/@firt/dont-use-ios-web-app-meta-tag-irresponsibly-in-your-progressive-web-apps-85d70f4438cb
-			.meta(META.Name.APPLE_MOBILE_WEB_APP_CAPABLE).content("yes").__()
-			.meta(META.Name.APPLE_MOBILE_WEB_APP_STATUS_BAR_STYLE).content("black").__();
+			.meta(AnyMETA.Name.APPLE_MOBILE_WEB_APP_CAPABLE).content("yes").__()
+			.meta(AnyMETA.Name.APPLE_MOBILE_WEB_APP_STATUS_BAR_STYLE).content("black").__();
 		// Authors
 		// TODO: dcterms copyright
 		String author = page.getAuthor();
 		if(author != null && !(author = author.trim()).isEmpty()) {
-			document.meta(META.Name.AUTHOR).content(author).__();
+			document.meta(AnyMETA.Name.AUTHOR).content(author).__();
 		}
 		String authorHref = page.getAuthorHref(req, resp);
 		if(authorHref != null && !(authorHref = authorHref.trim()).isEmpty()) {
-			document.link(LINK.Rel.AUTHOR).href(authorHref).__();
+			document.link(AnyLINK.Rel.AUTHOR).href(authorHref).__();
 		}
 		document.out.write("    <title>");
 		// No more page stack, just show current page only
@@ -227,11 +228,11 @@ public class TextOnlyLayout extends WebPageLayout {
 		document.out.write("</title>\n");
 		String description = page.getDescription();
 		if(description != null && !(description = description.trim()).isEmpty()) {
-			document.meta(META.Name.DESCRIPTION).content(description).__();
+			document.meta(AnyMETA.Name.DESCRIPTION).content(description).__();
 		}
 		String keywords = page.getKeywords();
 		if(keywords != null && !(keywords = keywords.trim()).isEmpty()) {
-			document.meta(META.Name.KEYWORDS).content(keywords).__();
+			document.meta(AnyMETA.Name.KEYWORDS).content(keywords).__();
 		}
 		// TODO: Review HTML 4/HTML 5 differences from here
 		String copyright = page.getCopyright(req, resp, page);
@@ -300,7 +301,7 @@ public class TextOnlyLayout extends WebPageLayout {
 			document.out.write("    onload=\""); encodeJavaScriptInXhtmlAttribute(onload, document.out); document.out.write("\"\n");
 		}
 		document.out.write("  >\n");
-		TD_c<DocumentEE, TR_c<DocumentEE, TABLE_c<DocumentEE, DocumentEE>>> tdc = document.table().cellspacing(10).cellpadding(0)._c()
+		TD_c<TR_c<TABLE_c<DocumentEE>>> tdc = document.table().cellspacing(10).cellpadding(0)._c()
 			.tr_c()
 				.td().attribute("valign", "top").__(td -> {
 					printLogo(page, td, req, resp);
@@ -432,14 +433,14 @@ public class TextOnlyLayout extends WebPageLayout {
 	}
 
 	@Override
-	public <__ extends FlowContent<DocumentEE, __>> void endPage(
+	public <__ extends FlowContent<__>> void endPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		__ flow
 	) throws ServletException, IOException {
 		@SuppressWarnings("unchecked")
-		TD_c<DocumentEE, TR_c<DocumentEE, TABLE_c<DocumentEE, DocumentEE>>> tdc = (TD_c<DocumentEE, TR_c<DocumentEE, TABLE_c<DocumentEE, DocumentEE>>>)flow;
+		TD_c<TR_c<TABLE_c<DocumentEE>>> tdc = (TD_c<TR_c<TABLE_c<DocumentEE>>>)flow;
 		DocumentEE document =
 				tdc.__()
 			.__()
@@ -454,7 +455,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	@Override
 	// TODO: Return value to be passed on to other methods
 	public void startContent(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) throws IOException {
-		TABLE<DocumentEE, DocumentEE> table = document.table().cellpadding(0).cellspacing(0);
+		TABLE<DocumentEE> table = document.table().cellpadding(0).cellspacing(0);
 		if(preferredWidth != -1) {
 			table.style(style -> style.append("width:").append(Integer.toString(preferredWidth)).append("px"));
 		}
@@ -517,7 +518,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	public void startContentLine(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int colspan, String align, String width) throws IOException {
 		String align_ = trimNullIfEmpty(align);
 		String width_ = trimNullIfEmpty(width);
-		TD<DocumentEE, TR_c<DocumentEE, DocumentEE>> td = document.tr_c()
+		TD<TR_c<DocumentEE>> td = document.tr_c()
 			.td();
 			if(align_ != null || width_ != null) {
 				td.style(style -> {
@@ -551,7 +552,7 @@ public class TextOnlyLayout extends WebPageLayout {
 				break;
 			default: throw new IllegalArgumentException("Unknown direction: " + direction);
 		}
-		TD<DocumentEE, DocumentEE> td = document.td();
+		TD<DocumentEE> td = document.td();
 		if(align_ != null || width_ != null) {
 			td.style(style -> {
 				if(align_ != null) {
@@ -617,12 +618,12 @@ public class TextOnlyLayout extends WebPageLayout {
 		return null;
 	}
 
-	public <__ extends FlowContent<DocumentEE, __>> void printLogo(WebPage page, __ td, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	public <__ extends FlowContent<__>> void printLogo(WebPage page, __ td, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 	}
 
 	/**
 	 * Prints content below the related pages area on the left.
 	 */
-	public <__ extends FlowContent<DocumentEE, __>> void printBelowRelatedPages(__ td, WebSiteRequest req) throws ServletException, IOException {
+	public <__ extends FlowContent<__>> void printBelowRelatedPages(__ td, WebSiteRequest req) throws ServletException, IOException {
 	}
 }

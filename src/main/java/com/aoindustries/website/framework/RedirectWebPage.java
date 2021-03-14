@@ -22,8 +22,8 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.html.FlowContent;
 import com.aoindustries.html.servlet.DocumentEE;
+import com.aoindustries.html.servlet.FlowContent;
 import java.io.IOException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -91,7 +91,7 @@ public class RedirectWebPage extends WebPage {
 	 * Never do GET, redirect-only.
 	 */
 	@Override
-	final public <__ extends FlowContent<DocumentEE, __>> void doGet(
+	final public <__ extends FlowContent<__>> void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,
@@ -117,7 +117,7 @@ public class RedirectWebPage extends WebPage {
 	 * Never do POST, redirect-only.
 	 */
 	@Override
-	final public <__ extends FlowContent<DocumentEE, __>> void doPost(
+	final public <__ extends FlowContent<__>> void doPost(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,

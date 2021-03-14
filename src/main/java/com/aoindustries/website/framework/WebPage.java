@@ -29,10 +29,10 @@ import com.aoindustries.encoding.WhitespaceWriter;
 import com.aoindustries.encoding.servlet.DoctypeEE;
 import com.aoindustries.encoding.servlet.EncodingContextEE;
 import com.aoindustries.encoding.servlet.SerializationEE;
-import com.aoindustries.html.AnyDocument;
-import com.aoindustries.html.Content;
-import com.aoindustries.html.FlowContent;
+import com.aoindustries.html.any.AnyDocument;
+import com.aoindustries.html.any.Content;
 import com.aoindustries.html.servlet.DocumentEE;
+import com.aoindustries.html.servlet.FlowContent;
 import com.aoindustries.lang.Strings;
 import com.aoindustries.net.EmptyURIParameters;
 import com.aoindustries.net.URIParameters;
@@ -590,7 +590,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
-	 * The layout is automatically applied to the page, then {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.website.framework.WebPageLayout, com.aoindustries.html.FlowContent)}
+	 * The layout is automatically applied to the page, then {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.website.framework.WebPageLayout, com.aoindustries.html.servlet.FlowContent)}
 	 * is called.  To not have the layout automatically applied, override this method.
 	 * By the time this method is called, security checks, authentication, redirects, doctype, and serialization have been done.
 	 *
@@ -601,7 +601,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 * @see #getWebPageLayout(com.aoindustries.website.framework.WebSiteRequest)
 	 * @see WebPageLayout#doPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE, java.lang.String, com.aoindustries.io.function.IOConsumerE)
-	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.website.framework.WebPageLayout, com.aoindustries.html.FlowContent)
+	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.website.framework.WebPageLayout, com.aoindustries.html.servlet.FlowContent)
 	 */
 	// TODO: We could have a NullHtmlWriter that does not write any HTML tags or attributes, but just the text body.
 	//       Then there could be a search-specific request object, instead of null, which is used during searches.
@@ -628,7 +628,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE)
 	 */
 	@SuppressWarnings("NoopMethodInAbstractClass")
-	public <__ extends FlowContent<DocumentEE, __>> void doGet(
+	public <__ extends FlowContent<__>> void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,
@@ -811,7 +811,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
-	 * The layout is automatically applied to the page, then {@link #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.website.framework.WebPageLayout, com.aoindustries.html.FlowContent)}
+	 * The layout is automatically applied to the page, then {@link #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.website.framework.WebPageLayout, com.aoindustries.html.servlet.FlowContent)}
 	 * is called.  To not have the layout automatically applied, override this method.
 	 * By the time this method is called, security checks, authentication, redirects, doctype, and serialization have been done.
 	 *
@@ -822,7 +822,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 * @see #getWebPageLayout(com.aoindustries.website.framework.WebSiteRequest)
 	 * @see WebPageLayout#doPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE, java.lang.String, com.aoindustries.io.function.IOConsumerE)
-	 * @see #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.website.framework.WebPageLayout, com.aoindustries.html.FlowContent)
+	 * @see #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.website.framework.WebPageLayout, com.aoindustries.html.servlet.FlowContent)
 	 */
 	public void doPost(
 		WebSiteRequest req,
@@ -834,7 +834,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
-	 * By default, a POST request just calls {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.website.framework.WebPageLayout, com.aoindustries.html.FlowContent)}.
+	 * By default, a POST request just calls {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.website.framework.WebPageLayout, com.aoindustries.html.servlet.FlowContent)}.
 	 *
 	 * @param  req     the current {@link WebSiteRequest}
 	 * @param  resp    the {@link HttpServletResponse} for this request
@@ -842,9 +842,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @param  flow    the {@link FlowContent} to send output to
 	 *
 	 * @see #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE)
-	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.website.framework.WebPageLayout, com.aoindustries.html.FlowContent)
+	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.website.framework.WebPageLayout, com.aoindustries.html.servlet.FlowContent)
 	 */
-	public <__ extends FlowContent<DocumentEE, __>> void doPost(
+	public <__ extends FlowContent<__>> void doPost(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,

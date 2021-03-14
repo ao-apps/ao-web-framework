@@ -22,8 +22,7 @@
  */
 package com.aoindustries.website.framework;
 
-import com.aoindustries.html.FlowContent;
-import com.aoindustries.html.servlet.DocumentEE;
+import com.aoindustries.html.servlet.FlowContent;
 import com.aoindustries.io.ContentType;
 import com.aoindustries.lang.Strings;
 import com.aoindustries.net.URIDecoder;
@@ -830,7 +829,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	/**
 	 * Prints the hidden variables that contain all of the current settings.
 	 */
-	public <__ extends FlowContent<DocumentEE, __>> void printFormFields(__ form) throws ServletException, IOException {
+	public <__ extends FlowContent<__>> void printFormFields(__ form) throws ServletException, IOException {
 	}
 
 // Unused 2021-02-22:
