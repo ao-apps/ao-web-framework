@@ -24,12 +24,13 @@ package com.aoindustries.website.framework;
 
 import com.aoindustries.encoding.ChainWriter;
 import com.aoindustries.encoding.Doctype;
-import static com.aoindustries.encoding.JavaScriptInXhtmlAttributeEncoder.encodeJavaScriptInXhtmlAttribute;
 import com.aoindustries.html.any.AnyLINK;
 import com.aoindustries.html.any.AnyMETA;
 import com.aoindustries.html.any.AnySCRIPT;
 import com.aoindustries.html.any.AnySTYLE;
 import com.aoindustries.html.any.attributes.Enum.Method;
+import com.aoindustries.html.servlet.BODY;
+import com.aoindustries.html.servlet.BODY_c;
 import com.aoindustries.html.servlet.DocumentEE;
 import com.aoindustries.html.servlet.FlowContent;
 import com.aoindustries.html.servlet.HTML_c;
@@ -41,7 +42,6 @@ import com.aoindustries.html.servlet.TR_c;
 import com.aoindustries.html.util.GoogleAnalytics;
 import static com.aoindustries.lang.Strings.trimNullIfEmpty;
 import static com.aoindustries.taglib.AttributeUtils.appendWidthStyle;
-import com.aoindustries.taglib.HtmlTag;
 import com.aoindustries.web.resources.registry.Group;
 import com.aoindustries.web.resources.registry.Registry;
 import com.aoindustries.web.resources.registry.Style;
@@ -156,7 +156,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
+	// TODO: uncomment once only expected deprecated remains: @SuppressWarnings("deprecation")
 	public <__ extends FlowContent<__>> __ startPage(
 		WebPage page,
 		WebSiteRequest req,
@@ -171,137 +171,126 @@ public class TextOnlyLayout extends WebPageLayout {
 		document.xmlDeclaration();
 		document.doctype();
 		// Write <html>
-		//new Document(new StringWriter()).html().la
 		HTML_c<DocumentEE> html_c = document.html().lang()._c();
-		document.out.write("  <head>\n");
-		// If this is not the default layout, then robots noindex
-		if(!isOkResponseStatus || !getName().equals(getLayoutChoices()[0])) {
-			document.meta(AnyMETA.Name.ROBOTS).content("noindex, nofollow").__();
-		}
-		if(document.doctype == Doctype.HTML5) {
-			document.meta().charset(resp.getCharacterEncoding()).__();
-		} else {
-			document
-				.meta(AnyMETA.HttpEquiv.CONTENT_TYPE).content(resp.getContentType()).__()
-				// Default style language
-				.meta(AnyMETA.HttpEquiv.CONTENT_STYLE_TYPE).content(AnySTYLE.Type.TEXT_CSS).__()
-				.meta(AnyMETA.HttpEquiv.CONTENT_SCRIPT_TYPE).content(AnySCRIPT.Type.TEXT_JAVASCRIPT).__();
-		}
-		if(document.doctype == Doctype.HTML5) {
-			GoogleAnalytics.writeGlobalSiteTag(document, trackingId);
-		} else {
-			GoogleAnalytics.writeAnalyticsJs(document, trackingId);
-		}
-		// Mobile support
-		document
-			.meta(AnyMETA.Name.VIEWPORT).content("width=device-width, initial-scale=1.0").__()
-			// TODO: This is probably only appropriate for single-page applications!
-			//       See https://medium.com/@firt/dont-use-ios-web-app-meta-tag-irresponsibly-in-your-progressive-web-apps-85d70f4438cb
-			.meta(AnyMETA.Name.APPLE_MOBILE_WEB_APP_CAPABLE).content("yes").__()
-			.meta(AnyMETA.Name.APPLE_MOBILE_WEB_APP_STATUS_BAR_STYLE).content("black").__();
-		// Authors
-		// TODO: dcterms copyright
-		String author = page.getAuthor();
-		if(author != null && !(author = author.trim()).isEmpty()) {
-			document.meta(AnyMETA.Name.AUTHOR).content(author).__();
-		}
-		String authorHref = page.getAuthorHref(req, resp);
-		if(authorHref != null && !(authorHref = authorHref.trim()).isEmpty()) {
-			document.link(AnyLINK.Rel.AUTHOR).href(authorHref).__();
-		}
-		document.out.write("    <title>");
-		// No more page stack, just show current page only
-		document.text(page.getTitle());
-		/*
-		List<WebPage> parents=new ArrayList<>();
-		WebPage parent=page;
-		while(parent!=null) {
-			if(parent.showInLocationPath(req)) parents.add(parent);
-			parent=parent.getParent();
-		}
-		for(int c=(parents.size()-1);c>=0;c--) {
-			if(c<(parents.size()-1)) html.out.write(" - ");
-			parent=parents.get(c);
-			encodeTextInXhtml(parent.getTitle(), html.out); // Encode directly, since doesn't support Markup
-		}
-		*/
-		document.out.write("</title>\n");
-		String description = page.getDescription();
-		if(description != null && !(description = description.trim()).isEmpty()) {
-			document.meta(AnyMETA.Name.DESCRIPTION).content(description).__();
-		}
-		String keywords = page.getKeywords();
-		if(keywords != null && !(keywords = keywords.trim()).isEmpty()) {
-			document.meta(AnyMETA.Name.KEYWORDS).content(keywords).__();
-		}
-		// TODO: Review HTML 4/HTML 5 differences from here
-		String copyright = page.getCopyright(req, resp, page);
-		if(copyright != null && !(copyright = copyright.trim()).isEmpty()) {
-			// TODO: Dublin Core: https://stackoverflow.com/questions/6665312/is-the-copyright-meta-tag-valid-in-html5
-			document.meta().name("copyright").content(copyright).__();
-		}
+		html_c.head__(head -> {
+			// If this is not the default layout, then robots noindex
+			if(!isOkResponseStatus || !getName().equals(getLayoutChoices()[0])) {
+				head.meta(AnyMETA.Name.ROBOTS).content("noindex, nofollow").__();
+			}
+			if(document.doctype == Doctype.HTML5) {
+				head.meta().charset(resp.getCharacterEncoding()).__();
+			} else {
+				head
+					.meta(AnyMETA.HttpEquiv.CONTENT_TYPE).content(resp.getContentType()).__()
+					// Default style language
+					.meta(AnyMETA.HttpEquiv.CONTENT_STYLE_TYPE).content(AnySTYLE.Type.TEXT_CSS).__()
+					.meta(AnyMETA.HttpEquiv.CONTENT_SCRIPT_TYPE).content(AnySCRIPT.Type.TEXT_JAVASCRIPT).__();
+			}
+			if(document.doctype == Doctype.HTML5) {
+				GoogleAnalytics.writeGlobalSiteTag(head, trackingId);
+			} else {
+				GoogleAnalytics.writeAnalyticsJs(head, trackingId);
+			}
+			// Mobile support
+			head
+				.meta(AnyMETA.Name.VIEWPORT).content("width=device-width, initial-scale=1.0").__()
+				// TODO: This is probably only appropriate for single-page applications!
+				//       See https://medium.com/@firt/dont-use-ios-web-app-meta-tag-irresponsibly-in-your-progressive-web-apps-85d70f4438cb
+				.meta(AnyMETA.Name.APPLE_MOBILE_WEB_APP_CAPABLE).content("yes").__()
+				.meta(AnyMETA.Name.APPLE_MOBILE_WEB_APP_STATUS_BAR_STYLE).content("black").__();
+			// Authors
+			// TODO: dcterms copyright
+			String author = page.getAuthor();
+			if(author != null && !(author = author.trim()).isEmpty()) {
+				head.meta(AnyMETA.Name.AUTHOR).content(author).__();
+			}
+			String authorHref = page.getAuthorHref(req, resp);
+			if(authorHref != null && !(authorHref = authorHref.trim()).isEmpty()) {
+				head.link(AnyLINK.Rel.AUTHOR).href(authorHref).__();
+			}
+			head.title__(
+				// No more page stack, just show current page only
+				page.getTitle()
+				/*
+				List<WebPage> parents=new ArrayList<>();
+				WebPage parent=page;
+				while(parent!=null) {
+					if(parent.showInLocationPath(req)) parents.add(parent);
+					parent=parent.getParent();
+				}
+				for(int c=(parents.size()-1);c>=0;c--) {
+					if(c<(parents.size()-1)) html.out.write(" - ");
+					parent=parents.get(c);
+					encodeTextInXhtml(parent.getTitle(), html.out); // Encode directly, since doesn't support Markup
+				}
+				*/
+			);
+			String description = page.getDescription();
+			if(description != null && !(description = description.trim()).isEmpty()) {
+				head.meta(AnyMETA.Name.DESCRIPTION).content(description).__();
+			}
+			String keywords = page.getKeywords();
+			if(keywords != null && !(keywords = keywords.trim()).isEmpty()) {
+				head.meta(AnyMETA.Name.KEYWORDS).content(keywords).__();
+			}
+			// TODO: Review HTML 4/HTML 5 differences from here
+			String copyright = page.getCopyright(req, resp, page);
+			if(copyright != null && !(copyright = copyright.trim()).isEmpty()) {
+				// TODO: Dublin Core: https://stackoverflow.com/questions/6665312/is-the-copyright-meta-tag-valid-in-html5
+				head.meta().name("copyright").content(copyright).__();
+			}
 
-		// Configure layout resources
-		Registry requestRegistry = RegistryEE.Request.get(servletContext, req);
-		configureResources(servletContext, req, resp, page, requestRegistry);
-		// Configure page resources
-		Registry pageRegistry = RegistryEE.Page.get(req);
-		if(pageRegistry == null) throw new ServletException("page-scope registry not found.  WebPage.service(ServletRequest,ServletResponse) invoked?");
-		page.configureResources(servletContext, req, resp, this, pageRegistry);
-		// Render links
-		Renderer.get(servletContext).renderStyles(
-			req,
-			resp,
-			document,
-			null, // unused
-			true, // registeredActivations
-			null, // No additional activations
-			requestRegistry, // request-scope
-			RegistryEE.Session.get(req.getSession(false)), // session-scope
-			pageRegistry
-		);
-		document.script().src(req.getEncodedURLForPath("/global.js", null, false, resp)).__();
-		printJavaScriptIncludes(req, resp, document, page);
-		// TODO: Canonical?
-		document.out.write("  </head>\n"
-		+ "  <body\n");
-		int color = getBackgroundColor(req);
-		if(color != -1) {
-			document.out.write("    bgcolor=\"");
-			ChainWriter.writeHtmlColor(color, document.out);
-			document.out.write("\"\n");
+			// Configure layout resources
+			Registry requestRegistry = RegistryEE.Request.get(servletContext, req);
+			configureResources(servletContext, req, resp, page, requestRegistry);
+			// Configure page resources
+			Registry pageRegistry = RegistryEE.Page.get(req);
+			if(pageRegistry == null) throw new ServletException("page-scope registry not found.  WebPage.service(ServletRequest,ServletResponse) invoked?");
+			page.configureResources(servletContext, req, resp, this, pageRegistry);
+			// Render links
+			Renderer.get(servletContext).renderStyles(
+				req,
+				resp,
+				head, // TODO: MetadataContent
+				null, // unused
+				true, // registeredActivations
+				null, // No additional activations
+				requestRegistry, // request-scope
+				RegistryEE.Session.get(req.getSession(false)), // session-scope
+				pageRegistry
+			);
+			head.script().src(req.getEncodedURLForPath("/global.js", null, false, resp)).__();
+			printJavaScriptIncludes(req, resp, head, page); // TODO: ScriptSupportingContent
+			// TODO: Canonical?
+		});
+		BODY<HTML_c<DocumentEE>> body = html_c.body().nl();
+		int bgcolor = getBackgroundColor(req);
+		if(bgcolor != -1) {
+			body.attribute("bgcolor", attr -> ChainWriter.writeHtmlColor(bgcolor, attr)).nl();
 		}
-		color = getTextColor(req);
-		if(color != -1) {
-			document.out.write("    text=\"");
-			ChainWriter.writeHtmlColor(color, document.out);
-			document.out.write("\"\n");
+		int text = getTextColor(req);
+		if(text != -1) {
+			body.attribute("text", attr -> ChainWriter.writeHtmlColor(text, attr)).nl();
 		}
-		color = getLinkColor(req);
-		if(color != -1) {
-			document.out.write("    link=\"");
-			ChainWriter.writeHtmlColor(color, document.out);
-			document.out.write("\"\n");
+		int link = getLinkColor(req);
+		if(link != -1) {
+			body.attribute("link", attr -> ChainWriter.writeHtmlColor(link, attr)).nl();
 		}
-		color = getVisitedLinkColor(req);
-		if(color != -1) {
-			document.out.write("    vlink=\"");
-			ChainWriter.writeHtmlColor(color, document.out);
-			document.out.write("\"\n");
+		int vlink = getVisitedLinkColor(req);
+		if(vlink != -1) {
+			body.attribute("vlink", attr -> ChainWriter.writeHtmlColor(vlink, attr)).nl();
 		}
-		color = getActiveLinkColor(req);
-		if(color != -1) {
-			document.out.write("    alink=\"");
-			ChainWriter.writeHtmlColor(color, document.out);
-			document.out.write("\"\n");
+		int alink = getActiveLinkColor(req);
+		if(alink != -1) {
+			body.attribute("alink", attr -> ChainWriter.writeHtmlColor(alink, attr)).nl();
 		}
 		// TODO: These onloads should be merged?
 		if (onload == null) onload = page.getOnloadScript(req);
 		if (onload != null) {
-			document.out.write("    onload=\""); encodeJavaScriptInXhtmlAttribute(onload, document.out); document.out.write("\"\n");
+			body.onload(onload).nl();
 		}
-		document.out.write("  >\n");
-		TD_c<TR_c<TABLE_c<DocumentEE>>> tdc = document.table().cellspacing(10).cellpadding(0)._c()
+		BODY_c<HTML_c<DocumentEE>> body_c = body._c();
+		TD_c<TR_c<TABLE_c<BODY_c<HTML_c<DocumentEE>>>>> td_c = body_c.table().cellspacing(10).cellpadding(0)._c()
 			.tr_c()
 				.td().attribute("valign", "top").__(td -> {
 					printLogo(page, td, req, resp);
@@ -407,7 +396,7 @@ public class TextOnlyLayout extends WebPageLayout {
 				.td().attribute("valign", "top")._c();
 					WebPage[] commonPages = getCommonPages(page, req);
 					if(commonPages != null && commonPages.length > 0) {
-						tdc.table().cellspacing(0).cellpadding(0).style("width:100%").__(table -> table
+						td_c.table().cellspacing(0).cellpadding(0).style("width:100%").__(table -> table
 							.tr__(tr -> {
 								for(int c = 0; c < commonPages.length; c++) {
 									if(c > 0) tr.td().style("text-align:center", "width:1%").__("|");
@@ -420,7 +409,7 @@ public class TextOnlyLayout extends WebPageLayout {
 						);
 					}
 		// TODO: Why is cast required here?
-		@SuppressWarnings("unchecked") __ flow = (__)tdc;
+		@SuppressWarnings("unchecked") __ flow = (__)td_c;
 		return flow;
 	}
 
@@ -440,13 +429,14 @@ public class TextOnlyLayout extends WebPageLayout {
 		__ flow
 	) throws ServletException, IOException {
 		@SuppressWarnings("unchecked")
-		TD_c<TR_c<TABLE_c<DocumentEE>>> tdc = (TD_c<TR_c<TABLE_c<DocumentEE>>>)flow;
-		DocumentEE document =
-				tdc.__()
+		TD_c<TR_c<TABLE_c<BODY_c<HTML_c<DocumentEE>>>>> td_c = (TD_c<TR_c<TABLE_c<BODY_c<HTML_c<DocumentEE>>>>>)flow;
+		DocumentEE document = td_c
+						.__()
+					.__()
+				.__()
 			.__()
 		.__();
-		document.out.write("  </body>\n");
-		HtmlTag.endHtmlTag(document.out); document.autoNl();
+		assert document != null : "Is fully closed back to DocumentEE";
 	}
 
 	/**

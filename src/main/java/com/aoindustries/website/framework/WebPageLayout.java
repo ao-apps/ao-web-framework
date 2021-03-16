@@ -25,6 +25,7 @@ package com.aoindustries.website.framework;
 import com.aoindustries.html.any.attributes.Enum.Method;
 import com.aoindustries.html.servlet.DocumentEE;
 import com.aoindustries.html.servlet.FlowContent;
+import com.aoindustries.html.servlet.ScriptSupportingContent;
 import com.aoindustries.io.function.IOConsumerE;
 import com.aoindustries.io.function.IORunnableE;
 import com.aoindustries.net.URIEncoder;
@@ -407,21 +408,21 @@ abstract public class WebPageLayout {
 		} else return false;
 	}
 
-	protected void printJavaScriptIncludes(WebSiteRequest req, HttpServletResponse resp, DocumentEE document, WebPage page) throws ServletException, IOException {
+	protected <__ extends ScriptSupportingContent<__>> void printJavaScriptIncludes(WebSiteRequest req, HttpServletResponse resp, __ content, WebPage page) throws ServletException, IOException {
 		Object O = page.getJavaScriptSrc(req);
 		if (O != null) {
 			if (O instanceof String[]) {
 				String[] SA = (String[]) O;
 				int len = SA.length;
 				for (int c = 0; c < len; c++) {
-					document.script().src(req.getEncodedURLForPath('/'+SA[c], null, false, resp)).__();
+					content.script().src(req.getEncodedURLForPath('/'+SA[c], null, false, resp)).__();
 				}
 			} else if(O instanceof Class) {
-				document.script().src(req.getEncodedURL(((Class<?>)O).asSubclass(WebPage.class), null, resp)).__();
+				content.script().src(req.getEncodedURL(((Class<?>)O).asSubclass(WebPage.class), null, resp)).__();
 			} else if(O instanceof WebPage) {
-				document.script().src(req.getEncodedURL((WebPage)O, resp)).__();
+				content.script().src(req.getEncodedURL((WebPage)O, resp)).__();
 			} else {
-				document.script().src(req.getEncodedURLForPath('/'+O.toString(), null, false, resp)).__();
+				content.script().src(req.getEncodedURLForPath('/'+O.toString(), null, false, resp)).__();
 			}
 		}
 	}

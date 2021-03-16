@@ -24,6 +24,7 @@ package com.aoindustries.website.framework;
 
 import com.aoindustries.html.servlet.DocumentEE;
 import com.aoindustries.html.servlet.FlowContent;
+import com.aoindustries.html.servlet.ScriptSupportingContent;
 import com.aoindustries.lang.EmptyArrays;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
@@ -141,7 +142,7 @@ public class SearchLayout extends WebPageLayout {
 	}
 
 	@Override
-	protected void printJavaScriptIncludes(WebSiteRequest req, HttpServletResponse resp, DocumentEE document, WebPage page) {
+	protected <__ extends ScriptSupportingContent<__>> void printJavaScriptIncludes(WebSiteRequest req, HttpServletResponse resp, __ content, WebPage page) {
 		// Do nothing
 	}
 }
