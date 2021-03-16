@@ -399,7 +399,7 @@ abstract public class WebPageLayout {
 					// TODO: onchange event
 					.select().name("layout_selector").attribute("onchange", "selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);").__(select -> {
 						for(String choice : layoutChoices) {
-							select.option().value(choice).selected(choice.equalsIgnoreCase(getName())).text__(choice);
+							select.option().value(choice).selected(choice.equalsIgnoreCase(getName())).__(choice);
 						}
 					})
 				)

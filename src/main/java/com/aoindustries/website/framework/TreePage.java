@@ -317,7 +317,7 @@ abstract public class TreePage extends WebPage {
 		boolean[] opened_ = opened;
 
 		// Write the javascript that controls the form
-		try (MediaWriter script = document.script().out__()) {
+		try (MediaWriter script = document.script()._c()) {
 			script.write("  function openNode(index) {\n"
 				+ "    eval('document.forms[\"tree_form\"].opened_'+index+'.value=\"true\";');\n"
 				+ "    document.forms[\"tree_form\"].scroll_to_x.value=getPageXOffset(window);\n"
