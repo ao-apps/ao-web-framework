@@ -260,10 +260,11 @@ public class TextOnlyLayout extends WebPageLayout {
 				pageRegistry
 			);
 			head.script().src(req.getEncodedURLForPath("/global.js", null, false, resp)).__();
-			printJavaScriptIncludes(req, resp, head, page); // TODO: ScriptSupportingContent
+			printJavaScriptIncludes(req, resp, head, page);
 			// TODO: Canonical?
 		});
 		BODY<HTML_c<DocumentEE>> body = html_c.body().nl();
+		// TODO: Write a <style>, like done for dans-home.com
 		int bgcolor = getBackgroundColor(req);
 		if(bgcolor != -1) {
 			body.attribute("bgcolor", attr -> ChainWriter.writeHtmlColor(bgcolor, attr)).nl();
@@ -286,7 +287,7 @@ public class TextOnlyLayout extends WebPageLayout {
 		}
 		// TODO: These onloads should be merged?
 		if (onload == null) onload = page.getOnloadScript(req);
-		if (onload != null) {
+		if (onload != null && !onload.isEmpty()) {
 			body.onload(onload).nl();
 		}
 		BODY_c<HTML_c<DocumentEE>> body_c = body._c();
