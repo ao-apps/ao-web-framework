@@ -56,7 +56,6 @@ public class SearchLayout extends WebPageLayout {
 		String onload
 	) {
 		// Do nothing
-		// TODO: Why is cast required here?
 		@SuppressWarnings("unchecked") __ flow = (__)document;
 		return flow;
 	}

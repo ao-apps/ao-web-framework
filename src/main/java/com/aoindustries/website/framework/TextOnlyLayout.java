@@ -409,7 +409,6 @@ public class TextOnlyLayout extends WebPageLayout {
 							})
 						);
 					}
-		// TODO: Why is cast required here?
 		@SuppressWarnings("unchecked") __ flow = (__)td_c;
 		return flow;
 	}
