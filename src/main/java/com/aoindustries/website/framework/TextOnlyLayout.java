@@ -252,7 +252,6 @@ public class TextOnlyLayout extends WebPageLayout {
 				req,
 				resp,
 				head, // TODO: MetadataContent
-				null, // unused
 				true, // registeredActivations
 				null, // No additional activations
 				requestRegistry, // request-scope
