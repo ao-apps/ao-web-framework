@@ -36,8 +36,8 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		title="@{documented.name} Changelog"
 		shortTitle="Changelog"
 		tocLevels="1"
-		datePublished="2016-10-29T22:08:31-0500"
-		dateModified="2021-02-22T10:42:18-06:00"
+		datePublished="2016-10-29T22:08:31-05:00"
+		dateModified="2021-05-22T13:07:02-05:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -94,6 +94,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 						Removed uses of <code>IOException</code> where neither configuration of the response nor output
 						to client are expected.
 					</li>
+					<li>Updated to <ao:a rel="nofollow" href="https://www.oracle.com/java/technologies/javaee/javaeetechnologies.html#javaee7">Java™ EE 7 Web Profile</ao:a> (Servlet 3.1, JSP 2.3, EL 3.0, and JSTL 1.2).</li>
 				</ul>
 			</changelog:release>
 		</c:if>
@@ -101,7 +102,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		<changelog:release
 			projectName="@{documented.name}"
 			version="2.0.0"
-			datePublished="2019-10-12T19:50:22-0500"
+			datePublished="2019-10-12T19:50:22-05:00"
 			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
@@ -138,7 +139,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		<changelog:release
 			projectName="@{documented.name}"
 			version="1.2.5"
-			datePublished="2019-06-21T20:35:01-0500"
+			datePublished="2019-06-21T20:35:01-05:00"
 			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
@@ -163,7 +164,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		<changelog:release
 			projectName="@{documented.name}"
 			version="1.2.4"
-			datePublished="2019-04-25T01:06:42-0500"
+			datePublished="2019-04-25T01:06:42-05:00"
 			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
@@ -179,7 +180,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		<changelog:release
 			projectName="@{documented.name}"
 			version="1.2.3"
-			datePublished="2017-07-20T09:01:05-0500"
+			datePublished="2017-07-20T09:01:05-05:00"
 			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
@@ -192,7 +193,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		<changelog:release
 			projectName="@{documented.name}"
 			version="1.2.2"
-			datePublished="2016-11-16T02:34:59-0600"
+			datePublished="2016-11-16T02:34:59-06:00"
 			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
@@ -207,7 +208,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		<changelog:release
 			projectName="@{documented.name}"
 			version="1.2.1"
-			datePublished="2016-10-20T18:06:00-0500"
+			datePublished="2016-10-20T18:06:00-05:00"
 			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
@@ -222,7 +223,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		<changelog:release
 			projectName="@{documented.name}"
 			version="1.2.0"
-			datePublished="2016-10-11T16:21:00-0500"
+			datePublished="2016-10-11T16:21:00-05:00"
 			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
@@ -235,7 +236,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		<changelog:release
 			projectName="@{documented.name}"
 			version="1.1.0"
-			datePublished="2016-10-04T20:01:00-0500"
+			datePublished="2016-10-04T20:01:00-05:00"
 			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
@@ -255,7 +256,7 @@ along with aoweb-framework.  If not, see <http://www.gnu.org/licenses />.
 		<changelog:release
 			projectName="@{documented.name}"
 			version="1.0"
-			datePublished="2016-09-04T23:41:00-0500"
+			datePublished="2016-09-04T23:41:00-05:00"
 			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
