@@ -20,11 +20,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-web-framework.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.website.framework;
+package com.aoapps.web.framework;
 
-import com.aoindustries.exception.WrappedException;
-import com.aoindustries.io.IoUtils;
-import com.aoindustries.lang.Throwables;
+import com.aoapps.lang.Throwables;
+import com.aoapps.lang.exception.WrappedException;
+import com.aoapps.lang.io.IoUtils;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Random;

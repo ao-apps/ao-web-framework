@@ -20,33 +20,33 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-web-framework.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.website.framework;
+package com.aoapps.web.framework;
 
-import com.aoindustries.encoding.ChainWriter;
-import com.aoindustries.encoding.Doctype;
-import com.aoindustries.html.any.AnyLINK;
-import com.aoindustries.html.any.AnyMETA;
-import com.aoindustries.html.any.AnySCRIPT;
-import com.aoindustries.html.any.AnySTYLE;
-import com.aoindustries.html.any.attributes.Enum.Method;
-import com.aoindustries.html.servlet.BODY;
-import com.aoindustries.html.servlet.BODY_c;
-import com.aoindustries.html.servlet.DocumentEE;
-import com.aoindustries.html.servlet.FlowContent;
-import com.aoindustries.html.servlet.HTML_c;
-import com.aoindustries.html.servlet.TABLE;
-import com.aoindustries.html.servlet.TABLE_c;
-import com.aoindustries.html.servlet.TD;
-import com.aoindustries.html.servlet.TD_c;
-import com.aoindustries.html.servlet.TR_c;
-import com.aoindustries.html.util.GoogleAnalytics;
-import static com.aoindustries.lang.Strings.trimNullIfEmpty;
-import static com.aoindustries.taglib.AttributeUtils.appendWidthStyle;
-import com.aoindustries.web.resources.registry.Group;
-import com.aoindustries.web.resources.registry.Registry;
-import com.aoindustries.web.resources.registry.Style;
-import com.aoindustries.web.resources.renderer.Renderer;
-import com.aoindustries.web.resources.servlet.RegistryEE;
+import com.aoapps.encoding.ChainWriter;
+import com.aoapps.encoding.Doctype;
+import com.aoapps.html.any.AnyLINK;
+import com.aoapps.html.any.AnyMETA;
+import com.aoapps.html.any.AnySCRIPT;
+import com.aoapps.html.any.AnySTYLE;
+import com.aoapps.html.any.attributes.Enum.Method;
+import com.aoapps.html.servlet.BODY;
+import com.aoapps.html.servlet.BODY_c;
+import com.aoapps.html.servlet.DocumentEE;
+import com.aoapps.html.servlet.FlowContent;
+import com.aoapps.html.servlet.HTML_c;
+import com.aoapps.html.servlet.TABLE;
+import com.aoapps.html.servlet.TABLE_c;
+import com.aoapps.html.servlet.TD;
+import com.aoapps.html.servlet.TD_c;
+import com.aoapps.html.servlet.TR_c;
+import com.aoapps.html.util.GoogleAnalytics;
+import static com.aoapps.lang.Strings.trimNullIfEmpty;
+import static com.aoapps.taglib.AttributeUtils.appendWidthStyle;
+import com.aoapps.web.resources.registry.Group;
+import com.aoapps.web.resources.registry.Registry;
+import com.aoapps.web.resources.registry.Style;
+import com.aoapps.web.resources.renderer.Renderer;
+import com.aoapps.web.resources.servlet.RegistryEE;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +71,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	public static final String NAME = "Text";
 
 	/**
-	 * The name of the {@linkplain com.aoindustries.web.resources.servlet.RegistryEE.Application application-scope}
+	 * The name of the {@linkplain com.aoapps.web.resources.servlet.RegistryEE.Application application-scope}
 	 * group that will be used for text layout web resources.
 	 */
 	public static final Group.Name RESOURCE_GROUP = new Group.Name(TextOnlyLayout.class.getName());

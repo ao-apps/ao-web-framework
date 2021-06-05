@@ -1,6 +1,6 @@
 /*
  * ao-web-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2006-2009, 2015, 2016, 2021  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2015, 2016, 2019, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -20,55 +20,64 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-web-framework.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.website.framework;
-
-import java.util.Collection;
+package com.aoapps.web.framework;
 
 /**
+ * Automatically generates a list of all pages.
+ *
  * @author  AO Industries, Inc.
  */
-public class TreePageData {
+public class SearchResult implements Comparable<SearchResult> {
 
 	private final String url;
+	private final float probability;
+	private final String title;
 	private final String description;
-	private final boolean hasChilren;
-	private final String[] path;
+	private final String author;
+	private final String authorHref;
 
-	/**
-	 * @param path The path of display names.
-	 */
-	public TreePageData(String url, String description, boolean hasChildren, String ... path) {
+	public SearchResult(
+		String url,
+		float probability,
+		String title,
+		String description,
+		String author,
+		String authorHref
+	) {
 		this.url = url;
+		this.probability = probability;
+		this.title = title;
 		this.description = description;
-		this.hasChilren = hasChildren;
-		this.path = path;
-	}
-
-	/**
-	 * @param path The path of display names, extracted via {@link Collection#toArray(java.lang.Object[])}
-	 */
-	public TreePageData(String url, String description, boolean hasChildren, Collection<? extends String> path) {
-		this(
-			url,
-			description,
-			hasChildren,
-			path.toArray(new String[path.size()])
-		);
+		this.author = author;
+		this.authorHref = authorHref;
 	}
 
 	public String getUrl() {
 		return url;
 	}
 
+	public float getProbability() {
+		return probability;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
 	public String getDescription() {
 		return description;
 	}
 
-	public boolean hasChildren() {
-		return hasChilren;
+	public String getAuthor() {
+		return author;
 	}
 
-	public String[] getPath() {
-		return path;
+	public String getAuthorHref() {
+		return authorHref;
+	}
+
+	@Override
+	public int compareTo(SearchResult other) {
+		return Float.compare(other.probability, probability);
 	}
 }

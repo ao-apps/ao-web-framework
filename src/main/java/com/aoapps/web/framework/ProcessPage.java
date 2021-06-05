@@ -20,7 +20,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-web-framework.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.website.framework;
+package com.aoapps.web.framework;
 
 import java.io.IOException;
 import java.io.InputStream;

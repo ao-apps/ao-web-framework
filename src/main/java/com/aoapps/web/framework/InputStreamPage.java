@@ -20,13 +20,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-web-framework.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.website.framework;
+package com.aoapps.web.framework;
 
-import com.aoindustries.html.any.AnyDocument;
-import com.aoindustries.html.any.Content;
-import com.aoindustries.html.servlet.DocumentEE;
-import com.aoindustries.html.servlet.FlowContent;
-import com.aoindustries.io.IoUtils;
+import com.aoapps.html.any.AnyDocument;
+import com.aoapps.html.any.Content;
+import com.aoapps.html.servlet.DocumentEE;
+import com.aoapps.html.servlet.FlowContent;
+import com.aoapps.lang.io.IoUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;

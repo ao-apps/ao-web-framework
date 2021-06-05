@@ -20,10 +20,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-web-framework.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.website.framework;
+package com.aoapps.web.framework;
 
-import com.aoindustries.html.servlet.FlowContent;
-import com.aoindustries.html.servlet.PhrasingContent;
+import com.aoapps.html.servlet.FlowContent;
+import com.aoapps.html.servlet.PhrasingContent;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.util.HashSet;

@@ -20,18 +20,18 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-web-framework.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.website.framework;
+package com.aoapps.web.framework;
 
-import com.aoindustries.html.servlet.FlowContent;
-import com.aoindustries.io.ContentType;
-import com.aoindustries.lang.Strings;
-import com.aoindustries.net.URIDecoder;
-import com.aoindustries.net.URIEncoder;
-import com.aoindustries.net.URIParameters;
-import com.aoindustries.net.URIParametersMap;
-import com.aoindustries.net.URIParser;
-import com.aoindustries.security.Identifier;
-import com.aoindustries.servlet.http.HttpServletUtil;
+import com.aoapps.html.servlet.FlowContent;
+import com.aoapps.lang.Strings;
+import com.aoapps.lang.io.ContentType;
+import com.aoapps.net.URIDecoder;
+import com.aoapps.net.URIEncoder;
+import com.aoapps.net.URIParameters;
+import com.aoapps.net.URIParametersMap;
+import com.aoapps.net.URIParser;
+import com.aoapps.security.Identifier;
+import com.aoapps.servlet.http.HttpServletUtil;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -462,7 +462,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	}
 
 	/**
-	 * {@linkplain #getURLForClass(java.lang.String, com.aoindustries.net.URIParameters, java.lang.String) Gets the URL}, including:
+	 * {@linkplain #getURLForClass(java.lang.String, com.aoapps.net.URIParameters, java.lang.String) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
 	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
@@ -491,7 +491,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	}
 
 	/**
-	 * {@linkplain #getURLForClass(java.lang.String, com.aoindustries.net.URIParameters) Gets the URL}, including:
+	 * {@linkplain #getURLForClass(java.lang.String, com.aoapps.net.URIParameters) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
 	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
@@ -578,7 +578,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	}
 
 	/**
-	 * {@linkplain #getURLForPath(java.lang.String, com.aoindustries.net.URIParameters, boolean) Gets the URL}, including:
+	 * {@linkplain #getURLForPath(java.lang.String, com.aoapps.net.URIParameters, boolean) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
 	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
@@ -626,7 +626,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	}
 
 	/**
-	 * {@linkplain #getURL(com.aoindustries.website.framework.WebPage) Gets the URL}, including:
+	 * {@linkplain #getURL(com.aoapps.web.framework.WebPage) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
 	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
@@ -660,7 +660,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	}
 
 	/**
-	 * {@linkplain #getURL(com.aoindustries.website.framework.WebPage, com.aoindustries.net.URIParameters) Gets the URL}, including:
+	 * {@linkplain #getURL(com.aoapps.web.framework.WebPage, com.aoapps.net.URIParameters) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
 	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
@@ -692,7 +692,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	}
 
 	/**
-	 * {@linkplain #getURL(java.lang.Class, com.aoindustries.net.URIParameters) Gets the URL}, including:
+	 * {@linkplain #getURL(java.lang.Class, com.aoapps.net.URIParameters) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
 	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
@@ -752,7 +752,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	}
 
 	/**
-	 * {@linkplain #getURLForPath(java.lang.String, com.aoindustries.net.URIParameters) Gets the URL}, including:
+	 * {@linkplain #getURLForPath(java.lang.String, com.aoapps.net.URIParameters) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
 	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>

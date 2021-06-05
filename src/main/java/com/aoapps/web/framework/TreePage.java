@@ -20,19 +20,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-web-framework.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.website.framework;
+package com.aoapps.web.framework;
 
-import com.aoindustries.encoding.MediaWriter;
-import com.aoindustries.html.any.attributes.Enum.Method;
-import com.aoindustries.html.servlet.CODE_c;
-import com.aoindustries.html.servlet.DocumentEE;
-import com.aoindustries.html.servlet.FlowContent;
-import com.aoindustries.html.servlet.PhrasingContent;
-import com.aoindustries.io.ContentType;
-import com.aoindustries.io.IoUtils;
-import com.aoindustries.lang.EmptyArrays;
-import com.aoindustries.net.URIEncoder;
-import com.aoindustries.net.URIParametersMap;
+import com.aoapps.encoding.MediaWriter;
+import com.aoapps.html.any.attributes.Enum.Method;
+import com.aoapps.html.servlet.CODE_c;
+import com.aoapps.html.servlet.DocumentEE;
+import com.aoapps.html.servlet.FlowContent;
+import com.aoapps.html.servlet.PhrasingContent;
+import com.aoapps.lang.EmptyArrays;
+import com.aoapps.lang.io.ContentType;
+import com.aoapps.lang.io.IoUtils;
+import com.aoapps.net.URIEncoder;
+import com.aoapps.net.URIParametersMap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

@@ -20,12 +20,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-web-framework.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.website.framework;
+package com.aoapps.web.framework;
 
-import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
-import com.aoindustries.html.servlet.DocumentEE;
-import com.aoindustries.html.servlet.FlowContent;
-import com.aoindustries.io.IoUtils;
+import static com.aoapps.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
+import com.aoapps.html.servlet.DocumentEE;
+import com.aoapps.html.servlet.FlowContent;
+import com.aoapps.lang.io.IoUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -70,11 +70,11 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 	 * Prints HTML content, parsing for special <code>@</code> tags.  Types of tags include:
 	 * <ul>
 	 *   <li>@URL(classname)    Loads a WebPage of the given class and builds a URL to it</li>
-	 *   <li>@BEGIN_LIGHT_AREA  Calls {@link WebPageLayout#beginLightArea(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE)}</li>
-	 *   <li>@END_LIGHT_AREA    Calls {@link WebPageLayout#endLightArea(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE)}</li>
-	 *   <li>@END_CONTENT_LINE  Calls {@link WebPageLayout#endContentLine(com.aoindustries.html.servlet.DocumentEE, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, int, boolean)}</li>
-	 *   <li>@PRINT_CONTENT_HORIZONTAL_DIVIDER  Calls {@link WebPageLayout#printContentHorizontalDivider(com.aoindustries.html.servlet.DocumentEE, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, int, boolean)}</li>
-	 *   <li>@START_CONTENT_LINE  Calls {@link WebPageLayout#startContentLine(com.aoindustries.html.servlet.DocumentEE, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, int, java.lang.String, java.lang.String)}</li>
+	 *   <li>@BEGIN_LIGHT_AREA  Calls {@link WebPageLayout#beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE)}</li>
+	 *   <li>@END_LIGHT_AREA    Calls {@link WebPageLayout#endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE)}</li>
+	 *   <li>@END_CONTENT_LINE  Calls {@link WebPageLayout#endContentLine(com.aoapps.html.servlet.DocumentEE, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, int, boolean)}</li>
+	 *   <li>@PRINT_CONTENT_HORIZONTAL_DIVIDER  Calls {@link WebPageLayout#printContentHorizontalDivider(com.aoapps.html.servlet.DocumentEE, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, int, boolean)}</li>
+	 *   <li>@START_CONTENT_LINE  Calls {@link WebPageLayout#startContentLine(com.aoapps.html.servlet.DocumentEE, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, int, java.lang.String, java.lang.String)}</li>
 	 *   <li>@LINK_CLASS        The preferred link class for this element</li>
 	 * </ul>
 	 */

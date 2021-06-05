@@ -20,25 +20,39 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-web-framework.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.website.framework;
+package com.aoapps.web.framework;
 
-import com.aoindustries.html.servlet.FlowContent;
-import java.io.IOException;
-import java.io.InputStream;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
+import com.aoapps.security.Identifier;
+import java.io.File;
+import javax.activation.FileTypeMap;
+import javax.servlet.ServletContext;
 
 /**
- * Takes the output of a native process and puts it in a PRE block
- *
  * @author  AO Industries, Inc.
  */
-public abstract class PreProcessPage extends ProcessPage {
+final public class UploadedFileTypeMap extends FileTypeMap {
 
-	private static final long serialVersionUID = 1L;
+	final private WebSiteUser owner;
+	final private ServletContext context;
+
+	public UploadedFileTypeMap(WebSiteUser owner, ServletContext context) {
+		this.owner=owner;
+		this.context=context;
+	}
 
 	@Override
-	public <__ extends FlowContent<__>> void printStream(__ flow, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
-		flow.pre__(pre -> printStreamStatic(pre, in));
+	public String getContentType(File file) {
+		return getContentType(file.getName());
+	}
+
+	@Override
+	public String getContentType(String filename) {
+		int pos=filename.lastIndexOf('/');
+		if(pos==-1) pos=filename.lastIndexOf('\\');
+		if(pos!=-1) filename=filename.substring(pos+1);
+		Identifier id = new Identifier(filename);
+		UploadedFile uf = WebSiteRequest.getUploadedFile(owner, id, context);
+		if(uf == null) throw new NullPointerException("Unable to find uploaded file: " + id);
+		return uf.getContentType();
 	}
 }

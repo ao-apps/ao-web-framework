@@ -20,17 +20,17 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-web-framework.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.website.framework;
+package com.aoapps.web.framework;
 
-import com.aoindustries.html.any.attributes.Enum.Method;
-import com.aoindustries.html.servlet.DocumentEE;
-import com.aoindustries.html.servlet.FlowContent;
-import com.aoindustries.html.servlet.ScriptSupportingContent;
-import com.aoindustries.io.function.IOConsumerE;
-import com.aoindustries.io.function.IORunnableE;
-import com.aoindustries.net.URIEncoder;
-import com.aoindustries.net.URIParametersMap;
-import com.aoindustries.web.resources.registry.Registry;
+import com.aoapps.html.any.attributes.Enum.Method;
+import com.aoapps.html.servlet.DocumentEE;
+import com.aoapps.html.servlet.FlowContent;
+import com.aoapps.html.servlet.ScriptSupportingContent;
+import com.aoapps.lang.io.function.IOConsumerE;
+import com.aoapps.lang.io.function.IORunnableE;
+import com.aoapps.net.URIEncoder;
+import com.aoapps.net.URIParametersMap;
+import com.aoapps.web.resources.registry.Registry;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.ServletContext;
@@ -73,7 +73,7 @@ abstract public class WebPageLayout {
 	}
 
 	/**
-	 * Configures the {@linkplain com.aoindustries.web.resources.servlet.RegistryEE.Request request-scope web resources} that this layout uses.
+	 * Configures the {@linkplain com.aoapps.web.resources.servlet.RegistryEE.Request request-scope web resources} that this layout uses.
 	 * <p>
 	 * Implementers should call <code>super.configureResources(…)</code> as a matter of convention, despite this default implementation doing nothing.
 	 * </p>
@@ -88,7 +88,7 @@ abstract public class WebPageLayout {
 	 * whether the page is in a frameset or not.
 	 *
 	 * @return  The {@link FlowContent} that should be used to write the page contents.
-	 *          This is also given to {@link #endPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.FlowContent)}
+	 *          This is also given to {@link #endPage(com.aoapps.web.framework.WebPage, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
 	 *          to finish the template.
 	 */
 	abstract public <__ extends FlowContent<__>> __ startPage(
@@ -104,7 +104,7 @@ abstract public class WebPageLayout {
 	 * whether the page is in a frameset or not.
 	 *
 	 * @param  flow  The {@link FlowContent} that was returned by
-	 *               {@link #startPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE, java.lang.String)}.
+	 *               {@link #startPage(com.aoapps.web.framework.WebPage, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE, java.lang.String)}.
 	 */
 	abstract public <__ extends FlowContent<__>> void endPage(
 		WebPage page,
@@ -114,14 +114,14 @@ abstract public class WebPageLayout {
 	) throws ServletException, IOException;
 
 	/**
-	 * {@linkplain #startPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE, java.lang.String) Starts the page},
+	 * {@linkplain #startPage(com.aoapps.web.framework.WebPage, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE, java.lang.String) Starts the page},
 	 * invokes the given page body, then
-	 * {@linkplain #endPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.FlowContent) ends the page}.
+	 * {@linkplain #endPage(com.aoapps.web.framework.WebPage, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the page}.
 	 *
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @see  #startPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE, java.lang.String)
-	 * @see  #endPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.FlowContent)
+	 * @see  #startPage(com.aoapps.web.framework.WebPage, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE, java.lang.String)
+	 * @see  #endPage(com.aoapps.web.framework.WebPage, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
 	 */
 	public <__ extends FlowContent<__>, Ex extends Throwable> void doPage(
 		WebPage page,
@@ -137,14 +137,14 @@ abstract public class WebPageLayout {
 	}
 
 	/**
-	 * {@linkplain #startPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE, java.lang.String) Starts the page},
+	 * {@linkplain #startPage(com.aoapps.web.framework.WebPage, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE, java.lang.String) Starts the page},
 	 * invokes the given page body, then
-	 * {@linkplain #endPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.FlowContent) ends the page}.
+	 * {@linkplain #endPage(com.aoapps.web.framework.WebPage, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the page}.
 	 *
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @see  #startPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE, java.lang.String)
-	 * @see  #endPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.FlowContent)
+	 * @see  #startPage(com.aoapps.web.framework.WebPage, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE, java.lang.String)
+	 * @see  #endPage(com.aoapps.web.framework.WebPage, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
 	 */
 	public <__ extends FlowContent<__>, Ex extends Throwable> void doPage(
 		WebPage page,
@@ -164,7 +164,7 @@ abstract public class WebPageLayout {
 	 * additional search form named {@link WebPage#SEARCH_TWO}, with two fields named
 	 * {@link WebSiteRequest#SEARCH_QUERY} and {@link WebSiteRequest#SEARCH_TARGET}.
 	 *
-	 * @see WebPage#doPostWithSearch(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
+	 * @see WebPage#doPostWithSearch(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	public <__ extends FlowContent<__>> void printSearchOutput(WebPage page, __ flow, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) throws ServletException, IOException {
 		DocumentEE document = flow.getDocument();

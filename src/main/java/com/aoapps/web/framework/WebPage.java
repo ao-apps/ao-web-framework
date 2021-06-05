@@ -20,28 +20,28 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-web-framework.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.website.framework;
+package com.aoapps.web.framework;
 
-import com.aoindustries.collections.SortedArrayList;
-import com.aoindustries.encoding.Doctype;
-import com.aoindustries.encoding.Serialization;
-import com.aoindustries.encoding.WhitespaceWriter;
-import com.aoindustries.encoding.servlet.DoctypeEE;
-import com.aoindustries.encoding.servlet.EncodingContextEE;
-import com.aoindustries.encoding.servlet.SerializationEE;
-import com.aoindustries.html.any.AnyDocument;
-import com.aoindustries.html.any.Content;
-import com.aoindustries.html.servlet.DocumentEE;
-import com.aoindustries.html.servlet.FlowContent;
-import com.aoindustries.lang.Strings;
-import com.aoindustries.net.EmptyURIParameters;
-import com.aoindustries.net.URIParameters;
-import com.aoindustries.servlet.ServletRequestParameters;
-import com.aoindustries.servlet.ServletUtil;
-import com.aoindustries.servlet.http.HttpServletUtil;
-import com.aoindustries.web.resources.registry.Registry;
-import com.aoindustries.web.resources.servlet.PageServlet;
-import com.aoindustries.web.resources.servlet.RegistryEE;
+import com.aoapps.collections.SortedArrayList;
+import com.aoapps.encoding.Doctype;
+import com.aoapps.encoding.Serialization;
+import com.aoapps.encoding.WhitespaceWriter;
+import com.aoapps.encoding.servlet.DoctypeEE;
+import com.aoapps.encoding.servlet.EncodingContextEE;
+import com.aoapps.encoding.servlet.SerializationEE;
+import com.aoapps.html.any.AnyDocument;
+import com.aoapps.html.any.Content;
+import com.aoapps.html.servlet.DocumentEE;
+import com.aoapps.html.servlet.FlowContent;
+import com.aoapps.lang.Strings;
+import com.aoapps.net.EmptyURIParameters;
+import com.aoapps.net.URIParameters;
+import com.aoapps.servlet.ServletRequestParameters;
+import com.aoapps.servlet.ServletUtil;
+import com.aoapps.servlet.http.HttpServletUtil;
+import com.aoapps.web.resources.registry.Registry;
+import com.aoapps.web.resources.servlet.PageServlet;
+import com.aoapps.web.resources.servlet.RegistryEE;
 import java.io.CharArrayWriter;
 import java.io.File;
 import java.io.IOException;
@@ -103,7 +103,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	/**
 	 * Stores a cache of the list of child pages, once created.
 	 *
-	 * @see  #getCachedChildren(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
+	 * @see  #getCachedChildren(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	private WebPage[] cachedChildren;
 
@@ -132,7 +132,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	//private static Pattern reWordPattern = Pattern.compile("(\\w*)");
 
 	/**
-	 * Configures the {@linkplain com.aoindustries.web.resources.servlet.RegistryEE.Page page-scope web resources} that this page uses.
+	 * Configures the {@linkplain com.aoapps.web.resources.servlet.RegistryEE.Page page-scope web resources} that this page uses.
 	 * <p>
 	 * Implementers should call <code>super.configureResources(…)</code> as a matter of convention, despite this default implementation doing nothing.
 	 * </p>
@@ -198,22 +198,22 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *   <li>Wraps the request in {@link WebSiteRequest}
 	 *       via {@link #getWebSiteRequest(javax.servlet.http.HttpServletRequest)}.</li>
 	 *   <li>Resolves the current instance of {@link WebPage}
-	 *       via {@link #getWebPage(java.lang.Class, com.aoindustries.website.framework.WebSiteRequest)}.</li>
+	 *       via {@link #getWebPage(java.lang.Class, com.aoapps.web.framework.WebSiteRequest)}.</li>
 	 *   <li>Handles any login request (parameter {@link WebSiteRequest#LOGIN_REQUESTED}="true")
 	 *       by returning {@code -1} for unknown.</li>
 	 *   <li>Resolves the current {@link WebSiteUser}
 	 *       via {@link WebSiteRequest#getWebSiteUser(javax.servlet.http.HttpServletResponse)} (if any).
 	 *       When {@linkplain LoginException login required and failed},
 	 *       returns {@code -1} for unknown.</li>
-	 *   <li>Ensures the {@linkplain WebPage#canAccess(com.aoindustries.website.framework.WebSiteUser) user can access the page},
+	 *   <li>Ensures the {@linkplain WebPage#canAccess(com.aoapps.web.framework.WebSiteUser) user can access the page},
 	 *       returns {@code -1} for unknown
 	 *       when not authorized.</li>
-	 *   <li>If {@linkplain #getRedirectURL(com.aoindustries.website.framework.WebSiteRequest) is a redirect},
+	 *   <li>If {@linkplain #getRedirectURL(com.aoapps.web.framework.WebSiteRequest) is a redirect},
 	 *       returns {@code -1} for unknown.</li>
-	 *   <li>Finally, dispatches the request to {@link #getLastModified(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}.</li>
+	 *   <li>Finally, dispatches the request to {@link #getLastModified(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}.</li>
 	 * </ol>
 	 *
-	 * @see #getLastModified(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
+	 * @see #getLastModified(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
 	final protected long reportingGetLastModified(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException {
@@ -374,7 +374,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *   <li>Sets the {@linkplain ServletResponse#setContentType(java.lang.String) response content type}.</li>
 	 *   <li>Sets the {@linkplain ServletResponse#setCharacterEncoding(java.lang.String) response character encoding}
 	 *       to {@linkplain AnyDocument#ENCODING the default <code>UTF-8</code>}.</li>
-	 *   <li>Sets any {@linkplain #getAdditionalHeaders(com.aoindustries.website.framework.WebSiteRequest) additional headers}.</li>
+	 *   <li>Sets any {@linkplain #getAdditionalHeaders(com.aoapps.web.framework.WebSiteRequest) additional headers}.</li>
 	 * </ol>
 	 * <p>
 	 * Both the {@link Serialization} and {@link Doctype} may have been set
@@ -383,7 +383,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @see SerializationEE#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
 	 * @see DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
-	 * @see #getAdditionalHeaders(com.aoindustries.website.framework.WebSiteRequest)
+	 * @see #getAdditionalHeaders(com.aoapps.web.framework.WebSiteRequest)
 	 */
 	protected DocumentEE getDocument(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// Clear the output buffer
@@ -430,7 +430,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *   <li>Sets the {@linkplain ServletResponse#setContentType(java.lang.String) response content type}.</li>
 	 *   <li>Sets the {@linkplain ServletResponse#setCharacterEncoding(java.lang.String) response character encoding}
 	 *       to {@linkplain AnyDocument#ENCODING the default <code>UTF-8</code>}.</li>
-	 *   <li>Sets any {@linkplain #getAdditionalHeaders(com.aoindustries.website.framework.WebSiteRequest) additional headers}.</li>
+	 *   <li>Sets any {@linkplain #getAdditionalHeaders(com.aoapps.web.framework.WebSiteRequest) additional headers}.</li>
 	 * </ol>
 	 * <p>
 	 * Both the {@link Serialization} and {@link Doctype} may have been set
@@ -439,7 +439,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @see SerializationEE#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
 	 * @see DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
-	 * @see #getAdditionalHeaders(com.aoindustries.website.framework.WebSiteRequest)
+	 * @see #getAdditionalHeaders(com.aoapps.web.framework.WebSiteRequest)
 	 */
 	protected OutputStream getHTMLOutputStream(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// Clear the output buffer
@@ -494,24 +494,24 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *   <li>Wraps the request in {@link WebSiteRequest}
 	 *       via {@link #getWebSiteRequest(javax.servlet.http.HttpServletRequest)}.</li>
 	 *   <li>Resolves the current instance of {@link WebPage}
-	 *       via {@link #getWebPage(java.lang.Class, com.aoindustries.website.framework.WebSiteRequest)}.</li>
+	 *       via {@link #getWebPage(java.lang.Class, com.aoapps.web.framework.WebSiteRequest)}.</li>
 	 *   <li>Handles any logout request (parameter {@link WebSiteRequest#LOGOUT_REQUESTED}="true")
 	 *       via {@link WebSiteRequest#logout()}.</li>
 	 *   <li>Handles any login request (parameter {@link WebSiteRequest#LOGIN_REQUESTED}="true")
-	 *       by invoking {@link WebPage#printLoginForm(com.aoindustries.website.framework.WebPage, com.aoindustries.security.LoginException, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
+	 *       by invoking {@link WebPage#printLoginForm(com.aoapps.web.framework.WebPage, com.aoapps.security.LoginException, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
 	 *       and stops here.</li>
 	 *   <li>Resolves the current {@link WebSiteUser}
 	 *       via {@link WebSiteRequest#getWebSiteUser(javax.servlet.http.HttpServletResponse)} (if any).
 	 *       When {@linkplain LoginException login required and failed},
-	 *       invokes {@link WebPage#printLoginForm(com.aoindustries.website.framework.WebPage, com.aoindustries.security.LoginException, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
+	 *       invokes {@link WebPage#printLoginForm(com.aoapps.web.framework.WebPage, com.aoapps.security.LoginException, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
 	 *       and stops here.</li>
-	 *   <li>Ensures the {@linkplain WebPage#canAccess(com.aoindustries.website.framework.WebSiteUser) user can access the page},
-	 *       invokes {@link WebPage#printUnauthorizedPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
+	 *   <li>Ensures the {@linkplain WebPage#canAccess(com.aoapps.web.framework.WebSiteUser) user can access the page},
+	 *       invokes {@link WebPage#printUnauthorizedPage(com.aoapps.web.framework.WebPage, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
 	 *       when not authorized and stops here.</li>
-	 *   <li>If {@linkplain #getRedirectURL(com.aoindustries.website.framework.WebSiteRequest) is a redirect},
-	 *       {@linkplain HttpServletUtil#sendRedirect(int, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.String, com.aoindustries.net.URIParameters, boolean, boolean) sends the redirect}
+	 *   <li>If {@linkplain #getRedirectURL(com.aoapps.web.framework.WebSiteRequest) is a redirect},
+	 *       {@linkplain HttpServletUtil#sendRedirect(int, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.String, com.aoapps.net.URIParameters, boolean, boolean) sends the redirect}
 	 *       of the {@linkplain #getRedirectType() correct type} and stops here.</li>
-	 *   <li>Finally, dispatches the request to {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}.</li>
+	 *   <li>Finally, dispatches the request to {@link #doGet(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}.</li>
 	 * </ol>
 	 *
 	 * @see #doGet(WebSiteRequest,HttpServletResponse)
@@ -559,20 +559,20 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
-	 * Prepares the request then invokes {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE)}.
+	 * Prepares the request then invokes {@link #doGet(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE)}.
 	 * To not have these steps automatically applied, override this method.
 	 * By the time this method is called, security checks, authentication, and redirects have been done.
 	 * <ol>
 	 *   <li>Sets the {@linkplain Serialization serialization}.</li>
 	 *   <li>Sets the {@linkplain Doctype DOCTYPE}.</li>
-	 *   <li>Gets the {@link #getDocument(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse) response writer}.</li>
-	 *   <li>Invokes {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE)}.</li>
+	 *   <li>Gets the {@link #getDocument(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse) response writer}.</li>
+	 *   <li>Invokes {@link #doGet(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE)}.</li>
 	 * </ol>
 	 *
 	 * @see #reportingDoGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 * @see #getSerialization(com.aoindustries.website.framework.WebSiteRequest)
-	 * @see #getDoctype(com.aoindustries.website.framework.WebSiteRequest)
-	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE)
+	 * @see #getSerialization(com.aoapps.web.framework.WebSiteRequest)
+	 * @see #getDoctype(com.aoapps.web.framework.WebSiteRequest)
+	 * @see #doGet(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE)
 	 */
 	public void doGet(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		Serialization serialization = getSerialization(req);
@@ -590,7 +590,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
-	 * The layout is automatically applied to the page, then {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.website.framework.WebPageLayout, com.aoindustries.html.servlet.FlowContent)}
+	 * The layout is automatically applied to the page, then {@link #doGet(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.FlowContent)}
 	 * is called.  To not have the layout automatically applied, override this method.
 	 * By the time this method is called, security checks, authentication, redirects, doctype, and serialization have been done.
 	 *
@@ -598,10 +598,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @param  resp  the {@link HttpServletResponse} for this request, or {@code null} when searching
 	 * @param  document  the {@link DocumentEE} to send output to
 	 *
-	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
-	 * @see #getWebPageLayout(com.aoindustries.website.framework.WebSiteRequest)
-	 * @see WebPageLayout#doPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE, java.lang.String, com.aoindustries.io.function.IOConsumerE)
-	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.website.framework.WebPageLayout, com.aoindustries.html.servlet.FlowContent)
+	 * @see #doGet(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
+	 * @see #getWebPageLayout(com.aoapps.web.framework.WebSiteRequest)
+	 * @see WebPageLayout#doPage(com.aoapps.web.framework.WebPage, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE, java.lang.String, com.aoapps.lang.io.function.IOConsumerE)
+	 * @see #doGet(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.FlowContent)
 	 */
 	// TODO: We could have a NullHtmlWriter that does not write any HTML tags or attributes, but just the text body.
 	//       Then there could be a search-specific request object, instead of null, which is used during searches.
@@ -625,7 +625,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @param  layout  the {@link WebPageLayout} that has been applied
 	 * @param  flow    the {@link FlowContent} to send output to
 	 *
-	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE)
+	 * @see #doGet(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE)
 	 */
 	@SuppressWarnings("NoopMethodInAbstractClass")
 	public <__ extends FlowContent<__>> void doGet(
@@ -647,32 +647,32 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *   <li>Wraps the request in {@link WebSiteRequest}
 	 *       via {@link #getWebSiteRequest(javax.servlet.http.HttpServletRequest)}.</li>
 	 *   <li>Resolves the current instance of {@link WebPage}
-	 *       via {@link #getWebPage(java.lang.Class, com.aoindustries.website.framework.WebSiteRequest)}.</li>
+	 *       via {@link #getWebPage(java.lang.Class, com.aoapps.web.framework.WebSiteRequest)}.</li>
 	 *   <li>Handles any logout request (parameter {@link WebSiteRequest#LOGOUT_REQUESTED}="true")
 	 *       via {@link WebSiteRequest#logout()}.</li>
 	 *   <li>Handles any login request (parameter {@link WebSiteRequest#LOGIN_REQUESTED}="true")
-	 *       by invoking {@link WebPage#printLoginForm(com.aoindustries.website.framework.WebPage, com.aoindustries.security.LoginException, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
+	 *       by invoking {@link WebPage#printLoginForm(com.aoapps.web.framework.WebPage, com.aoapps.security.LoginException, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
 	 *       and stops here.</li>
 	 *   <li>Resolves the current {@link WebSiteUser}
 	 *       via {@link WebSiteRequest#getWebSiteUser(javax.servlet.http.HttpServletResponse)} (if any).
 	 *       When {@linkplain LoginException login required and failed},
-	 *       invokes {@link WebPage#printLoginForm(com.aoindustries.website.framework.WebPage, com.aoindustries.security.LoginException, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
+	 *       invokes {@link WebPage#printLoginForm(com.aoapps.web.framework.WebPage, com.aoapps.security.LoginException, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
 	 *       and stops here.</li>
-	 *   <li>Ensures the {@linkplain WebPage#canAccess(com.aoindustries.website.framework.WebSiteUser) user can access the page},
-	 *       invokes {@link WebPage#printUnauthorizedPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
+	 *   <li>Ensures the {@linkplain WebPage#canAccess(com.aoapps.web.framework.WebSiteUser) user can access the page},
+	 *       invokes {@link WebPage#printUnauthorizedPage(com.aoapps.web.framework.WebPage, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
 	 *       when not authorized and stops here.</li>
-	 *   <li>If {@linkplain #getRedirectURL(com.aoindustries.website.framework.WebSiteRequest) is a redirect},
-	 *       {@linkplain HttpServletUtil#sendRedirect(int, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.String, com.aoindustries.net.URIParameters, boolean, boolean) sends the redirect}
+	 *   <li>If {@linkplain #getRedirectURL(com.aoapps.web.framework.WebSiteRequest) is a redirect},
+	 *       {@linkplain HttpServletUtil#sendRedirect(int, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.String, com.aoapps.net.URIParameters, boolean, boolean) sends the redirect}
 	 *       of the {@linkplain #getRedirectType() correct type} and stops here.</li>
 	 *   <li>Avoid unexpected POST action after a (re)login: If has parameter {@link WebSiteRequest#LOGIN_REQUESTED}="true"
 	 *       or both {@link WebSiteRequest#LOGIN_USERNAME} and {@link WebSiteRequest#LOGIN_PASSWORD} parameters, dispatch to
-	 *       {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
+	 *       {@link #doGet(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
 	 *       and stop here.</li>
-	 *   <li>Finally, dispatches the request to {@link #doPostWithSearch(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}.</li>
+	 *   <li>Finally, dispatches the request to {@link #doPostWithSearch(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}.</li>
 	 * </ol>
 	 *
-	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
-	 * @see #doPostWithSearch(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
+	 * @see #doGet(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
+	 * @see #doPostWithSearch(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
 	final protected void reportingDoPost(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException, IOException {
@@ -727,7 +727,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
-	 * Handles any search posts, sends everything else on to {@link #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}.
+	 * Handles any search posts, sends everything else on to {@link #doPost(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}.
 	 * The search assumes the search parameters of {@link WebSiteRequest#SEARCH_QUERY} and {@link WebSiteRequest#SEARCH_TARGET}.  Both
 	 * these values must be present for a search to be performed.  Search target may be either {@link WebSiteRequest#SEARCH_THIS_AREA}
 	 * or {@link WebSiteRequest#SEARCH_ENTIRE_SITE}, defaulting to {@link WebSiteRequest#SEARCH_THIS_AREA} for any other value.
@@ -780,20 +780,20 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
-	 * Prepares the request then invokes {@link #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE)}.
+	 * Prepares the request then invokes {@link #doPost(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE)}.
 	 * To not have these steps automatically applied, override this method.
 	 * By the time this method is called, security checks, authentication, and redirects have been done.
 	 * <ol>
 	 *   <li>Sets the {@linkplain Serialization serialization}.</li>
 	 *   <li>Sets the {@linkplain Doctype DOCTYPE}.</li>
-	 *   <li>Gets the {@link #getDocument(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse) response writer}.</li>
-	 *   <li>Invokes {@link #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE)}.</li>
+	 *   <li>Gets the {@link #getDocument(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse) response writer}.</li>
+	 *   <li>Invokes {@link #doPost(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE)}.</li>
 	 * </ol>
 	 *
-	 * @see #doPostWithSearch(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
-	 * @see #getSerialization(com.aoindustries.website.framework.WebSiteRequest)
-	 * @see #getDoctype(com.aoindustries.website.framework.WebSiteRequest)
-	 * @see #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE)
+	 * @see #doPostWithSearch(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
+	 * @see #getSerialization(com.aoapps.web.framework.WebSiteRequest)
+	 * @see #getDoctype(com.aoapps.web.framework.WebSiteRequest)
+	 * @see #doPost(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE)
 	 */
 	public void doPost(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		Serialization serialization = getSerialization(req);
@@ -811,7 +811,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
-	 * The layout is automatically applied to the page, then {@link #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.website.framework.WebPageLayout, com.aoindustries.html.servlet.FlowContent)}
+	 * The layout is automatically applied to the page, then {@link #doPost(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.FlowContent)}
 	 * is called.  To not have the layout automatically applied, override this method.
 	 * By the time this method is called, security checks, authentication, redirects, doctype, and serialization have been done.
 	 *
@@ -819,10 +819,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @param  resp  the {@link HttpServletResponse} for this request, or {@code null} when searching
 	 * @param  document  the {@link DocumentEE} to send output to
 	 *
-	 * @see #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
-	 * @see #getWebPageLayout(com.aoindustries.website.framework.WebSiteRequest)
-	 * @see WebPageLayout#doPage(com.aoindustries.website.framework.WebPage, com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE, java.lang.String, com.aoindustries.io.function.IOConsumerE)
-	 * @see #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.website.framework.WebPageLayout, com.aoindustries.html.servlet.FlowContent)
+	 * @see #doPost(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
+	 * @see #getWebPageLayout(com.aoapps.web.framework.WebSiteRequest)
+	 * @see WebPageLayout#doPage(com.aoapps.web.framework.WebPage, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE, java.lang.String, com.aoapps.lang.io.function.IOConsumerE)
+	 * @see #doPost(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.FlowContent)
 	 */
 	public void doPost(
 		WebSiteRequest req,
@@ -834,15 +834,15 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
-	 * By default, a POST request just calls {@link #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.website.framework.WebPageLayout, com.aoindustries.html.servlet.FlowContent)}.
+	 * By default, a POST request just calls {@link #doGet(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.FlowContent)}.
 	 *
 	 * @param  req     the current {@link WebSiteRequest}
 	 * @param  resp    the {@link HttpServletResponse} for this request
 	 * @param  layout  the {@link WebPageLayout} that has been applied
 	 * @param  flow    the {@link FlowContent} to send output to
 	 *
-	 * @see #doPost(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.html.servlet.DocumentEE)
-	 * @see #doGet(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.website.framework.WebPageLayout, com.aoindustries.html.servlet.FlowContent)
+	 * @see #doPost(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE)
+	 * @see #doGet(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.FlowContent)
 	 */
 	public <__ extends FlowContent<__>> void doPost(
 		WebSiteRequest req,
@@ -979,8 +979,8 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @return  the alt text of the navigation image
 	 *
 	 * @see #getShortTitle()
-	 * @see #getNavImageSuffix(com.aoindustries.website.framework.WebSiteRequest)
-	 * @see #getNavImageURL(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.net.URIParameters)
+	 * @see #getNavImageSuffix(com.aoapps.web.framework.WebSiteRequest)
+	 * @see #getNavImageURL(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.net.URIParameters)
 	 */
 	public String getNavImageAlt(WebSiteRequest req) throws ServletException {
 		return getShortTitle();
@@ -991,8 +991,8 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * image is not large enough to hold both <code>getNavImageAlt</code> and <code>getNavImageSuffix</code>,
 	 * the beginning is truncated and <code>...</code> appended so that both fit the image.
 	 *
-	 * @see #getNavImageAlt(com.aoindustries.website.framework.WebSiteRequest)
-	 * @see #getNavImageURL(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoindustries.net.URIParameters)
+	 * @see #getNavImageAlt(com.aoapps.web.framework.WebSiteRequest)
+	 * @see #getNavImageURL(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.net.URIParameters)
 	 */
 	public String getNavImageSuffix(WebSiteRequest req) throws ServletException {
 		return null;
@@ -1004,8 +1004,8 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @param  params  Only adds a value when the name has not already been added to the URL.
 	 *                 This does not support multiple values, only the first is used.
 	 *
-	 * @see #getNavImageAlt(com.aoindustries.website.framework.WebSiteRequest)
-	 * @see #getNavImageSuffix(com.aoindustries.website.framework.WebSiteRequest)
+	 * @see #getNavImageAlt(com.aoapps.web.framework.WebSiteRequest)
+	 * @see #getNavImageSuffix(com.aoapps.web.framework.WebSiteRequest)
 	 */
 	public String getNavImageURL(WebSiteRequest req, HttpServletResponse resp, URIParameters params) throws ServletException {
 		return req.getEncodedURL(this, params, resp);
@@ -1079,14 +1079,14 @@ abstract public class WebPage extends ErrorReportingServlet {
 	/**
 	 * Gets all of the pages that are children of this one in the page hierarchy.
 	 * Unless overridden, the pages are cached in a <code>WebPage[]</code> for
-	 * faster access.  The actual list of pages is obtained from {@link #getChildren(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}.
+	 * faster access.  The actual list of pages is obtained from {@link #getChildren(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}.
 	 * <p>
 	 * Pages will also not be cached if the configuration property is set to anything
 	 * other than <code>"true"</code>
 	 *
 	 * @return a <code>WebPage[]</code> of all of the lower-level pages
 	 *
-	 * @see  #getChildren(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
+	 * @see  #getChildren(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	synchronized public WebPage[] getCachedChildren(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
 		WebPage[] children = this.cachedChildren;
@@ -1151,7 +1151,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	/**
-	 * @see  #getWebPage(javax.servlet.ServletContext, java.lang.Class, com.aoindustries.website.framework.WebSiteRequest)
+	 * @see  #getWebPage(javax.servlet.ServletContext, java.lang.Class, com.aoapps.web.framework.WebSiteRequest)
 	 */
 	public WebPage getWebPage(Class<? extends WebPage> clazz, WebSiteRequest req) throws ServletException {
 		return getWebPage(getServletContext(), clazz, req);
@@ -1294,7 +1294,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	/**
 	 * @param  params  The parameters used to select the right instance.
 	 *
-	 * @see  #getWebPage(javax.servlet.ServletContext, java.lang.Class, com.aoindustries.net.URIParameters)
+	 * @see  #getWebPage(javax.servlet.ServletContext, java.lang.Class, com.aoapps.net.URIParameters)
 	 */
 	public WebPage getWebPage(Class<? extends WebPage> clazz, URIParameters params) throws ServletException {
 		return getWebPage(getServletContext(), clazz, params);
@@ -1303,7 +1303,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	/**
 	 * Gets a web page given no parameters.
 	 *
-	 * @see  #getWebPage(java.lang.Class, com.aoindustries.net.URIParameters)
+	 * @see  #getWebPage(java.lang.Class, com.aoapps.net.URIParameters)
 	 */
 	public WebPage getWebPage(Class<? extends WebPage> clazz) throws ServletException {
 		return getWebPage(clazz, (URIParameters)null);
@@ -1329,7 +1329,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @exception  IllegalArgumentException if unable to create the instance
 	 *
-	 * @see  #isHandler(com.aoindustries.net.URIParameters)
+	 * @see  #isHandler(com.aoapps.net.URIParameters)
 	 */
 	// TODO: Deprecate for lambda version
 	public static WebPage getWebPage(ServletContext context, Class<? extends WebPage> clazz, URIParameters params) throws ServletException {
@@ -1391,7 +1391,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @exception  IllegalArgumentException if unable to create the instance
 	 *
-	 * @see  #getWebPage(javax.servlet.ServletContext, java.lang.Class, com.aoindustries.net.URIParameters)
+	 * @see  #getWebPage(javax.servlet.ServletContext, java.lang.Class, com.aoapps.net.URIParameters)
 	 */
 	// TODO: Deprecate for lambda version
 	public static WebPage getWebPage(ServletContext context, Class<? extends WebPage> clazz) throws ServletException {
@@ -1433,7 +1433,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *
 	 * @return a <code>WebPage[]</code> of all of the lower-level pages
 	 *
-	 * @see  #getCachedChildren(com.aoindustries.website.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
+	 * @see  #getCachedChildren(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 * @see  #emptyWebPageArray
 	 */
 	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Empty array is unmodifiable
@@ -1444,10 +1444,10 @@ abstract public class WebPage extends ErrorReportingServlet {
 	/**
 	 * Determines if this page is the instance that should handle a particular request.
 	 * <p>
-	 * By default calls {@link #isHandler(com.aoindustries.net.URIParameters)}, wrapping request in
+	 * By default calls {@link #isHandler(com.aoapps.net.URIParameters)}, wrapping request in
 	 * {@link ServletRequestParameters}.  When no request, uses {@link EmptyURIParameters}.
 	 *
-	 * @see  #getWebPage(javax.servlet.ServletContext, java.lang.Class, com.aoindustries.website.framework.WebSiteRequest)
+	 * @see  #getWebPage(javax.servlet.ServletContext, java.lang.Class, com.aoapps.web.framework.WebSiteRequest)
 	 */
 	public boolean isHandler(WebSiteRequest req) {
 		return isHandler((req == null) ? EmptyURIParameters.getInstance() : new ServletRequestParameters(req));
@@ -1460,7 +1460,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * for this <code>Class</code>.
 	 * </p>
 	 *
-	 * @see  #getWebPage(javax.servlet.ServletContext, java.lang.Class, com.aoindustries.net.URIParameters)
+	 * @see  #getWebPage(javax.servlet.ServletContext, java.lang.Class, com.aoapps.net.URIParameters)
 	 */
 	public boolean isHandler(URIParameters params) {
 		return true;

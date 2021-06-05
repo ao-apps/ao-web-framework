@@ -20,22 +20,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-web-framework.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.website.framework;
+package com.aoapps.web.framework;
 
-import com.aoindustries.html.any.Content;
-import com.aoindustries.html.servlet.FlowContent;
-import com.aoindustries.io.FileUtils;
-import java.io.File;
+import com.aoapps.html.servlet.FlowContent;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Pulls information from a file to be used as the content.
+ * Pulls the page contents from a file while wrapping it with a PRE block.
  *
  * @author  AO Industries, Inc.
  */
-abstract public class FilePage extends WebPage {
+public abstract class PreFilePage extends FilePage {
 
 	private static final long serialVersionUID = 1L;
 
@@ -46,24 +43,6 @@ abstract public class FilePage extends WebPage {
 		WebPageLayout layout,
 		__ flow
 	) throws ServletException, IOException {
-		printFile(flow, getFile());
-	}
-
-	/**
-	 * Gets the file that the text should be read from.
-	 */
-	public abstract File getFile() throws IOException;
-
-	@Override
-	public long getLastModified(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
-		try {
-			return Math.max(super.getLastModified(req, resp), getFile().lastModified());
-		} catch(IOException e) {
-			throw new ServletException(e);
-		}
-	}
-
-	public static void printFile(Content<?, ?> content, File file) throws IOException {
-		FileUtils.copy(file, content.getUnsafe());
+		flow.pre__(pre -> printFile(pre, getFile()));
 	}
 }

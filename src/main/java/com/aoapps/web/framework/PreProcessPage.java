@@ -20,29 +20,25 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-web-framework.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.website.framework;
+package com.aoapps.web.framework;
 
-import com.aoindustries.html.servlet.FlowContent;
+import com.aoapps.html.servlet.FlowContent;
 import java.io.IOException;
+import java.io.InputStream;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Pulls the page contents from a file while wrapping it with a PRE block.
+ * Takes the output of a native process and puts it in a PRE block
  *
  * @author  AO Industries, Inc.
  */
-public abstract class PreFilePage extends FilePage {
+public abstract class PreProcessPage extends ProcessPage {
 
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public <__ extends FlowContent<__>> void doGet(
-		WebSiteRequest req,
-		HttpServletResponse resp,
-		WebPageLayout layout,
-		__ flow
-	) throws ServletException, IOException {
-		flow.pre__(pre -> printFile(pre, getFile()));
+	public <__ extends FlowContent<__>> void printStream(__ flow, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
+		flow.pre__(pre -> printStreamStatic(pre, in));
 	}
 }
