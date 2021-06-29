@@ -37,7 +37,7 @@ along with ao-web-framework.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T22:08:31-05:00"
-		dateModified="2021-06-03T22:53:21-05:00"
+		dateModified="2021-06-27T16:13:41-05:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -97,6 +97,12 @@ along with ao-web-framework.  If not, see <http://www.gnu.org/licenses />.
 					</li>
 					<li>Updated to <ao:a rel="nofollow" href="https://www.oracle.com/java/technologies/javaee/javaeetechnologies.html#javaee7">Java™ EE 7 Web Profile</ao:a> (Servlet 3.1, JSP 2.3, EL 3.0, and JSTL 1.2).</li>
 					<li>Minimum Java version changed from 1.8 to 11.</li>
+					<li>
+						Now supports Java 9+ modules.  Due to still having filename-based automatic module dependencies,
+						*-SNAPSHOT versions include <code>module-info.class</code> while releases include the
+						<code>Automatic-Module-Name</code> manifest entry.  To minimize the difference between these
+						modes, <code>module-info.java</code> does not perform any transitive requires.
+					</li>
 					<li>Maven artifact relocated from <code>com.aoindustries:aoweb-framework</code> to <code>com.aoapps:ao-web-framework</code>.</li>
 					<li>Package renamed from <code>com.aoindustries.website.framework</code> to <code>com.aoapps.web.framework</code>.</li>
 				</ul>
@@ -175,7 +181,7 @@ along with ao-web-framework.  If not, see <http://www.gnu.org/licenses />.
 		>
 			<ul>
 				<li>
-					Removed uses of <ao:a rel="nofollow" href="@{javadoc.link.javase}java/io/File#deleteOnExit--">File.deleteOnExit()</ao:a>
+					Removed uses of <ao:a rel="nofollow" href="@{javadoc.link.javase}java.base/java/io/File#deleteOnExit--">File.deleteOnExit()</ao:a>
 					to avoid a <ao:a href="https://bugs.openjdk.java.net/browse/JDK-4872014">JDK memory leak</ao:a> in long-running applications.
 				</li>
 			</ul>

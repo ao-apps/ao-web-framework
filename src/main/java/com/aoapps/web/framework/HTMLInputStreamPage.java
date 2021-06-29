@@ -60,10 +60,19 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 	}
 
 	/**
-	 * Gets the HTML file with the same name as the provided Class.
+	 * Gets the HTML file with the same name as the provided Class or {@code null} when not found.
 	 */
 	public static InputStream getHTMLInputStream(Class<?> clazz) throws IOException {
-		return HTMLInputStreamPage.class.getResourceAsStream('/'+clazz.getName().replace('.', '/')+".html");
+		String resource = clazz.getName().replace('.', '/') + ".html";
+		InputStream in = HTMLInputStreamPage.class.getResourceAsStream("/" + resource);
+		if(in == null) {
+			// Try ClassLoader for when modules enabled
+			ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+			in = (classloader != null)
+				? classloader.getResourceAsStream(resource)
+				: ClassLoader.getSystemResourceAsStream(resource);
+		}
+		return in;
 	}
 
 	/**
