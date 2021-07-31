@@ -210,9 +210,9 @@ along with ao-web-framework.  If not, see <http://www.gnu.org/licenses />.
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId><artifactId>maven-javadoc-plugin</artifactId>
 						<configuration>
-							<offlineLinks>
+							<offlineLinks combine.children="append">
 								<!-- Direct -->
-								<!-- Java EE: <groupId>javax.activation</groupId><artifactId>activation</artifactId> --><!-- TODO: https://jakarta.ee/specifications/activation/1.2/apidocs/ -->
+								<!-- ao-javadoc-offline: <groupId>javax.activation</groupId><artifactId>activation</artifactId> --><!-- TODO: https://jakarta.ee/specifications/activation/1.2/apidocs/ -->
 								<offlineLink>
 									<url>https://oss.aoapps.com/collections/apidocs/</url>
 									<location>${project.build.directory}/offlineLinks/com.aoapps/ao-collections</location>
@@ -269,18 +269,8 @@ along with ao-web-framework.  If not, see <http://www.gnu.org/licenses />.
 									<url>https://oss.aoapps.com/web-resources/servlet/apidocs/</url>
 									<location>${project.build.directory}/offlineLinks/com.aoapps/ao-web-resources-servlet</location>
 								</offlineLink>
-								<!-- Java EE: <groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId> -->
-								<!-- Java EE: <groupId>javax.servlet.jsp</groupId><artifactId>javax.servlet.jsp-api</artifactId> -->
-								<!-- Java SE -->
-								<offlineLink>
-									<url>${javadoc.link.javase}</url>
-									<location>${project.build.directory}/offlineLinks/com/aoapps/javadoc/offline/javase/${javase.release}</location>
-								</offlineLink>
-								<!-- Java EE -->
-								<offlineLink>
-									<url>${javadoc.link.javaee}</url>
-									<location>${project.build.directory}/offlineLinks/com/aoapps/javadoc/offline/javaee/${javaee.version}</location>
-								</offlineLink>
+								<!-- ao-javadoc-offline: <groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId> -->
+								<!-- ao-javadoc-offline: <groupId>javax.servlet.jsp</groupId><artifactId>javax.servlet.jsp-api</artifactId> -->
 							</offlineLinks>
 						</configuration>
 					</plugin>
