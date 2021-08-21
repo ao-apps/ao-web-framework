@@ -190,7 +190,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="getLastModified() Requests">
-	
+
 	/**
 	 * The main entry point for <code>getLastModified()</code> requests.
 	 * Prepares the request and performs initial actions:
@@ -958,7 +958,9 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @param  req  the current <code>WebSiteRequest</code>
 	 *
 	 * @return  a <code>String[]</code> for multiple includes,
-	 *          a <code>String</code> for one,
+	 *          a <code>Class</code> for one,
+	 *          a <code>WebPage</code> for one,
+	 *          a <code>Object</code> for one via {@link Object#toString()},
 	 *          or <code>null</code> for none
 	 */
 	public Object getJavaScriptSrc(WebSiteRequest req) throws ServletException {
