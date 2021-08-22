@@ -106,11 +106,11 @@ abstract public class WebPageLayout {
 	 * @param  flow  The {@link FlowContent} that was returned by
 	 *               {@link #startPage(com.aoapps.web.framework.WebPage, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE, java.lang.String)}.
 	 */
-	abstract public <__ extends FlowContent<__>> void endPage(
+	abstract public void endPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		__ flow
+		FlowContent<?> flow
 	) throws ServletException, IOException;
 
 	/**
@@ -146,7 +146,7 @@ abstract public class WebPageLayout {
 	 * @see  #startPage(com.aoapps.web.framework.WebPage, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE, java.lang.String)
 	 * @see  #endPage(com.aoapps.web.framework.WebPage, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
 	 */
-	public <__ extends FlowContent<__>, Ex extends Throwable> void doPage(
+	public <Ex extends Throwable> void doPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
@@ -154,7 +154,7 @@ abstract public class WebPageLayout {
 		String onload,
 		IORunnableE<Ex> body
 	) throws ServletException, IOException, Ex {
-		__ flow = startPage(page, req, resp, document, onload);
+		FlowContent<?> flow = startPage(page, req, resp, document, onload);
 		if(body != null) body.run();
 		endPage(page, req, resp, flow);
 	}
@@ -172,26 +172,26 @@ abstract public class WebPageLayout {
 		printContentTitle(document, req, resp, "Search Results", 1);
 		printContentHorizontalDivider(document, req, resp, 1, false);
 		startContentLine(document, req, resp, 1, "center", null);
-		beginLightArea(req, resp, document, null, "300", true);
-		flow.form("").id(WebPage.SEARCH_TWO).method(Method.Value.POST).__(form -> {
-			req.printFormFields(form);
-			form.table().cellspacing(0).cellpadding(0).__(table -> table
-				.tr__(tr -> tr
-					.td().style("white-space:nowrap").__(td -> td
-						.text("Word(s) to search for:").sp()
-						.input().text().size(24).name(WebSiteRequest.SEARCH_QUERY).value(query).__().br__()
-						.text("Search Location:").sp().input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).checked(isEntireSite).__()
-						.sp().text("Entire Site").nbsp(3).input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_THIS_AREA).checked(!isEntireSite).__()
-						.sp().text("This Area").br__()
-						.br__()
-						.div().style("text-align:center").__(div -> div
-							.input().submit().clazz("ao_button").value(" Search ").__()
+		lightArea(req, resp, flow, null, "300", true, lightArea -> lightArea
+			.form("").id(WebPage.SEARCH_TWO).method(Method.Value.POST).__(form -> {
+				req.printFormFields(form);
+				form.table().cellspacing(0).cellpadding(0).__(table -> table
+					.tr__(tr -> tr
+						.td().style("white-space:nowrap").__(td -> td
+							.text("Word(s) to search for:").sp()
+							.input().text().size(24).name(WebSiteRequest.SEARCH_QUERY).value(query).__().br__()
+							.text("Search Location:").sp().input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).checked(isEntireSite).__()
+							.sp().text("Entire Site").nbsp(3).input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_THIS_AREA).checked(!isEntireSite).__()
+							.sp().text("This Area").br__()
+							.br__()
+							.div().style("text-align:center").__(div -> div
+								.input().submit().clazz("ao_button").value(" Search ").__()
+							)
 						)
 					)
-				)
-			);
-		});
-		endLightArea(req, resp, document);
+				);
+			})
+		);
 		endContentLine(document, req, resp, 1, false);
 		printContentHorizontalDivider(document, req, resp, 1, false);
 		startContentLine(document, req, resp, 1, "center", null);
@@ -200,44 +200,44 @@ abstract public class WebPageLayout {
 				flow.b__("No matches found");
 			}
 		} else {
-			beginLightArea(req, resp, document);
-			flow.table().cellspacing(0).cellpadding(0).clazz("aoLightRow").__(table -> {
-				table.tr__(tr -> tr
-					.th().style("white-space:nowrap").__("% Match")
-					.th().style("white-space:nowrap").__("Title")
-					.th().style("white-space:nowrap").__("\u00A0")
-					.th().style("white-space:nowrap").__("Description")
-				);
-
-				// Find the highest probability
-				float highest = results.get(0).getProbability();
-
-				// Display the results
-				int size = results.size();
-				for (int c = 0; c < size; c++) {
-					String rowClass= (c & 1) == 0 ? "aoLightRow":"aoDarkRow";
-					String linkClass = (c & 1) == 0 ? "aoDarkLink":"aoLightLink";
-					SearchResult result = results.get(c);
-					String url = result.getUrl();
-					String title = result.getTitle();
-					String description = result.getDescription();
-					table.tr().clazz(rowClass).__(tr -> tr
-						.td().style("white-space:nowrap", "text-align:center").__(Math.round(99 * result.getProbability() / highest) + "%")
-						.td().style("white-space:nowrap", "text-align:left").__(td -> td
-							.a().clazz(linkClass).href(
-								resp.encodeURL(
-									URIEncoder.encodeURI(
-										req.getContextPath() + url
-									)
-								)
-							).__(title)
-						)
-						.td().style("white-space:nowrap").__("\u00A0\u00A0\u00A0")
-						.td().style("white-space:nowrap", "text-align:left").__(description)
+			lightArea(req, resp, flow, lightArea -> lightArea
+				.table().cellspacing(0).cellpadding(0).clazz("aoLightRow").__(table -> {
+					table.tr__(tr -> tr
+						.th().style("white-space:nowrap").__("% Match")
+						.th().style("white-space:nowrap").__("Title")
+						.th().style("white-space:nowrap").__("\u00A0")
+						.th().style("white-space:nowrap").__("Description")
 					);
-				}
-			});
-			endLightArea(req, resp, document);
+
+					// Find the highest probability
+					float highest = results.get(0).getProbability();
+
+					// Display the results
+					int size = results.size();
+					for (int c = 0; c < size; c++) {
+						String rowClass= (c & 1) == 0 ? "aoLightRow":"aoDarkRow";
+						String linkClass = (c & 1) == 0 ? "aoDarkLink":"aoLightLink";
+						SearchResult result = results.get(c);
+						String url = result.getUrl();
+						String title = result.getTitle();
+						String description = result.getDescription();
+						table.tr().clazz(rowClass).__(tr -> tr
+							.td().style("white-space:nowrap", "text-align:center").__(Math.round(99 * result.getProbability() / highest) + "%")
+							.td().style("white-space:nowrap", "text-align:left").__(td -> td
+								.a().clazz(linkClass).href(
+									resp.encodeURL(
+										URIEncoder.encodeURI(
+											req.getContextPath() + url
+										)
+									)
+								).__(title)
+							)
+							.td().style("white-space:nowrap").__("\u00A0\u00A0\u00A0")
+							.td().style("white-space:nowrap", "text-align:left").__(description)
+						);
+					}
+				})
+			);
 		}
 		endContentLine(document, req, resp, 1, false);
 		endContent(page, document, req, resp, 1);
@@ -345,37 +345,335 @@ abstract public class WebPageLayout {
 
 	/**
 	 * Begins a lighter colored area of the site.
+	 *
+	 * @param  <PC>  The parent content model this area is within
+	 * @param  <__>  This content model, which will be the parent content model of child elements
+	 *
+	 * @return  The {@link FlowContent} that should be used to write the area contents.
+	 *          This is also given to {@link #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
+	 *          to finish the area.
 	 */
-	final public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document) throws IOException {
-		beginLightArea(req, resp, document, null, null, false);
+	final public <
+		PC extends FlowContent<PC>,
+		__ extends FlowContent<__>
+	> __ beginLightArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		PC pc
+	) throws ServletException, IOException {
+		return beginLightArea(req, resp, pc, null, null, false);
 	}
 
 	/**
 	 * Begins a lighter colored area of the site.
+	 *
+	 * @param  <PC>  The parent content model this area is within
+	 * @param  <__>  This content model, which will be the parent content model of child elements
+	 *
+	 * @return  The {@link FlowContent} that should be used to write the area contents.
+	 *          This is also given to {@link #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
+	 *          to finish the area.
 	 */
-	abstract public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document, String align, String width, boolean nowrap) throws IOException;
+	abstract public <
+		PC extends FlowContent<PC>,
+		__ extends FlowContent<__>
+	> __ beginLightArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		PC pc,
+		String align,
+		String width,
+		boolean nowrap
+	) throws ServletException, IOException;
 
 	/**
 	 * Ends a lighter area of the site.
+	 *
+	 * @param  lightArea  The {@link FlowContent} that was returned by
+	 *               {@link #beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
+	 *               or {@link #beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, boolean)}.
 	 */
-	abstract public void endLightArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document) throws IOException;
+	abstract public void endLightArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		FlowContent<?> lightArea
+	) throws ServletException, IOException;
 
 	/**
-	 * Begins an area with a white background.
+	 * {@linkplain #beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a light area},
+	 * invokes the given area body, then
+	 * {@linkplain #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the light area}.
+	 *
+	 * @param  <PC>  The parent content model this area is within
+	 * @param  <__>  This content model, which will be the parent content model of child elements
+	 * @param  <Ex>  An arbitrary exception type that may be thrown
+	 *
+	 * @see  #beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+	 * @see  #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
 	 */
-	final public void beginWhiteArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document) throws IOException {
-		beginWhiteArea(req, resp, document, null, null, false);
+	public <
+		PC extends FlowContent<PC>,
+		__ extends FlowContent<__>,
+		Ex extends Throwable
+	> void lightArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		PC pc,
+		IOConsumerE<? super __, Ex> lightArea
+	) throws ServletException, IOException, Ex {
+		__ flow = beginLightArea(req, resp, pc);
+		if(lightArea != null) lightArea.accept(flow);
+		endLightArea(req, resp, flow);
 	}
 
 	/**
-	 * Begins a lighter colored area of the site.
+	 * {@linkplain #beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a light area},
+	 * invokes the given area body, then
+	 * {@linkplain #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the light area}.
+	 *
+	 * @param  <PC>  The parent content model this area is within
+	 * @param  <Ex>  An arbitrary exception type that may be thrown
+	 *
+	 * @see  #beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+	 * @see  #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
 	 */
-	abstract public void beginWhiteArea(WebSiteRequest req, HttpServletResponse response, DocumentEE document, String align, String width, boolean nowrap) throws IOException;
+	public <
+		PC extends FlowContent<PC>,
+		Ex extends Throwable
+	> void lightArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		PC pc,
+		IORunnableE<Ex> lightArea
+	) throws ServletException, IOException, Ex {
+		FlowContent<?> flow = beginLightArea(req, resp, pc);
+		if(lightArea != null) lightArea.run();
+		endLightArea(req, resp, flow);
+	}
 
 	/**
-	 * Ends a lighter area of the site.
+	 * {@linkplain #beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a light area},
+	 * invokes the given area body, then
+	 * {@linkplain #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the light area}.
+	 *
+	 * @param  <PC>  The parent content model this area is within
+	 * @param  <__>  This content model, which will be the parent content model of child elements
+	 * @param  <Ex>  An arbitrary exception type that may be thrown
+	 *
+	 * @see  #beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+	 * @see  #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
 	 */
-	abstract public void endWhiteArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document) throws IOException;
+	public <
+		PC extends FlowContent<PC>,
+		__ extends FlowContent<__>,
+		Ex extends Throwable
+	> void lightArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		PC pc,
+		String align,
+		String width,
+		boolean nowrap,
+		IOConsumerE<? super __, Ex> lightArea
+	) throws ServletException, IOException, Ex {
+		__ flow = beginLightArea(req, resp, pc, align, width, nowrap);
+		if(lightArea != null) lightArea.accept(flow);
+		endLightArea(req, resp, flow);
+	}
+
+	/**
+	 * {@linkplain #beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a light area},
+	 * invokes the given area body, then
+	 * {@linkplain #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the light area}.
+	 *
+	 * @param  <PC>  The parent content model this area is within
+	 * @param  <Ex>  An arbitrary exception type that may be thrown
+	 *
+	 * @see  #beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+	 * @see  #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+	 */
+	public <
+		PC extends FlowContent<PC>,
+		Ex extends Throwable
+	> void lightArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		PC pc,
+		String align,
+		String width,
+		boolean nowrap,
+		IORunnableE<Ex> lightArea
+	) throws ServletException, IOException, Ex {
+		FlowContent<?> flow = beginLightArea(req, resp, pc, align, width, nowrap);
+		if(lightArea != null) lightArea.run();
+		endLightArea(req, resp, flow);
+	}
+
+	/**
+	 * Begins a white area of the site.
+	 *
+	 * @param  <PC>  The parent content model this area is within
+	 * @param  <__>  This content model, which will be the parent content model of child elements
+	 *
+	 * @return  The {@link FlowContent} that should be used to write the area contents.
+	 *          This is also given to {@link #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
+	 *          to finish the area.
+	 */
+	final public <
+		PC extends FlowContent<PC>,
+		__ extends FlowContent<__>
+	> __ beginWhiteArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		PC pc
+	) throws ServletException, IOException {
+		return beginWhiteArea(req, resp, pc, null, null, false);
+	}
+
+	/**
+	 * Begins a white area of the site.
+	 *
+	 * @param  <PC>  The parent content model this area is within
+	 * @param  <__>  This content model, which will be the parent content model of child elements
+	 *
+	 * @return  The {@link FlowContent} that should be used to write the area contents.
+	 *          This is also given to {@link #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
+	 *          to finish the area.
+	 */
+	abstract public <
+		PC extends FlowContent<PC>,
+		__ extends FlowContent<__>
+	> __ beginWhiteArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		PC pc,
+		String align,
+		String width,
+		boolean nowrap
+	) throws ServletException, IOException;
+
+	/**
+	 * Ends a white area of the site.
+	 *
+	 * @param  whiteArea  The {@link FlowContent} that was returned by
+	 *               {@link #beginWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
+	 *               or {@link #beginWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, boolean)}.
+	 */
+	abstract public void endWhiteArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		FlowContent<?> whiteArea
+	) throws ServletException, IOException;
+
+	/**
+	 * {@linkplain #beginWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a white area},
+	 * invokes the given area body, then
+	 * {@linkplain #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the white area}.
+	 *
+	 * @param  <PC>  The parent content model this area is within
+	 * @param  <__>  This content model, which will be the parent content model of child elements
+	 * @param  <Ex>  An arbitrary exception type that may be thrown
+	 *
+	 * @see  #beginWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+	 * @see  #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+	 */
+	public <
+		PC extends FlowContent<PC>,
+		__ extends FlowContent<__>,
+		Ex extends Throwable
+	> void whiteArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		PC pc,
+		IOConsumerE<? super __, Ex> whiteArea
+	) throws ServletException, IOException, Ex {
+		__ flow = beginWhiteArea(req, resp, pc);
+		if(whiteArea != null) whiteArea.accept(flow);
+		endWhiteArea(req, resp, flow);
+	}
+
+	/**
+	 * {@linkplain #beginWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a white area},
+	 * invokes the given area body, then
+	 * {@linkplain #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the white area}.
+	 *
+	 * @param  <PC>  The parent content model this area is within
+	 * @param  <Ex>  An arbitrary exception type that may be thrown
+	 *
+	 * @see  #beginWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+	 * @see  #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+	 */
+	public <
+		PC extends FlowContent<PC>,
+		Ex extends Throwable
+	> void whiteArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		PC pc,
+		IORunnableE<Ex> whiteArea
+	) throws ServletException, IOException, Ex {
+		FlowContent<?> flow = beginWhiteArea(req, resp, pc);
+		if(whiteArea != null) whiteArea.run();
+		endWhiteArea(req, resp, flow);
+	}
+
+	/**
+	 * {@linkplain #beginWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a white area},
+	 * invokes the given area body, then
+	 * {@linkplain #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the white area}.
+	 *
+	 * @param  <PC>  The parent content model this area is within
+	 * @param  <__>  This content model, which will be the parent content model of child elements
+	 * @param  <Ex>  An arbitrary exception type that may be thrown
+	 *
+	 * @see  #beginWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+	 * @see  #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+	 */
+	public <
+		PC extends FlowContent<PC>,
+		__ extends FlowContent<__>,
+		Ex extends Throwable
+	> void whiteArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		PC pc,
+		String align,
+		String width,
+		boolean nowrap,
+		IOConsumerE<? super __, Ex> whiteArea
+	) throws ServletException, IOException, Ex {
+		__ flow = beginWhiteArea(req, resp, pc, align, width, nowrap);
+		if(whiteArea != null) whiteArea.accept(flow);
+		endWhiteArea(req, resp, flow);
+	}
+
+	/**
+	 * {@linkplain #beginWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a white area},
+	 * invokes the given area body, then
+	 * {@linkplain #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the white area}.
+	 *
+	 * @param  <PC>  The parent content model this area is within
+	 * @param  <Ex>  An arbitrary exception type that may be thrown
+	 *
+	 * @see  #beginWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+	 * @see  #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+	 */
+	public <
+		PC extends FlowContent<PC>,
+		Ex extends Throwable
+	> void whiteArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		PC pc,
+		String align,
+		String width,
+		boolean nowrap,
+		IORunnableE<Ex> whiteArea
+	) throws ServletException, IOException, Ex {
+		FlowContent<?> flow = beginWhiteArea(req, resp, pc, align, width, nowrap);
+		if(whiteArea != null) whiteArea.run();
+		endWhiteArea(req, resp, flow);
+	}
 
 	/**
 	 * Each layout has a name.

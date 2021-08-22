@@ -42,6 +42,7 @@ import com.aoapps.html.servlet.TR_c;
 import com.aoapps.html.util.GoogleAnalytics;
 import static com.aoapps.lang.Strings.trimNullIfEmpty;
 import static com.aoapps.taglib.AttributeUtils.appendWidthStyle;
+import static com.aoapps.taglib.AttributeUtils.getWidthStyle;
 import com.aoapps.web.resources.registry.Group;
 import com.aoapps.web.resources.registry.Registry;
 import com.aoapps.web.resources.registry.Style;
@@ -103,56 +104,90 @@ public class TextOnlyLayout extends WebPageLayout {
 		requestRegistry.activate(RESOURCE_GROUP);
 	}
 
-	// TODO: Return Content<?> and pass to endLightArea
 	@Override
-	public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document, String align, String width, boolean nowrap) throws IOException {
+	public <
+		PC extends FlowContent<PC>,
+		__ extends FlowContent<__>
+	> __ beginLightArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		PC pc,
+		String align,
+		String width,
+		boolean nowrap
+	) throws ServletException, IOException {
 		String align_ = trimNullIfEmpty(align);
-		String width_ = trimNullIfEmpty(width);
-		document.table().style(style -> {
-			style.append("border:5px outset #a0a0a0");
-			if(align_ != null) {
-				style.append(";text-align:").append(align_);
-			}
-			if(width_ != null) {
-				style.append(';');
-				appendWidthStyle(width_, document.out);
-			}
-		}).cellpadding(0).cellspacing(0)._c()
+		TD_c<TR_c<TABLE_c<PC>>> td = pc.table()
+			.style(
+				"border:5px outset #a0a0a0",
+				(align_ != null) ? ("text-align:" + align_) : null,
+				getWidthStyle(width)
+			)
+			.cellpadding(0)
+			.cellspacing(0)
+		._c()
 			.tr_c()
 				.td().clazz("aoLightRow").style("padding:4px", nowrap ? "white-space:nowrap" : null)._c();
+		@SuppressWarnings("unchecked")
+		__ lightArea = (__)td;
+		return lightArea;
 	}
 
 	@Override
-	public void endLightArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document) throws IOException {
-		document.out.write("</td>\n"
-		+ "  </tr>\n"
-		+ "</table>\n");
+	public void endLightArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		FlowContent<?> lightArea
+	) throws ServletException, IOException {
+		@SuppressWarnings("unchecked")
+		TD_c<? extends TR_c<? extends TABLE_c<?>>> td = (TD_c)lightArea;
+					td
+				.__()
+			.__()
+		.__();
 	}
 
-	// TODO: Return Content<?> and pass to endWhiteArea
 	@Override
-	public void beginWhiteArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document, String align, String width, boolean nowrap) throws IOException {
+	public <
+		PC extends FlowContent<PC>,
+		__ extends FlowContent<__>
+	> __ beginWhiteArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		PC pc,
+		String align,
+		String width,
+		boolean nowrap
+	) throws ServletException, IOException {
 		String align_ = trimNullIfEmpty(align);
-		String width_ = trimNullIfEmpty(width);
-		document.table().style(style -> {
-			style.append("border:5px outset #a0a0a0");
-			if(align_ != null) {
-				style.append(";text-align:").append(align_);
-			}
-			if(width_ != null) {
-				style.append(';');
-				appendWidthStyle(width_, document.out);
-			}
-		}).cellpadding(0).cellspacing(0)._c()
+		TD_c<TR_c<TABLE_c<PC>>> td = pc.table()
+			.style(
+				"border:5px outset #a0a0a0",
+				(align_ != null) ? ("text-align:" + align_) : null,
+				getWidthStyle(width)
+			)
+			.cellpadding(0)
+			.cellspacing(0)
+		._c()
 			.tr_c()
 				.td().clazz("aoWhiteRow").style("background-color:white", "padding:4px", nowrap ? "white-space:nowrap" : null)._c();
+		@SuppressWarnings("unchecked")
+		__ whiteArea = (__)td;
+		return whiteArea;
 	}
 
 	@Override
-	public void endWhiteArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document) throws IOException {
-		document.out.write("</td>\n"
-		+ "  </tr>\n"
-		+ "</table>\n");
+	public void endWhiteArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		FlowContent<?> whiteArea
+	) throws ServletException, IOException {
+		@SuppressWarnings("unchecked")
+		TD_c<? extends TR_c<? extends TABLE_c<?>>> td = (TD_c)whiteArea;
+					td
+				.__()
+			.__()
+		.__();
 	}
 
 	@Override
@@ -421,11 +456,11 @@ public class TextOnlyLayout extends WebPageLayout {
 	}
 
 	@Override
-	public <__ extends FlowContent<__>> void endPage(
+	public void endPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		__ flow
+		FlowContent<?> flow
 	) throws ServletException, IOException {
 		@SuppressWarnings("unchecked")
 		TD_c<TR_c<TABLE_c<BODY_c<HTML_c<DocumentEE>>>>> td_c = (TD_c<TR_c<TABLE_c<BODY_c<HTML_c<DocumentEE>>>>>)flow;

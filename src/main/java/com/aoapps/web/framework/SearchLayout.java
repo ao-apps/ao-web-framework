@@ -26,7 +26,9 @@ import com.aoapps.html.servlet.DocumentEE;
 import com.aoapps.html.servlet.FlowContent;
 import com.aoapps.html.servlet.ScriptSupportingContent;
 import com.aoapps.lang.EmptyArrays;
+import java.io.IOException;
 import java.util.List;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -61,11 +63,11 @@ public class SearchLayout extends WebPageLayout {
 	}
 
 	@Override
-	public <__ extends FlowContent<__>> void endPage(
+	public void endPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
-		__ flow
+		FlowContent<?> flow
 	) {
 		// Do nothing
 	}
@@ -79,7 +81,7 @@ public class SearchLayout extends WebPageLayout {
 	public void startContent(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) {
 		// Do nothing
 	}
-	
+
 	@Override
 	public void printContentHorizontalDivider(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int[] colspansAndDirections, boolean endsInternal) {
 		// Do nothing
@@ -111,22 +113,56 @@ public class SearchLayout extends WebPageLayout {
 	}
 
 	@Override
-	public void beginLightArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document, String align, String width, boolean nowrap) {
+	public <
+		PC extends FlowContent<PC>,
+		__ extends FlowContent<__>
+	> __ beginLightArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		PC pc,
+		String align,
+		String width,
+		boolean nowrap
+	) throws ServletException, IOException {
+		// Do nothing
+		@SuppressWarnings("unchecked")
+		__ lightArea = (__)pc;
+		return lightArea;
+	}
+
+	@Override
+	public void endLightArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		FlowContent<?> lightArea
+	) throws ServletException, IOException {
 		// Do nothing
 	}
 
 	@Override
-	public void endLightArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document) {
+	public <
+		PC extends FlowContent<PC>,
+		__ extends FlowContent<__>
+	> __ beginWhiteArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		PC pc,
+		String align,
+		String width,
+		boolean nowrap
+	) throws ServletException, IOException {
 		// Do nothing
+		@SuppressWarnings("unchecked")
+		__ whiteArea = (__)pc;
+		return whiteArea;
 	}
 
 	@Override
-	public void beginWhiteArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document, String align, String width, boolean nowrap) {
-		// Do nothing
-	}
-
-	@Override
-	public void endWhiteArea(WebSiteRequest req, HttpServletResponse resp, DocumentEE document) {
+	public void endWhiteArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		FlowContent<?> whiteArea
+	) throws ServletException, IOException {
 		// Do nothing
 	}
 

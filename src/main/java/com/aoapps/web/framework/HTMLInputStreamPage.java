@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
@@ -48,7 +49,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 
 	@Override
 	public <__ extends FlowContent<__>> void printStream(__ flow, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
-		printHTMLStream(flow, req, resp, getWebPageLayout(req), in, "aoLightLink");
+		printHTMLStream(flow, req, resp, getWebPageLayout(req), in, "aoLightLink", new AtomicReference<>());
 	}
 
 	/**
@@ -79,15 +80,23 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 	 * Prints HTML content, parsing for special <code>@</code> tags.  Types of tags include:
 	 * <ul>
 	 *   <li>@URL(classname)    Loads a WebPage of the given class and builds a URL to it</li>
-	 *   <li>@BEGIN_LIGHT_AREA  Calls {@link WebPageLayout#beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE)}</li>
-	 *   <li>@END_LIGHT_AREA    Calls {@link WebPageLayout#endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE)}</li>
+	 *   <li>@BEGIN_LIGHT_AREA  Calls {@link WebPageLayout#beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}</li>
+	 *   <li>@END_LIGHT_AREA    Calls {@link WebPageLayout#endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}</li>
 	 *   <li>@END_CONTENT_LINE  Calls {@link WebPageLayout#endContentLine(com.aoapps.html.servlet.DocumentEE, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, int, boolean)}</li>
 	 *   <li>@PRINT_CONTENT_HORIZONTAL_DIVIDER  Calls {@link WebPageLayout#printContentHorizontalDivider(com.aoapps.html.servlet.DocumentEE, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, int, boolean)}</li>
 	 *   <li>@START_CONTENT_LINE  Calls {@link WebPageLayout#startContentLine(com.aoapps.html.servlet.DocumentEE, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, int, java.lang.String, java.lang.String)}</li>
 	 *   <li>@LINK_CLASS        The preferred link class for this element</li>
 	 * </ul>
 	 */
-	public static <__ extends FlowContent<__>> void printHTML(__ flow, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, String htmlContent, String linkClass) throws ServletException, IOException {
+	public static <__ extends FlowContent<__>> void printHTML(
+		__ flow,
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		WebPageLayout layout,
+		String htmlContent,
+		String linkClass,
+		AtomicReference<FlowContent<?>> lightAreaRef
+	) throws ServletException, IOException {
 		DocumentEE document = flow.getDocument();
 		if(req == null) {
 			document.unsafe(htmlContent);
@@ -106,10 +115,16 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 							encodeTextInXhtmlAttribute(req.getEncodedURLForClass(className, resp), unsafe);
 							pos=endPos+1;
 						} else if((pos+16)<len && htmlContent.substring(pos, pos+16).equalsIgnoreCase("BEGIN_LIGHT_AREA")) {
-							layout.beginLightArea(req, resp, document);
+							if(lightAreaRef.get() != null) throw new IllegalStateException("@BEGIN_LIGHT_AREA may not be nested");
+							FlowContent<?> lightArea = layout.beginLightArea(req, resp, document);
+							if(lightArea == null) throw new AssertionError("lightArea == null");
+							lightAreaRef.set(lightArea);
 							pos+=16;
 						} else if((pos+14)<len && htmlContent.substring(pos, pos+14).equalsIgnoreCase("END_LIGHT_AREA")) {
-							layout.endLightArea(req, resp, document);
+							FlowContent<?> lightArea = lightAreaRef.get();
+							if(lightArea == null) throw new IllegalStateException("@END_LIGHT_AREA does not have matching @BEGIN_LIGHT_AREA");
+							layout.endLightArea(req, resp, lightArea);
+							lightAreaRef.set(null);
 							pos+=14;
 						} else if((pos+16)<len && htmlContent.substring(pos, pos+16).equalsIgnoreCase("END_CONTENT_LINE")) {
 							layout.endContentLine(document, req, resp, 1, false);
@@ -147,7 +162,15 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 	/**
 	 * @see  #printHTML
 	 */
-	public static <__ extends FlowContent<__>> void printHTMLStream(__ flow, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, InputStream in, String linkClass) throws ServletException, IOException {
+	public static <__ extends FlowContent<__>> void printHTMLStream(
+		__ flow,
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		WebPageLayout layout,
+		InputStream in,
+		String linkClass,
+		AtomicReference<FlowContent<?>> lightAreaRef
+	) throws ServletException, IOException {
 		if(in==null) throw new NullPointerException("in is null");
 		DocumentEE document = flow.getDocument();
 		Reader reader = new InputStreamReader(in);
@@ -180,9 +203,19 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 										if(tags[c].equalsIgnoreCase(tagPart)) {
 											if(c==0) layout.printContentHorizontalDivider(document, req, resp, 1, false);
 											else if(c==1) layout.startContentLine(document, req, resp, 1, null, null);
-											else if(c==2) layout.beginLightArea(req, resp, document);
+											else if(c == 2) {
+												if(lightAreaRef.get() != null) throw new IllegalStateException("@BEGIN_LIGHT_AREA may not be nested");
+												FlowContent<?> lightArea = layout.beginLightArea(req, resp, document);
+												if(lightArea == null) throw new AssertionError("lightArea == null");
+												lightAreaRef.set(lightArea);
+											}
 											else if(c==3) layout.endContentLine(document, req, resp, 1, false);
-											else if(c==4) layout.endLightArea(req, resp, document);
+											else if(c == 4) {
+												FlowContent<?> lightArea = lightAreaRef.get();
+												if(lightArea == null) throw new IllegalStateException("@END_LIGHT_AREA does not have matching @BEGIN_LIGHT_AREA");
+												layout.endLightArea(req, resp, lightArea);
+												lightAreaRef.set(null);
+											}
 											else if(c==5) unsafe.write(linkClass == null ? "aoLightLink" : linkClass);
 											else if(c==6) {
 												// Read up to a ')'
