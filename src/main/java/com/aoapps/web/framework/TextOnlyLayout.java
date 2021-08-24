@@ -288,7 +288,7 @@ public class TextOnlyLayout extends WebPageLayout {
 				.meta(AnyMETA.Name.APPLE_MOBILE_WEB_APP_CAPABLE).content("yes").__()
 				.meta(AnyMETA.Name.APPLE_MOBILE_WEB_APP_STATUS_BAR_STYLE).content("black").__();
 			// Authors
-			// TODO: dcterms copyright
+			// TODO: 3.0.0: dcterms copyright
 			String author = page.getAuthor();
 			if(author != null && !(author = author.trim()).isEmpty()) {
 				head.meta(AnyMETA.Name.AUTHOR).content(author).__();
@@ -322,10 +322,10 @@ public class TextOnlyLayout extends WebPageLayout {
 			if(keywords != null && !(keywords = keywords.trim()).isEmpty()) {
 				head.meta(AnyMETA.Name.KEYWORDS).content(keywords).__();
 			}
-			// TODO: Review HTML 4/HTML 5 differences from here
+			// TODO: 3.0.0: Review HTML 4/HTML 5 differences from here
 			String copyright = page.getCopyright(req, resp, page);
 			if(copyright != null && !(copyright = copyright.trim()).isEmpty()) {
-				// TODO: Dublin Core: https://stackoverflow.com/questions/6665312/is-the-copyright-meta-tag-valid-in-html5
+				// TODO: 3.0.0: Dublin Core: https://stackoverflow.com/questions/6665312/is-the-copyright-meta-tag-valid-in-html5
 				head.meta().name("copyright").content(copyright).__();
 			}
 
@@ -511,14 +511,14 @@ public class TextOnlyLayout extends WebPageLayout {
 	 * Starts the content area of a page.
 	 */
 	@Override
-	// TODO: Return value to be passed on to other methods
+	// TODO: 3.0.0: Return value to be passed on to other methods
 	public void startContent(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) throws IOException {
 		TABLE<DocumentEE> table = document.table().cellpadding(0).cellspacing(0);
 		if(preferredWidth != -1) {
 			table.style(style -> style.append("width:").append(Integer.toString(preferredWidth)).append("px"));
 		}
-		/* TODO: return */ table._c()
-			// TODO: tbody
+		/* TODO: 3.0.0: return */ table._c()
+			// TODO: 3.0.0: tbody
 			.tr__(tr -> {
 				int totalColumns = 0;
 				for(int c = 0; c < contentColumnSpans.length; c++) {
@@ -572,7 +572,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	 * Starts one line of content with the initial colspan set to the provided colspan.
 	 */
 	@Override
-	// TODO: Return value to be passed on to other methods
+	// TODO: 3.0.0: Return value to be passed on to other methods
 	public void startContentLine(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int colspan, String align, String width) throws IOException {
 		String align_ = trimNullIfEmpty(align);
 		String width_ = trimNullIfEmpty(width);
@@ -590,13 +590,13 @@ public class TextOnlyLayout extends WebPageLayout {
 				});
 			}
 			td.attribute("valign", "top");
-			/* TODO: return */ td.colspan(colspan)._c();
+			/* TODO: 3.0.0: return */ td.colspan(colspan)._c();
 	}
 
 	/**
 	 * Starts one line of content with the initial colspan set to the provided colspan.
 	 */
-	// TODO: Accept and return value to be passed on to other methods
+	// TODO: 3.0.0: Accept and return value to be passed on to other methods
 	@Override
 	public void printContentVerticalDivider(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align, String width) throws IOException {
 		String align_ = trimNullIfEmpty(align);
@@ -622,7 +622,7 @@ public class TextOnlyLayout extends WebPageLayout {
 				}
 			});
 		}
-		/* TODO: return */ td
+		/* TODO: 3.0.0: return */ td
 			.attribute("valign", "top")
 			.colspan(colspan)
 			.rowspan(rowspan)
@@ -632,7 +632,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	/**
 	 * Ends one line of content.
 	 */
-	// TODO: Accept value from other methods
+	// TODO: 3.0.0: Accept value from other methods
 	@Override
 	public void endContentLine(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int rowspan, boolean endsInternal) throws IOException {
 		document.out.write("    </td>\n"
@@ -642,7 +642,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	/**
 	 * Ends the content area of a page.
 	 */
-	// TODO: Accept value from other methods
+	// TODO: 3.0.0: Accept value from other methods
 	@Override
 	public void endContent(WebPage page, DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) throws ServletException, IOException {
 		int totalColumns=0;
@@ -659,7 +659,7 @@ public class TextOnlyLayout extends WebPageLayout {
 			String copyright_ = copyright;
 			document.tr__(tr -> tr
 				.td().colspan(totalColumns_).style("text-align:center").__(td -> td
-					// TODO: span unneeded, combine style into td?
+					// TODO: 3.0.0: span unneeded, combine style into td?
 					.span().style("font-size:x-small").__(copyright_)
 				)
 			);

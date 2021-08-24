@@ -904,7 +904,7 @@ abstract public class WebPage extends PageServlet {
 	/**
 	 * Gets additional headers for this page.  The format must be in a String[] of name/value pairs, two elements each, name and then value.
 	 */
-	// TODO: Return a Map<String, ? extend Iterable<String>> ?
+	// TODO: 3.0.0: Return a Map<String, ? extend Iterable<String>> ?
 	public String[] getAdditionalHeaders(WebSiteRequest req) {
 		return null;
 	}
@@ -1432,7 +1432,7 @@ abstract public class WebPage extends PageServlet {
 	 *
 	 * @return  the <code>WebPageLayout</code>
 	 */
-	// TODO: Review uses, should be much fewer now (only from this class?)
+	// TODO: 3.0.0: Review uses, should be much fewer now (only from this class?)
 	public WebPageLayout getWebPageLayout(WebSiteRequest req) throws ServletException {
 		// Search index building
 		if(req == null) return SearchLayout.getInstance();
@@ -1769,7 +1769,7 @@ abstract public class WebPage extends PageServlet {
 	 * Gets the copyright information for this page.  Defaults to the copyright of the parent page.
 	 * May not contain HTML.
 	 *
-	 * // TODO: Use dcterms:
+	 * // TODO: 3.0.0: Use dcterms:
 	 *          http://stackoverflow.com/questions/6665312/is-the-copyright-meta-tag-valid-in-html5
 	 *          https://wiki.whatwg.org/wiki/MetaExtensions
 	 *          http://dublincore.org/documents/dcmi-terms/
