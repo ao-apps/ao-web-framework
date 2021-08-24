@@ -28,7 +28,6 @@ import com.aoapps.lang.io.IoUtils;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -56,33 +55,6 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 	// TODO: Compare to JSP page settings.
 	public static final int BUFFER_SIZE = 256 * 1024;
 
-	/**
-	 * The time that the servlet environment started.
-	 */
-	private static final long uptime = System.currentTimeMillis();
-
-	/**
-	 * Gets the time the servlet environment was loaded.
-	 */
-	public static long getUptime() {
-		return uptime;
-	}
-
-	/**
-	 * The GET requests are counted in a thread safe way.
-	 */
-	private static final AtomicLong getCount = new AtomicLong();
-
-	/**
-	 * The POST requests are counted in a thread safe way.
-	 */
-	private static final AtomicLong postCount = new AtomicLong();
-
-	/**
-	 * The getLastModified calls are counted in a thread safe way.
-	 */
-	private static final AtomicLong lastModifiedCount = new AtomicLong();
-
 	protected ErrorReportingServlet() {
 	}
 
@@ -93,7 +65,6 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	final protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setBufferSize(BUFFER_SIZE);
-		getCount.incrementAndGet();
 		try {
 			reportingDoGet(req, resp);
 		} catch (ThreadDeath td) {
@@ -112,7 +83,6 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	final protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setBufferSize(BUFFER_SIZE);
-		postCount.incrementAndGet();
 		try {
 			reportingDoPost(req, resp);
 		} catch (ThreadDeath td) {
@@ -122,13 +92,6 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 			if(t instanceof IOException) throw (IOException)t;
 			throw Throwables.wrap(t, ServletException.class, ServletException::new);
 		}
-	}
-
-	/**
-	 * Gets the number of GET requests that have been placed.
-	 */
-	public static long getGetCount() {
-		return getCount.get();
 	}
 
 	private static final String RESPONSE_REQUEST_ATTRIBUTE = ErrorReportingServlet.class.getName() + ".resp";
@@ -155,7 +118,6 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 	@Override
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	final protected long getLastModified(HttpServletRequest req) {
-		lastModifiedCount.incrementAndGet();
 		try {
 			HttpServletResponse resp = (HttpServletResponse)req.getAttribute(RESPONSE_REQUEST_ATTRIBUTE);
 			if(resp == null) throw new IllegalStateException("HttpServletResponse not found on the request: " + RESPONSE_REQUEST_ATTRIBUTE);
@@ -166,20 +128,6 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 			logger.log(Level.SEVERE, null, t);
 			throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
 		}
-	}
-
-	/**
-	 * Gets the number of calls to <code>getLastModified</code>.
-	 */
-	public static long getLastModifiedCount() {
-		return lastModifiedCount.get();
-	}
-
-	/**
-	 * Gets the number of POST requests that have been made.
-	 */
-	public static long getPostCount() {
-		return postCount.get();
 	}
 
 	/**

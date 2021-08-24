@@ -87,6 +87,18 @@ abstract public class WebPage extends ErrorReportingServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
+	 * The time that the servlet environment started.
+	 */
+	private static final long uptime = System.currentTimeMillis();
+
+	/**
+	 * Gets the time the servlet environment was loaded.
+	 */
+	public static long getUptime() {
+		return uptime;
+	}
+
+	/**
 	 * An empty array of <code>WebPage</code> objects to be used in returning no web pages.
 	 */
 	protected static final WebPage[] emptyWebPageArray = new WebPage[0];
@@ -248,7 +260,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * Gets the last modified time of the java class file.  If the class file is
 	 * unavailable, it defaults to the time the servlets were loaded.
 	 *
-	 * @see  ErrorReportingServlet#getUptime()
+	 * @see  #getUptime()
 	 */
 	final protected long getClassLastModified() throws ServletException {
 		String dir = getServletContext().getRealPath("/WEB-INF/classes");
