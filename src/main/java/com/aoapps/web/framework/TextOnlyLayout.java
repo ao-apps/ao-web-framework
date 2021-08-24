@@ -340,7 +340,7 @@ public class TextOnlyLayout extends WebPageLayout {
 			Renderer.get(servletContext).renderStyles(
 				req,
 				resp,
-				head, // TODO: MetadataContent
+				head,
 				true, // registeredActivations
 				null, // No additional activations
 				requestRegistry, // request-scope
