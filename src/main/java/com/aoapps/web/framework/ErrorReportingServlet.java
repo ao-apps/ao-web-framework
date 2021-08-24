@@ -49,12 +49,6 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * The response buffer is set to this size.
-	 */
-	// TODO: Compare to JSP page settings.
-	public static final int BUFFER_SIZE = 256 * 1024;
-
 	protected ErrorReportingServlet() {
 	}
 
@@ -64,7 +58,6 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 	@Override
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	final protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.setBufferSize(BUFFER_SIZE);
 		try {
 			reportingDoGet(req, resp);
 		} catch (ThreadDeath td) {
@@ -82,7 +75,6 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 	@Override
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	final protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.setBufferSize(BUFFER_SIZE);
 		try {
 			reportingDoPost(req, resp);
 		} catch (ThreadDeath td) {
