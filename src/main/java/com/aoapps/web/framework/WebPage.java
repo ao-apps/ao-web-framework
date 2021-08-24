@@ -393,7 +393,7 @@ abstract public class WebPage extends PageServlet {
 	 *   <li>Sets the {@linkplain ServletResponse#setContentType(java.lang.String) response content type}.</li>
 	 *   <li>Sets the {@linkplain ServletResponse#setCharacterEncoding(java.lang.String) response character encoding}
 	 *       to {@linkplain AnyDocument#ENCODING the default <code>UTF-8</code>}.</li>
-	 *   <li>Sets any {@linkplain #getAdditionalHeaders(com.aoapps.web.framework.WebSiteRequest) additional headers}.</li>
+	 *   <li>Sets any {@linkplain #setHeaders(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse) additional headers}.</li>
 	 * </ol>
 	 * <p>
 	 * Both the {@link Serialization} and {@link Doctype} may have been set
@@ -402,7 +402,7 @@ abstract public class WebPage extends PageServlet {
 	 *
 	 * @see SerializationEE#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
 	 * @see DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
-	 * @see #getAdditionalHeaders(com.aoapps.web.framework.WebSiteRequest)
+	 * @see #setHeaders(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	protected DocumentEE getDocument(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// Clear the output buffer
@@ -415,13 +415,7 @@ abstract public class WebPage extends PageServlet {
 			AnyDocument.ENCODING
 		);
 		// Set additional headers
-		String[] headers = getAdditionalHeaders(req);
-		if(headers != null) {
-			int len = headers.length;
-			for(int c = 0; c < len; c += 2) {
-				resp.setHeader(headers[c], headers[c + 1]);
-			}
-		}
+		setHeaders(req, resp);
 		Doctype doctype = getDoctype(req); // Lookup once here for constant value.  Do not inline into the anonymous class below.
 		ServletContext servletContext = getServletContext();
 		return new DocumentEE(
@@ -449,7 +443,7 @@ abstract public class WebPage extends PageServlet {
 	 *   <li>Sets the {@linkplain ServletResponse#setContentType(java.lang.String) response content type}.</li>
 	 *   <li>Sets the {@linkplain ServletResponse#setCharacterEncoding(java.lang.String) response character encoding}
 	 *       to {@linkplain AnyDocument#ENCODING the default <code>UTF-8</code>}.</li>
-	 *   <li>Sets any {@linkplain #getAdditionalHeaders(com.aoapps.web.framework.WebSiteRequest) additional headers}.</li>
+	 *   <li>Sets any {@linkplain #setHeaders(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse) additional headers}.</li>
 	 * </ol>
 	 * <p>
 	 * Both the {@link Serialization} and {@link Doctype} may have been set
@@ -458,7 +452,7 @@ abstract public class WebPage extends PageServlet {
 	 *
 	 * @see SerializationEE#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
 	 * @see DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
-	 * @see #getAdditionalHeaders(com.aoapps.web.framework.WebSiteRequest)
+	 * @see #setHeaders(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	protected OutputStream getHTMLOutputStream(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// Clear the output buffer
@@ -470,13 +464,7 @@ abstract public class WebPage extends PageServlet {
 			AnyDocument.ENCODING
 		);
 		// Set additional headers
-		String[] headers = getAdditionalHeaders(req);
-		if(headers != null) {
-			int len = headers.length;
-			for(int c = 0; c < len; c += 2) {
-				resp.setHeader(headers[c], headers[c + 1]);
-			}
-		}
+		setHeaders(req, resp);
 		return resp.getOutputStream();
 	}
 
@@ -902,11 +890,10 @@ abstract public class WebPage extends PageServlet {
 	}
 
 	/**
-	 * Gets additional headers for this page.  The format must be in a String[] of name/value pairs, two elements each, name and then value.
+	 * Sets headers for this page.
 	 */
-	// TODO: 3.0.0: Return a Map<String, ? extend Iterable<String>> ?
-	public String[] getAdditionalHeaders(WebSiteRequest req) {
-		return null;
+	public void setHeaders(WebSiteRequest req, HttpServletResponse resp) {
+		// None by default
 	}
 
 	/**

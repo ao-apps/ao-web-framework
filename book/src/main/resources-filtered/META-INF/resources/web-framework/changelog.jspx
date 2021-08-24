@@ -114,6 +114,10 @@ along with ao-web-framework.  If not, see <http://www.gnu.org/licenses />.
 							</li>
 						</ol>
 					</li>
+					<li>
+						<code>WebPage</code> now has <code>setHeaders(…)</code> instead of
+						<code>getAdditionalHeaders(…)</code> to provide more flexibility.
+					</li>
 				</ul>
 			</changelog:release>
 		</c:if>
