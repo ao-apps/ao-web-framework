@@ -34,6 +34,7 @@ import com.aoapps.html.any.Content;
 import com.aoapps.html.servlet.DocumentEE;
 import com.aoapps.html.servlet.FlowContent;
 import com.aoapps.lang.Strings;
+import com.aoapps.lang.exception.WrappedException;
 import com.aoapps.net.EmptyURIParameters;
 import com.aoapps.net.URIParameters;
 import com.aoapps.servlet.ServletRequestParameters;
@@ -61,7 +62,6 @@ import java.util.regex.Pattern;
 import javax.security.auth.login.LoginException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -69,12 +69,13 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * The main web page provides the overall layout of the site.  The rest of
  * the site overrides methods of this class, but cannot override the
- * <code>reportingDoGet</code>, <code>reportingDoPost</code>, or
- * <code>reportingGetLastModified</code> methods.
+ * {@link #doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)},
+ * {@link #doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}, or
+ * {@link #getLastModified(javax.servlet.http.HttpServletRequest)} methods.
  *
  * @author  AO Industries, Inc.
  */
-abstract public class WebPage extends ErrorReportingServlet {
+abstract public class WebPage extends PageServlet {
 
 	/**
 	 * The name of the search form during per-page searches.
@@ -228,25 +229,31 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see #getLastModified(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
-	final protected long reportingGetLastModified(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException {
-		WebSiteRequest req = getWebSiteRequest(httpReq);
-		WebPage page = getWebPage(getClass(), req);
-
-		if(Boolean.parseBoolean(req.getParameter(WebSiteRequest.LOGIN_REQUESTED))) {
-			return -1;
-		}
-		WebSiteUser user;
+	final protected long getLastModified(HttpServletRequest httpReq) {
 		try {
-			user = req.getWebSiteUser(null);
-		} catch(LoginException err) {
-			return -1;
+			WebSiteRequest req = getWebSiteRequest(httpReq);
+			WebPage page = getWebPage(getClass(), req);
+
+			if(Boolean.parseBoolean(req.getParameter(WebSiteRequest.LOGIN_REQUESTED))) {
+				return -1;
+			}
+			WebSiteUser user;
+			try {
+				user = req.getWebSiteUser(null);
+			} catch(LoginException err) {
+				return -1;
+			}
+			if(!page.canAccess(user)) return -1;
+
+			// If redirected
+			if(page.getRedirectURL(req) != null) return -1;
+
+			HttpServletResponse resp = (HttpServletResponse)req.getAttribute(RESPONSE_REQUEST_ATTRIBUTE);
+			if(resp == null) throw new IllegalStateException("HttpServletResponse not found on the request: " + RESPONSE_REQUEST_ATTRIBUTE);
+			return page.getLastModified(req, resp);
+		} catch (ServletException e) {
+			throw new WrappedException(e);
 		}
-		if(!page.canAccess(user)) return -1;
-
-		// If redirected
-		if(page.getRedirectURL(req) != null) return -1;
-
-		return page.getLastModified(req, resp);
 	}
 
 	/**
@@ -473,28 +480,21 @@ abstract public class WebPage extends ErrorReportingServlet {
 		return resp.getOutputStream();
 	}
 
+	private static final String RESPONSE_REQUEST_ATTRIBUTE = WebPage.class.getName() + ".resp";
+
 	/**
-	 * Sets the page-scope registry.
-	 * <p>
-	 * TODO: Just subclass {@link PageServlet} once we no longer extend
-	 * {@link ErrorReportingServlet}.
-	 * </p>
-	 *
-	 * @see  PageServlet#service(javax.servlet.ServletRequest, javax.servlet.ServletResponse)
+	 * Stores the current response in a request attribute named {@link #RESPONSE_REQUEST_ATTRIBUTE}.
+	 * This is used by {@link #getLastModified(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}.
 	 */
 	@Override
-	public void service(ServletRequest request, ServletResponse response) throws ServletException, IOException {
-		Registry oldPageRegistry = RegistryEE.Page.get(request);
-		if(oldPageRegistry == null) {
-			// Create a new page-scope registry
-			RegistryEE.Page.set(request, new Registry());
-		}
+	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// Store the current response in the request, so can be used for getLastModified
+		Object oldResp = req.getAttribute(RESPONSE_REQUEST_ATTRIBUTE);
 		try {
-			super.service(request, response);
+			req.setAttribute(RESPONSE_REQUEST_ATTRIBUTE, resp);
+			super.service(req, resp);
 		} finally {
-			if(oldPageRegistry == null) {
-				RegistryEE.Page.set(request, null);
-			}
+			req.setAttribute(RESPONSE_REQUEST_ATTRIBUTE, oldResp);
 		}
 	}
 
@@ -529,7 +529,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see #doGet(WebSiteRequest,HttpServletResponse)
 	 */
 	@Override
-	final protected void reportingDoGet(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException, IOException {
+	final protected void doGet(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException, IOException {
 		WebSiteRequest req = getWebSiteRequest(httpReq);
 		WebPage page = getWebPage(getClass(), req);
 		// Logout when requested
@@ -581,7 +581,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 *   <li>Invokes {@link #doGet(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE)}.</li>
 	 * </ol>
 	 *
-	 * @see #reportingDoGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 * @see #doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 * @see #getSerialization(com.aoapps.web.framework.WebSiteRequest)
 	 * @see #getDoctype(com.aoapps.web.framework.WebSiteRequest)
 	 * @see #doGet(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE)
@@ -687,7 +687,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * @see #doPostWithSearch(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
-	final protected void reportingDoPost(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException, IOException {
+	final protected void doPost(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException, IOException {
 		WebSiteRequest req = getWebSiteRequest(httpReq);
 		WebPage page = getWebPage(getClass(), req);
 		// Logout when requested
@@ -744,7 +744,7 @@ abstract public class WebPage extends ErrorReportingServlet {
 	 * these values must be present for a search to be performed.  Search target may be either {@link WebSiteRequest#SEARCH_THIS_AREA}
 	 * or {@link WebSiteRequest#SEARCH_ENTIRE_SITE}, defaulting to {@link WebSiteRequest#SEARCH_THIS_AREA} for any other value.
 	 *
-	 * @see #reportingDoPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 * @see #doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 * @see #doPost(WebSiteRequest,HttpServletResponse)
 	 */
 	protected void doPostWithSearch(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {

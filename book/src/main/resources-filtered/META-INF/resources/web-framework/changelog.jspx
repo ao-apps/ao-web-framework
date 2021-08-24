@@ -37,7 +37,7 @@ along with ao-web-framework.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T22:08:31-05:00"
-		dateModified="2021-08-23T21:06:32-05:00"
+		dateModified="2021-08-23T21:41:16-05:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -105,10 +105,14 @@ along with ao-web-framework.  If not, see <http://www.gnu.org/licenses />.
 					</li>
 					<li>Maven artifact relocated from <code>com.aoindustries:aoweb-framework</code> to <code>com.aoapps:ao-web-framework</code>.</li>
 					<li>Package renamed from <code>com.aoindustries.website.framework</code> to <code>com.aoapps.web.framework</code>.</li>
-					<li>Removed request statistics from <code>ErrorReportingServlet</code> since they were not used anywhere within our code-base.</li>
-					<li>
-						Response buffer is no longer increased to 256 kiB and instead remains at the container default (8 kiB for Tomcat).
-						Any servlet or <code>WebPage</code> that requires a larger buffer must configure it.
+					<li>Completely removed <code>ErrorReportingServlet</code>:
+						<ol>
+							<li>Removed request statistics since they were not used anywhere within our code-base.</li>
+							<li>
+								Response buffer is no longer increased to 256 kiB and instead remains at the container default (8 kiB for Tomcat).
+								Any servlet or <code>WebPage</code> that requires a larger buffer must configure it.
+							</li>
+						</ol>
 					</li>
 				</ul>
 			</changelog:release>
