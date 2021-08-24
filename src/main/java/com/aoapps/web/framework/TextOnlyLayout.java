@@ -33,6 +33,7 @@ import com.aoapps.html.servlet.BODY;
 import com.aoapps.html.servlet.BODY_c;
 import com.aoapps.html.servlet.DocumentEE;
 import com.aoapps.html.servlet.FlowContent;
+import com.aoapps.html.servlet.HEAD__;
 import com.aoapps.html.servlet.HTML_c;
 import com.aoapps.html.servlet.TABLE;
 import com.aoapps.html.servlet.TABLE_c;
@@ -190,6 +191,59 @@ public class TextOnlyLayout extends WebPageLayout {
 		.__();
 	}
 
+	public static void writeBodyColorStyle(WebPageLayout layout, WebSiteRequest req, HEAD__<?> head) throws IOException {
+		int backgroundColor = layout.getBackgroundColor(req);
+		int textColor = layout.getTextColor(req);
+		int linkColor = layout.getLinkColor(req);
+		int visitedLinkColor = layout.getVisitedLinkColor(req);
+		int activeLinkColor = layout.getActiveLinkColor(req);
+		if(
+			backgroundColor != -1
+			|| textColor != -1
+			|| linkColor != -1
+			|| visitedLinkColor != -1
+			|| activeLinkColor != -1
+		) {
+			try (var style = head.style()._c()) {
+				if(backgroundColor != -1 || textColor != -1) {
+					style.append("body {").nl();
+					if(backgroundColor != -1) {
+						style.indent().append("background-color:");
+						ChainWriter.writeHtmlColor(backgroundColor, style);
+						style.append(';').nl();
+					}
+					if(textColor != -1) {
+						style.indent().append("color:");
+						ChainWriter.writeHtmlColor(textColor, style);
+						style.append(';').nl();
+					}
+					style.append('}').nl();
+				}
+				if(linkColor != -1) {
+					style.append("a {").nl();
+					style.indent().append("color:");
+					ChainWriter.writeHtmlColor(linkColor, style);
+					style.append(';').nl();
+					style.append('}').nl();
+				}
+				if(visitedLinkColor != -1) {
+					style.append("a:visited {").nl();
+					style.indent().append("color:");
+					ChainWriter.writeHtmlColor(visitedLinkColor, style);
+					style.append(';').nl();
+					style.append('}').nl();
+				}
+				if(activeLinkColor != -1) {
+					style.append("a:active {").nl();
+					style.indent().append("color:");
+					ChainWriter.writeHtmlColor(activeLinkColor, style);
+					style.append(';').nl();
+					style.append('}').nl();
+				}
+			}
+		}
+	}
+
 	@Override
 	// TODO: uncomment once only expected deprecated remains: @SuppressWarnings("deprecation")
 	public <__ extends FlowContent<__>> __ startPage(
@@ -295,30 +349,10 @@ public class TextOnlyLayout extends WebPageLayout {
 			);
 			head.script().src(req.getEncodedURLForPath("/global.js", null, false, resp)).__();
 			printJavaScriptIncludes(req, resp, head, page);
+			writeBodyColorStyle(this, req, head);
 			// TODO: Canonical?
 		});
 		BODY<HTML_c<DocumentEE>> body = html_c.body().nl();
-		// TODO: Write a <style>, like done for dans-home.com
-		int bgcolor = getBackgroundColor(req);
-		if(bgcolor != -1) {
-			body.attribute("bgcolor", attr -> ChainWriter.writeHtmlColor(bgcolor, attr)).nl();
-		}
-		int text = getTextColor(req);
-		if(text != -1) {
-			body.attribute("text", attr -> ChainWriter.writeHtmlColor(text, attr)).nl();
-		}
-		int link = getLinkColor(req);
-		if(link != -1) {
-			body.attribute("link", attr -> ChainWriter.writeHtmlColor(link, attr)).nl();
-		}
-		int vlink = getVisitedLinkColor(req);
-		if(vlink != -1) {
-			body.attribute("vlink", attr -> ChainWriter.writeHtmlColor(vlink, attr)).nl();
-		}
-		int alink = getActiveLinkColor(req);
-		if(alink != -1) {
-			body.attribute("alink", attr -> ChainWriter.writeHtmlColor(alink, attr)).nl();
-		}
 		// TODO: These onloads should be merged?
 		if (onload == null) onload = page.getOnloadScript(req);
 		if (onload != null && !onload.isEmpty()) {
