@@ -658,10 +658,7 @@ public class TextOnlyLayout extends WebPageLayout {
 		if(copyright != null && !(copyright = copyright.trim()).isEmpty()) {
 			String copyright_ = copyright;
 			document.tr__(tr -> tr
-				.td().colspan(totalColumns_).style("text-align:center").__(td -> td
-					// TODO: 3.0.0: span unneeded, combine style into td?
-					.span().style("font-size:x-small").__(copyright_)
-				)
+				.td().colspan(totalColumns_).style("text-align:center", "font-size:x-small").__(copyright_)
 			);
 		}
 		document.out.write("</table>\n");
