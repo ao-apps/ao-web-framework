@@ -25,6 +25,7 @@ package com.aoapps.web.framework;
 import com.aoapps.html.servlet.FlowContent;
 import com.aoapps.lang.Strings;
 import com.aoapps.lang.io.ContentType;
+import com.aoapps.lang.io.IoUtils;
 import com.aoapps.net.URIDecoder;
 import com.aoapps.net.URIEncoder;
 import com.aoapps.net.URIParameters;
@@ -141,18 +142,22 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 		return uploadDir;
 	}
 
+	private static final SecureRandom secureRandom = new SecureRandom();
+
 	/**
 	 * Gets the random number generator used for this request.
 	 */
 	public SecureRandom getSecureRandom() {
-		return ErrorReportingServlet.getSecureRandom();
+		return secureRandom;
 	}
+
+	private static final Random fastRandom = new Random(IoUtils.bufferToLong(secureRandom.generateSeed(8)));
 
 	/**
 	 * A fast pseudo-random number generated seeded by secure random.
 	 */
 	public Random getFastRandom() {
-		return ErrorReportingServlet.getFastRandom();
+		return fastRandom;
 	}
 
 	private static String getExtension(String filename) {

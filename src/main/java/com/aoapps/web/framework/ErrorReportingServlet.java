@@ -24,10 +24,7 @@ package com.aoapps.web.framework;
 
 import com.aoapps.lang.Throwables;
 import com.aoapps.lang.exception.WrappedException;
-import com.aoapps.lang.io.IoUtils;
 import java.io.IOException;
-import java.security.SecureRandom;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -141,22 +138,5 @@ public abstract class ErrorReportingServlet extends HttpServlet {
 	 */
 	protected long reportingGetLastModified(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
 		return super.getLastModified(req);
-	}
-
-	private static final SecureRandom secureRandom = new SecureRandom();
-
-	/**
-	 * @see  WebSiteRequest#getRandom()
-	 */
-	static SecureRandom getSecureRandom() {
-		return secureRandom;
-	}
-
-	/**
-	 * A fast pseudo-random number generated seeded by secure random.
-	 */
-	private static final Random fastRandom = new Random(IoUtils.bufferToLong(secureRandom.generateSeed(8)));
-	static Random getFastRandom() {
-		return fastRandom;
 	}
 }
