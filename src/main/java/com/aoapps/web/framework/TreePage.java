@@ -381,154 +381,154 @@ abstract public class TreePage extends WebPage {
 							table.tr__(tr -> tr
 								.td().style("white-space:nowrap", "border:0px").__(td -> td
 									.table().cellspacing(0).cellpadding(0).__(table2 -> table2
-										.tr__(tr2 -> tr2
-											.td().style("white-space:nowrap", "border:0px").__(td2 -> {
-												int max = Math.min(pathLen - 1, last_.length);
-												int pos = 0;
+										.tr__(tr2 -> {
+											var td2 = tr2.td().style("white-space:nowrap", "border:0px")._c();
+											int max = Math.min(pathLen - 1, last_.length);
+											int pos = 0;
 
-												// Skip the part of the path that is already displayed by the parent
-												for (; pos < max; pos++) {
-													if (last_[pos].equals(path[pos])) {
-														boolean hasMore = false;
-														for (int d = c_ + 1; d < treeLen; d++) {
+											// Skip the part of the path that is already displayed by the parent
+											for (; pos < max; pos++) {
+												if (last_[pos].equals(path[pos])) {
+													boolean hasMore = false;
+													for (int d = c_ + 1; d < treeLen; d++) {
+														int end = pos;
+														for (int e = 0; e < end; e++) {
+															if (paths[d][e].equals(path[e])) {
+																if (e == (end - 1) && !paths[d][end].equals(path[end])) {
+																	hasMore = true;
+																	break;
+																}
+															} else break;
+														}
+													}
+													td2.img()
+														.src(req.getEncodedURL(this, URIParametersMap.of("image_num", (hasMore ? 1 : 0)), resp))
+														.style("border:0px", "display:inline", "vertical-align:bottom")
+														.width(IMAGE_WIDTH)
+														.height(IMAGE_HEIGHT)
+														.alt("")
+													.__();
+												} else break;
+											}
+
+											// Display the remaining part of the path
+											for(; pos < pathLen; pos++) {
+												if(path[pos].length()>0) {
+													// Determine has sub items
+													boolean hasSub = false;
+													if (c_ < (treeLen - 1)) {
+														String[] next_path = paths[c_ + 1];
+														if (next_path.length >= pathLen) {
+															hasSub = true;
+															for (int e = 0; e < pathLen; e++) {
+																String tempPath=path[e];
+																if(tempPath.length()>0 && !tempPath.equals(next_path[e])) {
+																	hasSub = false;
+																	break;
+																}
+															}
+														}
+													}
+
+													// Determine if the line continues farther down
+													final boolean hasMore;
+													{
+														boolean found = false;
+														for (int d = c_; d < treeLen; d++) {
 															int end = pos;
 															for (int e = 0; e < end; e++) {
 																if (paths[d][e].equals(path[e])) {
 																	if (e == (end - 1) && !paths[d][end].equals(path[end])) {
-																		hasMore = true;
+																		found = true;
 																		break;
 																	}
 																} else break;
 															}
 														}
+														hasMore = found;
+													}
+
+													if(hasSub) {
+														td2.a().href(
+															"javascript:"
+															+ (opened_[c_] ? "closeNode(" : "openNode(")
+															+ c_
+															+ ");"
+														).__(a -> a
+															.img()
+																.alt(opened_[c_] ? "Close" : "Open")
+																.src(
+																	req.getEncodedURL(
+																		this,
+																		URIParametersMap.of(
+																			"image_num",
+																			opened_[c_]
+																				? (hasMore ? 4 : (c_ > 0 ? 5 : 9))
+																				: (hasMore ? 6 : (c_ > 0 ? 7 : 8))
+																		),
+																		resp
+																	)
+																).style("vertical-align:bottom", "border:0px", "display:inline")
+																.width(IMAGE_WIDTH)
+																.height(IMAGE_HEIGHT)
+															.__()
+														);
+													} else {
 														td2.img()
-															.src(req.getEncodedURL(this, URIParametersMap.of("image_num", (hasMore ? 1 : 0)), resp))
-															.style("border:0px", "display:inline", "vertical-align:bottom")
+															.src(
+																req.getEncodedURL(
+																	this,
+																	URIParametersMap.of("image_num", (hasMore ? 2 : 3)),
+																	resp
+																)
+															).style("vertical-align", "bottom; border:0px", "display:inline")
 															.width(IMAGE_WIDTH)
 															.height(IMAGE_HEIGHT)
 															.alt("")
 														.__();
-													} else break;
+													}
+													td2.img()
+														.src(req.getEncodedURL(this, URIParametersMap.of("image_num", 0), resp))
+														.style("vertical-align:bottom", "border:0px", "display:inline")
+														.width(4)
+														.height(IMAGE_HEIGHT)
+														.alt("")
+													.__();
+													// Close and open new TD
+													td2 = td2.__().td().style("white-space:nowrap")._c();
 												}
 
-												// Display the remaining part of the path
-												for(; pos < pathLen; pos++) {
-													if(path[pos].length()>0) {
-														// Determine has sub items
-														boolean hasSub = false;
-														if (c_ < (treeLen - 1)) {
-															String[] next_path = paths[c_ + 1];
-															if (next_path.length >= pathLen) {
-																hasSub = true;
-																for (int e = 0; e < pathLen; e++) {
-																	String tempPath=path[e];
-																	if(tempPath.length()>0 && !tempPath.equals(next_path[e])) {
-																		hasSub = false;
-																		break;
-																	}
-																}
-															}
-														}
-
-														// Determine if the line continues farther down
-														final boolean hasMore;
-														{
-															boolean found = false;
-															for (int d = c_; d < treeLen; d++) {
-																int end = pos;
-																for (int e = 0; e < end; e++) {
-																	if (paths[d][e].equals(path[e])) {
-																		if (e == (end - 1) && !paths[d][end].equals(path[end])) {
-																			found = true;
-																			break;
-																		}
-																	} else break;
-																}
-															}
-															hasMore = found;
-														}
-
-														if(hasSub) {
-															td2.a().href(
-																"javascript:"
-																+ (opened_[c_] ? "closeNode(" : "openNode(")
-																+ c_
-																+ ");"
-															).__(a -> a
-																.img()
-																	.alt(opened_[c_] ? "Close" : "Open")
-																	.src(
-																		req.getEncodedURL(
-																			this,
-																			URIParametersMap.of(
-																				"image_num",
-																				opened_[c_]
-																					? (hasMore ? 4 : (c_ > 0 ? 5 : 9))
-																					: (hasMore ? 6 : (c_ > 0 ? 7 : 8))
-																			),
-																			resp
-																		)
-																	).style("vertical-align:bottom", "border:0px", "display:inline")
-																	.width(IMAGE_WIDTH)
-																	.height(IMAGE_HEIGHT)
-																.__()
-															);
-														} else {
-															td2.img()
-																.src(
-																	req.getEncodedURL(
-																		this,
-																		URIParametersMap.of("image_num", (hasMore ? 2 : 3)),
-																		resp
-																	)
-																).style("vertical-align", "bottom; border:0px", "display:inline")
-																.width(IMAGE_WIDTH)
-																.height(IMAGE_HEIGHT)
-																.alt("")
-															.__();
-														}
-														td2.img()
-															.src(req.getEncodedURL(this, URIParametersMap.of("image_num", 0), resp))
-															.style("vertical-align:bottom", "border:0px", "display:inline")
-															.width(4)
-															.height(IMAGE_HEIGHT)
-															.alt("")
-														.__();
-														// TODO: Dirty hack, closing and opening new TD without using API
-														document.out.write("</td><td style='white-space:nowrap'>");
-													}
-
-													boolean useCodeFont=useCodeFont(req);
-													CODE_c<?> code;
-													PhrasingContent<?> phrasing;
-													if (useCodeFont) {
-														code = td2.code_c();
-														phrasing = code;
-													} else {
-														code = null;
-														phrasing = td2;
-													}
-													String href;
-													if(
-														(
-															(pathLen>=2 && pos==(pathLen-2) && path[pathLen-1].length()==0)
-															|| (pos==(pathLen-1) && path[pathLen-1].length()>0)
-														) && (href = tree.get(c_).getUrl()) != null
-													) {
-														phrasing.a().clazz("aoLightLink").href(
-															resp.encodeURL(
-																URIEncoder.encodeURI(
-																	req.getContextPath() + href
-																)
+												boolean useCodeFont=useCodeFont(req);
+												CODE_c<?> code;
+												PhrasingContent<?> phrasing;
+												if (useCodeFont) {
+													code = td2.code_c();
+													phrasing = code;
+												} else {
+													code = null;
+													phrasing = td2;
+												}
+												String href;
+												if(
+													(
+														(pathLen>=2 && pos==(pathLen-2) && path[pathLen-1].length()==0)
+														|| (pos==(pathLen-1) && path[pathLen-1].length()>0)
+													) && (href = tree.get(c_).getUrl()) != null
+												) {
+													phrasing.a().clazz("aoLightLink").href(
+														resp.encodeURL(
+															URIEncoder.encodeURI(
+																req.getContextPath() + href
 															)
-														).__(path[pos]);
-													} else if(!path[pos].isEmpty()) {
-														phrasing.text(path[pos]);
-													}
-													if(code != null) code.__();
+														)
+													).__(path[pos]);
+												} else if(!path[pos].isEmpty()) {
+													phrasing.text(path[pos]);
 												}
-											})
-										)
+												if(code != null) code.__();
+											}
+											td2.__();
+										})
 									)
 								)
 								.td().style("white-space:nowrap", "width:20px").__(td -> td
