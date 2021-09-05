@@ -892,6 +892,7 @@ abstract public class WebPage extends PageServlet {
 	/**
 	 * Sets headers for this page.
 	 */
+	@SuppressWarnings("NoopMethodInAbstractClass")
 	public void setHeaders(WebSiteRequest req, HttpServletResponse resp) {
 		// None by default
 	}
