@@ -91,7 +91,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	/**
 	 * Parameter that selects the {@link WebPageLayout}.
 	 */
-	// Matches aoweb-struts/core/Constants.LAYOUT
+	// Matches aoweb-struts/Constants.LAYOUT
 	public static final String LAYOUT = "layout";
 
 	/**
