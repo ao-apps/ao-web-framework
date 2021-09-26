@@ -37,7 +37,7 @@ along with ao-web-framework.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T22:08:31-05:00"
-		dateModified="2021-08-23T21:41:16-05:00"
+		dateModified="2021-09-25T23:27:50-05:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -144,7 +144,7 @@ along with ao-web-framework.  If not, see <http://www.gnu.org/licenses />.
 				<li>New <code>WebSiteRequest.getEncodedURL(…)</code> methods that:
 					<ol>
 						<li>Include <code>HttpServletRequest.getContextPath()</code> as a prefix</li>
-						<li>Encoded to ASCII-only <ao:a href="https://tools.ietf.org/html/rfc3986">RFC 3986</ao:a> format</li>
+						<li>Encoded to ASCII-only <ao:a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</ao:a> format</li>
 						<li>Response encode via <code>HttpServletResponse.encodeURL(String)</code></li>
 					</ol>
 				</li>

@@ -470,7 +470,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * {@linkplain #getURLForClass(java.lang.String, com.aoapps.net.URIParameters, java.lang.String) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
-	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
+	 * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 *
@@ -499,7 +499,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * {@linkplain #getURLForClass(java.lang.String, com.aoapps.net.URIParameters) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
-	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
+	 * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 *
@@ -553,7 +553,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * {@linkplain #getURLForClass(java.lang.String) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
-	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
+	 * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 */
@@ -586,7 +586,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * {@linkplain #getURLForPath(java.lang.String, com.aoapps.net.URIParameters, boolean) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
-	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
+	 * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 *
@@ -634,7 +634,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * {@linkplain #getURL(com.aoapps.web.framework.WebPage) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
-	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
+	 * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 */
@@ -668,7 +668,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * {@linkplain #getURL(com.aoapps.web.framework.WebPage, com.aoapps.net.URIParameters) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
-	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
+	 * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 *
@@ -700,7 +700,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * {@linkplain #getURL(java.lang.Class, com.aoapps.net.URIParameters) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
-	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
+	 * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 *
@@ -723,7 +723,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * {@linkplain #getURL(java.lang.Class) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
-	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
+	 * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 */
@@ -760,7 +760,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * {@linkplain #getURLForPath(java.lang.String, com.aoapps.net.URIParameters) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
-	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
+	 * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 *
@@ -781,7 +781,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * {@linkplain #getURLForPath(java.lang.String) Gets the URL}, including:
 	 * <ol>
 	 * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
-	 * <li>Encoded to ASCII-only <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a> format</li>
+	 * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
 	 * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
 	 * </ol>
 	 *
