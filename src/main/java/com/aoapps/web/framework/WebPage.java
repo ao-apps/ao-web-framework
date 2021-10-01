@@ -34,11 +34,13 @@ import com.aoapps.html.any.Content;
 import com.aoapps.html.servlet.DocumentEE;
 import com.aoapps.html.servlet.FlowContent;
 import com.aoapps.lang.Strings;
+import com.aoapps.lang.attribute.Attribute;
 import com.aoapps.lang.exception.WrappedException;
 import com.aoapps.net.EmptyURIParameters;
 import com.aoapps.net.URIParameters;
 import com.aoapps.servlet.ServletRequestParameters;
 import com.aoapps.servlet.ServletUtil;
+import com.aoapps.servlet.attribute.ScopeEE;
 import com.aoapps.servlet.http.HttpServletUtil;
 import com.aoapps.web.resources.registry.Registry;
 import com.aoapps.web.resources.servlet.PageServlet;
@@ -248,8 +250,8 @@ abstract public class WebPage extends PageServlet {
 			// If redirected
 			if(page.getRedirectURL(req) != null) return -1;
 
-			HttpServletResponse resp = (HttpServletResponse)req.getAttribute(RESPONSE_REQUEST_ATTRIBUTE);
-			if(resp == null) throw new IllegalStateException("HttpServletResponse not found on the request: " + RESPONSE_REQUEST_ATTRIBUTE);
+			HttpServletResponse resp = RESPONSE_REQUEST_ATTRIBUTE.context(req).get();
+			if(resp == null) throw new IllegalStateException("HttpServletResponse not found on the request: " + RESPONSE_REQUEST_ATTRIBUTE.getName());
 			return page.getLastModified(req, resp);
 		} catch (ServletException e) {
 			throw new WrappedException(e);
@@ -468,7 +470,8 @@ abstract public class WebPage extends PageServlet {
 		return resp.getOutputStream();
 	}
 
-	private static final String RESPONSE_REQUEST_ATTRIBUTE = WebPage.class.getName() + ".resp";
+	private static final ScopeEE.Request.Attribute<HttpServletResponse> RESPONSE_REQUEST_ATTRIBUTE =
+		ScopeEE.REQUEST.attribute(WebPage.class.getName() + ".resp");
 
 	/**
 	 * Stores the current response in a request attribute named {@link #RESPONSE_REQUEST_ATTRIBUTE}.
@@ -477,12 +480,8 @@ abstract public class WebPage extends PageServlet {
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// Store the current response in the request, so can be used for getLastModified
-		Object oldResp = req.getAttribute(RESPONSE_REQUEST_ATTRIBUTE);
-		try {
-			req.setAttribute(RESPONSE_REQUEST_ATTRIBUTE, resp);
+		try (Attribute.OldValue oldResp = RESPONSE_REQUEST_ATTRIBUTE.context(req).init(resp)) {
 			super.service(req, resp);
-		} finally {
-			req.setAttribute(RESPONSE_REQUEST_ATTRIBUTE, oldResp);
 		}
 	}
 

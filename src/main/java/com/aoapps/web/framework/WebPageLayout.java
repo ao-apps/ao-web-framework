@@ -686,7 +686,7 @@ abstract public class WebPageLayout {
 				script.indent().append("function selectLayout(layout) {").incDepth().nl();
 				for(String choice : layoutChoices) {
 					script.indent().append("if(layout==").text(choice).append(") window.top.location.href=").text(
-						req.getEncodedURL(page, URIParametersMap.of(WebSiteRequest.LAYOUT, choice), resp)
+						req.getEncodedURL(page, URIParametersMap.of(WebSiteRequest.LAYOUT.getName(), choice), resp)
 					).append(';').nl();
 				}
 				script.decDepth().indent().append('}');

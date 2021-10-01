@@ -32,6 +32,7 @@ import com.aoapps.net.URIParameters;
 import com.aoapps.net.URIParametersMap;
 import com.aoapps.net.URIParser;
 import com.aoapps.security.Identifier;
+import com.aoapps.servlet.attribute.ScopeEE;
 import com.aoapps.servlet.http.HttpServletUtil;
 import java.io.BufferedReader;
 import java.io.File;
@@ -92,7 +93,8 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * Parameter that selects the {@link WebPageLayout}.
 	 */
 	// Matches aoweb-struts/Constants.LAYOUT
-	public static final String LAYOUT = "layout";
+	public static final ScopeEE.Session.Attribute<String> LAYOUT =
+		ScopeEE.SESSION.attribute("layout");
 
 	/**
 	 * Parameter name used for logout requests.
@@ -128,7 +130,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	// TODO: It would be good form for each user to have their own upload directory by username
 	private static File getFileUploadDirectory(ServletContext servletContext) throws FileNotFoundException {
 		File uploadDir = new File(
-			(File)servletContext.getAttribute(ServletContext.TEMPDIR),
+			ScopeEE.Application.TEMPDIR.context(servletContext).get(),
 			"uploads"
 		);
 		if(
