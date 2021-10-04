@@ -78,7 +78,7 @@ public class RedirectWebPage extends WebPage {
 	 * Never do GET, redirect-only.
 	 */
 	@Override
-	final public void doGet(
+	public final void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		DocumentEE document
@@ -91,7 +91,7 @@ public class RedirectWebPage extends WebPage {
 	 * Never do GET, redirect-only.
 	 */
 	@Override
-	final public <__ extends FlowContent<__>> void doGet(
+	public final <__ extends FlowContent<__>> void doGet(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,
@@ -105,7 +105,7 @@ public class RedirectWebPage extends WebPage {
 	 * Never do POST, redirect-only.
 	 */
 	@Override
-	final public void doPost(
+	public final void doPost(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		DocumentEE document
@@ -117,7 +117,7 @@ public class RedirectWebPage extends WebPage {
 	 * Never do POST, redirect-only.
 	 */
 	@Override
-	final public <__ extends FlowContent<__>> void doPost(
+	public final <__ extends FlowContent<__>> void doPost(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPageLayout layout,

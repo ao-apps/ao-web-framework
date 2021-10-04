@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class AutoSiteMap extends TreePage {
+public abstract class AutoSiteMap extends TreePage {
 
 	private static final long serialVersionUID = 1L;
 
@@ -75,7 +75,7 @@ abstract public class AutoSiteMap extends TreePage {
 	}
 
 	@Override
-	final protected List<? extends TreePageData> getTree(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
+	protected final List<? extends TreePageData> getTree(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
 		WebPage home=getRootPage();
 		List<TreePageData> data=new ArrayList<>();
 		buildData(new ArrayDeque<>(), home, data, req, resp);
@@ -85,5 +85,5 @@ abstract public class AutoSiteMap extends TreePage {
 	/**
 	 * Determines if a page should be visible in the generated maps.
 	 */
-	abstract protected boolean isVisible(WebPage page);
+	protected abstract boolean isVisible(WebPage page);
 }

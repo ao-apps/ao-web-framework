@@ -30,10 +30,10 @@ import javax.servlet.ServletContext;
 /**
  * @author  AO Industries, Inc.
  */
-final public class UploadedFileTypeMap extends FileTypeMap {
+public final class UploadedFileTypeMap extends FileTypeMap {
 
-	final private WebSiteUser owner;
-	final private ServletContext context;
+	private final WebSiteUser owner;
+	private final ServletContext context;
 
 	public UploadedFileTypeMap(WebSiteUser owner, ServletContext context) {
 		this.owner=owner;

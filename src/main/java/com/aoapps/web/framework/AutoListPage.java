@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class AutoListPage extends WebPage {
+public abstract class AutoListPage extends WebPage {
 
 	private static final long serialVersionUID = 1L;
 

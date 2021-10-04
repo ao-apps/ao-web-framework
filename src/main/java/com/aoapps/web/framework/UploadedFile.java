@@ -31,16 +31,16 @@ import java.io.File;
  * @author  AO Industries, Inc.
  */
 // TODO: This is not Serializable.  How is it persisted through reboots?
-final public class UploadedFile {
+public final class UploadedFile {
 
-	final private Identifier id;
-	final private String filename;
-	final private File storageFile;
-	final private long create_time;
-	final private WebSiteUser owner;
-	final private String contentType;
+	private final Identifier id;
+	private final String filename;
+	private final File storageFile;
+	private final long create_time;
+	private final WebSiteUser owner;
+	private final String contentType;
 	private static class LastAccessLock {}
-	final private LastAccessLock lastAccessLock=new LastAccessLock();
+	private final LastAccessLock lastAccessLock=new LastAccessLock();
 	private long lastAccessed;
 
 	UploadedFile(String filename, File storageFile, WebSiteUser owner, String contentType) {

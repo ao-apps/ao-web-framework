@@ -39,7 +39,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class InputStreamPage extends WebPage {
+public abstract class InputStreamPage extends WebPage {
 
 	private static final long serialVersionUID = 1L;
 

@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class DumpURLs extends WebPage {
+public abstract class DumpURLs extends WebPage {
 
 	private static final long serialVersionUID = 1L;
 

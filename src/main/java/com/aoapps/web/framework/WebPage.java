@@ -77,7 +77,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class WebPage extends PageServlet {
+public abstract class WebPage extends PageServlet {
 
 	/**
 	 * The name of the search form during per-page searches.
@@ -231,7 +231,7 @@ abstract public class WebPage extends PageServlet {
 	 * @see #getLastModified(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
-	final protected long getLastModified(HttpServletRequest httpReq) {
+	protected final long getLastModified(HttpServletRequest httpReq) {
 		try {
 			WebSiteRequest req = getWebSiteRequest(httpReq);
 			WebPage page = getWebPage(getClass(), req);
@@ -271,7 +271,7 @@ abstract public class WebPage extends PageServlet {
 	 *
 	 * @see  #getUptime()
 	 */
-	final protected long getClassLastModified() throws ServletException {
+	protected final long getClassLastModified() throws ServletException {
 		String dir = getServletContext().getRealPath("/WEB-INF/classes");
 		if(dir != null && dir.length() > 0) {
 			// Try to get from the class file
@@ -300,7 +300,7 @@ abstract public class WebPage extends PageServlet {
 	/**
 	 * Recursively gets the most recent modification time.
 	 */
-	final public long getLastModifiedRecursive(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
+	public final long getLastModifiedRecursive(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
 		long time = getLastModified(req, resp);
 		WebPage[] children = getCachedChildren(req, resp);
 		int len = children.length;
@@ -516,7 +516,7 @@ abstract public class WebPage extends PageServlet {
 	 * @see #doGet(WebSiteRequest,HttpServletResponse)
 	 */
 	@Override
-	final protected void doGet(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException, IOException {
+	protected final void doGet(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException, IOException {
 		WebSiteRequest req = getWebSiteRequest(httpReq);
 		WebPage page = getWebPage(getClass(), req);
 		// Logout when requested
@@ -674,7 +674,7 @@ abstract public class WebPage extends PageServlet {
 	 * @see #doPostWithSearch(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
-	final protected void doPost(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException, IOException {
+	protected final void doPost(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException, IOException {
 		WebSiteRequest req = getWebSiteRequest(httpReq);
 		WebPage page = getWebPage(getClass(), req);
 		// Logout when requested
@@ -860,7 +860,7 @@ abstract public class WebPage extends PageServlet {
 	 * @see  #equals(WebPage)
 	 */
 	@Override
-	final public boolean equals(Object O) {
+	public final boolean equals(Object O) {
 		return
 			(O instanceof WebPage)
 			&& equals((WebPage)O)
@@ -1015,7 +1015,7 @@ abstract public class WebPage extends PageServlet {
 	/**
 	 * Gets the index of this page in the parents list of children pages.
 	 */
-	final public int getPageIndexInParent(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
+	public final int getPageIndexInParent(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
 		WebPage[] siblings = getParent().getCachedChildren(req, resp);
 		int len=siblings.length;
 		for(int c = 0; c < len; c++) {
@@ -1030,7 +1030,7 @@ abstract public class WebPage extends PageServlet {
 	 *
 	 * @return  the <code>WebPage</code> or <code>null</code> if not found
 	 */
-	final public WebPage getNextPage(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
+	public final WebPage getNextPage(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
 		WebPage parent=getParent();
 		if (parent!=null) {
 			WebPage[] siblings = parent.getCachedChildren(req, resp);
@@ -1051,7 +1051,7 @@ abstract public class WebPage extends PageServlet {
 	 *
 	 * @return  the <code>WebPage</code> or <code>null</code> if not found
 	 */
-	final public WebPage getPreviousPage(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
+	public final WebPage getPreviousPage(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
 		WebPage parent = getParent();
 		if (parent != null) {
 			WebPage[] siblings = parent.getCachedChildren(req, resp);
@@ -1089,7 +1089,7 @@ abstract public class WebPage extends PageServlet {
 	 *
 	 * @see  #getChildren(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 */
-	synchronized public WebPage[] getCachedChildren(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
+	public synchronized WebPage[] getCachedChildren(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
 		WebPage[] children = this.cachedChildren;
 		if(children == null) this.cachedChildren = children = getChildren(req, resp);
 		return children;
@@ -1471,7 +1471,7 @@ abstract public class WebPage extends PageServlet {
 	 * Gets the <code>WebSiteRequest</code> that handles authentication and other details
 	 * of this site.
 	 */
-	abstract protected WebSiteRequest getWebSiteRequest(HttpServletRequest req) throws ServletException;
+	protected abstract WebSiteRequest getWebSiteRequest(HttpServletRequest req) throws ServletException;
 
 	/**
 	 * Searches this WebPage and all of its subordinate pages, returning the matches
@@ -1508,7 +1508,7 @@ abstract public class WebPage extends PageServlet {
 	 *
 	 * @see  #search
 	 */
-	final public void standardSearch(
+	public final void standardSearch(
 		String[] words,
 		WebSiteRequest req,
 		HttpServletResponse resp,

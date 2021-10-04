@@ -27,13 +27,13 @@ package com.aoapps.web.framework;
  *
  * @author  AO Industries, Inc.
  */
-final public class OutputCacheEntry {
+public final class OutputCacheEntry {
 
-	final public Object outputCacheKey;
+	public final Object outputCacheKey;
 
-	final public long lastModified;
+	public final long lastModified;
 
-	final public byte[] bytes;
+	public final byte[] bytes;
 
 	public OutputCacheEntry(Object outputCacheKey, long lastModified, byte[] bytes) {
 		this.outputCacheKey=outputCacheKey;

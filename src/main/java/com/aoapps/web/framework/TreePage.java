@@ -44,7 +44,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author  AO Industries, Inc.
  */
-abstract public class TreePage extends WebPage {
+public abstract class TreePage extends WebPage {
 
 	private static final long serialVersionUID = 1L;
 
@@ -283,7 +283,7 @@ abstract public class TreePage extends WebPage {
 	/**
 	 * Gets the tree to be displayed.  Each row consists of three elements: path, href, description
 	 */
-	abstract protected List<? extends TreePageData> getTree(WebSiteRequest req, HttpServletResponse resp) throws ServletException;
+	protected abstract List<? extends TreePageData> getTree(WebSiteRequest req, HttpServletResponse resp) throws ServletException;
 
 	/**
 	 * Handles the interactive form of this page.
@@ -587,5 +587,5 @@ abstract public class TreePage extends WebPage {
 		return MODE_TEXT.equals(mode);
 	}
 
-	abstract public boolean useSmoothOutline(WebSiteRequest req);
+	public abstract boolean useSmoothOutline(WebSiteRequest req);
 }

@@ -73,7 +73,7 @@ public class SearchLayout extends WebPageLayout {
 	}
 
 	@Override
-	final public <__ extends FlowContent<__>> void printSearchOutput(WebPage page, __ flow, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) {
+	public final <__ extends FlowContent<__>> void printSearchOutput(WebPage page, __ flow, WebSiteRequest req, HttpServletResponse resp, String query, boolean isEntireSite, List<SearchResult> results, String[] words) {
 		throw new AssertionError("This should never be called within a search sub-request");
 	}
 
@@ -172,7 +172,7 @@ public class SearchLayout extends WebPageLayout {
 	}
 
 	@Override
-	final public <__ extends FlowContent<__>> boolean printWebPageLayoutSelector(WebPage page, __ flow, WebSiteRequest req, HttpServletResponse resp) {
+	public final <__ extends FlowContent<__>> boolean printWebPageLayoutSelector(WebPage page, __ flow, WebSiteRequest req, HttpServletResponse resp) {
 		throw new AssertionError("This should never be called within a search sub-request");
 	}
 

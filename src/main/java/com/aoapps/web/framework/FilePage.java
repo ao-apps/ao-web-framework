@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class FilePage extends WebPage {
+public abstract class FilePage extends WebPage {
 
 	private static final long serialVersionUID = 1L;
 

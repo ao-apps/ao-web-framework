@@ -43,7 +43,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class WebPageLayout {
+public abstract class WebPageLayout {
 
 	/**
 	 * Directional references.
@@ -68,7 +68,7 @@ abstract public class WebPageLayout {
 	 * @return  No defensive copy is made
 	 */
 	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	final public String[] getLayoutChoices() {
+	public final String[] getLayoutChoices() {
 		return layoutChoices;
 	}
 
@@ -91,7 +91,7 @@ abstract public class WebPageLayout {
 	 *          This is also given to {@link #endPage(com.aoapps.web.framework.WebPage, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
 	 *          to finish the template.
 	 */
-	abstract public <__ extends FlowContent<__>> __ startPage(
+	public abstract <__ extends FlowContent<__>> __ startPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
@@ -106,7 +106,7 @@ abstract public class WebPageLayout {
 	 * @param  flow  The {@link FlowContent} that was returned by
 	 *               {@link #startPage(com.aoapps.web.framework.WebPage, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE, java.lang.String)}.
 	 */
-	abstract public void endPage(
+	public abstract void endPage(
 		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
@@ -247,7 +247,7 @@ abstract public class WebPageLayout {
 	 * Starts the content area of a page.
 	 */
 	// TODO: 3.0.0: Lambda-friend variants of this and similar methods, that would call start, lambda, end
-	final public void startContent(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int contentColumns, int preferredWidth) throws ServletException, IOException {
+	public final void startContent(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int contentColumns, int preferredWidth) throws ServletException, IOException {
 		startContent(document, req, resp, new int[] {contentColumns}, preferredWidth);
 	}
 
@@ -255,58 +255,58 @@ abstract public class WebPageLayout {
 	 * Starts the content area of a page.
 	 */
 	// TODO: 3.0.0: Return TBody<TODO> that would be used by lambda consumer
-	abstract public void startContent(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) throws ServletException, IOException;
+	public abstract void startContent(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) throws ServletException, IOException;
 
 	/**
 	 * Prints a horizontal divider of the provided colspan.
 	 */
-	final public void printContentHorizontalDivider(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int colspan, boolean endsInternal) throws ServletException, IOException {
+	public final void printContentHorizontalDivider(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int colspan, boolean endsInternal) throws ServletException, IOException {
 		printContentHorizontalDivider(document, req, resp, new int[] {colspan}, endsInternal);
 	}
 
 	/**
 	 * Prints a horizontal divider of the provided colspan.
 	 */
-	abstract public void printContentHorizontalDivider(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int[] colspansAndDirections, boolean endsInternal) throws ServletException, IOException;
+	public abstract void printContentHorizontalDivider(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int[] colspansAndDirections, boolean endsInternal) throws ServletException, IOException;
 
 	/**
 	 * Prints the title of the page in one row in the content area.
 	 */
-	final public void printContentTitle(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, WebPage page, int contentColumns) throws ServletException, IOException {
+	public final void printContentTitle(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, WebPage page, int contentColumns) throws ServletException, IOException {
 		printContentTitle(document, req, resp, page.getTitle(), contentColumns);
 	}
 
 	/**
 	 * Prints the title of the page in one row in the content area.
 	 */
-	abstract public void printContentTitle(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) throws ServletException, IOException;
+	public abstract void printContentTitle(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) throws ServletException, IOException;
 
 	/**
 	 * Starts one line of content with the initial colspan set to the provided colspan.
 	 */
-	abstract public void startContentLine(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int colspan, String align, String width) throws ServletException, IOException;
+	public abstract void startContentLine(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int colspan, String align, String width) throws ServletException, IOException;
 
 	/**
 	 * Ends one part of a line and starts the next.
 	 */
-	abstract public void printContentVerticalDivider(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align, String width) throws ServletException, IOException;
+	public abstract void printContentVerticalDivider(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align, String width) throws ServletException, IOException;
 
 	/**
 	 * Ends one line of content.
 	 */
-	abstract public void endContentLine(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int rowspan, boolean endsInternal) throws ServletException, IOException;
+	public abstract void endContentLine(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int rowspan, boolean endsInternal) throws ServletException, IOException;
 
 	/**
 	 * Ends the content area of a page.
 	 */
-	final public void endContent(WebPage page, DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int contentColumns) throws ServletException, IOException {
+	public final void endContent(WebPage page, DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int contentColumns) throws ServletException, IOException {
 		endContent(page, document, req, resp, new int[] {contentColumns});
 	}
 
 	/**
 	 * Ends the content area of a page.
 	 */
-	abstract public void endContent(WebPage page, DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) throws ServletException, IOException;
+	public abstract void endContent(WebPage page, DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) throws ServletException, IOException;
 
 	/**
 	 * The background color for the page or <code>-1</code> for browser default.
@@ -353,7 +353,7 @@ abstract public class WebPageLayout {
 	 *          This is also given to {@link #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
 	 *          to finish the area.
 	 */
-	final public <
+	public final <
 		PC extends FlowContent<PC>,
 		__ extends FlowContent<__>
 	> __ beginLightArea(
@@ -374,7 +374,7 @@ abstract public class WebPageLayout {
 	 *          This is also given to {@link #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
 	 *          to finish the area.
 	 */
-	abstract public <
+	public abstract <
 		PC extends FlowContent<PC>,
 		__ extends FlowContent<__>
 	> __ beginLightArea(
@@ -393,7 +393,7 @@ abstract public class WebPageLayout {
 	 *               {@link #beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
 	 *               or {@link #beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, boolean)}.
 	 */
-	abstract public void endLightArea(
+	public abstract void endLightArea(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		FlowContent<?> lightArea
@@ -519,7 +519,7 @@ abstract public class WebPageLayout {
 	 *          This is also given to {@link #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
 	 *          to finish the area.
 	 */
-	final public <
+	public final <
 		PC extends FlowContent<PC>,
 		__ extends FlowContent<__>
 	> __ beginWhiteArea(
@@ -540,7 +540,7 @@ abstract public class WebPageLayout {
 	 *          This is also given to {@link #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
 	 *          to finish the area.
 	 */
-	abstract public <
+	public abstract <
 		PC extends FlowContent<PC>,
 		__ extends FlowContent<__>
 	> __ beginWhiteArea(
@@ -559,7 +559,7 @@ abstract public class WebPageLayout {
 	 *               {@link #beginWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
 	 *               or {@link #beginWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, boolean)}.
 	 */
-	abstract public void endWhiteArea(
+	public abstract void endWhiteArea(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		FlowContent<?> whiteArea
@@ -678,7 +678,7 @@ abstract public class WebPageLayout {
 	/**
 	 * Each layout has a name.
 	 */
-	abstract public String getName();
+	public abstract String getName();
 
 	public <__ extends FlowContent<__>> boolean printWebPageLayoutSelector(WebPage page, __ flow, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		if(layoutChoices.length >= 2) {

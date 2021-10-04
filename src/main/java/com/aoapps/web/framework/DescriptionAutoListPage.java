@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class DescriptionAutoListPage extends AutoListPage {
+public abstract class DescriptionAutoListPage extends AutoListPage {
 
 	private static final long serialVersionUID = 1L;
 

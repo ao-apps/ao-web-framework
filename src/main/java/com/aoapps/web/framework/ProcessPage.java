@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class ProcessPage extends InputStreamPage {
+public abstract class ProcessPage extends InputStreamPage {
 
 	private static final long serialVersionUID = 1L;
 

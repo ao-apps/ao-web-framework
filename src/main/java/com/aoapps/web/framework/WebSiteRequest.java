@@ -311,8 +311,8 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 		}
 	}
 
-	final protected WebPage sourcePage;
-	final private HttpServletRequest req;
+	protected final WebPage sourcePage;
+	private final HttpServletRequest req;
 	private List<UploadedFile> reqUploadedFiles;
 
 	private boolean isLynx;
