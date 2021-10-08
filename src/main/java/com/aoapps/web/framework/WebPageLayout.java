@@ -57,7 +57,7 @@ public abstract class WebPageLayout {
 
 	private final String[] layoutChoices;
 
-	public WebPageLayout(String[] layoutChoices) {
+	protected WebPageLayout(String[] layoutChoices) {
 		this.layoutChoices=layoutChoices;
 	}
 
