@@ -707,20 +707,20 @@ public abstract class WebPageLayout {
 	}
 
 	protected <__ extends ScriptSupportingContent<__>> void printJavaScriptIncludes(WebSiteRequest req, HttpServletResponse resp, __ content, WebPage page) throws ServletException, IOException {
-		Object O = page.getJavaScriptSrc(req);
-		if (O != null) {
-			if (O instanceof String[]) {
-				String[] SA = (String[]) O;
-				int len = SA.length;
+		Object src = page.getJavaScriptSrc(req);
+		if (src != null) {
+			if (src instanceof String[]) {
+				String[] sa = (String[]) src;
+				int len = sa.length;
 				for (int c = 0; c < len; c++) {
-					content.script().src(req.getEncodedURLForPath('/'+SA[c], null, false, resp)).__();
+					content.script().src(req.getEncodedURLForPath('/' + sa[c], null, false, resp)).__();
 				}
-			} else if(O instanceof Class) {
-				content.script().src(req.getEncodedURL(((Class<?>)O).asSubclass(WebPage.class), null, resp)).__();
-			} else if(O instanceof WebPage) {
-				content.script().src(req.getEncodedURL((WebPage)O, resp)).__();
+			} else if(src instanceof Class) {
+				content.script().src(req.getEncodedURL(((Class<?>)src).asSubclass(WebPage.class), null, resp)).__();
+			} else if(src instanceof WebPage) {
+				content.script().src(req.getEncodedURL((WebPage)src, resp)).__();
 			} else {
-				content.script().src(req.getEncodedURLForPath('/'+O.toString(), null, false, resp)).__();
+				content.script().src(req.getEncodedURLForPath('/' + src.toString(), null, false, resp)).__();
 			}
 		}
 	}

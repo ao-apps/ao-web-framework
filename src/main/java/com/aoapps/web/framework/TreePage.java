@@ -114,18 +114,18 @@ public abstract class TreePage extends WebPage {
 
 	@Override
 	public void doGet(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String S=req.getParameter("image_num");
-		if(S == null) {
+		String s = req.getParameter("image_num");
+		if(s == null) {
 			super.doGet(req, resp);
 		} else {
 			try {
-				int imageNum=Integer.parseInt(S);
-				if(imageNum<0 || imageNum>9) {
+				int imageNum = Integer.parseInt(s);
+				if(imageNum < 0 || imageNum > 9) {
 					resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unable to find image number "+imageNum);
 				} else {
-					boolean useSmooth=useSmoothOutline(req);
-					resp.setContentType(imageNum==0?ContentType.GIF:useSmooth?ContentType.JPEG:ContentType.GIF);
-					byte[] bytes=getImageBytes(imageNum, useSmooth);
+					boolean useSmooth = useSmoothOutline(req);
+					resp.setContentType(imageNum == 0 ? ContentType.GIF : useSmooth ? ContentType.JPEG : ContentType.GIF);
+					byte[] bytes = getImageBytes(imageNum, useSmooth);
 					try (OutputStream out = resp.getOutputStream()) {
 						out.write(bytes);
 					}
@@ -143,9 +143,9 @@ public abstract class TreePage extends WebPage {
 
 	@Override
 	public long getLastModified(WebSiteRequest req, HttpServletResponse resp) {
-		if(req==null) return -1;
-		String S=req.getParameter("image_num");
-		return S==null?-1:getUptime();
+		if(req == null) return -1;
+		String s = req.getParameter("image_num");
+		return (s == null) ? -1 : getUptime();
 	}
 
 	@Override

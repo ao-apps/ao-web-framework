@@ -233,16 +233,16 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 
 									// Remove the expired entries
 									synchronized(uploadedFiles) {
-										Iterator<Identifier> I = uploadedFiles.keySet().iterator();
-										while(I.hasNext()) {
-											Identifier id = I.next();
-											UploadedFile uf=uploadedFiles.get(id);
-											if(uf==null) {
-												I.remove();
+										Iterator<Identifier> iter = uploadedFiles.keySet().iterator();
+										while(iter.hasNext()) {
+											Identifier id = iter.next();
+											UploadedFile uf = uploadedFiles.get(id);
+											if(uf == null) {
+												iter.remove();
 											} else {
-												long timeSince=System.currentTimeMillis()-uf.getLastAccessed();
-												if(timeSince<0 || timeSince>=((long)60*60*1000)) {
-													File file=uf.getStorageFile();
+												long timeSince = System.currentTimeMillis() - uf.getLastAccessed();
+												if(timeSince < 0 || timeSince >= ((long)60 * 60 * 1000)) {
+													File file = uf.getStorageFile();
 													if(file.exists()) {
 														try {
 															Files.delete(file.toPath());
@@ -254,7 +254,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 															);
 														}
 													}
-													I.remove();
+													iter.remove();
 												}
 											}
 										}
@@ -266,12 +266,12 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 												File file = new File(dir, filename);
 												long fileAge=System.currentTimeMillis()-file.lastModified();
 												if(fileAge<((long)-2*60*60*1000) || fileAge>((long)2*60*60*1000)) {
-													boolean found=false;
-													I=uploadedFiles.keySet().iterator();
-													while(I.hasNext()) {
-														UploadedFile uf=uploadedFiles.get(I.next());
+													boolean found = false;
+													iter = uploadedFiles.keySet().iterator();
+													while(iter.hasNext()) {
+														UploadedFile uf = uploadedFiles.get(iter.next());
 														if(uf.getStorageFile().getAbsolutePath().equals(file.getAbsolutePath())) {
-															found=true;
+															found = true;
 															break;
 														}
 													}
@@ -291,8 +291,8 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 										}
 									}
 								}
-							} catch(ThreadDeath TD) {
-								throw TD;
+							} catch(ThreadDeath td) {
+								throw td;
 							} catch(InterruptedException err) {
 								logger.log(Level.WARNING, null, err);
 							} catch(Throwable t) {

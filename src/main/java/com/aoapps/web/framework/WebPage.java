@@ -860,10 +860,10 @@ public abstract class WebPage extends PageServlet {
 	 * @see  #equals(WebPage)
 	 */
 	@Override
-	public final boolean equals(Object O) {
+	public final boolean equals(Object obj) {
 		return
-			(O instanceof WebPage)
-			&& equals((WebPage)O)
+			(obj instanceof WebPage)
+			&& equals((WebPage)obj)
 		;
 	}
 
