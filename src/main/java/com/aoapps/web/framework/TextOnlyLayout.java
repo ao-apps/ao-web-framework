@@ -289,7 +289,7 @@ public class TextOnlyLayout extends WebPageLayout {
 				.meta(AnyMETA.Name.APPLE_MOBILE_WEB_APP_STATUS_BAR_STYLE).content("black").__();
 			// Authors
 			// TODO: 3.0.0: dcterms copyright
-			String author = page.getAuthor();
+			String author = page.getAuthor(req);
 			if(author != null && !(author = author.trim()).isEmpty()) {
 				head.meta(AnyMETA.Name.AUTHOR).content(author).__();
 			}
@@ -299,7 +299,7 @@ public class TextOnlyLayout extends WebPageLayout {
 			}
 			head.title__(
 				// No more page stack, just show current page only
-				page.getTitle()
+				page.getTitle(req)
 				/*
 				List<WebPage> parents=new ArrayList<>();
 				WebPage parent=page;
@@ -314,11 +314,11 @@ public class TextOnlyLayout extends WebPageLayout {
 				}
 				*/
 			);
-			String description = page.getDescription();
+			String description = page.getDescription(req);
 			if(description != null && !(description = description.trim()).isEmpty()) {
 				head.meta(AnyMETA.Name.DESCRIPTION).content(description).__();
 			}
-			String keywords = page.getKeywords();
+			String keywords = page.getKeywords(req);
 			if(keywords != null && !(keywords = keywords.trim()).isEmpty()) {
 				head.meta(AnyMETA.Name.KEYWORDS).content(keywords).__();
 			}

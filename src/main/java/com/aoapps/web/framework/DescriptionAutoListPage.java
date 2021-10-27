@@ -45,6 +45,6 @@ public abstract class DescriptionAutoListPage extends AutoListPage {
 		WebSiteRequest req,
 		HttpServletResponse resp
 	) throws ServletException, IOException {
-		document.text(getDescription());
+		document.text(getDescription(req));
 	}
 }

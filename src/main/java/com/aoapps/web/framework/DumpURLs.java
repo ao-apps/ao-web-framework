@@ -57,12 +57,12 @@ public abstract class DumpURLs extends WebPage {
 	}
 
 	@Override
-	public String getDescription() {
+	public String getDescription(WebSiteRequest req) {
 		return "Lists all of the URLs in the site, useful for adding to search engines.";
 	}
 
 	@Override
-	public String getKeywords() {
+	public String getKeywords(WebSiteRequest req) {
 		return "search, engine, URL, list, add, hit, hits, adding";
 	}
 
@@ -95,7 +95,7 @@ public abstract class DumpURLs extends WebPage {
 	}
 
 	@Override
-	public String getTitle() {
+	public String getTitle(WebSiteRequest req) {
 		return "List URLs";
 	}
 

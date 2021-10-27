@@ -142,12 +142,12 @@ public class RedirectWebPage extends WebPage {
 	}
 
 	@Override
-	public String getDescription() {
+	public String getDescription(WebSiteRequest req) {
 		return description;
 	}
 
 	@Override
-	public String getKeywords() {
+	public String getKeywords(WebSiteRequest req) {
 		return keywords;
 	}
 
@@ -157,7 +157,7 @@ public class RedirectWebPage extends WebPage {
 	}
 
 	@Override
-	public String getTitle() {
+	public String getTitle(WebSiteRequest req) {
 		return title;
 	}
 }

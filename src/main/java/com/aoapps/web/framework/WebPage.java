@@ -899,8 +899,8 @@ public abstract class WebPage extends PageServlet {
 	/**
 	 * Gets the author of this page.  By default, the author of the parent page is used.
 	 */
-	public String getAuthor() throws ServletException {
-		return getParent().getAuthor();
+	public String getAuthor(WebSiteRequest req) throws ServletException {
+		return getParent().getAuthor(req);
 	}
 
 	/**
@@ -935,8 +935,8 @@ public abstract class WebPage extends PageServlet {
 	 * Gets the description of this page.  By default, the description of the parent page is used.
 	 * May not contain HTML.
 	 */
-	public String getDescription() throws ServletException {
-		return getParent().getDescription();
+	public String getDescription(WebSiteRequest req) throws ServletException {
+		return getParent().getDescription(req);
 	}
 
 	/**
@@ -970,8 +970,8 @@ public abstract class WebPage extends PageServlet {
 	 * Gets the keywords for this page.  By default, the keywords of the parent page are used.
 	 */
 	// TODO: Is it correct to use keywords of parent?
-	public String getKeywords() throws ServletException {
-		return getParent().getKeywords();
+	public String getKeywords(WebSiteRequest req) throws ServletException {
+		return getParent().getKeywords(req);
 	}
 
 	/**
@@ -979,12 +979,12 @@ public abstract class WebPage extends PageServlet {
 	 *
 	 * @return  the alt text of the navigation image
 	 *
-	 * @see #getShortTitle()
+	 * @see #getShortTitle(com.aoapps.web.framework.WebSiteRequest)
 	 * @see #getNavImageSuffix(com.aoapps.web.framework.WebSiteRequest)
 	 * @see #getNavImageURL(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.net.URIParameters)
 	 */
 	public String getNavImageAlt(WebSiteRequest req) throws ServletException {
-		return getShortTitle();
+		return getShortTitle(req);
 	}
 
 	/**
@@ -1126,8 +1126,8 @@ public abstract class WebPage extends PageServlet {
 	 *
 	 * @see  #getTitle
 	 */
-	public String getShortTitle() throws ServletException {
-		return getTitle();
+	public String getShortTitle(WebSiteRequest req) throws ServletException {
+		return getTitle(req);
 	}
 
 	/**
@@ -1136,8 +1136,8 @@ public abstract class WebPage extends PageServlet {
 	 *
 	 * @return  the page title
 	 */
-	public String getTitle() throws ServletException {
-		return getParent().getTitle();
+	public String getTitle(WebSiteRequest req) throws ServletException {
+		return getParent().getTitle(req);
 	}
 
 	/**
@@ -1529,11 +1529,11 @@ public abstract class WebPage extends PageServlet {
 			// Search the byte data only if not able to index
 			long mySearchLastModified = getSearchLastModified();
 			if (mySearchLastModified == -1) {
-				title = getTitle();
-				description = getDescription();
-				author = getAuthor();
+				title = getTitle(req);
+				description = getDescription(req);
+				author = getAuthor(req);
 				authorHref = getAuthorHref(req, resp);
-				String keywords = getKeywords();
+				String keywords = getKeywords(req);
 
 				// Get the HTML content
 				buffer.reset();
@@ -1595,11 +1595,11 @@ public abstract class WebPage extends PageServlet {
 					// Only synchronize for index rebuild
 					synchronized (this) {
 						if (mySearchLastModified != this.searchLastModified) {
-							title = getTitle();
-							description = getDescription();
-							author = getAuthor();
+							title = getTitle(req);
+							description = getDescription(req);
+							author = getAuthor(req);
 							authorHref = getAuthorHref(req, resp);
-							String keywords = getKeywords();
+							String keywords = getKeywords(req);
 
 							// Get the HTML content
 							buffer.reset();
@@ -1692,9 +1692,9 @@ public abstract class WebPage extends PageServlet {
 					new SearchResult(
 						req.getURL(this),
 						probability,
-						title == null ? getTitle() : title,
-						description == null ? getDescription() : description,
-						author == null ? getAuthor() : author,
+						title == null ? getTitle(req) : title,
+						description == null ? getDescription(req) : description,
+						author == null ? getAuthor(req) : author,
 						authorHref == null ? getAuthorHref(req, resp) : authorHref
 					)
 				);

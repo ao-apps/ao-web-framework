@@ -273,7 +273,7 @@ public abstract class WebPageLayout {
 	 * Prints the title of the page in one row in the content area.
 	 */
 	public final void printContentTitle(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, WebPage page, int contentColumns) throws ServletException, IOException {
-		printContentTitle(document, req, resp, page.getTitle(), contentColumns);
+		printContentTitle(document, req, resp, page.getTitle(req), contentColumns);
 	}
 
 	/**

@@ -87,10 +87,10 @@ public abstract class AutoListPage extends WebPage {
 			WebPage page = pages[c];
 			tbody.tr__(tr -> tr
 				.td().style("white-space:nowrap").__(td -> td
-					.a().clazz("aoLightLink").href(req == null ? null : req.getEncodedURL(page, resp)).__(page.getShortTitle())
+					.a().clazz("aoLightLink").href(req == null ? null : req.getEncodedURL(page, resp)).__(page.getShortTitle(req))
 				)
 				.td().style("width:12px", "white-space:nowrap").__("\u00A0")
-				.td().style("white-space:nowrap").__(page.getDescription())
+				.td().style("white-space:nowrap").__(page.getDescription(req))
 			);
 		}
 	}
