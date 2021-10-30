@@ -221,70 +221,68 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 		synchronized(uploadedFiles) {
 			uploadedFiles.put(uf.getID(), uf);
 
-			if(uploadedFileCleanup==null) {
-				uploadedFileCleanup=new Thread() {
+			if(uploadedFileCleanup == null) {
+				uploadedFileCleanup = new Thread() {
 					@Override
 					@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "SleepWhileInLoop"})
 					public void run() {
-						while(true) {
+						while(!Thread.currentThread().isInterrupted()) {
 							try {
-								while(true) {
-									sleep(10*60*1000);
+								sleep(10L * 60 * 1000);
 
-									// Remove the expired entries
-									synchronized(uploadedFiles) {
-										Iterator<Identifier> iter = uploadedFiles.keySet().iterator();
-										while(iter.hasNext()) {
-											Identifier id = iter.next();
-											UploadedFile uf = uploadedFiles.get(id);
-											if(uf == null) {
-												iter.remove();
-											} else {
-												long timeSince = System.currentTimeMillis() - uf.getLastAccessed();
-												if(timeSince < 0 || timeSince >= ((long)60 * 60 * 1000)) {
-													File file = uf.getStorageFile();
-													if(file.exists()) {
-														try {
-															Files.delete(file.toPath());
-														} catch(IOException e) {
-															logger.log(
-																Level.SEVERE,
-																"file.getPath()="+file.getPath(),
-																e
-															);
-														}
+								// Remove the expired entries
+								synchronized(uploadedFiles) {
+									Iterator<Identifier> iter = uploadedFiles.keySet().iterator();
+									while(iter.hasNext()) {
+										Identifier id = iter.next();
+										UploadedFile uf = uploadedFiles.get(id);
+										if(uf == null) {
+											iter.remove();
+										} else {
+											long timeSince = System.currentTimeMillis() - uf.getLastAccessed();
+											if(timeSince < 0 || timeSince >= ((long)60 * 60 * 1000)) {
+												File file = uf.getStorageFile();
+												if(file.exists()) {
+													try {
+														Files.delete(file.toPath());
+													} catch(IOException e) {
+														logger.log(
+															Level.SEVERE,
+															"file.getPath()="+file.getPath(),
+															e
+														);
 													}
-													iter.remove();
 												}
+												iter.remove();
 											}
 										}
-										// Delete the files that do not have an uploadedFile entry and are at least two hours old
-										File dir=getFileUploadDirectory(servletContext);
-										String[] list=dir.list();
-										if(list!=null) {
-											for(String filename : list) {
-												File file = new File(dir, filename);
-												long fileAge=System.currentTimeMillis()-file.lastModified();
-												if(fileAge<((long)-2*60*60*1000) || fileAge>((long)2*60*60*1000)) {
-													boolean found = false;
-													iter = uploadedFiles.keySet().iterator();
-													while(iter.hasNext()) {
-														UploadedFile uf = uploadedFiles.get(iter.next());
-														if(uf.getStorageFile().getAbsolutePath().equals(file.getAbsolutePath())) {
-															found = true;
-															break;
-														}
+									}
+									// Delete the files that do not have an uploadedFile entry and are at least two hours old
+									File dir=getFileUploadDirectory(servletContext);
+									String[] list=dir.list();
+									if(list!=null) {
+										for(String filename : list) {
+											File file = new File(dir, filename);
+											long fileAge=System.currentTimeMillis()-file.lastModified();
+											if(fileAge<((long)-2*60*60*1000) || fileAge>((long)2*60*60*1000)) {
+												boolean found = false;
+												iter = uploadedFiles.keySet().iterator();
+												while(iter.hasNext()) {
+													UploadedFile uf = uploadedFiles.get(iter.next());
+													if(uf.getStorageFile().getAbsolutePath().equals(file.getAbsolutePath())) {
+														found = true;
+														break;
 													}
-													if(!found) {
-														try {
-															Files.delete(file.toPath());
-														} catch(IOException e) {
-															logger.log(
-																Level.SEVERE,
-																"file.getPath()="+file.getPath(),
-																e
-															);
-														}
+												}
+												if(!found) {
+													try {
+														Files.delete(file.toPath());
+													} catch(IOException e) {
+														logger.log(
+															Level.SEVERE,
+															"file.getPath()="+file.getPath(),
+															e
+														);
 													}
 												}
 											}
@@ -295,12 +293,16 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 								throw td;
 							} catch(InterruptedException err) {
 								logger.log(Level.WARNING, null, err);
+								// Restore the interrupted status
+								Thread.currentThread().interrupt();
 							} catch(Throwable t) {
 								logger.log(Level.SEVERE, null, t);
 								try {
 									sleep(60*1000);
 								} catch(InterruptedException err) {
 									logger.log(Level.WARNING, null, err);
+									// Restore the interrupted status
+									Thread.currentThread().interrupt();
 								}
 							}
 						}

@@ -37,7 +37,7 @@ along with ao-web-framework.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T22:08:31-05:00"
-		dateModified="2021-09-25T23:27:50-05:00"
+		dateModified="2021-10-29T03:58:47-05:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -118,6 +118,7 @@ along with ao-web-framework.  If not, see <http://www.gnu.org/licenses />.
 						<code>WebPage</code> now has <code>setHeaders(…)</code> instead of
 						<code>getAdditionalHeaders(…)</code> to provide more flexibility.
 					</li>
+					<li>Now properly restoring Thread interrupted state on <code>InterruptedException</code>.</li>
 				</ul>
 			</changelog:release>
 		</c:if>
