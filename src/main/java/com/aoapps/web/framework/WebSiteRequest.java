@@ -240,7 +240,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 											iter.remove();
 										} else {
 											long timeSince = System.currentTimeMillis() - uf.getLastAccessed();
-											if(timeSince < 0 || timeSince >= ((long)60 * 60 * 1000)) {
+											if(timeSince < 0 || timeSince >= (60L * 60 * 1000)) {
 												File file = uf.getStorageFile();
 												if(file.exists()) {
 													try {
@@ -263,8 +263,11 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 									if(list!=null) {
 										for(String filename : list) {
 											File file = new File(dir, filename);
-											long fileAge=System.currentTimeMillis()-file.lastModified();
-											if(fileAge<((long)-2*60*60*1000) || fileAge>((long)2*60*60*1000)) {
+											long fileAge = System.currentTimeMillis() - file.lastModified();
+											if(
+												fileAge < (-2L * 60 * 60 * 1000)
+												|| fileAge > (2L * 60 * 60 * 1000)
+											) {
 												boolean found = false;
 												iter = uploadedFiles.keySet().iterator();
 												while(iter.hasNext()) {
@@ -298,7 +301,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 							} catch(Throwable t) {
 								logger.log(Level.SEVERE, null, t);
 								try {
-									sleep(60*1000);
+									sleep(60L * 1000);
 								} catch(InterruptedException err) {
 									logger.log(Level.WARNING, null, err);
 									// Restore the interrupted status
