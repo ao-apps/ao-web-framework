@@ -869,12 +869,12 @@ public abstract class WebPage extends PageServlet {
 
 	/**
 	 * Determines if this page equals another page.  By default, two pages
-	 * of the same classname are considered equal.
+	 * of the same class are considered equal.
 	 *
 	 * @see  #hashCode
 	 */
 	public boolean equals(WebPage other) {
-		return other.getClass().getName().equals(getClass().getName());
+		return this.getClass() == other.getClass();
 	}
 
 	/**
