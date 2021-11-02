@@ -148,15 +148,18 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 
 	/**
 	 * Gets the random number generator used for this request.
+	 * <p>
+	 * Note: This is not a {@linkplain SecureRandom#getInstanceStrong() strong instance} to avoid blocking.
+	 * </p>
 	 */
 	public SecureRandom getSecureRandom() {
 		return secureRandom;
 	}
 
-	private static final Random fastRandom = new Random(IoUtils.bufferToLong(secureRandom.generateSeed(8)));
+	private static final Random fastRandom = new Random(IoUtils.bufferToLong(secureRandom.generateSeed(Long.BYTES)));
 
 	/**
-	 * A fast pseudo-random number generated seeded by secure random.
+	 * A fast pseudo-random number generator for non-cryptographic purposes.
 	 */
 	public Random getFastRandom() {
 		return fastRandom;
