@@ -1173,7 +1173,7 @@ public abstract class WebPage extends PageServlet {
 	private static final ConcurrentMap<Class<? extends WebPage>, Constructor<? extends WebPage>> requestConstructors = new ConcurrentHashMap<>();
 	@SuppressWarnings("unchecked")
 	private static <W extends WebPage> Constructor<W> getRequestConstructor(Class<W> clazz) {
-		Constructor<?> con = (Constructor)requestConstructors.get(clazz);
+		Constructor<?> con = requestConstructors.get(clazz);
 		if(con == null) {
 			try {
 				con = clazz.getConstructor(WebSiteRequest.class);
@@ -1188,7 +1188,7 @@ public abstract class WebPage extends PageServlet {
 	private static final ConcurrentMap<Class<? extends WebPage>, Constructor<? extends WebPage>> paramsConstructors = new ConcurrentHashMap<>();
 	@SuppressWarnings("unchecked")
 	private static <W extends WebPage> Constructor<W> getParamsConstructor(Class<W> clazz) {
-		Constructor<?> con = (Constructor)paramsConstructors.get(clazz);
+		Constructor<?> con = paramsConstructors.get(clazz);
 		if(con == null) {
 			try {
 				con = clazz.getConstructor(URIParameters.class);
@@ -1203,7 +1203,7 @@ public abstract class WebPage extends PageServlet {
 	private static final ConcurrentMap<Class<? extends WebPage>, Constructor<? extends WebPage>> defaultConstructors = new ConcurrentHashMap<>();
 	@SuppressWarnings("unchecked")
 	private static <W extends WebPage> Constructor<W> getDefaultConstructor(Class<W> clazz) {
-		Constructor<?> con = (Constructor)defaultConstructors.get(clazz);
+		Constructor<?> con = defaultConstructors.get(clazz);
 		if(con == null) {
 			try {
 				con = clazz.getConstructor();
