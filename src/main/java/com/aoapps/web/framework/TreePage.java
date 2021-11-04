@@ -165,7 +165,7 @@ public abstract class TreePage extends WebPage {
 
 			// Get the widest of the lines
 			int longest=0;
-			for(String path[] : paths) {
+			for(String[] path : paths) {
 				int width=0;
 				for (int d=0; d<path.length; d++) {
 					if(d>0) width+=3;
