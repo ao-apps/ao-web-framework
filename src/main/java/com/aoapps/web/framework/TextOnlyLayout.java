@@ -674,11 +674,13 @@ public class TextOnlyLayout extends WebPageLayout {
 	}
 
 	public <__ extends FlowContent<__>> void printLogo(WebPage page, __ td, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// Do nothing
 	}
 
 	/**
 	 * Prints content below the related pages area on the left.
 	 */
 	public <__ extends FlowContent<__>> void printBelowRelatedPages(__ td, WebSiteRequest req) throws ServletException, IOException {
+		// Do nothing
 	}
 }

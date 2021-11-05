@@ -171,7 +171,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 		else return filename.substring(pos+1);
 	}
 
-	private static class MimeTypeLock {}
+	private static class MimeTypeLock {/* Empty lock class to help heap profile */}
 	private static final MimeTypeLock mimeTypeLock=new MimeTypeLock();
 	private static Map<String, String> mimeTypes;
 	// TODO: Should client-provided content-type take priority?
@@ -845,6 +845,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * Prints the hidden variables that contain all of the current settings.
 	 */
 	public <__ extends FlowContent<__>> void printFormFields(__ form) throws ServletException, IOException {
+		// Do nothing
 	}
 
 // Unused 2021-02-22:
@@ -916,5 +917,6 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 	 * Logs out the current user or does nothing if not logged in.
 	 */
 	public void logout(HttpServletResponse resp) {
+		// Do nothing
 	}
 }

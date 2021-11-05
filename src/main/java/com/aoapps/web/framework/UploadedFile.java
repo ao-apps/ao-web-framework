@@ -39,7 +39,7 @@ public final class UploadedFile {
 	private final long create_time;
 	private final WebSiteUser owner;
 	private final String contentType;
-	private static class LastAccessLock {}
+	private static class LastAccessLock {/* Empty lock class to help heap profile */}
 	private final LastAccessLock lastAccessLock=new LastAccessLock();
 	private long lastAccessed;
 

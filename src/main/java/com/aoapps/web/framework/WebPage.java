@@ -633,6 +633,7 @@ public abstract class WebPage extends PageServlet {
 		WebPageLayout layout,
 		__ flow
 	) throws ServletException, IOException {
+		// Do nothing
 	}
 
 	// </editor-fold>

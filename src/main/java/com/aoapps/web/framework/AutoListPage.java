@@ -76,6 +76,7 @@ public abstract class AutoListPage extends WebPage {
 		WebSiteRequest req,
 		HttpServletResponse resp
 	) throws ServletException, IOException {
+		// Do nothing
 	}
 
 	/**

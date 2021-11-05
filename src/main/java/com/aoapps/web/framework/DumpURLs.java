@@ -87,6 +87,7 @@ public abstract class DumpURLs extends WebPage {
 		CharArrayWriter buffer,
 		Set<WebPage> finishedPages
 	) {
+		// Do nothing
 	}
 
 	@Override
