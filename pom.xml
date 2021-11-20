@@ -85,9 +85,15 @@ along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
 	</issueManagement>
 
 	<ciManagement>
+		<system>Jenkins</system>
+		<url>https://jenkins.aoindustries.com/job/ao/job/oss/job/web-framework/</url>
+	</ciManagement>
+	<!-- Only one allowed in POM:
+	<ciManagement>
 		<system>GitHub Actions</system>
 		<url>https://github.com/ao-apps/ao-web-framework/actions</url>
 	</ciManagement>
+	-->
 
 	<repositories>
 		<!-- Repository required here, too, so can find parent -->
@@ -131,7 +137,7 @@ along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
 								<configuration>
 									<artifactItems>
 										<!-- Direct -->
-										<!-- ao-javadoc-offline: <groupId>javax.activation</groupId><artifactId>activation</artifactId> -->
+										<!-- ao-javadoc-offline: <groupId>javax.activation</groupId><artifactId>activation</artifactId><classifier>javadoc</classifier> -->
 										<artifactItem>
 											<groupId>com.aoapps</groupId><artifactId>ao-collections</artifactId><classifier>javadoc</classifier>
 											<includes>element-list, package-list</includes>
@@ -202,8 +208,8 @@ along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
 											<includes>element-list, package-list</includes>
 											<outputDirectory>${project.build.directory}/offlineLinks/com.aoapps/ao-web-resources-servlet</outputDirectory>
 										</artifactItem>
-										<!-- ao-javadoc-offline: <groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId> -->
-										<!-- ao-javadoc-offline: <groupId>javax.servlet.jsp</groupId><artifactId>javax.servlet.jsp-api</artifactId> -->
+										<!-- ao-javadoc-offline: <groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId><classifier>javadoc</classifier> -->
+										<!-- ao-javadoc-offline: <groupId>javax.servlet.jsp</groupId><artifactId>javax.servlet.jsp-api</artifactId><classifier>javadoc</classifier> -->
 									</artifactItems>
 								</configuration>
 							</execution>
@@ -214,7 +220,7 @@ along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
 						<configuration>
 							<offlineLinks combine.children="append">
 								<!-- Direct -->
-								<!-- ao-javadoc-offline: <groupId>javax.activation</groupId><artifactId>activation</artifactId> --><!-- TODO: https://jakarta.ee/specifications/activation/1.2/apidocs/ -->
+								<!-- ao-javadoc-offline: <groupId>javax.activation</groupId><artifactId>activation</artifactId><classifier>javadoc</classifier> --><!-- TODO: https://jakarta.ee/specifications/activation/1.2/apidocs/ -->
 								<offlineLink>
 									<url>https://oss.aoapps.com/collections/apidocs/</url>
 									<location>${project.build.directory}/offlineLinks/com.aoapps/ao-collections</location>
@@ -271,8 +277,8 @@ along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
 									<url>https://oss.aoapps.com/web-resources/servlet/apidocs/</url>
 									<location>${project.build.directory}/offlineLinks/com.aoapps/ao-web-resources-servlet</location>
 								</offlineLink>
-								<!-- ao-javadoc-offline: <groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId> -->
-								<!-- ao-javadoc-offline: <groupId>javax.servlet.jsp</groupId><artifactId>javax.servlet.jsp-api</artifactId> -->
+								<!-- ao-javadoc-offline: <groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId><classifier>javadoc</classifier> -->
+								<!-- ao-javadoc-offline: <groupId>javax.servlet.jsp</groupId><artifactId>javax.servlet.jsp-api</artifactId><classifier>javadoc</classifier> -->
 							</offlineLinks>
 						</configuration>
 					</plugin>
