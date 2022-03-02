@@ -1,6 +1,6 @@
 /*
  * ao-web-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2015, 2016, 2019, 2020, 2021  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2015, 2016, 2019, 2020, 2021, 2022  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -599,7 +599,7 @@ public abstract class WebPage extends PageServlet {
 	 *
 	 * @see #doGet(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 * @see #getWebPageLayout(com.aoapps.web.framework.WebSiteRequest)
-	 * @see WebPageLayout#doPage(com.aoapps.web.framework.WebPage, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE, java.lang.String, com.aoapps.lang.io.function.IOConsumerE)
+	 * @see WebPageLayout#doPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String, com.aoapps.lang.io.function.IOConsumerE)
 	 * @see #doGet(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.FlowContent)
 	 */
 	// TODO: We could have a NullHtmlWriter that does not write any HTML tags or attributes, but just the text body.
@@ -613,7 +613,7 @@ public abstract class WebPage extends PageServlet {
 		DocumentEE document
 	) throws ServletException, IOException {
 		WebPageLayout layout = getWebPageLayout(req);
-		layout.doPage(this, req, resp, document, null, flow -> doGet(req, resp, layout, flow));
+		layout.doPage(req, resp, this, document, null, flow -> doGet(req, resp, layout, flow));
 	}
 
 	/**
@@ -746,7 +746,7 @@ public abstract class WebPage extends PageServlet {
 				try {
 					DocumentEE document = getDocument(req, resp);
 					WebPageLayout layout = getWebPageLayout(req);
-					layout.doPage(this, req, resp, document, "document.forms." + SEARCH_TWO + "." + WebSiteRequest.SEARCH_QUERY + ".select(); document.forms." + SEARCH_TWO + "." + WebSiteRequest.SEARCH_QUERY + ".focus();",
+					layout.doPage(req, resp, this, document, "document.forms." + SEARCH_TWO + "." + WebSiteRequest.SEARCH_QUERY + ".select(); document.forms." + SEARCH_TWO + "." + WebSiteRequest.SEARCH_QUERY + ".focus();",
 						flow -> {
 							boolean entire_site = searchTarget.equals(WebSiteRequest.SEARCH_ENTIRE_SITE);
 							WebPage target = entire_site ? getRootPage() : this;
@@ -765,7 +765,7 @@ public abstract class WebPage extends PageServlet {
 								//Strings.sortObjectsAndFloatDescending(results, 1, 5);
 							}
 
-							layout.printSearchOutput(this, flow, req, resp, query, entire_site, results, words);
+							layout.printSearchOutput(req, resp, this, flow, query, entire_site, results, words);
 						}
 					);
 				} finally {
@@ -821,7 +821,7 @@ public abstract class WebPage extends PageServlet {
 	 *
 	 * @see #doPost(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 * @see #getWebPageLayout(com.aoapps.web.framework.WebSiteRequest)
-	 * @see WebPageLayout#doPage(com.aoapps.web.framework.WebPage, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.DocumentEE, java.lang.String, com.aoapps.lang.io.function.IOConsumerE)
+	 * @see WebPageLayout#doPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String, com.aoapps.lang.io.function.IOConsumerE)
 	 * @see #doPost(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.FlowContent)
 	 */
 	public void doPost(
@@ -830,7 +830,7 @@ public abstract class WebPage extends PageServlet {
 		DocumentEE document
 	) throws ServletException, IOException {
 		WebPageLayout layout = getWebPageLayout(req);
-		layout.doPage(this, req, resp, document, null, flow -> doPost(req, resp, layout, flow));
+		layout.doPage(req, resp, this, document, null, flow -> doPost(req, resp, layout, flow));
 	}
 
 	/**
@@ -912,13 +912,13 @@ public abstract class WebPage extends PageServlet {
 	}
 
 	/**
-	 * Gets the preferred width of this content in pixels or <code>-1</code> for no preference.
-	 * It is up to the <code>WebPageLayout</code> to make use of this value.  The preferred width
+	 * Gets the preferred width of this content or {@code null} for no preference.
+	 * It is up to the {@link WebPageLayout} to make use of this value.  The preferred width
 	 * defaults to the preferred width of the parent page.
 	 *
 	 * @see  WebPageLayout
 	 */
-	public int getPreferredContentWidth(WebSiteRequest req) throws ServletException {
+	public String getPreferredContentWidth(WebSiteRequest req) throws ServletException {
 		return getParent().getPreferredContentWidth(req);
 	}
 

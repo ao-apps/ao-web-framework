@@ -1,6 +1,6 @@
 /*
  * ao-web-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2003-2013, 2015, 2016, 2019, 2020, 2021  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2015, 2016, 2019, 2020, 2021, 2022  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -31,18 +31,16 @@ import com.aoapps.html.any.AnySTYLE;
 import com.aoapps.html.any.attributes.Enum.Method;
 import com.aoapps.html.servlet.BODY;
 import com.aoapps.html.servlet.BODY_c;
+import com.aoapps.html.servlet.ContentEE;
 import com.aoapps.html.servlet.DocumentEE;
 import com.aoapps.html.servlet.FlowContent;
 import com.aoapps.html.servlet.HEAD__;
 import com.aoapps.html.servlet.HTML_c;
-import com.aoapps.html.servlet.TABLE;
 import com.aoapps.html.servlet.TABLE_c;
-import com.aoapps.html.servlet.TD;
 import com.aoapps.html.servlet.TD_c;
 import com.aoapps.html.servlet.TR_c;
 import com.aoapps.html.util.GoogleAnalytics;
 import static com.aoapps.lang.Strings.trimNullIfEmpty;
-import static com.aoapps.taglib.AttributeUtils.appendWidthStyle;
 import static com.aoapps.taglib.AttributeUtils.getWidthStyle;
 import com.aoapps.web.resources.registry.Group;
 import com.aoapps.web.resources.registry.Registry;
@@ -78,7 +76,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	 */
 	public static final Group.Name RESOURCE_GROUP = new Group.Name(TextOnlyLayout.class.getName());
 
-	public static final Style GLOBAL_CSS = new Style("/layout/text/global.css");
+	public static final Style LAYOUT_TEXT_CSS = new Style("/layout/text/layout-text.css");
 
 	@WebListener
 	public static class Initializer implements ServletContextListener {
@@ -87,7 +85,7 @@ public class TextOnlyLayout extends WebPageLayout {
 			RegistryEE.Application.get(event.getServletContext())
 				.getGroup(RESOURCE_GROUP)
 				.styles
-				.add(GLOBAL_CSS);
+				.add(LAYOUT_TEXT_CSS);
 		}
 		@Override
 		public void contextDestroyed(ServletContextEvent event) {
@@ -117,18 +115,20 @@ public class TextOnlyLayout extends WebPageLayout {
 		String width,
 		boolean nowrap
 	) throws ServletException, IOException {
-		String align_ = trimNullIfEmpty(align);
+		align = trimNullIfEmpty(align);
 		TD_c<TR_c<TABLE_c<PC>>> td = pc.table()
-			.style(
-				"border:5px outset #a0a0a0",
-				(align_ != null) ? ("text-align:" + align_) : null,
-				getWidthStyle(width)
-			)
-			.cellpadding(0)
-			.cellspacing(0)
+			.clazz("ao-packed")
+			.style("border:5px outset #a0a0a0", getWidthStyle(width))
 		._c()
 			.tr_c()
-				.td().clazz("aoLightRow").style("padding:4px", nowrap ? "white-space:nowrap" : null)._c();
+				.td()
+					.clazz("aoLightRow")
+					.style(
+						"padding:4px",
+						(align != null) ? ("text-align:" + align) : null,
+						nowrap ? "white-space:nowrap" : null
+					)
+				._c();
 		@SuppressWarnings("unchecked")
 		__ lightArea = (__)td;
 		return lightArea;
@@ -160,18 +160,20 @@ public class TextOnlyLayout extends WebPageLayout {
 		String width,
 		boolean nowrap
 	) throws ServletException, IOException {
-		String align_ = trimNullIfEmpty(align);
+		align = trimNullIfEmpty(align);
 		TD_c<TR_c<TABLE_c<PC>>> td = pc.table()
-			.style(
-				"border:5px outset #a0a0a0",
-				(align_ != null) ? ("text-align:" + align_) : null,
-				getWidthStyle(width)
-			)
-			.cellpadding(0)
-			.cellspacing(0)
+			.clazz("ao-packed")
+			.style("border:5px outset #a0a0a0", getWidthStyle(width))
 		._c()
 			.tr_c()
-				.td().clazz("aoWhiteRow").style("background-color:white", "padding:4px", nowrap ? "white-space:nowrap" : null)._c();
+				.td()
+					.clazz("aoWhiteRow")
+					.style(
+						"padding:4px",
+						(align != null) ? ("text-align:" + align) : null,
+						nowrap ? "white-space:nowrap" : null
+					)
+				._c();
 		@SuppressWarnings("unchecked")
 		__ whiteArea = (__)td;
 		return whiteArea;
@@ -247,9 +249,9 @@ public class TextOnlyLayout extends WebPageLayout {
 	@Override
 	// TODO: uncomment once only expected deprecated remains: @SuppressWarnings("deprecation")
 	public <__ extends FlowContent<__>> __ startPage(
-		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
+		WebPage page,
 		DocumentEE document,
 		String onload
 	) throws ServletException, IOException {
@@ -348,7 +350,7 @@ public class TextOnlyLayout extends WebPageLayout {
 				pageRegistry
 			);
 			head.script().src(req.getEncodedURLForPath("/global.js", null, false, resp)).__();
-			printJavaScriptIncludes(req, resp, head, page);
+			printJavaScriptIncludes(req, resp, page, head);
 			writeBodyColorStyle(this, req, head);
 			// TODO: Canonical?
 		});
@@ -361,7 +363,7 @@ public class TextOnlyLayout extends WebPageLayout {
 		BODY_c<HTML_c<DocumentEE>> body_c = body._c();
 		TD_c<TR_c<TABLE_c<BODY_c<HTML_c<DocumentEE>>>>> td_c = body_c.table().cellspacing(10).cellpadding(0)._c()
 			.tr_c()
-				.td().attribute("valign", "top").__(td -> {
+				.td().style("vertical-align:top").__(td -> {
 					printLogo(page, td, req, resp);
 					boolean isLoggedIn = req.isLoggedIn();
 					if(isLoggedIn) {
@@ -386,7 +388,7 @@ public class TextOnlyLayout extends WebPageLayout {
 					td.hr__()
 					.div().style("white-space:nowrap").__(div -> {
 						if(getLayoutChoices().length >= 2) div.text("Layout: ");
-						if(printWebPageLayoutSelector(page, div, req, resp)) div.br__();
+						if(printWebPageLayoutSelector(req, resp, page, div)) div.br__();
 						div.text("Search: ").form().id("search_site").style("display:inline").method(Method.Value.POST).action(req.getEncodedURL(page, resp)).__(form -> form
 							.div().style("display:inline").__(div2 -> {
 								div2.input().hidden().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).__().autoNl();
@@ -462,19 +464,21 @@ public class TextOnlyLayout extends WebPageLayout {
 					.hr__();
 					printBelowRelatedPages(td, req);
 				})
-				.td().attribute("valign", "top")._c();
+				.td().style("vertical-align:top")._c();
 					WebPage[] commonPages = getCommonPages(page, req);
 					if(commonPages != null && commonPages.length > 0) {
-						td_c.table().cellspacing(0).cellpadding(0).style("width:100%").__(table -> table
-							.tr__(tr -> {
-								for(int c = 0; c < commonPages.length; c++) {
-									if(c > 0) tr.td().style("text-align:center", "width:1%").__("|");
-									WebPage tpage = commonPages[c];
-									tr.td().style("white-space:nowrap", "text-align:center", "width:" + ((101 - commonPages.length) / commonPages.length) + "%").__(td -> td
-										.a(tpage.getNavImageURL(req, resp, null)).__(tpage.getNavImageAlt(req))
-									);
-								}
-							})
+						td_c.table().clazz("ao-packed").style("width:100%").__(table -> table
+							.tbody__(tbody -> tbody
+								.tr__(tr -> {
+									for(int c = 0; c < commonPages.length; c++) {
+										if(c > 0) tr.td().style("text-align:center", "width:1%").__('|');
+										WebPage tpage = commonPages[c];
+										tr.td().style("white-space:nowrap", "text-align:center", "width:" + ((101 - commonPages.length) / commonPages.length) + "%").__(td -> td
+											.a(tpage.getNavImageURL(req, resp, null)).__(tpage.getNavImageAlt(req))
+										);
+									}
+								})
+							)
 						);
 					}
 		@SuppressWarnings("unchecked") __ flow = (__)td_c;
@@ -491,9 +495,9 @@ public class TextOnlyLayout extends WebPageLayout {
 
 	@Override
 	public void endPage(
-		WebPage page,
 		WebSiteRequest req,
 		HttpServletResponse resp,
+		WebPage page,
 		FlowContent<?> flow
 	) throws ServletException, IOException {
 		@SuppressWarnings("unchecked")
@@ -507,161 +511,211 @@ public class TextOnlyLayout extends WebPageLayout {
 		assert document != null : "Is fully closed back to DocumentEE";
 	}
 
-	/**
-	 * Starts the content area of a page.
-	 */
 	@Override
-	// TODO: 3.0.0: Return value to be passed on to other methods
-	public void startContent(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans, int preferredWidth) throws IOException {
-		TABLE<DocumentEE> table = document.table().cellpadding(0).cellspacing(0);
-		if(preferredWidth != -1) {
-			table.style(style -> style.append("width:").append(Integer.toString(preferredWidth)).append("px"));
+	public <
+		PC extends FlowContent<PC>,
+		__ extends ContentEE<__>
+	> __ startContent(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		WebPage page,
+		PC pc,
+		int[] contentColumnSpans,
+		String width
+	) throws ServletException, IOException {
+		if(width == null) width = page.getPreferredContentWidth(req);
+		width = trimNullIfEmpty(width);
+		final int totalColumns;
+		{
+			int totalColumns_ = 0;
+			for(int c = 0; c < contentColumnSpans.length; c++) {
+				if(c > 0) totalColumns_++;
+				totalColumns_ += contentColumnSpans[c];
+			}
+			totalColumns = totalColumns_;
 		}
-		/* TODO: 3.0.0: return */ table._c()
-			// TODO: 3.0.0: tbody
-			.tr__(tr -> {
-				int totalColumns = 0;
-				for(int c = 0; c < contentColumnSpans.length; c++) {
-					if(c > 0) totalColumns++;
-					totalColumns += contentColumnSpans[c];
-				}
-				tr.td().colspan(totalColumns).__(td -> td.hr__());
-			});
+		TABLE_c<PC> table = pc.table()
+			.clazz("ao-packed")
+			.style(getWidthStyle(width))
+		._c()
+			.tr__(tr -> tr
+				.td().colspan(totalColumns).__(td -> td
+					.hr__()
+				)
+			);
+		@SuppressWarnings("unchecked")
+		__ content = (__)table;
+		return content;
 	}
 
-	/**
-	 * Prints a horizontal divider of the provided colspan.
-	 */
 	@Override
-	public void printContentHorizontalDivider(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int[] colspansAndDirections, boolean endsInternal) throws IOException {
-		document.tr__(tr -> {
-			for(int c = 0; c < colspansAndDirections.length; c += 2) {
-				int direction = (c == 0) ? -1 : colspansAndDirections[c - 1];
-				if(direction != -1) {
-					switch(direction) {
-						case UP:
-							tr.td__("\u00A0");
-							break;
-						case DOWN:
-							tr.td__("\u00A0");
-							break;
-						case UP_AND_DOWN:
-							tr.td__("\u00A0");
-							break;
-						default: throw new IllegalArgumentException("Unknown direction: " + direction);
-					}
-				}
-
-				int colspan = colspansAndDirections[c];
-				tr.td().colspan(colspan).__(td -> td.hr__());
-			}
-		});
+	public void contentTitle(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		ContentEE<?> content,
+		String title,
+		int contentColumns
+	) throws ServletException, IOException {
+		FlowContent<?> contentLine = startContentLine(req, resp, content, contentColumns, "center", null);
+		contentLine.h1__(title);
+		endContentLine(req, resp, contentLine);
 	}
 
-	/**
-	 * Prints the title of the page in one row in the content area.
-	 */
 	@Override
-	public void printContentTitle(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, String title, int contentColumns) throws IOException {
-		startContentLine(document, req, resp, contentColumns, "center", null);
-		document.h1__(title);
-		endContentLine(document, req, resp, 1, false);
+	public <__ extends FlowContent<__>> __ startContentLine(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		ContentEE<?> content,
+		int colspan,
+		String align,
+		String width
+	) throws ServletException, IOException {
+		@SuppressWarnings("unchecked")
+		TABLE_c<?> table = (TABLE_c)content;
+		align = trimNullIfEmpty(align);
+		width = trimNullIfEmpty(width);
+		TD_c<? extends TR_c<? extends TABLE_c<?>>> td = table.tr_c()
+			.td()
+				.style(
+					align == null ? null : "text-align:" + align,
+					getWidthStyle(width),
+					"vertical-align:top"
+				)
+				.colspan(colspan)
+			._c();
+		@SuppressWarnings("unchecked")
+		__ contentLine = (__)td;
+		return contentLine;
 	}
 
-	/**
-	 * Starts one line of content with the initial colspan set to the provided colspan.
-	 */
 	@Override
-	// TODO: 3.0.0: Return value to be passed on to other methods
-	public void startContentLine(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int colspan, String align, String width) throws IOException {
-		String align_ = trimNullIfEmpty(align);
-		String width_ = trimNullIfEmpty(width);
-		TD<TR_c<DocumentEE>> td = document.tr_c()
-			.td();
-			if(align_ != null || width_ != null) {
-				td.style(style -> {
-					if(align_ != null) {
-						style.append("text-align:").append(align_);
-					}
-					if(width_ != null) {
-						if(align_ != null) style.append(';');
-						appendWidthStyle(width_, document.out);
-					}
-				});
-			}
-			td.attribute("valign", "top");
-			/* TODO: 3.0.0: return */ td.colspan(colspan)._c();
-	}
-
-	/**
-	 * Starts one line of content with the initial colspan set to the provided colspan.
-	 */
-	// TODO: 3.0.0: Accept and return value to be passed on to other methods
-	@Override
-	public void printContentVerticalDivider(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int direction, int colspan, int rowspan, String align, String width) throws IOException {
-		String align_ = trimNullIfEmpty(align);
-		String width_ = trimNullIfEmpty(width);
-		document.out.write("    </td>\n");
+	public <__ extends FlowContent<__>> __ contentVerticalDivider(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		FlowContent<?> contentLine,
+		int direction,
+		int colspan,
+		int rowspan,
+		String align,
+		String width
+	) throws ServletException, IOException {
+		@SuppressWarnings("unchecked")
+		TD_c<? extends TR_c<? extends TABLE_c<?>>> td = (TD_c)contentLine;
+		align = trimNullIfEmpty(align);
+		width = trimNullIfEmpty(width);
+		TR_c<? extends TABLE_c<?>> tr = td.__();
 		switch(direction) {
 			case UP_AND_DOWN:
-				document.td__("\u00A0");
+				tr.td__('\u00A0');
 				break;
 			case NONE:
 				break;
 			default: throw new IllegalArgumentException("Unknown direction: " + direction);
 		}
-		TD<DocumentEE> td = document.td();
-		if(align_ != null || width_ != null) {
-			td.style(style -> {
-				if(align_ != null) {
-					style.append("text-align:").append(align_);
-				}
-				if(width_ != null) {
-					if(align_ != null) style.append(';');
-					appendWidthStyle(width_, document.out);
-				}
-			});
-		}
-		/* TODO: 3.0.0: return */ td
-			.attribute("valign", "top")
+		TD_c<? extends TR_c<? extends TABLE_c<?>>> newTd = tr.td()
+			.style(
+				align == null ? null : "text-align:" + align,
+				getWidthStyle(width),
+				"vertical-align:top"
+			)
 			.colspan(colspan)
 			.rowspan(rowspan)
-			._c();
+		._c();
+		@SuppressWarnings("unchecked")
+		__ newContentLine = (__)newTd;
+		return newContentLine;
 	}
 
-	/**
-	 * Ends one line of content.
-	 */
-	// TODO: 3.0.0: Accept value from other methods
 	@Override
-	public void endContentLine(DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int rowspan, boolean endsInternal) throws IOException {
-		document.out.write("    </td>\n"
-		+ "  </tr>\n");
+	public void endContentLine(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		FlowContent<?> contentLine,
+		int rowspan,
+		boolean endsInternal
+	) throws ServletException, IOException {
+		@SuppressWarnings("unchecked")
+		TD_c<? extends TR_c<? extends TABLE_c<?>>> td = (TD_c)contentLine;
+				td
+			.__()
+		.__();
 	}
 
-	/**
-	 * Ends the content area of a page.
-	 */
-	// TODO: 3.0.0: Accept value from other methods
 	@Override
-	public void endContent(WebPage page, DocumentEE document, WebSiteRequest req, HttpServletResponse resp, int[] contentColumnSpans) throws ServletException, IOException {
-		int totalColumns=0;
-		for(int c = 0; c < contentColumnSpans.length; c++) {
-			if(c > 0) totalColumns += 1;
-			totalColumns += contentColumnSpans[c];
+	public void contentHorizontalDivider(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		ContentEE<?> content,
+		int[] colspansAndDirections,
+		boolean endsInternal
+	) throws ServletException, IOException {
+		@SuppressWarnings("unchecked")
+		TABLE_c<?> table = (TABLE_c)content;
+		table.tr__(tr -> {
+			for(int c = 0; c < colspansAndDirections.length; c += 2) {
+				if(c > 0) {
+					int direction = colspansAndDirections[c - 1];
+					switch(direction) {
+						case UP:
+							tr.td__('\u00A0');
+							break;
+						case DOWN:
+							tr.td__('\u00A0');
+							break;
+						case UP_AND_DOWN:
+							tr.td__('\u00A0');
+							break;
+						default: throw new IllegalArgumentException("Unknown direction: " + direction);
+					}
+				}
+				int colspan = colspansAndDirections[c];
+				tr.td()
+					.colspan(colspan)
+				.__(td -> td
+					.hr__()
+				);
+			}
+		});
+	}
+
+	@Override
+	public void endContent(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		WebPage page,
+		ContentEE<?> content,
+		int[] contentColumnSpans
+	) throws ServletException, IOException {
+		@SuppressWarnings("unchecked")
+		TABLE_c<?> table = (TABLE_c)content;
+		final int totalColumns;
+		{
+			int totalColumns_ = 0;
+			for(int c = 0; c < contentColumnSpans.length; c++) {
+				if(c > 0) totalColumns_ += 1;
+				totalColumns_ += contentColumnSpans[c];
+			}
+			totalColumns = totalColumns_;
 		}
-		int totalColumns_ = totalColumns;
-		document.tr__(tr -> tr
-			.td().colspan(totalColumns_).__(td -> td.hr__())
+		table.tr__(tr -> tr
+			.td()
+				.colspan(totalColumns)
+			.__(td -> td
+				.hr__()
+			)
 		);
 		String copyright = page.getCopyright(req, resp, page);
-		if(copyright != null && !(copyright = copyright.trim()).isEmpty()) {
+		if(copyright != null) copyright = copyright.trim();
+		if(copyright != null && !copyright.isEmpty()) {
 			String copyright_ = copyright;
-			document.tr__(tr -> tr
-				.td().colspan(totalColumns_).style("text-align:center", "font-size:x-small").__(copyright_)
+			table.tr__(tr -> tr
+				.td()
+					.colspan(totalColumns)
+					.style("text-align:center", "font-size:x-small")
+				.__(copyright_)
 			);
 		}
-		document.out.write("</table>\n");
+		table.__();
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 /*
  * ao-web-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2009, 2015, 2016, 2019, 2020, 2021  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2015, 2016, 2019, 2020, 2021, 2022  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,7 @@
  */
 package com.aoapps.web.framework;
 
+import com.aoapps.html.servlet.ContentEE;
 import com.aoapps.html.servlet.FlowContent;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +39,15 @@ public abstract class PreProcessPage extends ProcessPage {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public <__ extends FlowContent<__>> void printStream(__ flow, WebSiteRequest req, HttpServletResponse resp, InputStream in) throws ServletException, IOException {
-		flow.pre__(pre -> printStreamStatic(pre, in));
+	public <__ extends FlowContent<__>> __ printStream(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		WebPageLayout layout,
+		ContentEE<?> content,
+		__ contentLine,
+		InputStream in
+	) throws ServletException, IOException {
+		contentLine.pre__(pre -> printStreamStatic(pre, in));
+		return contentLine;
 	}
 }

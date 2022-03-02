@@ -1,6 +1,6 @@
 /*
  * ao-web-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2005-2009, 2015, 2016, 2020, 2021  AO Industries, Inc.
+ * Copyright (C) 2005-2009, 2015, 2016, 2020, 2021, 2022  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,7 +22,8 @@
  */
 package com.aoapps.web.framework;
 
-import com.aoapps.html.servlet.DocumentEE;
+import com.aoapps.html.servlet.ContentEE;
+import com.aoapps.html.servlet.FlowContent;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -40,11 +41,14 @@ public abstract class DescriptionAutoListPage extends AutoListPage {
 	 * Prints the content that will be put before the auto-generated list.
 	 */
 	@Override
-	public void printContentStart(
-		DocumentEE document,
+	public <__ extends FlowContent<__>> __ printContentStart(
 		WebSiteRequest req,
-		HttpServletResponse resp
+		HttpServletResponse resp,
+		WebPageLayout layout,
+		ContentEE<?> content,
+		__ contentLine
 	) throws ServletException, IOException {
-		document.text(getDescription(req));
+		contentLine.text(getDescription(req));
+		return contentLine;
 	}
 }
