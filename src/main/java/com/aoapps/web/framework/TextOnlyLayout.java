@@ -556,9 +556,9 @@ public class TextOnlyLayout extends WebPageLayout {
 		String title,
 		int contentColumns
 	) throws ServletException, IOException {
-		FlowContent<?> contentLine = startContentLine(req, resp, content, contentColumns, "center", null);
-		contentLine.h1__(title);
-		endContentLine(req, resp, contentLine);
+		FlowContent<?> contentLine = startContentLine(req, resp, content, contentColumns, "center", null); {
+			contentLine.h1__(title);
+		} endContentLine(req, resp, contentLine);
 	}
 
 	@Override

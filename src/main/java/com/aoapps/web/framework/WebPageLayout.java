@@ -629,9 +629,9 @@ public abstract class WebPageLayout {
 		boolean endsInternal,
 		IOConsumerE<? super __, Ex> contentLine
 	) throws ServletException, IOException, Ex {
-		__ flow = startContentLine(req, resp, content, colspan, align, width);
-		if(contentLine != null) contentLine.accept(flow);
-		endContentLine(req, resp, flow, endRowspan, endsInternal);
+		__ flow = startContentLine(req, resp, content, colspan, align, width); {
+			if(contentLine != null) contentLine.accept(flow);
+		} endContentLine(req, resp, flow, endRowspan, endsInternal);
 	}
 
 	/**
@@ -659,9 +659,9 @@ public abstract class WebPageLayout {
 		boolean endsInternal,
 		IORunnableE<Ex> contentLine
 	) throws ServletException, IOException, Ex {
-		__ flow = startContentLine(req, resp, content, colspan, align, width);
-		if(contentLine != null) contentLine.run();
-		endContentLine(req, resp, flow, endRowspan, endsInternal);
+		__ flow = startContentLine(req, resp, content, colspan, align, width); {
+			if(contentLine != null) contentLine.run();
+		} endContentLine(req, resp, flow, endRowspan, endsInternal);
 	}
 
 	/**
@@ -901,9 +901,9 @@ public abstract class WebPageLayout {
 		int[] endContentColumnSpans,
 		IOConsumerE<? super __, Ex> content
 	) throws ServletException, IOException, Ex {
-		__ contentEE = startContent(req, resp, page, pc, startContentColumnSpans, width);
-		if(content != null) content.accept(contentEE);
-		endContent(req, resp, page, contentEE, endContentColumnSpans);
+		__ contentEE = startContent(req, resp, page, pc, startContentColumnSpans, width); {
+			if(content != null) content.accept(contentEE);
+		} endContent(req, resp, page, contentEE, endContentColumnSpans);
 	}
 
 	/**
@@ -932,9 +932,9 @@ public abstract class WebPageLayout {
 		int[] endContentColumnSpans,
 		IORunnableE<Ex> content
 	) throws ServletException, IOException, Ex {
-		__ contentEE = startContent(req, resp, page, pc, startContentColumnSpans, width);
-		if(content != null) content.run();
-		endContent(req, resp, page, contentEE, endContentColumnSpans);
+		__ contentEE = startContent(req, resp, page, pc, startContentColumnSpans, width); {
+			if(content != null) content.run();
+		} endContent(req, resp, page, contentEE, endContentColumnSpans);
 	}
 
 	/**
@@ -1053,9 +1053,9 @@ public abstract class WebPageLayout {
 		//       Also review to other places IOConsumerE and IORunnableE are used
 		IOConsumerE<? super __, Ex> lightArea
 	) throws ServletException, IOException, Ex {
-		__ flow = beginLightArea(req, resp, pc);
-		if(lightArea != null) lightArea.accept(flow);
-		endLightArea(req, resp, flow);
+		__ flow = beginLightArea(req, resp, pc); {
+			if(lightArea != null) lightArea.accept(flow);
+		} endLightArea(req, resp, flow);
 	}
 
 	/**
@@ -1078,9 +1078,9 @@ public abstract class WebPageLayout {
 		PC pc,
 		IORunnableE<Ex> lightArea
 	) throws ServletException, IOException, Ex {
-		FlowContent<?> flow = beginLightArea(req, resp, pc);
-		if(lightArea != null) lightArea.run();
-		endLightArea(req, resp, flow);
+		FlowContent<?> flow = beginLightArea(req, resp, pc); {
+			if(lightArea != null) lightArea.run();
+		} endLightArea(req, resp, flow);
 	}
 
 	/**
@@ -1108,9 +1108,9 @@ public abstract class WebPageLayout {
 		boolean nowrap,
 		IOConsumerE<? super __, Ex> lightArea
 	) throws ServletException, IOException, Ex {
-		__ flow = beginLightArea(req, resp, pc, align, width, nowrap);
-		if(lightArea != null) lightArea.accept(flow);
-		endLightArea(req, resp, flow);
+		__ flow = beginLightArea(req, resp, pc, align, width, nowrap); {
+			if(lightArea != null) lightArea.accept(flow);
+		} endLightArea(req, resp, flow);
 	}
 
 	/**
@@ -1136,9 +1136,9 @@ public abstract class WebPageLayout {
 		boolean nowrap,
 		IORunnableE<Ex> lightArea
 	) throws ServletException, IOException, Ex {
-		FlowContent<?> flow = beginLightArea(req, resp, pc, align, width, nowrap);
-		if(lightArea != null) lightArea.run();
-		endLightArea(req, resp, flow);
+		FlowContent<?> flow = beginLightArea(req, resp, pc, align, width, nowrap); {
+			if(lightArea != null) lightArea.run();
+		} endLightArea(req, resp, flow);
 	}
 
 	/**
@@ -1219,9 +1219,9 @@ public abstract class WebPageLayout {
 		PC pc,
 		IOConsumerE<? super __, Ex> whiteArea
 	) throws ServletException, IOException, Ex {
-		__ flow = beginWhiteArea(req, resp, pc);
-		if(whiteArea != null) whiteArea.accept(flow);
-		endWhiteArea(req, resp, flow);
+		__ flow = beginWhiteArea(req, resp, pc); {
+			if(whiteArea != null) whiteArea.accept(flow);
+		} endWhiteArea(req, resp, flow);
 	}
 
 	/**
@@ -1244,9 +1244,9 @@ public abstract class WebPageLayout {
 		PC pc,
 		IORunnableE<Ex> whiteArea
 	) throws ServletException, IOException, Ex {
-		FlowContent<?> flow = beginWhiteArea(req, resp, pc);
-		if(whiteArea != null) whiteArea.run();
-		endWhiteArea(req, resp, flow);
+		FlowContent<?> flow = beginWhiteArea(req, resp, pc); {
+			if(whiteArea != null) whiteArea.run();
+		} endWhiteArea(req, resp, flow);
 	}
 
 	/**
@@ -1274,9 +1274,9 @@ public abstract class WebPageLayout {
 		boolean nowrap,
 		IOConsumerE<? super __, Ex> whiteArea
 	) throws ServletException, IOException, Ex {
-		__ flow = beginWhiteArea(req, resp, pc, align, width, nowrap);
-		if(whiteArea != null) whiteArea.accept(flow);
-		endWhiteArea(req, resp, flow);
+		__ flow = beginWhiteArea(req, resp, pc, align, width, nowrap); {
+			if(whiteArea != null) whiteArea.accept(flow);
+		} endWhiteArea(req, resp, flow);
 	}
 
 	/**
@@ -1302,9 +1302,9 @@ public abstract class WebPageLayout {
 		boolean nowrap,
 		IORunnableE<Ex> whiteArea
 	) throws ServletException, IOException, Ex {
-		FlowContent<?> flow = beginWhiteArea(req, resp, pc, align, width, nowrap);
-		if(whiteArea != null) whiteArea.run();
-		endWhiteArea(req, resp, flow);
+		FlowContent<?> flow = beginWhiteArea(req, resp, pc, align, width, nowrap); {
+			if(whiteArea != null) whiteArea.run();
+		} endWhiteArea(req, resp, flow);
 	}
 
 	/**

@@ -56,15 +56,13 @@ public abstract class AutoListPage extends WebPage {
 				layout.contentTitle(req, resp, this, content);
 				layout.contentHorizontalDivider(req, resp, content);
 				FlowContent<?> contentLine = layout.startContentLine(req, resp, content);
-				contentLine = printContentStart(req, resp, layout, content, (FlowContent)contentLine);
-				{
+				contentLine = printContentStart(req, resp, layout, content, (FlowContent)contentLine); {
 					contentLine.table().cellpadding(0).cellspacing(10).__(table -> table
 						.tbody__(tbody ->
 							printPageList(tbody, req, resp, this, layout)
 						)
 					);
-				}
-				layout.endContentLine(req, resp, contentLine);
+				} layout.endContentLine(req, resp, contentLine);
 			});
 		}
 	}
