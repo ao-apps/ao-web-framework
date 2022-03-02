@@ -87,7 +87,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 	 * Prints HTML content, parsing for special <code>@</code> tags.  Types of tags include:
 	 * <ul>
 	 *   <li>@URL(classname)    Loads a WebPage of the given class and builds a URL to it</li>
-	 *   <li>@BEGIN_LIGHT_AREA  Calls {@link WebPageLayout#beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}</li>
+	 *   <li>@BEGIN_LIGHT_AREA  Calls {@link WebPageLayout#startLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}</li>
 	 *   <li>@END_LIGHT_AREA    Calls {@link WebPageLayout#endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}</li>
 	 *   <li>@END_CONTENT_LINE  Calls {@link WebPageLayout#endContentLine(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}</li>
 	 *   <li>@PRINT_CONTENT_HORIZONTAL_DIVIDER  Calls {@link WebPageLayout#contentHorizontalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)}</li>
@@ -129,7 +129,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 						pos=endPos+1;
 					} else if((pos+16)<len && htmlContent.substring(pos, pos+16).equalsIgnoreCase("BEGIN_LIGHT_AREA")) {
 						if(lightAreaRef.get() != null) throw new IllegalStateException("@BEGIN_LIGHT_AREA may not be nested");
-						FlowContent<?> lightArea = layout.beginLightArea(req, resp, contentLine);
+						FlowContent<?> lightArea = layout.startLightArea(req, resp, contentLine);
 						if(lightArea == null) throw new AssertionError("lightArea == null");
 						lightAreaRef.set(lightArea);
 						pos+=16;
@@ -226,7 +226,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 										}
 										else if(c == 2) {
 											if(lightAreaRef.get() != null) throw new IllegalStateException("@BEGIN_LIGHT_AREA may not be nested");
-											FlowContent<?> lightArea = layout.beginLightArea(req, resp, contentLine);
+											FlowContent<?> lightArea = layout.startLightArea(req, resp, contentLine);
 											if(lightArea == null) throw new AssertionError("lightArea == null");
 											lightAreaRef.set(lightArea);
 										}

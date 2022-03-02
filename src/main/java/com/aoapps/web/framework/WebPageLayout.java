@@ -985,12 +985,12 @@ public abstract class WebPageLayout {
 	public final <
 		PC extends FlowContent<PC>,
 		__ extends FlowContent<__>
-	> __ beginLightArea(
+	> __ startLightArea(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		PC pc
 	) throws ServletException, IOException {
-		return beginLightArea(req, resp, pc, null, null, false);
+		return startLightArea(req, resp, pc, null, null, false);
 	}
 
 	/**
@@ -1006,7 +1006,7 @@ public abstract class WebPageLayout {
 	public abstract <
 		PC extends FlowContent<PC>,
 		__ extends FlowContent<__>
-	> __ beginLightArea(
+	> __ startLightArea(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		PC pc,
@@ -1019,8 +1019,8 @@ public abstract class WebPageLayout {
 	 * Ends a lighter area of the site.
 	 *
 	 * @param  lightArea  The {@link FlowContent} that was returned by
-	 *               {@link #beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
-	 *               or {@link #beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, boolean)}.
+	 *               {@link #startLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
+	 *               or {@link #startLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, boolean)}.
 	 */
 	public abstract void endLightArea(
 		WebSiteRequest req,
@@ -1029,7 +1029,7 @@ public abstract class WebPageLayout {
 	) throws ServletException, IOException;
 
 	/**
-	 * {@linkplain #beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a light area},
+	 * {@linkplain #startLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a light area},
 	 * invokes the given area body, then
 	 * {@linkplain #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the light area}.
 	 *
@@ -1037,7 +1037,7 @@ public abstract class WebPageLayout {
 	 * @param  <__>  This content model, which will be the parent content model of child elements
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @see  #beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+	 * @see  #startLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
 	 * @see  #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
 	 */
 	public final <
@@ -1053,20 +1053,20 @@ public abstract class WebPageLayout {
 		//       Also review to other places IOConsumerE and IORunnableE are used
 		IOConsumerE<? super __, Ex> lightArea
 	) throws ServletException, IOException, Ex {
-		__ flow = beginLightArea(req, resp, pc); {
+		__ flow = startLightArea(req, resp, pc); {
 			if(lightArea != null) lightArea.accept(flow);
 		} endLightArea(req, resp, flow);
 	}
 
 	/**
-	 * {@linkplain #beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a light area},
+	 * {@linkplain #startLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a light area},
 	 * invokes the given area body, then
 	 * {@linkplain #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the light area}.
 	 *
 	 * @param  <PC>  The parent content model this area is within
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @see  #beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+	 * @see  #startLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
 	 * @see  #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
 	 */
 	public final <
@@ -1078,13 +1078,13 @@ public abstract class WebPageLayout {
 		PC pc,
 		IORunnableE<Ex> lightArea
 	) throws ServletException, IOException, Ex {
-		FlowContent<?> flow = beginLightArea(req, resp, pc); {
+		FlowContent<?> flow = startLightArea(req, resp, pc); {
 			if(lightArea != null) lightArea.run();
 		} endLightArea(req, resp, flow);
 	}
 
 	/**
-	 * {@linkplain #beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a light area},
+	 * {@linkplain #startLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a light area},
 	 * invokes the given area body, then
 	 * {@linkplain #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the light area}.
 	 *
@@ -1092,7 +1092,7 @@ public abstract class WebPageLayout {
 	 * @param  <__>  This content model, which will be the parent content model of child elements
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @see  #beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+	 * @see  #startLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
 	 * @see  #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
 	 */
 	public final <
@@ -1108,20 +1108,20 @@ public abstract class WebPageLayout {
 		boolean nowrap,
 		IOConsumerE<? super __, Ex> lightArea
 	) throws ServletException, IOException, Ex {
-		__ flow = beginLightArea(req, resp, pc, align, width, nowrap); {
+		__ flow = startLightArea(req, resp, pc, align, width, nowrap); {
 			if(lightArea != null) lightArea.accept(flow);
 		} endLightArea(req, resp, flow);
 	}
 
 	/**
-	 * {@linkplain #beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a light area},
+	 * {@linkplain #startLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a light area},
 	 * invokes the given area body, then
 	 * {@linkplain #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the light area}.
 	 *
 	 * @param  <PC>  The parent content model this area is within
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @see  #beginLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+	 * @see  #startLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
 	 * @see  #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
 	 */
 	public final <
@@ -1136,7 +1136,7 @@ public abstract class WebPageLayout {
 		boolean nowrap,
 		IORunnableE<Ex> lightArea
 	) throws ServletException, IOException, Ex {
-		FlowContent<?> flow = beginLightArea(req, resp, pc, align, width, nowrap); {
+		FlowContent<?> flow = startLightArea(req, resp, pc, align, width, nowrap); {
 			if(lightArea != null) lightArea.run();
 		} endLightArea(req, resp, flow);
 	}
@@ -1154,12 +1154,12 @@ public abstract class WebPageLayout {
 	public final <
 		PC extends FlowContent<PC>,
 		__ extends FlowContent<__>
-	> __ beginWhiteArea(
+	> __ startWhiteArea(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		PC pc
 	) throws ServletException, IOException {
-		return beginWhiteArea(req, resp, pc, null, null, false);
+		return startWhiteArea(req, resp, pc, null, null, false);
 	}
 
 	/**
@@ -1175,7 +1175,7 @@ public abstract class WebPageLayout {
 	public abstract <
 		PC extends FlowContent<PC>,
 		__ extends FlowContent<__>
-	> __ beginWhiteArea(
+	> __ startWhiteArea(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		PC pc,
@@ -1188,8 +1188,8 @@ public abstract class WebPageLayout {
 	 * Ends a white area of the site.
 	 *
 	 * @param  whiteArea  The {@link FlowContent} that was returned by
-	 *               {@link #beginWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
-	 *               or {@link #beginWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, boolean)}.
+	 *               {@link #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
+	 *               or {@link #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, boolean)}.
 	 */
 	public abstract void endWhiteArea(
 		WebSiteRequest req,
@@ -1198,7 +1198,7 @@ public abstract class WebPageLayout {
 	) throws ServletException, IOException;
 
 	/**
-	 * {@linkplain #beginWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a white area},
+	 * {@linkplain #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a white area},
 	 * invokes the given area body, then
 	 * {@linkplain #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the white area}.
 	 *
@@ -1206,7 +1206,7 @@ public abstract class WebPageLayout {
 	 * @param  <__>  This content model, which will be the parent content model of child elements
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @see  #beginWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+	 * @see  #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
 	 * @see  #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
 	 */
 	public final <
@@ -1219,20 +1219,20 @@ public abstract class WebPageLayout {
 		PC pc,
 		IOConsumerE<? super __, Ex> whiteArea
 	) throws ServletException, IOException, Ex {
-		__ flow = beginWhiteArea(req, resp, pc); {
+		__ flow = startWhiteArea(req, resp, pc); {
 			if(whiteArea != null) whiteArea.accept(flow);
 		} endWhiteArea(req, resp, flow);
 	}
 
 	/**
-	 * {@linkplain #beginWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a white area},
+	 * {@linkplain #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a white area},
 	 * invokes the given area body, then
 	 * {@linkplain #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the white area}.
 	 *
 	 * @param  <PC>  The parent content model this area is within
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @see  #beginWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+	 * @see  #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
 	 * @see  #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
 	 */
 	public final <
@@ -1244,13 +1244,13 @@ public abstract class WebPageLayout {
 		PC pc,
 		IORunnableE<Ex> whiteArea
 	) throws ServletException, IOException, Ex {
-		FlowContent<?> flow = beginWhiteArea(req, resp, pc); {
+		FlowContent<?> flow = startWhiteArea(req, resp, pc); {
 			if(whiteArea != null) whiteArea.run();
 		} endWhiteArea(req, resp, flow);
 	}
 
 	/**
-	 * {@linkplain #beginWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a white area},
+	 * {@linkplain #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a white area},
 	 * invokes the given area body, then
 	 * {@linkplain #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the white area}.
 	 *
@@ -1258,7 +1258,7 @@ public abstract class WebPageLayout {
 	 * @param  <__>  This content model, which will be the parent content model of child elements
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @see  #beginWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+	 * @see  #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
 	 * @see  #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
 	 */
 	public final <
@@ -1274,20 +1274,20 @@ public abstract class WebPageLayout {
 		boolean nowrap,
 		IOConsumerE<? super __, Ex> whiteArea
 	) throws ServletException, IOException, Ex {
-		__ flow = beginWhiteArea(req, resp, pc, align, width, nowrap); {
+		__ flow = startWhiteArea(req, resp, pc, align, width, nowrap); {
 			if(whiteArea != null) whiteArea.accept(flow);
 		} endWhiteArea(req, resp, flow);
 	}
 
 	/**
-	 * {@linkplain #beginWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a white area},
+	 * {@linkplain #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a white area},
 	 * invokes the given area body, then
 	 * {@linkplain #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the white area}.
 	 *
 	 * @param  <PC>  The parent content model this area is within
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @see  #beginWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+	 * @see  #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
 	 * @see  #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
 	 */
 	public final <
@@ -1302,7 +1302,7 @@ public abstract class WebPageLayout {
 		boolean nowrap,
 		IORunnableE<Ex> whiteArea
 	) throws ServletException, IOException, Ex {
-		FlowContent<?> flow = beginWhiteArea(req, resp, pc, align, width, nowrap); {
+		FlowContent<?> flow = startWhiteArea(req, resp, pc, align, width, nowrap); {
 			if(whiteArea != null) whiteArea.run();
 		} endWhiteArea(req, resp, flow);
 	}

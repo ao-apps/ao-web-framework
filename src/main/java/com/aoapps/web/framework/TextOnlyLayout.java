@@ -107,7 +107,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	public <
 		PC extends FlowContent<PC>,
 		__ extends FlowContent<__>
-	> __ beginLightArea(
+	> __ startLightArea(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		PC pc,
@@ -152,7 +152,7 @@ public class TextOnlyLayout extends WebPageLayout {
 	public <
 		PC extends FlowContent<PC>,
 		__ extends FlowContent<__>
-	> __ beginWhiteArea(
+	> __ startWhiteArea(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		PC pc,
