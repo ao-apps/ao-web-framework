@@ -599,7 +599,7 @@ public abstract class WebPage extends PageServlet {
 	 *
 	 * @see #doGet(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 * @see #getWebPageLayout(com.aoapps.web.framework.WebSiteRequest)
-	 * @see WebPageLayout#doPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String, com.aoapps.lang.io.function.IOConsumerE)
+	 * @see WebPageLayout#doPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String, com.aoapps.servlet.function.ServletConsumerE)
 	 * @see #doGet(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.FlowContent)
 	 */
 	// TODO: We could have a NullHtmlWriter that does not write any HTML tags or attributes, but just the text body.
@@ -821,7 +821,7 @@ public abstract class WebPage extends PageServlet {
 	 *
 	 * @see #doPost(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
 	 * @see #getWebPageLayout(com.aoapps.web.framework.WebSiteRequest)
-	 * @see WebPageLayout#doPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String, com.aoapps.lang.io.function.IOConsumerE)
+	 * @see WebPageLayout#doPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String, com.aoapps.servlet.function.ServletConsumerE)
 	 * @see #doPost(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.FlowContent)
 	 */
 	public void doPost(

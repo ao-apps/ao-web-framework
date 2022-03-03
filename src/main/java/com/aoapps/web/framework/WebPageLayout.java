@@ -27,10 +27,10 @@ import com.aoapps.html.servlet.ContentEE;
 import com.aoapps.html.servlet.DocumentEE;
 import com.aoapps.html.servlet.FlowContent;
 import com.aoapps.html.servlet.ScriptSupportingContent;
-import com.aoapps.lang.io.function.IOConsumerE;
-import com.aoapps.lang.io.function.IORunnableE;
 import com.aoapps.net.URIEncoder;
 import com.aoapps.net.URIParametersMap;
+import com.aoapps.servlet.function.ServletConsumerE;
+import com.aoapps.servlet.function.ServletRunnableE;
 import com.aoapps.web.resources.registry.Registry;
 import java.io.IOException;
 import java.util.List;
@@ -136,7 +136,7 @@ public abstract class WebPageLayout {
 		WebPage page,
 		DocumentEE document,
 		String onload,
-		IOConsumerE<? super __, Ex> body
+		ServletConsumerE<? super __, Ex> body
 	) throws ServletException, IOException, Ex {
 		__ flow = startPage(req, resp, page, document, onload);
 		if(body != null) body.accept(flow);
@@ -159,7 +159,7 @@ public abstract class WebPageLayout {
 		WebPage page,
 		DocumentEE document,
 		String onload,
-		IORunnableE<Ex> body
+		ServletRunnableE<Ex> body
 	) throws ServletException, IOException, Ex {
 		FlowContent<?> flow = startPage(req, resp, page, document, onload);
 		if(body != null) body.run();
@@ -576,7 +576,7 @@ public abstract class WebPageLayout {
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		ContentEE<?> content,
-		IOConsumerE<? super __, Ex> contentLine
+		ServletConsumerE<? super __, Ex> contentLine
 	) throws ServletException, IOException, Ex {
 		this.<__, Ex>contentLine(req, resp, content, 1, null, null, 1, false, contentLine);
 	}
@@ -599,7 +599,7 @@ public abstract class WebPageLayout {
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		ContentEE<?> content,
-		IORunnableE<Ex> contentLine
+		ServletRunnableE<Ex> contentLine
 	) throws ServletException, IOException, Ex {
 		contentLine(req, resp, content, 1, null, null, 1, false, contentLine);
 	}
@@ -627,7 +627,7 @@ public abstract class WebPageLayout {
 		String width,
 		int endRowspan,
 		boolean endsInternal,
-		IOConsumerE<? super __, Ex> contentLine
+		ServletConsumerE<? super __, Ex> contentLine
 	) throws ServletException, IOException, Ex {
 		__ flow = startContentLine(req, resp, content, colspan, align, width); {
 			if(contentLine != null) contentLine.accept(flow);
@@ -657,7 +657,7 @@ public abstract class WebPageLayout {
 		String width,
 		int endRowspan,
 		boolean endsInternal,
-		IORunnableE<Ex> contentLine
+		ServletRunnableE<Ex> contentLine
 	) throws ServletException, IOException, Ex {
 		__ flow = startContentLine(req, resp, content, colspan, align, width); {
 			if(contentLine != null) contentLine.run();
@@ -786,7 +786,7 @@ public abstract class WebPageLayout {
 		HttpServletResponse resp,
 		WebPage page,
 		PC pc,
-		IOConsumerE<? super __, Ex> content
+		ServletConsumerE<? super __, Ex> content
 	) throws ServletException, IOException, Ex {
 		this.<PC, __, Ex>content(req, resp, page, pc, new int[] {1}, null, new int[] {1}, content);
 	}
@@ -812,7 +812,7 @@ public abstract class WebPageLayout {
 		HttpServletResponse resp,
 		WebPage page,
 		PC pc,
-		IORunnableE<Ex> content
+		ServletRunnableE<Ex> content
 	) throws ServletException, IOException, Ex {
 		content(req, resp, page, pc, new int[] {1}, null, new int[] {1}, content);
 	}
@@ -841,7 +841,7 @@ public abstract class WebPageLayout {
 		int startContentColumns,
 		String width,
 		int endContentColumns,
-		IOConsumerE<? super __, Ex> content
+		ServletConsumerE<? super __, Ex> content
 	) throws ServletException, IOException, Ex {
 		this.<PC, __, Ex>content(req, resp, page, pc, new int[] {startContentColumns}, width, new int[] {endContentColumns}, content);
 	}
@@ -870,7 +870,7 @@ public abstract class WebPageLayout {
 		int startContentColumns,
 		String width,
 		int endContentColumns,
-		IORunnableE<Ex> content
+		ServletRunnableE<Ex> content
 	) throws ServletException, IOException, Ex {
 		content(req, resp, page, pc, new int[] {startContentColumns}, width, new int[] {endContentColumns}, content);
 	}
@@ -899,7 +899,7 @@ public abstract class WebPageLayout {
 		int[] startContentColumnSpans,
 		String width,
 		int[] endContentColumnSpans,
-		IOConsumerE<? super __, Ex> content
+		ServletConsumerE<? super __, Ex> content
 	) throws ServletException, IOException, Ex {
 		__ contentEE = startContent(req, resp, page, pc, startContentColumnSpans, width); {
 			if(content != null) content.accept(contentEE);
@@ -930,7 +930,7 @@ public abstract class WebPageLayout {
 		int[] startContentColumnSpans,
 		String width,
 		int[] endContentColumnSpans,
-		IORunnableE<Ex> content
+		ServletRunnableE<Ex> content
 	) throws ServletException, IOException, Ex {
 		__ contentEE = startContent(req, resp, page, pc, startContentColumnSpans, width); {
 			if(content != null) content.run();
@@ -1048,10 +1048,7 @@ public abstract class WebPageLayout {
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		PC pc,
-		// TODO: Make a ServletConsumerE that allows ServletException, IOException, and an arbitrary third exception
-		//       This will then allow many few try-catch of SQLException and similar within
-		//       Also review to other places IOConsumerE and IORunnableE are used
-		IOConsumerE<? super __, Ex> lightArea
+		ServletConsumerE<? super __, Ex> lightArea
 	) throws ServletException, IOException, Ex {
 		__ flow = startLightArea(req, resp, pc); {
 			if(lightArea != null) lightArea.accept(flow);
@@ -1076,7 +1073,7 @@ public abstract class WebPageLayout {
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		PC pc,
-		IORunnableE<Ex> lightArea
+		ServletRunnableE<Ex> lightArea
 	) throws ServletException, IOException, Ex {
 		FlowContent<?> flow = startLightArea(req, resp, pc); {
 			if(lightArea != null) lightArea.run();
@@ -1106,7 +1103,7 @@ public abstract class WebPageLayout {
 		String align,
 		String width,
 		boolean nowrap,
-		IOConsumerE<? super __, Ex> lightArea
+		ServletConsumerE<? super __, Ex> lightArea
 	) throws ServletException, IOException, Ex {
 		__ flow = startLightArea(req, resp, pc, align, width, nowrap); {
 			if(lightArea != null) lightArea.accept(flow);
@@ -1134,7 +1131,7 @@ public abstract class WebPageLayout {
 		String align,
 		String width,
 		boolean nowrap,
-		IORunnableE<Ex> lightArea
+		ServletRunnableE<Ex> lightArea
 	) throws ServletException, IOException, Ex {
 		FlowContent<?> flow = startLightArea(req, resp, pc, align, width, nowrap); {
 			if(lightArea != null) lightArea.run();
@@ -1217,7 +1214,7 @@ public abstract class WebPageLayout {
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		PC pc,
-		IOConsumerE<? super __, Ex> whiteArea
+		ServletConsumerE<? super __, Ex> whiteArea
 	) throws ServletException, IOException, Ex {
 		__ flow = startWhiteArea(req, resp, pc); {
 			if(whiteArea != null) whiteArea.accept(flow);
@@ -1242,7 +1239,7 @@ public abstract class WebPageLayout {
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		PC pc,
-		IORunnableE<Ex> whiteArea
+		ServletRunnableE<Ex> whiteArea
 	) throws ServletException, IOException, Ex {
 		FlowContent<?> flow = startWhiteArea(req, resp, pc); {
 			if(whiteArea != null) whiteArea.run();
@@ -1272,7 +1269,7 @@ public abstract class WebPageLayout {
 		String align,
 		String width,
 		boolean nowrap,
-		IOConsumerE<? super __, Ex> whiteArea
+		ServletConsumerE<? super __, Ex> whiteArea
 	) throws ServletException, IOException, Ex {
 		__ flow = startWhiteArea(req, resp, pc, align, width, nowrap); {
 			if(whiteArea != null) whiteArea.accept(flow);
@@ -1300,7 +1297,7 @@ public abstract class WebPageLayout {
 		String align,
 		String width,
 		boolean nowrap,
-		IORunnableE<Ex> whiteArea
+		ServletRunnableE<Ex> whiteArea
 	) throws ServletException, IOException, Ex {
 		FlowContent<?> flow = startWhiteArea(req, resp, pc, align, width, nowrap); {
 			if(whiteArea != null) whiteArea.run();
