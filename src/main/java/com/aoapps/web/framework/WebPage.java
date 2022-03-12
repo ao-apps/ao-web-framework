@@ -1103,7 +1103,6 @@ public abstract class WebPage extends PageServlet {
 
 	/**
 	 * Gets the absolute or context-relative URL to direct to.
-	 * Redirection happens before specific frameset actions thus allowing one to redirect various frames to different places.
 	 *
 	 * @return  the context-relative or absolute URL to redirect to or <code>null</code> for
 	 *          no redirect.

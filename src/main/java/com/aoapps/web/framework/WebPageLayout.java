@@ -91,8 +91,7 @@ public abstract class WebPageLayout {
 	}
 
 	/**
-	 * Writes all of the HTML preceding the content of the page,
-	 * whether the page is in a frameset or not.
+	 * Writes all of the HTML preceding the content of the page.
 	 *
 	 * @return  The {@link FlowContent} that should be used to write the page contents.
 	 *          This is also given to {@link #endPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
@@ -107,8 +106,7 @@ public abstract class WebPageLayout {
 	) throws ServletException, IOException;
 
 	/**
-	 * Writes all of the HTML following the content of the page,
-	 * whether the page is in a frameset or not.
+	 * Writes all of the HTML following the content of the page.
 	 *
 	 * @param  flow  The {@link FlowContent} that was returned by
 	 *               {@link #startPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String)}.
