@@ -256,16 +256,18 @@ public abstract class WebPageLayout {
 					.form("").id(WebPage.SEARCH_TWO).method(Method.Value.POST).__(form -> {
 						req.printFormFields(form);
 						form.table().clazz("ao-packed").__(table -> table
-							.tr__(tr -> tr
-								.td().style("white-space:nowrap").__(td -> td
-									.text("Word(s) to search for:").sp()
-									.input().text().size(24).name(WebSiteRequest.SEARCH_QUERY).value(query).__().br__()
-									.text("Search Location:").sp().input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).checked(isEntireSite).__()
-									.sp().text("Entire Site").nbsp(3).input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_THIS_AREA).checked(!isEntireSite).__()
-									.sp().text("This Area").br__()
-									.br__()
-									.div().style("text-align:center").__(div -> div
-										.input().submit().clazz("ao_button").value(" Search ").__()
+							.tbody__(tbody -> tbody
+								.tr__(tr -> tr
+									.td().style("white-space:nowrap").__(td -> td
+										.text("Word(s) to search for:").sp()
+										.input().text().size(24).name(WebSiteRequest.SEARCH_QUERY).value(query).__().br__()
+										.text("Search Location:").sp().input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).checked(isEntireSite).__()
+										.sp().text("Entire Site").nbsp(3).input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_THIS_AREA).checked(!isEntireSite).__()
+										.sp().text("This Area").br__()
+										.br__()
+										.div().style("text-align:center").__(div -> div
+											.input().submit().clazz("ao_button").value(" Search ").__()
+										)
 									)
 								)
 							)
@@ -282,11 +284,13 @@ public abstract class WebPageLayout {
 				} else {
 					lightArea(req, resp, contentLine, lightArea -> lightArea
 						.table().clazz("ao-packed", "aoLightRow").__(table -> {
-							table.tr__(tr -> tr
-								.th().style("white-space:nowrap").__("% Match")
-								.th().style("white-space:nowrap").__("Title")
-								.th().style("white-space:nowrap").__("\u00A0")
-								.th().style("white-space:nowrap").__("Description")
+							table.thead__(thead -> thead
+								.tr__(tr -> tr
+									.th().style("white-space:nowrap").__("% Match")
+									.th().style("white-space:nowrap").__("Title")
+									.th().style("white-space:nowrap").__("\u00A0")
+									.th().style("white-space:nowrap").__("Description")
+								)
 							);
 
 							// Find the highest probability
@@ -294,27 +298,31 @@ public abstract class WebPageLayout {
 
 							// Display the results
 							int size = results.size();
-							for (int c = 0; c < size; c++) {
-								String rowClass= (c & 1) == 0 ? "aoLightRow":"aoDarkRow";
-								String linkClass = (c & 1) == 0 ? "aoDarkLink":"aoLightLink";
-								SearchResult result = results.get(c);
-								String url = result.getUrl();
-								String title = result.getTitle();
-								String description = result.getDescription();
-								table.tr().clazz(rowClass).__(tr -> tr
-									.td().style("white-space:nowrap", "text-align:center").__(Math.round(99 * result.getProbability() / highest) + "%")
-									.td().style("white-space:nowrap", "text-align:left").__(td -> td
-										.a().clazz(linkClass).href(
-											resp.encodeURL(
-												URIEncoder.encodeURI(
-													req.getContextPath() + url
-												)
+							if(size > 0) {
+								table.tbody__(tbody -> {
+									for (int c = 0; c < size; c++) {
+										String rowClass= (c & 1) == 0 ? "aoLightRow":"aoDarkRow";
+										String linkClass = (c & 1) == 0 ? "aoDarkLink":"aoLightLink";
+										SearchResult result = results.get(c);
+										String url = result.getUrl();
+										String title = result.getTitle();
+										String description = result.getDescription();
+										tbody.tr().clazz(rowClass).__(tr -> tr
+											.td().style("white-space:nowrap", "text-align:center").__(Math.round(99 * result.getProbability() / highest) + "%")
+											.td().style("white-space:nowrap", "text-align:left").__(td -> td
+												.a().clazz(linkClass).href(
+													resp.encodeURL(
+														URIEncoder.encodeURI(
+															req.getContextPath() + url
+														)
+													)
+												).__(title)
 											)
-										).__(title)
-									)
-									.td().style("white-space:nowrap").__("\u00A0\u00A0\u00A0")
-									.td().style("white-space:nowrap", "text-align:left").__(description)
-								);
+											.td().style("white-space:nowrap").__("\u00A0\u00A0\u00A0")
+											.td().style("white-space:nowrap", "text-align:left").__(description)
+										);
+									}
+								});
 							}
 						})
 					);
