@@ -41,6 +41,7 @@ import com.aoapps.html.servlet.TD_c;
 import com.aoapps.html.servlet.TR_c;
 import com.aoapps.html.util.GoogleAnalytics;
 import static com.aoapps.lang.Strings.trimNullIfEmpty;
+import com.aoapps.net.URIEncoder;
 import static com.aoapps.taglib.AttributeUtils.getWidthStyle;
 import com.aoapps.web.resources.registry.Group;
 import com.aoapps.web.resources.registry.Registry;
@@ -98,99 +99,15 @@ public class TextOnlyLayout extends WebPageLayout {
 	}
 
 	@Override
-	public void configureResources(ServletContext servletContext, WebSiteRequest req, HttpServletResponse resp, WebPage page, Registry requestRegistry) {
+	public void configureResources(
+		ServletContext servletContext,
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		WebPage page,
+		Registry requestRegistry
+	) {
 		super.configureResources(servletContext, req, resp, page, requestRegistry);
 		requestRegistry.activate(RESOURCE_GROUP);
-	}
-
-	@Override
-	public <
-		PC extends FlowContent<PC>,
-		__ extends FlowContent<__>
-	> __ startLightArea(
-		WebSiteRequest req,
-		HttpServletResponse resp,
-		PC pc,
-		String align,
-		String width,
-		boolean nowrap
-	) throws ServletException, IOException {
-		align = trimNullIfEmpty(align);
-		TD_c<TR_c<TABLE_c<PC>>> td = pc.table()
-			.clazz("ao-packed")
-			.style("border:5px outset #a0a0a0", getWidthStyle(width))
-		._c()
-			.tr_c()
-				.td()
-					.clazz("aoLightRow")
-					.style(
-						"padding:4px",
-						(align != null) ? ("text-align:" + align) : null,
-						nowrap ? "white-space:nowrap" : null
-					)
-				._c();
-		@SuppressWarnings("unchecked")
-		__ lightArea = (__)td;
-		return lightArea;
-	}
-
-	@Override
-	public void endLightArea(
-		WebSiteRequest req,
-		HttpServletResponse resp,
-		FlowContent<?> lightArea
-	) throws ServletException, IOException {
-		@SuppressWarnings("unchecked")
-		TD_c<? extends TR_c<? extends TABLE_c<?>>> td = (TD_c)lightArea;
-					td
-				.__()
-			.__()
-		.__();
-	}
-
-	@Override
-	public <
-		PC extends FlowContent<PC>,
-		__ extends FlowContent<__>
-	> __ startWhiteArea(
-		WebSiteRequest req,
-		HttpServletResponse resp,
-		PC pc,
-		String align,
-		String width,
-		boolean nowrap
-	) throws ServletException, IOException {
-		align = trimNullIfEmpty(align);
-		TD_c<TR_c<TABLE_c<PC>>> td = pc.table()
-			.clazz("ao-packed")
-			.style("border:5px outset #a0a0a0", getWidthStyle(width))
-		._c()
-			.tr_c()
-				.td()
-					.clazz("aoWhiteRow")
-					.style(
-						"padding:4px",
-						(align != null) ? ("text-align:" + align) : null,
-						nowrap ? "white-space:nowrap" : null
-					)
-				._c();
-		@SuppressWarnings("unchecked")
-		__ whiteArea = (__)td;
-		return whiteArea;
-	}
-
-	@Override
-	public void endWhiteArea(
-		WebSiteRequest req,
-		HttpServletResponse resp,
-		FlowContent<?> whiteArea
-	) throws ServletException, IOException {
-		@SuppressWarnings("unchecked")
-		TD_c<? extends TR_c<? extends TABLE_c<?>>> td = (TD_c)whiteArea;
-					td
-				.__()
-			.__()
-		.__();
 	}
 
 	public static void writeBodyColorStyle(WebPageLayout layout, WebSiteRequest req, HEAD__<?> head) throws IOException {
@@ -297,25 +214,14 @@ public class TextOnlyLayout extends WebPageLayout {
 			}
 			String authorHref = page.getAuthorHref(req, resp);
 			if(authorHref != null && !(authorHref = authorHref.trim()).isEmpty()) {
-				head.link(AnyLINK.Rel.AUTHOR).href(authorHref).__();
+				head.link(AnyLINK.Rel.AUTHOR).href(
+					// TODO: RFC 3986-only always?
+					resp.encodeURL(
+						URIEncoder.encodeURI(authorHref) // TODO: Conditionally convert from context-relative paths
+					)
+				).__();
 			}
-			head.title__(
-				// No more page stack, just show current page only
-				page.getTitle(req)
-				/*
-				List<WebPage> parents=new ArrayList<>();
-				WebPage parent=page;
-				while(parent!=null) {
-					if(parent.showInLocationPath(req)) parents.add(parent);
-					parent=parent.getParent();
-				}
-				for(int c=(parents.size()-1);c>=0;c--) {
-					if(c<(parents.size()-1)) html.out.write(" - ");
-					parent=parents.get(c);
-					encodeTextInXhtml(parent.getTitle(), html.out); // Encode directly, since doesn't support Markup
-				}
-				*/
-			);
+			head.title__(page.getTitle(req));
 			String description = page.getDescription(req);
 			if(description != null && !(description = description.trim()).isEmpty()) {
 				head.meta(AnyMETA.Name.DESCRIPTION).content(description).__();
@@ -336,7 +242,9 @@ public class TextOnlyLayout extends WebPageLayout {
 			configureResources(servletContext, req, resp, page, requestRegistry);
 			// Configure page resources
 			Registry pageRegistry = RegistryEE.Page.get(req);
-			if(pageRegistry == null) throw new ServletException("page-scope registry not found.  WebPage.service(ServletRequest,ServletResponse) invoked?");
+			if(pageRegistry == null) {
+				throw new ServletException("page-scope registry not found.  WebPage.service(ServletRequest,ServletResponse) invoked?");
+			}
 			page.configureResources(servletContext, req, resp, this, pageRegistry);
 			// Render links
 			Renderer.get(servletContext).renderStyles(
@@ -354,21 +262,27 @@ public class TextOnlyLayout extends WebPageLayout {
 			writeBodyColorStyle(this, req, head);
 			// TODO: Canonical?
 		});
-		BODY<HTML_c<DocumentEE>> body = html_c.body().nl();
+		BODY<HTML_c<DocumentEE>> body = html_c.body();
 		// TODO: These onloads should be merged?
 		if (onload == null) onload = page.getOnloadScript(req);
-		if (onload != null && !onload.isEmpty()) {
-			body.onload(onload).nl();
+		if (onload != null && !(onload = onload.trim()).isEmpty()) {
+			body.onload(onload);
 		}
 		BODY_c<HTML_c<DocumentEE>> body_c = body._c();
 		TD_c<TR_c<TABLE_c<BODY_c<HTML_c<DocumentEE>>>>> td_c = body_c.table().cellspacing(10).cellpadding(0)._c()
 			.tr_c()
 				.td().style("vertical-align:top").__(td -> {
-					printLogo(page, td, req, resp);
+					printLogo(req, resp, page, td);
 					boolean isLoggedIn = req.isLoggedIn();
 					if(isLoggedIn) {
 						td.hr__()
-						.text("Logout: ").form().style("display:inline").id("logout_form").method(Method.Value.POST).action(req.getEncodedURL(page, resp)).__(form -> form
+						.text("Logout: ")
+						.form()
+							.style("display:inline")
+							.id("logout_form")
+							.method(Method.Value.POST)
+							.action(req.getEncodedURL(page, resp))
+						.__(form -> form
 							.div().style("display:inline").__(div -> {
 								req.printFormFields(div);
 								div.input().hidden().name(WebSiteRequest.LOGOUT_REQUESTED).value(true).__()
@@ -377,7 +291,13 @@ public class TextOnlyLayout extends WebPageLayout {
 						);
 					} else {
 						td.hr__()
-						.text("Login: ").form().style("display:inline").id("login_form").method(Method.Value.POST).action(req.getEncodedURL(page, resp)).__(form -> form
+						.text("Login: ")
+						.form()
+							.style("display:inline")
+							.id("login_form")
+							.method(Method.Value.POST)
+							.action(req.getEncodedURL(page, resp))
+						.__(form -> form
 							.div().style("display:inline").__(div -> {
 								req.printFormFields(div);
 								div.input().hidden().name(WebSiteRequest.LOGIN_REQUESTED).value(true).__()
@@ -399,19 +319,19 @@ public class TextOnlyLayout extends WebPageLayout {
 						);
 					})
 					.hr__()
+					// Display the parents
 					.b__("Current Location").br__()
 					.div().style("white-space:nowrap").__(div -> {
-						List<WebPage> parents=new ArrayList<>();
-						//parents.clear();
+						List<WebPage> parents = new ArrayList<>();
 						WebPage parent = page;
 						while(parent != null) {
 							if(parent.showInLocationPath(req)) parents.add(parent);
 							parent = parent.getParent();
 						}
-						for(int c=(parents.size()-1);c>=0;c--) {
-							parent=parents.get(c);
+						for(int c = (parents.size() - 1); c >= 0; c--) {
+							parent = parents.get(c);
 							String navAlt = parent.getNavImageAlt(req);
-							String navSuffix=parent.getNavImageSuffix(req);
+							String navSuffix = parent.getNavImageSuffix(req);
 							div.a(req.getEncodedURL(parent, resp)).__(a -> {
 								a.text(navAlt);
 								if(navSuffix != null) {
@@ -421,22 +341,22 @@ public class TextOnlyLayout extends WebPageLayout {
 						}
 					})
 					.hr__()
+					// Related Pages
 					.b__("Related Pages").br__()
 					.div().style("white-space:nowrap").__(div -> {
-						WebPage[] children = page.getCachedChildren(req, resp);
+						WebPage[] related = page.getCachedChildren(req, resp);
 						WebPage parent = page;
-						if(children.length == 0) {
+						if(related.length == 0) {
 							parent = page.getParent();
-							if(parent != null) children = parent.getCachedChildren(req, resp);
+							if(parent != null) related = parent.getCachedChildren(req, resp);
 						}
-
-						for(int c = -1; c < children.length; c++) {
+						for(int c = -1; c < related.length; c++) {
 							WebPage tpage;
 							if (c == -1) {
 								if (parent!=null && parent.includeNavImageAsParent()) tpage = parent;
 								else tpage = null;
 							} else {
-								tpage = children[c];
+								tpage = related[c];
 							}
 							if(
 								tpage != null
@@ -719,6 +639,96 @@ public class TextOnlyLayout extends WebPageLayout {
 	}
 
 	@Override
+	public <
+		PC extends FlowContent<PC>,
+		__ extends FlowContent<__>
+	> __ startLightArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		PC pc,
+		String align,
+		String width,
+		boolean nowrap
+	) throws ServletException, IOException {
+		align = trimNullIfEmpty(align);
+		TD_c<TR_c<TABLE_c<PC>>> td = pc.table()
+			.clazz("ao-packed")
+			.style("border:5px outset #a0a0a0", getWidthStyle(width))
+		._c()
+			.tr_c()
+				.td()
+					.clazz("aoLightRow")
+					.style(
+						"padding:4px",
+						(align != null) ? ("text-align:" + align) : null,
+						nowrap ? "white-space:nowrap" : null
+					)
+				._c();
+		@SuppressWarnings("unchecked")
+		__ lightArea = (__)td;
+		return lightArea;
+	}
+
+	@Override
+	public void endLightArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		FlowContent<?> lightArea
+	) throws ServletException, IOException {
+		@SuppressWarnings("unchecked")
+		TD_c<? extends TR_c<? extends TABLE_c<?>>> td = (TD_c)lightArea;
+					td
+				.__()
+			.__()
+		.__();
+	}
+
+	@Override
+	public <
+		PC extends FlowContent<PC>,
+		__ extends FlowContent<__>
+	> __ startWhiteArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		PC pc,
+		String align,
+		String width,
+		boolean nowrap
+	) throws ServletException, IOException {
+		align = trimNullIfEmpty(align);
+		TD_c<TR_c<TABLE_c<PC>>> td = pc.table()
+			.clazz("ao-packed")
+			.style("border:5px outset #a0a0a0", getWidthStyle(width))
+		._c()
+			.tr_c()
+				.td()
+					.clazz("aoWhiteRow")
+					.style(
+						"padding:4px",
+						(align != null) ? ("text-align:" + align) : null,
+						nowrap ? "white-space:nowrap" : null
+					)
+				._c();
+		@SuppressWarnings("unchecked")
+		__ whiteArea = (__)td;
+		return whiteArea;
+	}
+
+	@Override
+	public void endWhiteArea(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		FlowContent<?> whiteArea
+	) throws ServletException, IOException {
+		@SuppressWarnings("unchecked")
+		TD_c<? extends TR_c<? extends TABLE_c<?>>> td = (TD_c)whiteArea;
+					td
+				.__()
+			.__()
+		.__();
+	}
+
+	@Override
 	public String getName() {
 		return NAME;
 	}
@@ -727,7 +737,12 @@ public class TextOnlyLayout extends WebPageLayout {
 		return null;
 	}
 
-	public <__ extends FlowContent<__>> void printLogo(WebPage page, __ td, WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	public <__ extends FlowContent<__>> void printLogo(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		WebPage page,
+		__ td
+	) throws ServletException, IOException {
 		// Do nothing
 	}
 

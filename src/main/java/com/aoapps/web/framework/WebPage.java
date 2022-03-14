@@ -153,7 +153,13 @@ public abstract class WebPage extends PageServlet {
 	 * </p>
 	 */
 	@SuppressWarnings("NoopMethodInAbstractClass")
-	public void configureResources(ServletContext servletContext, WebSiteRequest req, HttpServletResponse resp, WebPageLayout layout, Registry pageRegistry) {
+	public void configureResources(
+		ServletContext servletContext,
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		WebPageLayout layout,
+		Registry pageRegistry
+	) {
 		// Do nothing
 	}
 

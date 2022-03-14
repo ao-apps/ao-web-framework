@@ -22,6 +22,10 @@
  */
 package com.aoapps.web.framework;
 
+import com.aoapps.encoding.Doctype;
+import com.aoapps.encoding.Serialization;
+import com.aoapps.encoding.servlet.DoctypeEE;
+import com.aoapps.encoding.servlet.SerializationEE;
 import com.aoapps.html.any.attributes.Enum.Method;
 import com.aoapps.html.servlet.ContentEE;
 import com.aoapps.html.servlet.DocumentEE;
@@ -90,12 +94,56 @@ public abstract class WebPageLayout {
 		// Do nothing
 	}
 
+	public <__ extends FlowContent<__>> boolean printWebPageLayoutSelector(
+		WebSiteRequest req,
+		HttpServletResponse resp,
+		WebPage page,
+		__ flow
+	) throws ServletException, IOException {
+		if(layoutChoices.length >= 2) {
+			flow.script().out(script -> {
+				script.indent().append("function selectLayout(layout) {").incDepth().nl();
+				for(String choice : layoutChoices) {
+					script
+						.indent()
+						.append("if(layout==")
+						.text(choice)
+						.append(") window.top.location.href=")
+						.text(req.getEncodedURL(page, URIParametersMap.of(WebSiteRequest.LAYOUT.getName(), choice), resp))
+						.append(';')
+						.nl();
+				}
+				script.decDepth().indent().append('}');
+			}).__()
+			.form().action("").style("display:inline").__(form -> form
+				.div().style("display:inline").__(div -> div
+					// TODO: Constant for "layout_selector"?
+					.select().name("layout_selector").onchange("selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);").__(select -> {
+						for(String choice : layoutChoices) {
+							select.option().value(choice).selected(choice.equalsIgnoreCase(getName())).__(choice); // TODO: .equals() like aoindustries.com:DefaultSkin.java?
+						}
+					})
+				)
+			);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	/**
 	 * Writes all of the HTML preceding the content of the page.
+	 * <p>
+	 * Both the {@link Serialization} and {@link Doctype} may have been set
+	 * on the request, and these must be considered in the HTML generation.
+	 * </p>
 	 *
 	 * @return  The {@link FlowContent} that should be used to write the page contents.
 	 *          This is also given to {@link #endPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
 	 *          to finish the template.
+	 *
+	 * @see  SerializationEE#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
+	 * @see  DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
 	 */
 	public abstract <__ extends FlowContent<__>> __ startPage(
 		WebSiteRequest req,
@@ -107,9 +155,16 @@ public abstract class WebPageLayout {
 
 	/**
 	 * Writes all of the HTML following the content of the page.
+	 * <p>
+	 * Both the {@link Serialization} and {@link Doctype} may have been set
+	 * on the request, and these must be considered in the HTML generation.
+	 * </p>
 	 *
 	 * @param  flow  The {@link FlowContent} that was returned by
 	 *               {@link #startPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String)}.
+	 *
+	 * @see  SerializationEE#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
+	 * @see  DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
 	 */
 	public abstract void endPage(
 		WebSiteRequest req,
@@ -122,11 +177,17 @@ public abstract class WebPageLayout {
 	 * {@linkplain #startPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String) Starts the page},
 	 * invokes the given page body, then
 	 * {@linkplain #endPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent) ends the page}.
+	 * <p>
+	 * Both the {@link Serialization} and {@link Doctype} may have been set
+	 * on the request, and these must be considered in the HTML generation.
+	 * </p>
 	 *
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
 	 * @see  #startPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String)
 	 * @see  #endPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)
+	 * @see  SerializationEE#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
+	 * @see  DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
 	 */
 	public final <__ extends FlowContent<__>, Ex extends Throwable> void doPage(
 		WebSiteRequest req,
@@ -145,11 +206,17 @@ public abstract class WebPageLayout {
 	 * {@linkplain #startPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String) Starts the page},
 	 * invokes the given page body, then
 	 * {@linkplain #endPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent) ends the page}.
+	 * <p>
+	 * Both the {@link Serialization} and {@link Doctype} may have been set
+	 * on the request, and these must be considered in the HTML generation.
+	 * </p>
 	 *
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
 	 * @see  #startPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String)
 	 * @see  #endPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)
+	 * @see  SerializationEE#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
+	 * @see  DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
 	 */
 	public final <Ex extends Throwable> void doPage(
 		WebSiteRequest req,
@@ -1017,8 +1084,8 @@ public abstract class WebPageLayout {
 	 * Ends a lighter area of the site.
 	 *
 	 * @param  lightArea  The {@link FlowContent} that was returned by
-	 *               {@link #startLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
-	 *               or {@link #startLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, boolean)}.
+	 *                    {@link #startLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
+	 *                    or {@link #startLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, boolean)}.
 	 */
 	public abstract void endLightArea(
 		WebSiteRequest req,
@@ -1183,8 +1250,8 @@ public abstract class WebPageLayout {
 	 * Ends a white area of the site.
 	 *
 	 * @param  whiteArea  The {@link FlowContent} that was returned by
-	 *               {@link #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
-	 *               or {@link #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, boolean)}.
+	 *                    {@link #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
+	 *                    or {@link #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, boolean)}.
 	 */
 	public abstract void endWhiteArea(
 		WebSiteRequest req,
@@ -1306,36 +1373,6 @@ public abstract class WebPageLayout {
 	 * Each layout has a name.
 	 */
 	public abstract String getName();
-
-	public <__ extends FlowContent<__>> boolean printWebPageLayoutSelector(
-		WebSiteRequest req,
-		HttpServletResponse resp,
-		WebPage page,
-		__ flow
-	) throws ServletException, IOException {
-		if(layoutChoices.length >= 2) {
-			flow.script().out(script -> {
-				script.indent().append("function selectLayout(layout) {").incDepth().nl();
-				for(String choice : layoutChoices) {
-					script.indent().append("if(layout==").text(choice).append(") window.top.location.href=").text(
-						req.getEncodedURL(page, URIParametersMap.of(WebSiteRequest.LAYOUT.getName(), choice), resp)
-					).append(';').nl();
-				}
-				script.decDepth().indent().append('}');
-			}).__()
-			.form("#").style("display:inline").__(form -> form
-				.div().style("display:inline").__(div -> div
-					// TODO: Constant for "layout_selector"?
-					.select().name("layout_selector").onchange("selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);").__(select -> {
-						for(String choice : layoutChoices) {
-							select.option().value(choice).selected(choice.equalsIgnoreCase(getName())).__(choice);
-						}
-					})
-				)
-			);
-			return true;
-		} else return false;
-	}
 
 	protected <__ extends ScriptSupportingContent<__>> void printJavaScriptIncludes(
 		WebSiteRequest req,
