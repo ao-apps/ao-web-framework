@@ -50,6 +50,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -417,27 +418,18 @@ public abstract class WebPage extends PageServlet {
 		resp.resetBuffer();
 		// Set the content type
 		Serialization serialization = getSerialization(req);
+		final Charset charset = AnyDocument.ENCODING;
 		ServletUtil.setContentType(
 			resp,
 			serialization.getContentType(),
-			AnyDocument.ENCODING
+			charset
 		);
 		// Set additional headers
 		setHeaders(req, resp);
 		Doctype doctype = getDoctype(req); // Lookup once here for constant value.  Do not inline into the anonymous class below.
-		ServletContext servletContext = getServletContext();
 		return new DocumentEE(
-			servletContext, req, resp,
-			new EncodingContextEE(servletContext, req, resp) {
-				@Override
-				public Serialization getSerialization() {
-					return serialization;
-				}
-				@Override
-				public Doctype getDoctype() {
-					return doctype;
-				}
-			},
+			resp,
+			new EncodingContextEE(doctype, serialization, charset, resp),
 			resp.getWriter(),
 			getAutonli(req),
 			getIndent(req)
