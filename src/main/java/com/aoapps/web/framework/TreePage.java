@@ -22,7 +22,7 @@
  */
 package com.aoapps.web.framework;
 
-import com.aoapps.encoding.MediaWriter;
+import com.aoapps.encoding.JavaScriptWriter;
 import com.aoapps.html.any.attributes.Enum.Method;
 import com.aoapps.html.servlet.CODE_c;
 import com.aoapps.html.servlet.DocumentEE;
@@ -316,7 +316,7 @@ public abstract class TreePage extends WebPage {
 			layout.contentHorizontalDivider(req, resp, content);
 			layout.contentLine(req, resp, content, contentLine -> {
 				// Write the javascript that controls the form
-				try (MediaWriter script = contentLine.script()._c()) {
+				try (JavaScriptWriter script = contentLine.script()._c()) {
 					script.write("  function openNode(index) {\n"
 						+ "    eval('document.forms[\"tree_form\"].opened_'+index+'.value=\"true\";');\n"
 						+ "    document.forms[\"tree_form\"].scroll_to_x.value=getPageXOffset(window);\n"

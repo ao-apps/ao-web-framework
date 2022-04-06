@@ -25,7 +25,7 @@ package com.aoapps.web.framework;
 import com.aoapps.collections.SortedArrayList;
 import com.aoapps.encoding.Doctype;
 import com.aoapps.encoding.Serialization;
-import com.aoapps.encoding.WhitespaceWriter;
+import com.aoapps.encoding.Whitespace;
 import com.aoapps.encoding.servlet.DoctypeEE;
 import com.aoapps.encoding.servlet.EncodingContextEE;
 import com.aoapps.encoding.servlet.SerializationEE;
@@ -384,12 +384,12 @@ public abstract class WebPage extends PageServlet {
 	}
 
 	/**
-	 * Gets the {@linkplain WhitespaceWriter#setIndent(boolean) indentation setting} to use for this page.
+	 * Gets the {@linkplain Whitespace#setIndent(boolean) indentation setting} to use for this page.
 	 * Defaults to {@link DocumentEE#getIndent(javax.servlet.ServletContext, javax.servlet.ServletRequest)}.
 	 *
 	 * @param req  {@code null} during search
 	 *
-	 * @see WhitespaceWriter#setIndent(boolean)
+	 * @see Whitespace#setIndent(boolean)
 	 */
 	protected boolean getIndent(WebSiteRequest req) {
 		return (req == null) ? false : DocumentEE.getIndent(getServletContext(), req);
