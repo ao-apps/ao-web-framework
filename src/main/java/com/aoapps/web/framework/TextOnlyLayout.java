@@ -260,7 +260,7 @@ public class TextOnlyLayout extends WebPageLayout {
 				pageRegistry
 			);
 			head.script().src(req.getEncodedURLForPath("/global.js", null, false, resp)).__();
-			printJavaScriptIncludes(req, resp, page, head);
+			printJavascriptIncludes(req, resp, page, head);
 			writeBodyColorStyle(this, req, head);
 			// TODO: Canonical?
 		});

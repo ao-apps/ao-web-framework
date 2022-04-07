@@ -237,7 +237,7 @@ public class SearchLayout extends WebPageLayout {
 	}
 
 	@Override
-	protected <__ extends ScriptSupportingContent<__>> void printJavaScriptIncludes(WebSiteRequest req, HttpServletResponse resp, WebPage page, __ content) {
+	protected <__ extends ScriptSupportingContent<__>> void printJavascriptIncludes(WebSiteRequest req, HttpServletResponse resp, WebPage page, __ content) {
 		// Do nothing
 	}
 }

@@ -961,7 +961,7 @@ public abstract class WebPage extends PageServlet {
 	 *          a <code>Object</code> for one via {@link Object#toString()},
 	 *          or <code>null</code> for none
 	 */
-	public Object getJavaScriptSrc(WebSiteRequest req) throws ServletException {
+	public Object getJavascriptSrc(WebSiteRequest req) throws ServletException {
 		return null;
 	}
 

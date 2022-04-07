@@ -1382,13 +1382,13 @@ public abstract class WebPageLayout {
 	 */
 	public abstract String getName();
 
-	protected <__ extends ScriptSupportingContent<__>> void printJavaScriptIncludes(
+	protected <__ extends ScriptSupportingContent<__>> void printJavascriptIncludes(
 		WebSiteRequest req,
 		HttpServletResponse resp,
 		WebPage page,
 		__ content
 	) throws ServletException, IOException {
-		Object src = page.getJavaScriptSrc(req);
+		Object src = page.getJavascriptSrc(req);
 		if (src != null) {
 			if (src instanceof String[]) {
 				String[] sa = (String[]) src;
