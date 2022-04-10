@@ -84,7 +84,8 @@ public abstract class InputStreamPage extends WebPage {
 		return contentLine;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void printStreamStatic(Content<?, ?> content, InputStream in) throws IOException {
-		IoUtils.copy(new InputStreamReader(in, AnyDocument.ENCODING), content.getUnsafe());
+		IoUtils.copy(new InputStreamReader(in, AnyDocument.ENCODING), content.getRawUnsafe());
 	}
 }

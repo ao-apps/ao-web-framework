@@ -101,6 +101,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 	 *
 	 * @see  #printHTMLStream(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.ContentEE, com.aoapps.html.servlet.FlowContent, java.io.InputStream, java.lang.String, java.util.concurrent.atomic.AtomicReference)
 	 */
+	@SuppressWarnings("deprecation")
 	public static <__ extends FlowContent<__>> __ printHTML(
 		WebSiteRequest req,
 		HttpServletResponse resp,
@@ -111,15 +112,15 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 		String linkClass,
 		AtomicReference<FlowContent<?>> lightAreaRef
 	) throws ServletException, IOException {
-		Writer unsafe = contentLine.getUnsafe();
 		if(req == null) {
 			contentLine.unsafe(htmlContent);
 		} else {
-			int len=htmlContent.length();
-			int pos=0;
-			while(pos<len) {
-				char ch=htmlContent.charAt(pos++);
-				if(ch=='@') {
+			Writer unsafe = contentLine.getRawUnsafe();
+			int len = htmlContent.length();
+			int pos = 0;
+			while(pos < len) {
+				char ch = htmlContent.charAt(pos++);
+				if(ch == '@') {
 					// TODO: regionsMatches would be faster than repeated substring
 					if((pos+4)<len && htmlContent.substring(pos, pos+4).equalsIgnoreCase("URL(")) {
 						int endPos=htmlContent.indexOf(')', pos+4);
@@ -147,7 +148,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 						pos+=32;
 					} else if((pos+18)<len && htmlContent.substring(pos, pos+18).equalsIgnoreCase("START_CONTENT_LINE")) {
 						contentLine = layout.startContentLine(req, resp, content);
-						unsafe = contentLine.getUnsafe();
+						unsafe = contentLine.getRawUnsafe();
 						pos+=18;
 					} else if((pos+10)<len && htmlContent.substring(pos, pos+10).equalsIgnoreCase("LINK_CLASS")) {
 						unsafe.write(linkClass==null?"aoLightLink":linkClass);
@@ -180,6 +181,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 	 *
 	 * @see  #printHTML(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.ContentEE, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, java.util.concurrent.atomic.AtomicReference)
 	 */
+	@SuppressWarnings("deprecation")
 	public static <__ extends FlowContent<__>> __ printHTMLStream(
 		WebSiteRequest req,
 		HttpServletResponse resp,
@@ -195,7 +197,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 		if(req == null) {
 			IoUtils.copy(reader, contentLine.unsafe());
 		} else {
-			Writer unsafe = contentLine.getUnsafe();
+			Writer unsafe = contentLine.getRawUnsafe();
 			StringBuilder buffer = null;
 			int ch;
 			while((ch=reader.read())!=-1) {
@@ -222,7 +224,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 										if(c == 0) layout.contentHorizontalDivider(req, resp, content);
 										else if(c == 1) {
 											contentLine = layout.startContentLine(req, resp, content);
-											unsafe = contentLine.getUnsafe();
+											unsafe = contentLine.getRawUnsafe();
 										}
 										else if(c == 2) {
 											if(lightAreaRef.get() != null) throw new IllegalStateException("@BEGIN_LIGHT_AREA may not be nested");

@@ -26,8 +26,6 @@ import com.aoapps.encoding.ChainWriter;
 import com.aoapps.encoding.Doctype;
 import com.aoapps.html.any.AnyLINK;
 import com.aoapps.html.any.AnyMETA;
-import com.aoapps.html.any.AnySCRIPT;
-import com.aoapps.html.any.AnySTYLE;
 import com.aoapps.html.any.attributes.Enum.Method;
 import com.aoapps.html.servlet.BODY;
 import com.aoapps.html.servlet.BODY_c;
@@ -41,6 +39,7 @@ import com.aoapps.html.servlet.TBODY_c;
 import com.aoapps.html.servlet.TD_c;
 import com.aoapps.html.servlet.TR_c;
 import com.aoapps.html.util.GoogleAnalytics;
+import com.aoapps.html.util.HeadUtil;
 import static com.aoapps.lang.Strings.trimNullIfEmpty;
 import com.aoapps.net.URIEncoder;
 import static com.aoapps.taglib.AttributeUtils.getWidthStyle;
@@ -165,7 +164,6 @@ public class TextOnlyLayout extends WebPageLayout {
 	}
 
 	@Override
-	// TODO: uncomment once only expected deprecated remains: @SuppressWarnings("deprecation")
 	public <__ extends FlowContent<__>> __ startPage(
 		WebSiteRequest req,
 		HttpServletResponse resp,
@@ -186,16 +184,8 @@ public class TextOnlyLayout extends WebPageLayout {
 			if(!isOkResponseStatus || !getName().equals(getLayoutChoices()[0])) {
 				head.meta().name(AnyMETA.Name.ROBOTS).content("noindex, nofollow").__();
 			}
+			HeadUtil.standardMeta(head, resp.getContentType());
 			Doctype doctype = document.encodingContext.getDoctype();
-			if(doctype == Doctype.HTML5) {
-				head.meta().charset().__();
-			} else {
-				head
-					.meta().httpEquiv(AnyMETA.HttpEquiv.CONTENT_TYPE).content(resp.getContentType()).__()
-					// Default style language
-					.meta().httpEquiv(AnyMETA.HttpEquiv.CONTENT_STYLE_TYPE).content(AnySTYLE.Type.TEXT_CSS).__()
-					.meta().httpEquiv(AnyMETA.HttpEquiv.CONTENT_SCRIPT_TYPE).content(AnySCRIPT.Type.TEXT_JAVASCRIPT).__();
-			}
 			if(doctype == Doctype.HTML5) {
 				GoogleAnalytics.writeGlobalSiteTag(head, trackingId);
 			} else {
