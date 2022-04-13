@@ -70,7 +70,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 	/**
 	 * Gets the HTML file with the same name as the provided Class or {@code null} when not found.
 	 */
-	public static InputStream getHTMLInputStream(Class<?> clazz) throws IOException {
+	public static InputStream getHTMLInputStream(Class<?> clazz) {
 		String resource = clazz.getName().replace('.', '/') + ".html";
 		InputStream in = HTMLInputStreamPage.class.getResourceAsStream("/" + resource);
 		if(in == null) {
