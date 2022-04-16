@@ -1,6 +1,6 @@
 /*
  * ao-web-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2009, 2015, 2016, 2020, 2021  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2015, 2016, 2020, 2021, 2022  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -20,6 +20,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 package com.aoapps.web.framework;
 
 import java.io.IOException;
