@@ -41,75 +41,77 @@ import javax.servlet.http.HttpServletResponse;
  */
 public abstract class DumpURLs extends WebPage {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	@Override
-	public <__ extends FlowContent<__>> void doGet(
-		WebSiteRequest req,
-		HttpServletResponse resp,
-		WebPageLayout layout,
-		__ flow
-	) throws ServletException, IOException {
-		flow.text(
-			"The following is a list of all unique servlet URLs in the site and may be used to add this site to\n"
-			+ "search engines:"
-		)
-		.pre__(pre -> printURLs(req, resp, pre, getRootPage(), new HashSet<>()));
-	}
+  @Override
+  public <__ extends FlowContent<__>> void doGet(
+    WebSiteRequest req,
+    HttpServletResponse resp,
+    WebPageLayout layout,
+    __ flow
+  ) throws ServletException, IOException {
+    flow.text(
+      "The following is a list of all unique servlet URLs in the site and may be used to add this site to\n"
+      + "search engines:"
+    )
+    .pre__(pre -> printURLs(req, resp, pre, getRootPage(), new HashSet<>()));
+  }
 
-	@Override
-	public String getDescription(WebSiteRequest req) {
-		return "Lists all of the URLs in the site, useful for adding to search engines.";
-	}
+  @Override
+  public String getDescription(WebSiteRequest req) {
+    return "Lists all of the URLs in the site, useful for adding to search engines.";
+  }
 
-	@Override
-	public String getKeywords(WebSiteRequest req) {
-		return "search, engine, URL, list, add, hit, hits, adding";
-	}
+  @Override
+  public String getKeywords(WebSiteRequest req) {
+    return "search, engine, URL, list, add, hit, hits, adding";
+  }
 
-	/**
-	 * The last modified time is -1 to always reload the list.
-	 */
-	@Override
-	public long getLastModified(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
-		return -1;
-	}
+  /**
+   * The last modified time is -1 to always reload the list.
+   */
+  @Override
+  public long getLastModified(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
+    return -1;
+  }
 
-	/**
-	 * Do not include this in the search results.
-	 */
-	@Override
-	@SuppressWarnings("NoopMethodInAbstractClass")
-	public void search(
-		String[] words,
-		WebSiteRequest req,
-		HttpServletResponse response,
-		List<SearchResult> results,
-		CharArrayWriter buffer,
-		Set<WebPage> finishedPages
-	) {
-		// Do nothing
-	}
+  /**
+   * Do not include this in the search results.
+   */
+  @Override
+  @SuppressWarnings("NoopMethodInAbstractClass")
+  public void search(
+    String[] words,
+    WebSiteRequest req,
+    HttpServletResponse response,
+    List<SearchResult> results,
+    CharArrayWriter buffer,
+    Set<WebPage> finishedPages
+  ) {
+    // Do nothing
+  }
 
-	@Override
-	public long getSearchLastModified() throws ServletException {
-		return getClassLastModified();
-	}
+  @Override
+  public long getSearchLastModified() throws ServletException {
+    return getClassLastModified();
+  }
 
-	@Override
-	public String getTitle(WebSiteRequest req) {
-		return "List URLs";
-	}
+  @Override
+  public String getTitle(WebSiteRequest req) {
+    return "List URLs";
+  }
 
-	private void printURLs(WebSiteRequest req, HttpServletResponse resp, PhrasingContent<?> pre, WebPage page, Set<WebPage> finishedPages) throws ServletException, IOException {
-		boolean doNl = !finishedPages.isEmpty();
-		if(finishedPages.add(page)) {
-			if(doNl) pre.nl();
-			pre.a().clazz("aoLightLink").href(req.getEncodedURL(page, resp)).__(req.getURL(page));
+  private void printURLs(WebSiteRequest req, HttpServletResponse resp, PhrasingContent<?> pre, WebPage page, Set<WebPage> finishedPages) throws ServletException, IOException {
+    boolean doNl = !finishedPages.isEmpty();
+    if (finishedPages.add(page)) {
+      if (doNl) {
+        pre.nl();
+      }
+      pre.a().clazz("aoLightLink").href(req.getEncodedURL(page, resp)).__(req.getURL(page));
 
-			for (WebPage child : page.getCachedChildren(req, resp)) {
-				printURLs(req, resp, pre, child, finishedPages);
-			}
-		}
-	}
+      for (WebPage child : page.getCachedChildren(req, resp)) {
+        printURLs(req, resp, pre, child, finishedPages);
+      }
+    }
+  }
 }

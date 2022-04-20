@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 ao-web-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
-Copyright (C) 2016, 2017, 2019, 2020, 2021  AO Industries, Inc.
+Copyright (C) 2016, 2017, 2019, 2020, 2021, 2022  AO Industries, Inc.
     support@aoindustries.com
     7262 Bull Pen Cir
     Mobile, AL 36695
@@ -22,272 +22,272 @@ You should have received a copy of the GNU Lesser General Public License
 along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
 -->
 <jsp:root
-	xmlns:ao="https://oss.aoapps.com/taglib/"
-	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:changelog="https://semanticcms.com/changelog/taglib/"
-	xmlns:core="https://semanticcms.com/core/taglib/"
-	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
-	xmlns:jsp="http://java.sun.com/JSP/Page"
-	version="2.1"
+  xmlns:ao="https://oss.aoapps.com/taglib/"
+  xmlns:c="http://java.sun.com/jsp/jstl/core"
+  xmlns:changelog="https://semanticcms.com/changelog/taglib/"
+  xmlns:core="https://semanticcms.com/core/taglib/"
+  xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+  xmlns:jsp="http://java.sun.com/JSP/Page"
+  version="2.1"
 >
-	<jsp:directive.page language="java" pageEncoding="UTF-8" />
-	<jsp:directive.page session="false" />
-	<core:page
-		title="@{documented.name} Changelog"
-		shortTitle="Changelog"
-		tocLevels="1"
-		datePublished="2016-10-29T22:08:31-05:00"
-		dateModified="2021-10-29T03:58:47-05:00"
-	>
-		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
-			<changelog:release
-				projectName="@{documented.name}"
-				version="@{project.version}"
-				groupId="@{project.groupId}"
-				artifactId="@{documented.artifactId}"
-				repository="@{nexusUrl}content/repositories/snapshots/"
-				scmUrl="@{project.scm.url}"
-			>
-				<ul>
-					<li>
-						Reduced use of property substitutions in <code>pom.xml</code>.
-						This is to help 3rd-party parsers that fail to perform full Maven-compatible substitutions.
-					</li>
-					<li>Registering serialization (HTML/XHTML) with new methods <code>SerializationEE.set(…)</code> and <code>SerializationEE.get(…)</code>.</li>
-					<li>Registering doctype with new methods <code>DoctypeEE.set(…)</code> and <code>DoctypeEE.get(…)</code>.</li>
-					<li>Response writing now uses the new <code>Html</code> instead of <code>ChainWriter</code>.</li>
-					<li>Refactored <code>WebPage.doGet(…)</code> and <code>WebPage.doPost(…)</code> methods for more meaningful parameter order.</li>
-					<li>Added <code><![CDATA[&lt;link rel="author" href="…" /&gt;]]></code> support.</li>
-					<li>
-						Removed all the old logging nonsense: use <code>java.util.logging.Logger</code>
-						like normal now.
-					</li>
-					<li>Integrated with <core:link book="/web-resources" page="/index.jspx" />.</li>
-					<li><code>HttpServletResponse</code> is passed many places that were formerly only given <code>WebSiteRequest</code>.</li>
-					<li>Added support for <ao:a href="https://developers.google.com/speed/webp">WebP images</ao:a>.</li>
-					<li>
-						Now using <ao:a rel="nofollow" href="@{javadoc.link.javaee}javax/servlet/http/HttpServletRequest.html#getParts()">the standard file upload API</ao:a>
-						for all uploaded files.  This allows the removal of the <code>com.servlets:cos</code> legacy dependency.
-					</li>
-					<li>
-						<ao:a rel="nofollow" href="@{javadoc.link.javaee}javax/servlet/ServletException.html">ServletException</ao:a>
-						allowed more places where it naturally fits.
-					</li>
-					<li>
-						<code>TreePageData</code> now takes a <code>String[]</code> for the path.  This allows path elements
-						to contain slash (/) characters without any special encoding.
-					</li>
-					<li>
-						Renamed <code>WebPage.getWebPages(…)</code> to <code>getChildren(…)</code> and
-						<code>WebPage.getCachedPages(…)</code> to <code>getCachedChildren(…)</code>.
-					</li>
-					<li>
-						URL parameters are now manipulated using <code>URIParameters</code>, instead of a haphazard combination
-						of <code>String</code> and <code>String[]</code>.  With this change, we have proper URL encoding by default.
-					</li>
-					<li>
-						<code>WebPage(WebSiteRequest)</code> and <code>WebPage(URIParameters)</code> and constructors are
-						now optional.  When <code>WebPage(WebSiteRequest)</code> does not exist, it falls-back to
-						<code>WebPage(URIParameters)</code>, which, in-turn, falls-back to <code>WebPage()</code>.
-					</li>
-					<li>Removed uses of <code>SQLException</code> in favor of <code>ServletException</code>.</li>
-					<li>
-						Removed uses of <code>IOException</code> where neither configuration of the response nor output
-						to client are expected.
-					</li>
-					<li>Updated to <ao:a rel="nofollow" href="https://www.oracle.com/java/technologies/javaee/javaeetechnologies.html#javaee7">Java™ EE 7 Web Profile</ao:a> (Servlet 3.1, JSP 2.3, EL 3.0, and JSTL 1.2).</li>
-					<li>Minimum Java version changed from 1.8 to 11.</li>
-					<li>
-						Now supports Java 9+ modules.  Due to still having filename-based automatic module dependencies,
-						*-SNAPSHOT versions include <code>module-info.class</code> while releases include the
-						<code>Automatic-Module-Name</code> manifest entry.  To minimize the difference between these
-						modes, <code>module-info.java</code> does not perform any transitive requires.
-					</li>
-					<li>Maven artifact relocated from <code>com.aoindustries:aoweb-framework</code> to <code>com.aoapps:ao-web-framework</code>.</li>
-					<li>Package renamed from <code>com.aoindustries.website.framework</code> to <code>com.aoapps.web.framework</code>.</li>
-					<li>Completely removed <code>ErrorReportingServlet</code>:
-						<ol>
-							<li>Removed request statistics since they were not used anywhere within our code-base.</li>
-							<li>
-								Response buffer is no longer increased to 256 kiB and instead remains at the container default (8 kiB for Tomcat).
-								Any servlet or <code>WebPage</code> that requires a larger buffer must configure it.
-							</li>
-						</ol>
-					</li>
-					<li>
-						<code>WebPage</code> now has <code>setHeaders(…)</code> instead of
-						<code>getAdditionalHeaders(…)</code> to provide more flexibility.
-					</li>
-					<li>Now properly restoring Thread interrupted state on <code>InterruptedException</code>.</li>
-				</ul>
-			</changelog:release>
-		</c:if>
+  <jsp:directive.page language="java" pageEncoding="UTF-8" />
+  <jsp:directive.page session="false" />
+  <core:page
+    title="@{documented.name} Changelog"
+    shortTitle="Changelog"
+    tocLevels="1"
+    datePublished="2016-10-29T22:08:31-05:00"
+    dateModified="2021-10-29T03:58:47-05:00"
+  >
+    <c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
+      <changelog:release
+        projectName="@{documented.name}"
+        version="@{project.version}"
+        groupId="@{project.groupId}"
+        artifactId="@{documented.artifactId}"
+        repository="@{nexusUrl}content/repositories/snapshots/"
+        scmUrl="@{project.scm.url}"
+      >
+        <ul>
+          <li>
+            Reduced use of property substitutions in <code>pom.xml</code>.
+            This is to help 3rd-party parsers that fail to perform full Maven-compatible substitutions.
+          </li>
+          <li>Registering serialization (HTML/XHTML) with new methods <code>SerializationEE.set(…)</code> and <code>SerializationEE.get(…)</code>.</li>
+          <li>Registering doctype with new methods <code>DoctypeEE.set(…)</code> and <code>DoctypeEE.get(…)</code>.</li>
+          <li>Response writing now uses the new <code>Html</code> instead of <code>ChainWriter</code>.</li>
+          <li>Refactored <code>WebPage.doGet(…)</code> and <code>WebPage.doPost(…)</code> methods for more meaningful parameter order.</li>
+          <li>Added <code><![CDATA[&lt;link rel="author" href="…" /&gt;]]></code> support.</li>
+          <li>
+            Removed all the old logging nonsense: use <code>java.util.logging.Logger</code>
+            like normal now.
+          </li>
+          <li>Integrated with <core:link book="/web-resources" page="/index.jspx" />.</li>
+          <li><code>HttpServletResponse</code> is passed many places that were formerly only given <code>WebSiteRequest</code>.</li>
+          <li>Added support for <ao:a href="https://developers.google.com/speed/webp">WebP images</ao:a>.</li>
+          <li>
+            Now using <ao:a rel="nofollow" href="@{javadoc.link.javaee}javax/servlet/http/HttpServletRequest.html#getParts()">the standard file upload API</ao:a>
+            for all uploaded files.  This allows the removal of the <code>com.servlets:cos</code> legacy dependency.
+          </li>
+          <li>
+            <ao:a rel="nofollow" href="@{javadoc.link.javaee}javax/servlet/ServletException.html">ServletException</ao:a>
+            allowed more places where it naturally fits.
+          </li>
+          <li>
+            <code>TreePageData</code> now takes a <code>String[]</code> for the path.  This allows path elements
+            to contain slash (/) characters without any special encoding.
+          </li>
+          <li>
+            Renamed <code>WebPage.getWebPages(…)</code> to <code>getChildren(…)</code> and
+            <code>WebPage.getCachedPages(…)</code> to <code>getCachedChildren(…)</code>.
+          </li>
+          <li>
+            URL parameters are now manipulated using <code>URIParameters</code>, instead of a haphazard combination
+            of <code>String</code> and <code>String[]</code>.  With this change, we have proper URL encoding by default.
+          </li>
+          <li>
+            <code>WebPage(WebSiteRequest)</code> and <code>WebPage(URIParameters)</code> and constructors are
+            now optional.  When <code>WebPage(WebSiteRequest)</code> does not exist, it falls-back to
+            <code>WebPage(URIParameters)</code>, which, in-turn, falls-back to <code>WebPage()</code>.
+          </li>
+          <li>Removed uses of <code>SQLException</code> in favor of <code>ServletException</code>.</li>
+          <li>
+            Removed uses of <code>IOException</code> where neither configuration of the response nor output
+            to client are expected.
+          </li>
+          <li>Updated to <ao:a rel="nofollow" href="https://www.oracle.com/java/technologies/javaee/javaeetechnologies.html#javaee7">Java™ EE 7 Web Profile</ao:a> (Servlet 3.1, JSP 2.3, EL 3.0, and JSTL 1.2).</li>
+          <li>Minimum Java version changed from 1.8 to 11.</li>
+          <li>
+            Now supports Java 9+ modules.  Due to still having filename-based automatic module dependencies,
+            *-SNAPSHOT versions include <code>module-info.class</code> while releases include the
+            <code>Automatic-Module-Name</code> manifest entry.  To minimize the difference between these
+            modes, <code>module-info.java</code> does not perform any transitive requires.
+          </li>
+          <li>Maven artifact relocated from <code>com.aoindustries:aoweb-framework</code> to <code>com.aoapps:ao-web-framework</code>.</li>
+          <li>Package renamed from <code>com.aoindustries.website.framework</code> to <code>com.aoapps.web.framework</code>.</li>
+          <li>Completely removed <code>ErrorReportingServlet</code>:
+            <ol>
+              <li>Removed request statistics since they were not used anywhere within our code-base.</li>
+              <li>
+                Response buffer is no longer increased to 256 kiB and instead remains at the container default (8 kiB for Tomcat).
+                Any servlet or <code>WebPage</code> that requires a larger buffer must configure it.
+              </li>
+            </ol>
+          </li>
+          <li>
+            <code>WebPage</code> now has <code>setHeaders(…)</code> instead of
+            <code>getAdditionalHeaders(…)</code> to provide more flexibility.
+          </li>
+          <li>Now properly restoring Thread interrupted state on <code>InterruptedException</code>.</li>
+        </ul>
+      </changelog:release>
+    </c:if>
 
-		<changelog:release
-			projectName="@{documented.name}"
-			version="2.0.0"
-			datePublished="2019-10-12T19:50:22-05:00"
-			groupId="com.aoindustries"
-			artifactId="aoweb-framework"
-			scmUrl="@{project.scm.url}"
-		>
-			<ul>
-				<li>
-					Split <code>getRandom()</code> into both <code>getSecureRandom()</code> and <code>getFastRandom()</code>,
-					then selected the appropriate method for each place random is used.
-				</li>
-				<li>Upload file ids changed from 31-bit <code>long</code> to 128-bit <code>Identifier</code>.</li>
-				<li>
-					Case-insensitive matching of URL schemes.  Previously, URL schemes were matched case-sensitive,
-					while the spec is case-insensitive.  This has been OK given we only use lower-case schemes within our
-					code and tools, but this is now a correct implementation.
-				</li>
-				<li>New <code>WebSiteRequest.getEncodedURL(…)</code> methods that:
-					<ol>
-						<li>Include <code>HttpServletRequest.getContextPath()</code> as a prefix</li>
-						<li>Encoded to ASCII-only <ao:a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</ao:a> format</li>
-						<li>Response encode via <code>HttpServletResponse.encodeURL(String)</code></li>
-					</ol>
-				</li>
-				<li>
-					Split <code>WebSiteRequest.getURL(String, …)</code> into
-					<code>WebSiteRequest.getURLForClass(String, …)</code> and
-					<code>WebSiteRequest.getURLForPath(String, …)</code>
-					to avoid ambiguity.
-				</li>
-				<li>Updated bundled <code>mime.types</code> to current version from Debian 8.11.</li>
-				<li>Added <code>#fragment</code> support to <code>WebSiteRequest.getURLForClass(String, …)</code>.</li>
-			</ul>
-		</changelog:release>
+    <changelog:release
+      projectName="@{documented.name}"
+      version="2.0.0"
+      datePublished="2019-10-12T19:50:22-05:00"
+      groupId="com.aoindustries"
+      artifactId="aoweb-framework"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>
+          Split <code>getRandom()</code> into both <code>getSecureRandom()</code> and <code>getFastRandom()</code>,
+          then selected the appropriate method for each place random is used.
+        </li>
+        <li>Upload file ids changed from 31-bit <code>long</code> to 128-bit <code>Identifier</code>.</li>
+        <li>
+          Case-insensitive matching of URL schemes.  Previously, URL schemes were matched case-sensitive,
+          while the spec is case-insensitive.  This has been OK given we only use lower-case schemes within our
+          code and tools, but this is now a correct implementation.
+        </li>
+        <li>New <code>WebSiteRequest.getEncodedURL(…)</code> methods that:
+          <ol>
+            <li>Include <code>HttpServletRequest.getContextPath()</code> as a prefix</li>
+            <li>Encoded to ASCII-only <ao:a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</ao:a> format</li>
+            <li>Response encode via <code>HttpServletResponse.encodeURL(String)</code></li>
+          </ol>
+        </li>
+        <li>
+          Split <code>WebSiteRequest.getURL(String, …)</code> into
+          <code>WebSiteRequest.getURLForClass(String, …)</code> and
+          <code>WebSiteRequest.getURLForPath(String, …)</code>
+          to avoid ambiguity.
+        </li>
+        <li>Updated bundled <code>mime.types</code> to current version from Debian 8.11.</li>
+        <li>Added <code>#fragment</code> support to <code>WebSiteRequest.getURLForClass(String, …)</code>.</li>
+      </ul>
+    </changelog:release>
 
-		<changelog:release
-			projectName="@{documented.name}"
-			version="1.2.5"
-			datePublished="2019-06-21T20:35:01-05:00"
-			groupId="com.aoindustries"
-			artifactId="aoweb-framework"
-			scmUrl="@{project.scm.url}"
-		>
-			<ul>
-				<li>Using managed dependencies:
-					<ol>
-						<li>This project uses managed dependencies.</li>
-						<li>This project's managed dependencies may also be imported by other projects.</li>
-					</ol>
-				</li>
-				<li>
-					No longer excluding
-					<ao:a rel="nofollow" href="https://www.oracle.com/technetwork/java/javaee/documentation/avaee6sdku1-relnotes-326908.html">Java EE Web API 6</ao:a>
-					from <ao:a href="https://www.mojohaus.org/versions-maven-plugin/examples/advancing-dependency-versions.html#Controlling_which_dependencies_are_processed">version updates</ao:a>.
-					Instead, projects are encouraged to use the new
-					<core:link book="/javaee-web-api-bom" page="/index.jspx" /> project.
-				</li>
-			</ul>
-		</changelog:release>
+    <changelog:release
+      projectName="@{documented.name}"
+      version="1.2.5"
+      datePublished="2019-06-21T20:35:01-05:00"
+      groupId="com.aoindustries"
+      artifactId="aoweb-framework"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>Using managed dependencies:
+          <ol>
+            <li>This project uses managed dependencies.</li>
+            <li>This project's managed dependencies may also be imported by other projects.</li>
+          </ol>
+        </li>
+        <li>
+          No longer excluding
+          <ao:a rel="nofollow" href="https://www.oracle.com/technetwork/java/javaee/documentation/avaee6sdku1-relnotes-326908.html">Java EE Web API 6</ao:a>
+          from <ao:a href="https://www.mojohaus.org/versions-maven-plugin/examples/advancing-dependency-versions.html#Controlling_which_dependencies_are_processed">version updates</ao:a>.
+          Instead, projects are encouraged to use the new
+          <core:link book="/javaee-web-api-bom" page="/index.jspx" /> project.
+        </li>
+      </ul>
+    </changelog:release>
 
-		<changelog:release
-			projectName="@{documented.name}"
-			version="1.2.4"
-			datePublished="2019-04-25T01:06:42-05:00"
-			groupId="com.aoindustries"
-			artifactId="aoweb-framework"
-			scmUrl="@{project.scm.url}"
-		>
-			<ul>
-				<li>
-					Removed uses of <ao:a rel="nofollow" href="@{javadoc.link.javase}java.base/java/io/File#deleteOnExit--">File.deleteOnExit()</ao:a>
-					to avoid a <ao:a href="https://bugs.openjdk.java.net/browse/JDK-4872014">JDK memory leak</ao:a> in long-running applications.
-				</li>
-			</ul>
-		</changelog:release>
+    <changelog:release
+      projectName="@{documented.name}"
+      version="1.2.4"
+      datePublished="2019-04-25T01:06:42-05:00"
+      groupId="com.aoindustries"
+      artifactId="aoweb-framework"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>
+          Removed uses of <ao:a rel="nofollow" href="@{javadoc.link.javase}java.base/java/io/File#deleteOnExit--">File.deleteOnExit()</ao:a>
+          to avoid a <ao:a href="https://bugs.openjdk.java.net/browse/JDK-4872014">JDK memory leak</ao:a> in long-running applications.
+        </li>
+      </ul>
+    </changelog:release>
 
-		<changelog:release
-			projectName="@{documented.name}"
-			version="1.2.3"
-			datePublished="2017-07-20T09:01:05-05:00"
-			groupId="com.aoindustries"
-			artifactId="aoweb-framework"
-			scmUrl="@{project.scm.url}"
-		>
-			<ul>
-				<li>Updated dependencies.</li>
-			</ul>
-		</changelog:release>
+    <changelog:release
+      projectName="@{documented.name}"
+      version="1.2.3"
+      datePublished="2017-07-20T09:01:05-05:00"
+      groupId="com.aoindustries"
+      artifactId="aoweb-framework"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>Updated dependencies.</li>
+      </ul>
+    </changelog:release>
 
-		<changelog:release
-			projectName="@{documented.name}"
-			version="1.2.2"
-			datePublished="2016-11-16T02:34:59-06:00"
-			groupId="com.aoindustries"
-			artifactId="aoweb-framework"
-			scmUrl="@{project.scm.url}"
-		>
-			<ul>
-				<li>New <core:link book="/parent" page="/index.jspx" /> POM to simplify <code>pom.xml</code> files.</li>
-				<li>Project documentation moved to per-project book in <ao:a href="https://semanticcms.com/">SemanticCMS</ao:a> format.</li>
-				<li>Added changelog as top-level project link.</li>
-			</ul>
-		</changelog:release>
+    <changelog:release
+      projectName="@{documented.name}"
+      version="1.2.2"
+      datePublished="2016-11-16T02:34:59-06:00"
+      groupId="com.aoindustries"
+      artifactId="aoweb-framework"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>New <core:link book="/parent" page="/index.jspx" /> POM to simplify <code>pom.xml</code> files.</li>
+        <li>Project documentation moved to per-project book in <ao:a href="https://semanticcms.com/">SemanticCMS</ao:a> format.</li>
+        <li>Added changelog as top-level project link.</li>
+      </ul>
+    </changelog:release>
 
-		<changelog:release
-			projectName="@{documented.name}"
-			version="1.2.1"
-			datePublished="2016-10-20T18:06:00-05:00"
-			groupId="com.aoindustries"
-			artifactId="aoweb-framework"
-			scmUrl="@{project.scm.url}"
-		>
-			<ul>
-				<li>Improved Javadoc formatting.</li>
-				<li>Improved README formatting.</li>
-				<li>No more page stack, just show title for current page only.</li>
-			</ul>
-		</changelog:release>
+    <changelog:release
+      projectName="@{documented.name}"
+      version="1.2.1"
+      datePublished="2016-10-20T18:06:00-05:00"
+      groupId="com.aoindustries"
+      artifactId="aoweb-framework"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>Improved Javadoc formatting.</li>
+        <li>Improved README formatting.</li>
+        <li>No more page stack, just show title for current page only.</li>
+      </ul>
+    </changelog:release>
 
-		<changelog:release
-			projectName="@{documented.name}"
-			version="1.2.0"
-			datePublished="2016-10-11T16:21:00-05:00"
-			groupId="com.aoindustries"
-			artifactId="aoweb-framework"
-			scmUrl="@{project.scm.url}"
-		>
-			<ul>
-				<li>Completely removed dynamic classloading and all configuration.</li>
-			</ul>
-		</changelog:release>
+    <changelog:release
+      projectName="@{documented.name}"
+      version="1.2.0"
+      datePublished="2016-10-11T16:21:00-05:00"
+      groupId="com.aoindustries"
+      artifactId="aoweb-framework"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>Completely removed dynamic classloading and all configuration.</li>
+      </ul>
+    </changelog:release>
 
-		<changelog:release
-			projectName="@{documented.name}"
-			version="1.1.0"
-			datePublished="2016-10-04T20:01:00-05:00"
-			groupId="com.aoindustries"
-			artifactId="aoweb-framework"
-			scmUrl="@{project.scm.url}"
-		>
-			<ul>
-				<li>Improved Javadoc formatting.</li>
-				<li>Improved README formatting.</li>
-				<li>Each lock object now a small empty class to help identify lock contention.
-					<p>
-						The lock contention profiler in NetBeans is just showing "java.lang.Object" all over, and can't seem to
-						get from the lock object id to the actual object in the heap dump using OQL (id not found).
-					</p>
-				</li>
-			</ul>
-		</changelog:release>
+    <changelog:release
+      projectName="@{documented.name}"
+      version="1.1.0"
+      datePublished="2016-10-04T20:01:00-05:00"
+      groupId="com.aoindustries"
+      artifactId="aoweb-framework"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>Improved Javadoc formatting.</li>
+        <li>Improved README formatting.</li>
+        <li>Each lock object now a small empty class to help identify lock contention.
+          <p>
+            The lock contention profiler in NetBeans is just showing "java.lang.Object" all over, and can't seem to
+            get from the lock object id to the actual object in the heap dump using OQL (id not found).
+          </p>
+        </li>
+      </ul>
+    </changelog:release>
 
-		<changelog:release
-			projectName="@{documented.name}"
-			version="1.0"
-			datePublished="2016-09-04T23:41:00-05:00"
-			groupId="com.aoindustries"
-			artifactId="aoweb-framework"
-			scmUrl="@{project.scm.url}"
-		>
-			<ul>
-				<li>Project moved to GitHub and Maven.</li>
-			</ul>
-		</changelog:release>
-	</core:page>
+    <changelog:release
+      projectName="@{documented.name}"
+      version="1.0"
+      datePublished="2016-09-04T23:41:00-05:00"
+      groupId="com.aoindustries"
+      artifactId="aoweb-framework"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>Project moved to GitHub and Maven.</li>
+      </ul>
+    </changelog:release>
+  </core:page>
 </jsp:root>

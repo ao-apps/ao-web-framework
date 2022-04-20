@@ -35,15 +35,15 @@ import javax.servlet.http.HttpServletResponse;
  */
 public abstract class PreFilePage extends FilePage {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	@Override
-	public <__ extends FlowContent<__>> void doGet(
-		WebSiteRequest req,
-		HttpServletResponse resp,
-		WebPageLayout layout,
-		__ flow
-	) throws ServletException, IOException {
-		flow.pre__(pre -> printFile(pre, getFile()));
-	}
+  @Override
+  public <__ extends FlowContent<__>> void doGet(
+    WebSiteRequest req,
+    HttpServletResponse resp,
+    WebPageLayout layout,
+    __ flow
+  ) throws ServletException, IOException {
+    flow.pre__(pre -> printFile(pre, getFile()));
+  }
 }

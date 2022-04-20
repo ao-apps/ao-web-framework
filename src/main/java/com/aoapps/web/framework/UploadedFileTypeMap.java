@@ -33,27 +33,33 @@ import javax.servlet.ServletContext;
  */
 public final class UploadedFileTypeMap extends FileTypeMap {
 
-	private final WebSiteUser owner;
-	private final ServletContext context;
+  private final WebSiteUser owner;
+  private final ServletContext context;
 
-	public UploadedFileTypeMap(WebSiteUser owner, ServletContext context) {
-		this.owner=owner;
-		this.context=context;
-	}
+  public UploadedFileTypeMap(WebSiteUser owner, ServletContext context) {
+    this.owner=owner;
+    this.context=context;
+  }
 
-	@Override
-	public String getContentType(File file) {
-		return getContentType(file.getName());
-	}
+  @Override
+  public String getContentType(File file) {
+    return getContentType(file.getName());
+  }
 
-	@Override
-	public String getContentType(String filename) {
-		int pos=filename.lastIndexOf('/');
-		if(pos==-1) pos=filename.lastIndexOf('\\');
-		if(pos!=-1) filename=filename.substring(pos+1);
-		Identifier id = new Identifier(filename);
-		UploadedFile uf = WebSiteRequest.getUploadedFile(owner, id, context);
-		if(uf == null) throw new NullPointerException("Unable to find uploaded file: " + id);
-		return uf.getContentType();
-	}
+  @Override
+  public String getContentType(String filename) {
+    int pos=filename.lastIndexOf('/');
+    if (pos == -1) {
+      pos=filename.lastIndexOf('\\');
+    }
+    if (pos != -1) {
+      filename=filename.substring(pos+1);
+    }
+    Identifier id = new Identifier(filename);
+    UploadedFile uf = WebSiteRequest.getUploadedFile(owner, id, context);
+    if (uf == null) {
+      throw new NullPointerException("Unable to find uploaded file: " + id);
+    }
+    return uf.getContentType();
+  }
 }

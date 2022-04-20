@@ -34,58 +34,58 @@ import java.io.File;
 // TODO: This is not Serializable.  How is it persisted through reboots?
 public final class UploadedFile {
 
-	private final Identifier id;
-	private final String filename;
-	private final File storageFile;
-	private final long create_time;
-	private final WebSiteUser owner;
-	private final String contentType;
-	private static class LastAccessLock {/* Empty lock class to help heap profile */}
-	private final LastAccessLock lastAccessLock=new LastAccessLock();
-	private long lastAccessed;
+  private final Identifier id;
+  private final String filename;
+  private final File storageFile;
+  private final long create_time;
+  private final WebSiteUser owner;
+  private final String contentType;
+  private static class LastAccessLock {/* Empty lock class to help heap profile */}
+  private final LastAccessLock lastAccessLock=new LastAccessLock();
+  private long lastAccessed;
 
-	UploadedFile(String filename, File storageFile, WebSiteUser owner, String contentType) {
-		this.id = new Identifier(storageFile.getName());
-		this.filename=filename;
-		this.storageFile=storageFile;
-		this.create_time=this.lastAccessed=System.currentTimeMillis();
-		this.owner=owner;
-		this.contentType=contentType;
-	}
+  UploadedFile(String filename, File storageFile, WebSiteUser owner, String contentType) {
+    this.id = new Identifier(storageFile.getName());
+    this.filename=filename;
+    this.storageFile=storageFile;
+    this.create_time=this.lastAccessed=System.currentTimeMillis();
+    this.owner=owner;
+    this.contentType=contentType;
+  }
 
-	public Identifier getID() {
-		synchronized(lastAccessLock) {lastAccessed=System.currentTimeMillis();}
-		return id;
-	}
+  public Identifier getID() {
+    synchronized (lastAccessLock) {lastAccessed=System.currentTimeMillis();}
+    return id;
+  }
 
-	public String getFilename() {
-		synchronized(lastAccessLock) {lastAccessed=System.currentTimeMillis();}
-		return filename;
-	}
+  public String getFilename() {
+    synchronized (lastAccessLock) {lastAccessed=System.currentTimeMillis();}
+    return filename;
+  }
 
-	public File getStorageFile() {
-		synchronized(lastAccessLock) {lastAccessed=System.currentTimeMillis();}
-		return storageFile;
-	}
+  public File getStorageFile() {
+    synchronized (lastAccessLock) {lastAccessed=System.currentTimeMillis();}
+    return storageFile;
+  }
 
-	public long getCreateTime() {
-		synchronized(lastAccessLock) {lastAccessed=System.currentTimeMillis();}
-		return create_time;
-	}
+  public long getCreateTime() {
+    synchronized (lastAccessLock) {lastAccessed=System.currentTimeMillis();}
+    return create_time;
+  }
 
-	public WebSiteUser getOwner() {
-		synchronized(lastAccessLock) {lastAccessed=System.currentTimeMillis();}
-		return owner;
-	}
+  public WebSiteUser getOwner() {
+    synchronized (lastAccessLock) {lastAccessed=System.currentTimeMillis();}
+    return owner;
+  }
 
-	public String getContentType() {
-		synchronized(lastAccessLock) {lastAccessed=System.currentTimeMillis();}
-		return contentType;
-	}
+  public String getContentType() {
+    synchronized (lastAccessLock) {lastAccessed=System.currentTimeMillis();}
+    return contentType;
+  }
 
-	public long getLastAccessed() {
-		synchronized(lastAccessLock) {
-			return lastAccessed;
-		}
-	}
+  public long getLastAccessed() {
+    synchronized (lastAccessLock) {
+      return lastAccessed;
+    }
+  }
 }

@@ -36,20 +36,20 @@ import javax.servlet.http.HttpServletResponse;
  */
 public abstract class DescriptionAutoListPage extends AutoListPage {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	/**
-	 * Prints the content that will be put before the auto-generated list.
-	 */
-	@Override
-	public <__ extends FlowContent<__>> __ printContentStart(
-		WebSiteRequest req,
-		HttpServletResponse resp,
-		WebPageLayout layout,
-		ContentEE<?> content,
-		__ contentLine
-	) throws ServletException, IOException {
-		contentLine.text(getDescription(req));
-		return contentLine;
-	}
+  /**
+   * Prints the content that will be put before the auto-generated list.
+   */
+  @Override
+  public <__ extends FlowContent<__>> __ printContentStart(
+    WebSiteRequest req,
+    HttpServletResponse resp,
+    WebPageLayout layout,
+    ContentEE<?> content,
+    __ contentLine
+  ) throws ServletException, IOException {
+    contentLine.text(getDescription(req));
+    return contentLine;
+  }
 }

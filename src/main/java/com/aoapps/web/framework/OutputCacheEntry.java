@@ -30,15 +30,15 @@ package com.aoapps.web.framework;
  */
 public final class OutputCacheEntry {
 
-	public final Object outputCacheKey;
+  public final Object outputCacheKey;
 
-	public final long lastModified;
+  public final long lastModified;
 
-	public final byte[] bytes;
+  public final byte[] bytes;
 
-	public OutputCacheEntry(Object outputCacheKey, long lastModified, byte[] bytes) {
-		this.outputCacheKey=outputCacheKey;
-		this.lastModified=lastModified;
-		this.bytes=bytes;
-	}
+  public OutputCacheEntry(Object outputCacheKey, long lastModified, byte[] bytes) {
+    this.outputCacheKey=outputCacheKey;
+    this.lastModified=lastModified;
+    this.bytes=bytes;
+  }
 }

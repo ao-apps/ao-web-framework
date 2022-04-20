@@ -46,236 +46,260 @@ import javax.servlet.http.HttpServletResponse;
  */
 public abstract class HTMLInputStreamPage extends InputStreamPage {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	@Override
-	public <__ extends FlowContent<__>> __ printStream(
-		WebSiteRequest req,
-		HttpServletResponse resp,
-		WebPageLayout layout,
-		ContentEE<?> content,
-		__ contentLine,
-		InputStream in
-	) throws ServletException, IOException {
-		return printHTMLStream(req, resp, layout, content, contentLine, in, "aoLightLink", new AtomicReference<>());
-	}
+  @Override
+  public <__ extends FlowContent<__>> __ printStream(
+    WebSiteRequest req,
+    HttpServletResponse resp,
+    WebPageLayout layout,
+    ContentEE<?> content,
+    __ contentLine,
+    InputStream in
+  ) throws ServletException, IOException {
+    return printHTMLStream(req, resp, layout, content, contentLine, in, "aoLightLink", new AtomicReference<>());
+  }
 
-	/**
-	 * Gets the file that the text should be read from.
-	 */
-	@Override
-	public InputStream getInputStream() throws IOException {
-		return getHTMLInputStream(getClass());
-	}
+  /**
+   * Gets the file that the text should be read from.
+   */
+  @Override
+  public InputStream getInputStream() throws IOException {
+    return getHTMLInputStream(getClass());
+  }
 
-	/**
-	 * Gets the HTML file with the same name as the provided Class or {@code null} when not found.
-	 */
-	public static InputStream getHTMLInputStream(Class<?> clazz) {
-		String resource = clazz.getName().replace('.', '/') + ".html";
-		InputStream in = HTMLInputStreamPage.class.getResourceAsStream("/" + resource);
-		if(in == null) {
-			// Try ClassLoader for when modules enabled
-			ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-			in = (classloader != null)
-				? classloader.getResourceAsStream(resource)
-				: ClassLoader.getSystemResourceAsStream(resource);
-		}
-		return in;
-	}
+  /**
+   * Gets the HTML file with the same name as the provided Class or {@code null} when not found.
+   */
+  public static InputStream getHTMLInputStream(Class<?> clazz) {
+    String resource = clazz.getName().replace('.', '/') + ".html";
+    InputStream in = HTMLInputStreamPage.class.getResourceAsStream("/" + resource);
+    if (in == null) {
+      // Try ClassLoader for when modules enabled
+      ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+      in = (classloader != null)
+        ? classloader.getResourceAsStream(resource)
+        : ClassLoader.getSystemResourceAsStream(resource);
+    }
+    return in;
+  }
 
-	/**
-	 * Prints HTML content, parsing for special <code>@</code> tags.  Types of tags include:
-	 * <ul>
-	 *   <li>@URL(classname)    Loads a WebPage of the given class and builds a URL to it</li>
-	 *   <li>@BEGIN_LIGHT_AREA  Calls {@link WebPageLayout#startLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}</li>
-	 *   <li>@END_LIGHT_AREA    Calls {@link WebPageLayout#endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}</li>
-	 *   <li>@END_CONTENT_LINE  Calls {@link WebPageLayout#endContentLine(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}</li>
-	 *   <li>@PRINT_CONTENT_HORIZONTAL_DIVIDER  Calls {@link WebPageLayout#contentHorizontalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)}</li>
-	 *   <li>@START_CONTENT_LINE  Calls {@link WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)}</li>
-	 *   <li>@LINK_CLASS        The preferred link class for this element</li>
-	 * </ul>
-	 *
-	 * @return  The current {@code contentLine}, which may have been replaced by a call to
-	 *          {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
-	 *          or {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.
-	 *
-	 * @see  #printHTMLStream(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.ContentEE, com.aoapps.html.servlet.FlowContent, java.io.InputStream, java.lang.String, java.util.concurrent.atomic.AtomicReference)
-	 */
-	@SuppressWarnings("deprecation")
-	public static <__ extends FlowContent<__>> __ printHTML(
-		WebSiteRequest req,
-		HttpServletResponse resp,
-		WebPageLayout layout,
-		ContentEE<?> content,
-		__ contentLine,
-		String htmlContent,
-		String linkClass,
-		AtomicReference<FlowContent<?>> lightAreaRef
-	) throws ServletException, IOException {
-		if(req == null) {
-			contentLine.unsafe(htmlContent);
-		} else {
-			Writer unsafe = contentLine.getRawUnsafe();
-			int len = htmlContent.length();
-			int pos = 0;
-			while(pos < len) {
-				char ch = htmlContent.charAt(pos++);
-				if(ch == '@') {
-					// TODO: regionsMatches would be faster than repeated substring
-					if((pos+4)<len && htmlContent.substring(pos, pos+4).equalsIgnoreCase("URL(")) {
-						int endPos=htmlContent.indexOf(')', pos+4);
-						if(endPos==-1) throw new IllegalArgumentException("Unable to find closing parenthesis for @URL( substitution, pos="+pos);
-						String className=htmlContent.substring(pos+4, endPos);
-						encodeTextInXhtmlAttribute(req.getEncodedURLForClass(className, resp), unsafe);
-						pos=endPos+1;
-					} else if((pos+16)<len && htmlContent.substring(pos, pos+16).equalsIgnoreCase("BEGIN_LIGHT_AREA")) {
-						if(lightAreaRef.get() != null) throw new IllegalStateException("@BEGIN_LIGHT_AREA may not be nested");
-						FlowContent<?> lightArea = layout.startLightArea(req, resp, contentLine);
-						if(lightArea == null) throw new AssertionError("lightArea == null");
-						lightAreaRef.set(lightArea);
-						pos+=16;
-					} else if((pos+14)<len && htmlContent.substring(pos, pos+14).equalsIgnoreCase("END_LIGHT_AREA")) {
-						FlowContent<?> lightArea = lightAreaRef.get();
-						if(lightArea == null) throw new IllegalStateException("@END_LIGHT_AREA does not have matching @BEGIN_LIGHT_AREA");
-						layout.endLightArea(req, resp, lightArea);
-						lightAreaRef.set(null);
-						pos+=14;
-					} else if((pos+16)<len && htmlContent.substring(pos, pos+16).equalsIgnoreCase("END_CONTENT_LINE")) {
-						layout.endContentLine(req, resp, contentLine);
-						pos+=16;
-					} else if((pos+32)<len && htmlContent.substring(pos, pos+32).equalsIgnoreCase("PRINT_CONTENT_HORIZONTAL_DIVIDER")) {
-						layout.contentHorizontalDivider(req, resp, content);
-						pos+=32;
-					} else if((pos+18)<len && htmlContent.substring(pos, pos+18).equalsIgnoreCase("START_CONTENT_LINE")) {
-						contentLine = layout.startContentLine(req, resp, content);
-						unsafe = contentLine.getRawUnsafe();
-						pos+=18;
-					} else if((pos+10)<len && htmlContent.substring(pos, pos+10).equalsIgnoreCase("LINK_CLASS")) {
-						unsafe.write(linkClass==null?"aoLightLink":linkClass);
-						pos+=10;
-					} else {
-						unsafe.write('@');
-					}
-				} else {
-					unsafe.write(ch);
-				}
-			}
-		}
-		return contentLine;
-	}
+  /**
+   * Prints HTML content, parsing for special <code>@</code> tags.  Types of tags include:
+   * <ul>
+   *   <li>@URL(classname)    Loads a WebPage of the given class and builds a URL to it</li>
+   *   <li>@BEGIN_LIGHT_AREA  Calls {@link WebPageLayout#startLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}</li>
+   *   <li>@END_LIGHT_AREA    Calls {@link WebPageLayout#endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}</li>
+   *   <li>@END_CONTENT_LINE  Calls {@link WebPageLayout#endContentLine(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}</li>
+   *   <li>@PRINT_CONTENT_HORIZONTAL_DIVIDER  Calls {@link WebPageLayout#contentHorizontalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)}</li>
+   *   <li>@START_CONTENT_LINE  Calls {@link WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)}</li>
+   *   <li>@LINK_CLASS        The preferred link class for this element</li>
+   * </ul>
+   *
+   * @return  The current {@code contentLine}, which may have been replaced by a call to
+   *          {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
+   *          or {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.
+   *
+   * @see  #printHTMLStream(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.ContentEE, com.aoapps.html.servlet.FlowContent, java.io.InputStream, java.lang.String, java.util.concurrent.atomic.AtomicReference)
+   */
+  @SuppressWarnings("deprecation")
+  public static <__ extends FlowContent<__>> __ printHTML(
+    WebSiteRequest req,
+    HttpServletResponse resp,
+    WebPageLayout layout,
+    ContentEE<?> content,
+    __ contentLine,
+    String htmlContent,
+    String linkClass,
+    AtomicReference<FlowContent<?>> lightAreaRef
+  ) throws ServletException, IOException {
+    if (req == null) {
+      contentLine.unsafe(htmlContent);
+    } else {
+      Writer unsafe = contentLine.getRawUnsafe();
+      int len = htmlContent.length();
+      int pos = 0;
+      while (pos < len) {
+        char ch = htmlContent.charAt(pos++);
+        if (ch == '@') {
+          // TODO: regionsMatches would be faster than repeated substring
+          if ((pos+4)<len && htmlContent.substring(pos, pos+4).equalsIgnoreCase("URL(")) {
+            int endPos=htmlContent.indexOf(')', pos+4);
+            if (endPos == -1) {
+              throw new IllegalArgumentException("Unable to find closing parenthesis for @URL( substitution, pos="+pos);
+            }
+            String className=htmlContent.substring(pos+4, endPos);
+            encodeTextInXhtmlAttribute(req.getEncodedURLForClass(className, resp), unsafe);
+            pos=endPos+1;
+          } else if ((pos+16)<len && htmlContent.substring(pos, pos+16).equalsIgnoreCase("BEGIN_LIGHT_AREA")) {
+            if (lightAreaRef.get() != null) {
+              throw new IllegalStateException("@BEGIN_LIGHT_AREA may not be nested");
+            }
+            FlowContent<?> lightArea = layout.startLightArea(req, resp, contentLine);
+            if (lightArea == null) {
+              throw new AssertionError("lightArea == null");
+            }
+            lightAreaRef.set(lightArea);
+            pos+=16;
+          } else if ((pos+14)<len && htmlContent.substring(pos, pos+14).equalsIgnoreCase("END_LIGHT_AREA")) {
+            FlowContent<?> lightArea = lightAreaRef.get();
+            if (lightArea == null) {
+              throw new IllegalStateException("@END_LIGHT_AREA does not have matching @BEGIN_LIGHT_AREA");
+            }
+            layout.endLightArea(req, resp, lightArea);
+            lightAreaRef.set(null);
+            pos+=14;
+          } else if ((pos+16)<len && htmlContent.substring(pos, pos+16).equalsIgnoreCase("END_CONTENT_LINE")) {
+            layout.endContentLine(req, resp, contentLine);
+            pos+=16;
+          } else if ((pos+32)<len && htmlContent.substring(pos, pos+32).equalsIgnoreCase("PRINT_CONTENT_HORIZONTAL_DIVIDER")) {
+            layout.contentHorizontalDivider(req, resp, content);
+            pos+=32;
+          } else if ((pos+18)<len && htmlContent.substring(pos, pos+18).equalsIgnoreCase("START_CONTENT_LINE")) {
+            contentLine = layout.startContentLine(req, resp, content);
+            unsafe = contentLine.getRawUnsafe();
+            pos+=18;
+          } else if ((pos+10)<len && htmlContent.substring(pos, pos+10).equalsIgnoreCase("LINK_CLASS")) {
+            unsafe.write(linkClass == null?"aoLightLink":linkClass);
+            pos+=10;
+          } else {
+            unsafe.write('@');
+          }
+        } else {
+          unsafe.write(ch);
+        }
+      }
+    }
+    return contentLine;
+  }
 
-	private static final String[] tags={
-		"@PRINT_CONTENT_HORIZONTAL_DIVIDER",
-		"@START_CONTENT_LINE",
-		"@BEGIN_LIGHT_AREA",
-		"@END_CONTENT_LINE",
-		"@END_LIGHT_AREA",
-		"@LINK_CLASS",
-		"@URL"
-	};
+  private static final String[] tags={
+    "@PRINT_CONTENT_HORIZONTAL_DIVIDER",
+    "@START_CONTENT_LINE",
+    "@BEGIN_LIGHT_AREA",
+    "@END_CONTENT_LINE",
+    "@END_LIGHT_AREA",
+    "@LINK_CLASS",
+    "@URL"
+  };
 
-	/**
-	 * @return  The current {@code contentLine}, which may have been replaced by a call to
-	 *          {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
-	 *          or {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.
-	 *
-	 * @see  #printHTML(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.ContentEE, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, java.util.concurrent.atomic.AtomicReference)
-	 */
-	@SuppressWarnings("deprecation")
-	public static <__ extends FlowContent<__>> __ printHTMLStream(
-		WebSiteRequest req,
-		HttpServletResponse resp,
-		WebPageLayout layout,
-		ContentEE<?> content,
-		__ contentLine,
-		InputStream in,
-		String linkClass,
-		AtomicReference<FlowContent<?>> lightAreaRef
-	) throws ServletException, IOException {
-		if(in == null) throw new NullPointerException("in is null");
-		Reader reader = new InputStreamReader(in);
-		if(req == null) {
-			IoUtils.copy(reader, contentLine.unsafe());
-		} else {
-			Writer unsafe = contentLine.getRawUnsafe();
-			StringBuilder buffer = null;
-			int ch;
-			while((ch=reader.read())!=-1) {
-				if(ch=='@') {
-					if(buffer==null) buffer=new StringBuilder();
-					// Read until a tag is matched, or until a tag cannot be matched
-					buffer.append('@');
-				Loop:
-					while((ch=reader.read())!=-1) {
-						// If @ found, print buffer and reset for next tag
-						if(ch=='@') {
-							unsafe.write(buffer.toString());
-							buffer.setLength(0);
-							buffer.append('@');
-						} else {
-							buffer.append((char)ch);
-							String tagPart=buffer.toString();
-							// Does one of the tags begin with or match this tag
-							boolean found=false;
-							for(int c=0;c<tags.length;c++) {
-								String tag=tags[c];
-								if(tag.length()>=tagPart.length()) {
-									if(tags[c].equalsIgnoreCase(tagPart)) {
-										if(c == 0) layout.contentHorizontalDivider(req, resp, content);
-										else if(c == 1) {
-											contentLine = layout.startContentLine(req, resp, content);
-											unsafe = contentLine.getRawUnsafe();
-										}
-										else if(c == 2) {
-											if(lightAreaRef.get() != null) throw new IllegalStateException("@BEGIN_LIGHT_AREA may not be nested");
-											FlowContent<?> lightArea = layout.startLightArea(req, resp, contentLine);
-											if(lightArea == null) throw new AssertionError("lightArea == null");
-											lightAreaRef.set(lightArea);
-										}
-										else if(c==3) layout.endContentLine(req, resp, contentLine);
-										else if(c == 4) {
-											FlowContent<?> lightArea = lightAreaRef.get();
-											if(lightArea == null) throw new IllegalStateException("@END_LIGHT_AREA does not have matching @BEGIN_LIGHT_AREA");
-											layout.endLightArea(req, resp, lightArea);
-											lightAreaRef.set(null);
-										}
-										else if(c==5) unsafe.write(linkClass == null ? "aoLightLink" : linkClass);
-										else if(c==6) {
-											// Read up to a ')'
-											while((ch=reader.read())!=-1) {
-												if(ch==')') {
-													String className=buffer.toString().substring(5, buffer.length());
-													encodeTextInXhtmlAttribute(req.getEncodedURLForClass(className, resp), unsafe);
-													buffer.setLength(0);
-													break;
-												} else buffer.append((char)ch);
-											}
-											if(buffer.length()>0) throw new IllegalArgumentException("Unable to find closing parenthesis for @URL( substitution, buffer="+buffer.toString());
-										} else throw new RuntimeException("This index should not be used because it is biffer than tags.length");
-										buffer.setLength(0);
-										break Loop;
-									} else if(tags[c].toUpperCase().startsWith(tagPart.toUpperCase())) {
-										found=true;
-										break;
-									}
-								} else {
-									// Sorted with longest first, can break here
-									break;
-								}
-							}
-							if(!found) {
-								unsafe.write(tagPart);
-								buffer.setLength(0);
-								break;
-							}
-						}
-					}
-				} else {
-					unsafe.write((char)ch);
-				}
-			}
-		}
-		return contentLine;
-	}
+  /**
+   * @return  The current {@code contentLine}, which may have been replaced by a call to
+   *          {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
+   *          or {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.
+   *
+   * @see  #printHTML(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.ContentEE, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, java.util.concurrent.atomic.AtomicReference)
+   */
+  @SuppressWarnings("deprecation")
+  public static <__ extends FlowContent<__>> __ printHTMLStream(
+    WebSiteRequest req,
+    HttpServletResponse resp,
+    WebPageLayout layout,
+    ContentEE<?> content,
+    __ contentLine,
+    InputStream in,
+    String linkClass,
+    AtomicReference<FlowContent<?>> lightAreaRef
+  ) throws ServletException, IOException {
+    if (in == null) {
+      throw new NullPointerException("in is null");
+    }
+    Reader reader = new InputStreamReader(in);
+    if (req == null) {
+      IoUtils.copy(reader, contentLine.unsafe());
+    } else {
+      Writer unsafe = contentLine.getRawUnsafe();
+      StringBuilder buffer = null;
+      int ch;
+      while ((ch=reader.read()) != -1) {
+        if (ch == '@') {
+          if (buffer == null) {
+            buffer=new StringBuilder();
+          }
+          // Read until a tag is matched, or until a tag cannot be matched
+          buffer.append('@');
+        Loop:
+          while ((ch=reader.read()) != -1) {
+            // If @ found, print buffer and reset for next tag
+            if (ch == '@') {
+              unsafe.write(buffer.toString());
+              buffer.setLength(0);
+              buffer.append('@');
+            } else {
+              buffer.append((char)ch);
+              String tagPart=buffer.toString();
+              // Does one of the tags begin with or match this tag
+              boolean found=false;
+              for (int c=0;c<tags.length;c++) {
+                String tag=tags[c];
+                if (tag.length() >= tagPart.length()) {
+                  if (tags[c].equalsIgnoreCase(tagPart)) {
+                    if (c == 0) {
+                      layout.contentHorizontalDivider(req, resp, content);
+                    } else if (c == 1) {
+                      contentLine = layout.startContentLine(req, resp, content);
+                      unsafe = contentLine.getRawUnsafe();
+                    } else if (c == 2) {
+                      if (lightAreaRef.get() != null) {
+                        throw new IllegalStateException("@BEGIN_LIGHT_AREA may not be nested");
+                      }
+                      FlowContent<?> lightArea = layout.startLightArea(req, resp, contentLine);
+                      if (lightArea == null) {
+                        throw new AssertionError("lightArea == null");
+                      }
+                      lightAreaRef.set(lightArea);
+                    } else if (c == 3) {
+                      layout.endContentLine(req, resp, contentLine);
+                    } else if (c == 4) {
+                      FlowContent<?> lightArea = lightAreaRef.get();
+                      if (lightArea == null) {
+                        throw new IllegalStateException("@END_LIGHT_AREA does not have matching @BEGIN_LIGHT_AREA");
+                      }
+                      layout.endLightArea(req, resp, lightArea);
+                      lightAreaRef.set(null);
+                    } else if (c == 5) {
+                      unsafe.write(linkClass == null ? "aoLightLink" : linkClass);
+                    } else if (c == 6) {
+                      // Read up to a ')'
+                      while ((ch=reader.read()) != -1) {
+                        if (ch == ')') {
+                          String className=buffer.toString().substring(5, buffer.length());
+                          encodeTextInXhtmlAttribute(req.getEncodedURLForClass(className, resp), unsafe);
+                          buffer.setLength(0);
+                          break;
+                        } else {
+                          buffer.append((char)ch);
+                        }
+                      }
+                      if (buffer.length()>0) {
+                        throw new IllegalArgumentException("Unable to find closing parenthesis for @URL( substitution, buffer="+buffer.toString());
+                      }
+                    } else {
+                      throw new RuntimeException("This index should not be used because it is biffer than tags.length");
+                    }
+                    buffer.setLength(0);
+                    break Loop;
+                  } else if (tags[c].toUpperCase().startsWith(tagPart.toUpperCase())) {
+                    found=true;
+                    break;
+                  }
+                } else {
+                  // Sorted with longest first, can break here
+                  break;
+                }
+              }
+              if (!found) {
+                unsafe.write(tagPart);
+                buffer.setLength(0);
+                break;
+              }
+            }
+          }
+        } else {
+          unsafe.write((char)ch);
+        }
+      }
+    }
+    return contentLine;
+  }
 }

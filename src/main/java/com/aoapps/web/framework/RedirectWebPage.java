@@ -38,127 +38,131 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class RedirectWebPage extends WebPage {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	private final WebPage parent;
-	private final String path;
-	private final int redirectType;
-	private final String description;
-	private final String keywords;
-	private final String navImageAlt;
-	private final String title;
+  private final WebPage parent;
+  private final String path;
+  private final int redirectType;
+  private final String description;
+  private final String keywords;
+  private final String navImageAlt;
+  private final String title;
 
-	/**
-	 * Performs a redirect.
-	 *
-	 * @param  path  the context-relative path, with a preceding slash (/)
-	 */
-	public RedirectWebPage(ServletContext context, WebPage parent, String path, int redirectType, String description, String keywords, String navImageAlt, String title) {
-		super();
-		setServletContext(context);
-		this.parent = parent;
-		this.path = path;
-		this.redirectType = redirectType;
-		this.description = description;
-		this.keywords = keywords;
-		this.navImageAlt = navImageAlt;
-		this.title = title;
-	}
+  /**
+   * Performs a redirect.
+   *
+   * @param  path  the context-relative path, with a preceding slash (/)
+   */
+  public RedirectWebPage(ServletContext context, WebPage parent, String path, int redirectType, String description, String keywords, String navImageAlt, String title) {
+    super();
+    setServletContext(context);
+    this.parent = parent;
+    this.path = path;
+    this.redirectType = redirectType;
+    this.description = description;
+    this.keywords = keywords;
+    this.navImageAlt = navImageAlt;
+    this.title = title;
+  }
 
-	@Override
-	protected WebSiteRequest getWebSiteRequest(HttpServletRequest req) throws ServletException {
-		return new WebSiteRequest(this, req);
-	}
+  @Override
+  protected WebSiteRequest getWebSiteRequest(HttpServletRequest req) throws ServletException {
+    return new WebSiteRequest(this, req);
+  }
 
-	@Override
-	public WebPage getParent() {
-		return parent;
-	}
+  @Override
+  public WebPage getParent() {
+    return parent;
+  }
 
-	/**
-	 * Never do GET, redirect-only.
-	 */
-	@Override
-	public final void doGet(
-		WebSiteRequest req,
-		HttpServletResponse resp,
-		DocumentEE document
-	) throws ServletException, IOException {
-		// resp null during search
-		if(resp != null) resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-	}
+  /**
+   * Never do GET, redirect-only.
+   */
+  @Override
+  public final void doGet(
+    WebSiteRequest req,
+    HttpServletResponse resp,
+    DocumentEE document
+  ) throws ServletException, IOException {
+    // resp null during search
+    if (resp != null) {
+      resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+    }
+  }
 
-	/**
-	 * Never do GET, redirect-only.
-	 */
-	@Override
-	public final <__ extends FlowContent<__>> void doGet(
-		WebSiteRequest req,
-		HttpServletResponse resp,
-		WebPageLayout layout,
-		__ flow
-	) throws ServletException, IOException {
-		// resp null during search
-		if(resp != null) resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-	}
+  /**
+   * Never do GET, redirect-only.
+   */
+  @Override
+  public final <__ extends FlowContent<__>> void doGet(
+    WebSiteRequest req,
+    HttpServletResponse resp,
+    WebPageLayout layout,
+    __ flow
+  ) throws ServletException, IOException {
+    // resp null during search
+    if (resp != null) {
+      resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+    }
+  }
 
-	/**
-	 * Never do POST, redirect-only.
-	 */
-	@Override
-	public final void doPost(
-		WebSiteRequest req,
-		HttpServletResponse resp,
-		DocumentEE document
-	) throws ServletException, IOException {
-		resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-	}
+  /**
+   * Never do POST, redirect-only.
+   */
+  @Override
+  public final void doPost(
+    WebSiteRequest req,
+    HttpServletResponse resp,
+    DocumentEE document
+  ) throws ServletException, IOException {
+    resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+  }
 
-	/**
-	 * Never do POST, redirect-only.
-	 */
-	@Override
-	public final <__ extends FlowContent<__>> void doPost(
-		WebSiteRequest req,
-		HttpServletResponse resp,
-		WebPageLayout layout,
-		__ flow
-	) throws ServletException, IOException {
-		resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-	}
+  /**
+   * Never do POST, redirect-only.
+   */
+  @Override
+  public final <__ extends FlowContent<__>> void doPost(
+    WebSiteRequest req,
+    HttpServletResponse resp,
+    WebPageLayout layout,
+    __ flow
+  ) throws ServletException, IOException {
+    resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+  }
 
-	@Override
-	public String getRedirectURL(WebSiteRequest req) throws ServletException {
-		return path;
-	}
+  @Override
+  public String getRedirectURL(WebSiteRequest req) throws ServletException {
+    return path;
+  }
 
-	@Override
-	public int getRedirectType() {
-		return redirectType;
-	}
+  @Override
+  public int getRedirectType() {
+    return redirectType;
+  }
 
-	@Override
-	public String getURLPath() {
-		return path;
-	}
+  @Override
+  public String getURLPath() {
+    return path;
+  }
 
-	@Override
-	public String getDescription(WebSiteRequest req) {
-		return description;
-	}
+  @Override
+  public String getDescription(WebSiteRequest req) {
+    return description;
+  }
 
-	@Override
-	public String getKeywords(WebSiteRequest req) {
-		return keywords;
-	}
+  @Override
+  public String getKeywords(WebSiteRequest req) {
+    return keywords;
+  }
 
-	@Override
-	public String getNavImageAlt(WebSiteRequest req) {
-		return navImageAlt;
-	}
+  @Override
+  public String getNavImageAlt(WebSiteRequest req) {
+    return navImageAlt;
+  }
 
-	@Override
-	public String getTitle(WebSiteRequest req) {
-		return title;
-	}
+  @Override
+  public String getTitle(WebSiteRequest req) {
+    return title;
+  }
 }

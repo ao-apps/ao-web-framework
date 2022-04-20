@@ -30,55 +30,55 @@ package com.aoapps.web.framework;
  */
 public class SearchResult implements Comparable<SearchResult> {
 
-	private final String url;
-	private final float probability;
-	private final String title;
-	private final String description;
-	private final String author;
-	private final String authorHref;
+  private final String url;
+  private final float probability;
+  private final String title;
+  private final String description;
+  private final String author;
+  private final String authorHref;
 
-	public SearchResult(
-		String url,
-		float probability,
-		String title,
-		String description,
-		String author,
-		String authorHref
-	) {
-		this.url = url;
-		this.probability = probability;
-		this.title = title;
-		this.description = description;
-		this.author = author;
-		this.authorHref = authorHref;
-	}
+  public SearchResult(
+    String url,
+    float probability,
+    String title,
+    String description,
+    String author,
+    String authorHref
+  ) {
+    this.url = url;
+    this.probability = probability;
+    this.title = title;
+    this.description = description;
+    this.author = author;
+    this.authorHref = authorHref;
+  }
 
-	public String getUrl() {
-		return url;
-	}
+  public String getUrl() {
+    return url;
+  }
 
-	public float getProbability() {
-		return probability;
-	}
+  public float getProbability() {
+    return probability;
+  }
 
-	public String getTitle() {
-		return title;
-	}
+  public String getTitle() {
+    return title;
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public String getAuthor() {
-		return author;
-	}
+  public String getAuthor() {
+    return author;
+  }
 
-	public String getAuthorHref() {
-		return authorHref;
-	}
+  public String getAuthorHref() {
+    return authorHref;
+  }
 
-	@Override
-	public int compareTo(SearchResult other) {
-		return Float.compare(other.probability, probability);
-	}
+  @Override
+  public int compareTo(SearchResult other) {
+    return Float.compare(other.probability, probability);
+  }
 }

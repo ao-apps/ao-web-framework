@@ -37,18 +37,18 @@ import javax.servlet.http.HttpServletResponse;
  */
 public abstract class PreProcessPage extends ProcessPage {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	@Override
-	public <__ extends FlowContent<__>> __ printStream(
-		WebSiteRequest req,
-		HttpServletResponse resp,
-		WebPageLayout layout,
-		ContentEE<?> content,
-		__ contentLine,
-		InputStream in
-	) throws ServletException, IOException {
-		contentLine.pre__(pre -> printStreamStatic(pre, in));
-		return contentLine;
-	}
+  @Override
+  public <__ extends FlowContent<__>> __ printStream(
+    WebSiteRequest req,
+    HttpServletResponse resp,
+    WebPageLayout layout,
+    ContentEE<?> content,
+    __ contentLine,
+    InputStream in
+  ) throws ServletException, IOException {
+    contentLine.pre__(pre -> printStreamStatic(pre, in));
+    return contentLine;
+  }
 }

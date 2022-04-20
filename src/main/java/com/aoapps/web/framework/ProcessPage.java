@@ -35,28 +35,28 @@ import javax.servlet.http.HttpServletResponse;
  */
 public abstract class ProcessPage extends InputStreamPage {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	@Override
-	public InputStream getInputStream() throws IOException {
-		return getProcess().getInputStream();
-	}
+  @Override
+  public InputStream getInputStream() throws IOException {
+    return getProcess().getInputStream();
+  }
 
-	@Override
-	public long getLastModified(WebSiteRequest req, HttpServletResponse resp) {
-		return -1;
-	}
+  @Override
+  public long getLastModified(WebSiteRequest req, HttpServletResponse resp) {
+    return -1;
+  }
 
-	/**
-	 * Gets the process that the contents should be read from
-	 */
-	public abstract Process getProcess() throws IOException;
+  /**
+   * Gets the process that the contents should be read from
+   */
+  public abstract Process getProcess() throws IOException;
 
-	/**
-	 * The search format of this page is indexed.
-	 */
-	@Override
-	public long getSearchLastModified() throws ServletException {
-		return super.getLastModified(null, null);
-	}
+  /**
+   * The search format of this page is indexed.
+   */
+  @Override
+  public long getSearchLastModified() throws ServletException {
+    return super.getLastModified(null, null);
+  }
 }

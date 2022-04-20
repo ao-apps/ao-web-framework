@@ -38,34 +38,34 @@ import javax.servlet.http.HttpServletResponse;
  */
 public abstract class FilePage extends WebPage {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	@Override
-	public <__ extends FlowContent<__>> void doGet(
-		WebSiteRequest req,
-		HttpServletResponse resp,
-		WebPageLayout layout,
-		__ flow
-	) throws ServletException, IOException {
-		printFile(flow, getFile());
-	}
+  @Override
+  public <__ extends FlowContent<__>> void doGet(
+    WebSiteRequest req,
+    HttpServletResponse resp,
+    WebPageLayout layout,
+    __ flow
+  ) throws ServletException, IOException {
+    printFile(flow, getFile());
+  }
 
-	/**
-	 * Gets the file that the text should be read from.
-	 */
-	public abstract File getFile() throws IOException;
+  /**
+   * Gets the file that the text should be read from.
+   */
+  public abstract File getFile() throws IOException;
 
-	@Override
-	public long getLastModified(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
-		try {
-			return Math.max(super.getLastModified(req, resp), getFile().lastModified());
-		} catch(IOException e) {
-			throw new ServletException(e);
-		}
-	}
+  @Override
+  public long getLastModified(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
+    try {
+      return Math.max(super.getLastModified(req, resp), getFile().lastModified());
+    } catch (IOException e) {
+      throw new ServletException(e);
+    }
+  }
 
-	@SuppressWarnings("deprecation")
-	public static void printFile(Content<?, ?> content, File file) throws IOException {
-		FileUtils.copy(file, content.getRawUnsafe());
-	}
+  @SuppressWarnings("deprecation")
+  public static void printFile(Content<?, ?> content, File file) throws IOException {
+    FileUtils.copy(file, content.getRawUnsafe());
+  }
 }

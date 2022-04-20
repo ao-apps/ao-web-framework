@@ -39,52 +39,54 @@ import javax.servlet.http.HttpServletResponse;
  */
 public abstract class AutoSiteMap extends TreePage {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	/**
-	 * Recursively builds the list of all sites.
-	 */
-	private void buildData(Deque<String> path, WebPage page, List<TreePageData> data, WebSiteRequest req, HttpServletResponse resp) throws ServletException {
-		if(isVisible(page)) {
-			path.add(page.getShortTitle(req));
-			WebPage[] children = page.getCachedChildren(req, resp);
-			data.add(
-				new TreePageData(
-					req.getURL(page),
-					page.getDescription(req),
-					children.length > 0,
-					path
-				)
-			);
-			for(WebPage child : children) {
-				buildData(path, child, data, req, resp);
-			}
-			path.removeLast();
-		}
-	}
+  /**
+   * Recursively builds the list of all sites.
+   */
+  private void buildData(Deque<String> path, WebPage page, List<TreePageData> data, WebSiteRequest req, HttpServletResponse resp) throws ServletException {
+    if (isVisible(page)) {
+      path.add(page.getShortTitle(req));
+      WebPage[] children = page.getCachedChildren(req, resp);
+      data.add(
+        new TreePageData(
+          req.getURL(page),
+          page.getDescription(req),
+          children.length > 0,
+          path
+        )
+      );
+      for (WebPage child : children) {
+        buildData(path, child, data, req, resp);
+      }
+      path.removeLast();
+    }
+  }
 
-	/**
-	 * The content of this page will not be included in the internal search engine.
-	 */
-	@Override
-	public void doGet(
-		WebSiteRequest req,
-		HttpServletResponse resp,
-		DocumentEE document
-	) throws ServletException, IOException {
-		if(req != null) super.doGet(req, resp, document);
-	}
+  /**
+   * The content of this page will not be included in the internal search engine.
+   */
+  @Override
+  public void doGet(
+    WebSiteRequest req,
+    HttpServletResponse resp,
+    DocumentEE document
+  ) throws ServletException, IOException {
+    if (req != null) {
+      super.doGet(req, resp, document);
+    }
+  }
 
-	@Override
-	protected final List<? extends TreePageData> getTree(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
-		WebPage home=getRootPage();
-		List<TreePageData> data=new ArrayList<>();
-		buildData(new ArrayDeque<>(), home, data, req, resp);
-		return data;
-	}
+  @Override
+  protected final List<? extends TreePageData> getTree(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
+    WebPage home=getRootPage();
+    List<TreePageData> data=new ArrayList<>();
+    buildData(new ArrayDeque<>(), home, data, req, resp);
+    return data;
+  }
 
-	/**
-	 * Determines if a page should be visible in the generated maps.
-	 */
-	protected abstract boolean isVisible(WebPage page);
+  /**
+   * Determines if a page should be visible in the generated maps.
+   */
+  protected abstract boolean isVisible(WebPage page);
 }

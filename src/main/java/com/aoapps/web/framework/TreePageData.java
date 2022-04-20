@@ -30,46 +30,46 @@ import java.util.Collection;
  */
 public class TreePageData {
 
-	private final String url;
-	private final String description;
-	private final boolean hasChilren;
-	private final String[] path;
+  private final String url;
+  private final String description;
+  private final boolean hasChilren;
+  private final String[] path;
 
-	/**
-	 * @param path The path of display names.
-	 */
-	public TreePageData(String url, String description, boolean hasChildren, String ... path) {
-		this.url = url;
-		this.description = description;
-		this.hasChilren = hasChildren;
-		this.path = path;
-	}
+  /**
+   * @param path The path of display names.
+   */
+  public TreePageData(String url, String description, boolean hasChildren, String ... path) {
+    this.url = url;
+    this.description = description;
+    this.hasChilren = hasChildren;
+    this.path = path;
+  }
 
-	/**
-	 * @param path The path of display names, extracted via {@link Collection#toArray(java.lang.Object[])}
-	 */
-	public TreePageData(String url, String description, boolean hasChildren, Collection<? extends String> path) {
-		this(
-			url,
-			description,
-			hasChildren,
-			path.toArray(new String[path.size()])
-		);
-	}
+  /**
+   * @param path The path of display names, extracted via {@link Collection#toArray(java.lang.Object[])}
+   */
+  public TreePageData(String url, String description, boolean hasChildren, Collection<? extends String> path) {
+    this(
+      url,
+      description,
+      hasChildren,
+      path.toArray(new String[path.size()])
+    );
+  }
 
-	public String getUrl() {
-		return url;
-	}
+  public String getUrl() {
+    return url;
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public boolean hasChildren() {
-		return hasChilren;
-	}
+  public boolean hasChildren() {
+    return hasChilren;
+  }
 
-	public String[] getPath() {
-		return path;
-	}
+  public String[] getPath() {
+    return path;
+  }
 }
