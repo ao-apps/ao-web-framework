@@ -42,10 +42,10 @@ public abstract class FilePage extends WebPage {
 
   @Override
   public <__ extends FlowContent<__>> void doGet(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPageLayout layout,
-    __ flow
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPageLayout layout,
+      __ flow
   ) throws ServletException, IOException {
     printFile(flow, getFile());
   }

@@ -40,46 +40,61 @@ public final class UploadedFile {
   private final long create_time;
   private final WebSiteUser owner;
   private final String contentType;
-  private static class LastAccessLock {/* Empty lock class to help heap profile */}
-  private final LastAccessLock lastAccessLock=new LastAccessLock();
+
+  private static class LastAccessLock {
+    // Empty lock class to help heap profile
+  }
+  private final LastAccessLock lastAccessLock = new LastAccessLock();
   private long lastAccessed;
 
   UploadedFile(String filename, File storageFile, WebSiteUser owner, String contentType) {
     this.id = new Identifier(storageFile.getName());
-    this.filename=filename;
-    this.storageFile=storageFile;
-    this.create_time=this.lastAccessed=System.currentTimeMillis();
-    this.owner=owner;
-    this.contentType=contentType;
+    this.filename = filename;
+    this.storageFile = storageFile;
+    this.create_time = this.lastAccessed = System.currentTimeMillis();
+    this.owner = owner;
+    this.contentType = contentType;
   }
 
   public Identifier getID() {
-    synchronized (lastAccessLock) {lastAccessed=System.currentTimeMillis();}
+    synchronized (lastAccessLock) {
+      lastAccessed = System.currentTimeMillis();
+    }
     return id;
   }
 
   public String getFilename() {
-    synchronized (lastAccessLock) {lastAccessed=System.currentTimeMillis();}
+    synchronized (lastAccessLock) {
+      lastAccessed = System.currentTimeMillis();
+    }
     return filename;
   }
 
   public File getStorageFile() {
-    synchronized (lastAccessLock) {lastAccessed=System.currentTimeMillis();}
+    synchronized (lastAccessLock) {
+      lastAccessed = System.currentTimeMillis();
+    }
     return storageFile;
   }
 
   public long getCreateTime() {
-    synchronized (lastAccessLock) {lastAccessed=System.currentTimeMillis();}
+    synchronized (lastAccessLock) {
+      lastAccessed = System.currentTimeMillis();
+    }
     return create_time;
   }
 
   public WebSiteUser getOwner() {
-    synchronized (lastAccessLock) {lastAccessed=System.currentTimeMillis();}
+    synchronized (lastAccessLock) {
+      lastAccessed = System.currentTimeMillis();
+    }
     return owner;
   }
 
   public String getContentType() {
-    synchronized (lastAccessLock) {lastAccessed=System.currentTimeMillis();}
+    synchronized (lastAccessLock) {
+      lastAccessed = System.currentTimeMillis();
+    }
     return contentType;
   }
 

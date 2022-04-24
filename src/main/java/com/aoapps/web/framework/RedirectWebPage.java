@@ -80,9 +80,9 @@ public class RedirectWebPage extends WebPage {
    */
   @Override
   public final void doGet(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    DocumentEE document
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      DocumentEE document
   ) throws ServletException, IOException {
     // resp null during search
     if (resp != null) {
@@ -95,10 +95,10 @@ public class RedirectWebPage extends WebPage {
    */
   @Override
   public final <__ extends FlowContent<__>> void doGet(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPageLayout layout,
-    __ flow
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPageLayout layout,
+      __ flow
   ) throws ServletException, IOException {
     // resp null during search
     if (resp != null) {
@@ -111,9 +111,9 @@ public class RedirectWebPage extends WebPage {
    */
   @Override
   public final void doPost(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    DocumentEE document
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      DocumentEE document
   ) throws ServletException, IOException {
     resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
   }
@@ -123,10 +123,10 @@ public class RedirectWebPage extends WebPage {
    */
   @Override
   public final <__ extends FlowContent<__>> void doPost(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPageLayout layout,
-    __ flow
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPageLayout layout,
+      __ flow
   ) throws ServletException, IOException {
     resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
   }

@@ -49,12 +49,12 @@ public abstract class AutoSiteMap extends TreePage {
       path.add(page.getShortTitle(req));
       WebPage[] children = page.getCachedChildren(req, resp);
       data.add(
-        new TreePageData(
-          req.getURL(page),
-          page.getDescription(req),
-          children.length > 0,
-          path
-        )
+          new TreePageData(
+              req.getURL(page),
+              page.getDescription(req),
+              children.length > 0,
+              path
+          )
       );
       for (WebPage child : children) {
         buildData(path, child, data, req, resp);
@@ -68,9 +68,9 @@ public abstract class AutoSiteMap extends TreePage {
    */
   @Override
   public void doGet(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    DocumentEE document
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      DocumentEE document
   ) throws ServletException, IOException {
     if (req != null) {
       super.doGet(req, resp, document);
@@ -79,8 +79,8 @@ public abstract class AutoSiteMap extends TreePage {
 
   @Override
   protected final List<? extends TreePageData> getTree(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
-    WebPage home=getRootPage();
-    List<TreePageData> data=new ArrayList<>();
+    WebPage home = getRootPage();
+    List<TreePageData> data = new ArrayList<>();
     buildData(new ArrayDeque<>(), home, data, req, resp);
     return data;
   }

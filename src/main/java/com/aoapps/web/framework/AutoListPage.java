@@ -47,23 +47,25 @@ public abstract class AutoListPage extends WebPage {
   @Override
   @SuppressWarnings("unchecked")
   public <__ extends FlowContent<__>> void doGet(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPageLayout layout,
-    __ flow
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPageLayout layout,
+      __ flow
   ) throws ServletException, IOException {
     if (req != null) {
       layout.content(req, resp, this, flow, content -> {
         layout.contentTitle(req, resp, this, content);
         layout.contentHorizontalDivider(req, resp, content);
         FlowContent<?> contentLine = layout.startContentLine(req, resp, content);
-        contentLine = printContentStart(req, resp, layout, content, (FlowContent)contentLine); {
+        contentLine = printContentStart(req, resp, layout, content, (FlowContent) contentLine);
+        {
           contentLine.table().cellpadding(0).cellspacing(10).__(table -> table
-            .tbody__(tbody ->
-              printPageList(tbody, req, resp, this, layout)
-            )
+                  .tbody__(tbody ->
+                      printPageList(tbody, req, resp, this, layout)
+                  )
           );
-        } layout.endContentLine(req, resp, contentLine);
+        }
+        layout.endContentLine(req, resp, contentLine);
       });
     }
   }
@@ -77,11 +79,11 @@ public abstract class AutoListPage extends WebPage {
    */
   @SuppressWarnings("NoopMethodInAbstractClass")
   public <__ extends FlowContent<__>> __ printContentStart(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPageLayout layout,
-    ContentEE<?> content,
-    __ contentLine
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPageLayout layout,
+      ContentEE<?> content,
+      __ contentLine
   ) throws ServletException, IOException {
     // Do nothing
     return contentLine;
@@ -95,11 +97,11 @@ public abstract class AutoListPage extends WebPage {
     for (int c = 0; c < len; c++) {
       WebPage page = pages[c];
       tbody.tr__(tr -> tr
-        .td().style("white-space:nowrap").__(td -> td
-          .a().clazz("aoLightLink").href(req == null ? null : req.getEncodedURL(page, resp)).__(page.getShortTitle(req))
-        )
-        .td().style("width:12px", "white-space:nowrap").__("\u00A0")
-        .td().style("white-space:nowrap").__(page.getDescription(req))
+              .td().style("white-space:nowrap").__(td -> td
+                  .a().clazz("aoLightLink").href(req == null ? null : req.getEncodedURL(page, resp)).__(page.getShortTitle(req))
+          )
+              .td().style("width:12px", "white-space:nowrap").__("\u00A0")
+              .td().style("white-space:nowrap").__(page.getDescription(req))
       );
     }
   }

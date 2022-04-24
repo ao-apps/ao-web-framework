@@ -37,8 +37,8 @@ public final class UploadedFileTypeMap extends FileTypeMap {
   private final ServletContext context;
 
   public UploadedFileTypeMap(WebSiteUser owner, ServletContext context) {
-    this.owner=owner;
-    this.context=context;
+    this.owner = owner;
+    this.context = context;
   }
 
   @Override
@@ -48,12 +48,12 @@ public final class UploadedFileTypeMap extends FileTypeMap {
 
   @Override
   public String getContentType(String filename) {
-    int pos=filename.lastIndexOf('/');
+    int pos = filename.lastIndexOf('/');
     if (pos == -1) {
-      pos=filename.lastIndexOf('\\');
+      pos = filename.lastIndexOf('\\');
     }
     if (pos != -1) {
-      filename=filename.substring(pos+1);
+      filename = filename.substring(pos + 1);
     }
     Identifier id = new Identifier(filename);
     UploadedFile uf = WebSiteRequest.getUploadedFile(owner, id, context);

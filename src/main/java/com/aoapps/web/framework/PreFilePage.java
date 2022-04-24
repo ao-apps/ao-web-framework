@@ -39,10 +39,10 @@ public abstract class PreFilePage extends FilePage {
 
   @Override
   public <__ extends FlowContent<__>> void doGet(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPageLayout layout,
-    __ flow
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPageLayout layout,
+      __ flow
   ) throws ServletException, IOException {
     flow.pre__(pre -> printFile(pre, getFile()));
   }

@@ -45,16 +45,16 @@ public abstract class DumpURLs extends WebPage {
 
   @Override
   public <__ extends FlowContent<__>> void doGet(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPageLayout layout,
-    __ flow
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPageLayout layout,
+      __ flow
   ) throws ServletException, IOException {
     flow.text(
-      "The following is a list of all unique servlet URLs in the site and may be used to add this site to\n"
-      + "search engines:"
+        "The following is a list of all unique servlet URLs in the site and may be used to add this site to\n"
+            + "search engines:"
     )
-    .pre__(pre -> printURLs(req, resp, pre, getRootPage(), new HashSet<>()));
+        .pre__(pre -> printURLs(req, resp, pre, getRootPage(), new HashSet<>()));
   }
 
   @Override
@@ -81,12 +81,12 @@ public abstract class DumpURLs extends WebPage {
   @Override
   @SuppressWarnings("NoopMethodInAbstractClass")
   public void search(
-    String[] words,
-    WebSiteRequest req,
-    HttpServletResponse response,
-    List<SearchResult> results,
-    CharArrayWriter buffer,
-    Set<WebPage> finishedPages
+      String[] words,
+      WebSiteRequest req,
+      HttpServletResponse response,
+      List<SearchResult> results,
+      CharArrayWriter buffer,
+      Set<WebPage> finishedPages
   ) {
     // Do nothing
   }

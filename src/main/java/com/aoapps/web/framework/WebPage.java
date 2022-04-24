@@ -112,8 +112,8 @@ public abstract class WebPage extends PageServlet {
    * Caches instances of <code>WebPage</code> for reuse.  The storage is a
    * <code>HashMap</code> of <code>ArrayList</code>s, keyed on class.
    *
-   * @see  #getWebPage(ServletContext,Class,WebSiteRequest)
-   * @see  #getWebPage(ServletContext,Class,Object)
+   * @see  #getWebPage(ServletContext, Class, WebSiteRequest)
+   * @see  #getWebPage(ServletContext, Class, Object)
    */
   private static final Map<Class<?>, List<WebPage>> webPageCache = new HashMap<>();
 
@@ -127,7 +127,7 @@ public abstract class WebPage extends PageServlet {
   /**
    * The last modified time of the content in the search index or <code>-1</code> if not indexed.
    */
-  private long searchLastModified=-1;
+  private long searchLastModified = -1;
 
   /**
    * The number of bytes in the document at last index time, used to properly weight the search results.
@@ -137,15 +137,16 @@ public abstract class WebPage extends PageServlet {
   /**
    * The words that are indexed, sorted.
    */
-  private final List<String> searchWords=new SortedArrayList<>();
+  private final List<String> searchWords = new SortedArrayList<>();
 
   /**
    * The number times each word appears in the document.
    */
-  private final List<int[]> searchCounts=new ArrayList<>();
+  private final List<int[]> searchCounts = new ArrayList<>();
 
   // TODO: Use a full HTML parser for extraction, JTidy or newer alternative
   public static final Pattern reHTMLPattern = Pattern.compile("<[^>]*>");
+
   //private static Pattern reWordPattern = Pattern.compile("(\\w*)");
 
   /**
@@ -156,11 +157,11 @@ public abstract class WebPage extends PageServlet {
    */
   @SuppressWarnings("NoopMethodInAbstractClass")
   public void configureResources(
-    ServletContext servletContext,
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPageLayout layout,
-    Registry pageRegistry
+      ServletContext servletContext,
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPageLayout layout,
+      Registry pageRegistry
   ) {
     // Do nothing
   }
@@ -176,20 +177,20 @@ public abstract class WebPage extends PageServlet {
     // }
 
     // Iterate through all the words in the content
-    StringTokenizer st=new StringTokenizer(words, " ");
+    StringTokenizer st = new StringTokenizer(words, " ");
     while (st.hasMoreTokens()) {
-      String word=st.nextToken().toLowerCase(); //reWordPattern.getMatch(st.nextToken()).toString(1);
+      String word = st.nextToken().toLowerCase(); //reWordPattern.getMatch(st.nextToken()).toString(1);
 
       // Find the index of the word
-      int index=searchWords.indexOf(word);
+      int index = searchWords.indexOf(word);
       if (index == -1) {
         // Add to the word list
         searchWords.add(word);
-        index=searchWords.indexOf(word);
-        searchCounts.add(index, new int[] {weight});
+        index = searchWords.indexOf(word);
+        searchCounts.add(index, new int[]{weight});
       } else {
         // Increment the existing count
-        searchCounts.get(index)[0]+=weight;
+        searchCounts.get(index)[0] += weight;
       }
     }
   }
@@ -330,7 +331,7 @@ public abstract class WebPage extends PageServlet {
     long time = getLastModified(req, resp);
     WebPage[] children = getCachedChildren(req, resp);
     int len = children.length;
-    for (int c=0; c<len; c++) {
+    for (int c = 0; c < len; c++) {
       long time2 = children[c].getLastModifiedRecursive(req, resp);
       if (time2 > time) {
         time = time2;
@@ -343,12 +344,12 @@ public abstract class WebPage extends PageServlet {
    * Recursively gets the most recent modification time of a file or directory.
    */
   public static long getLastModifiedRecursive(File file) {
-    long time=file.lastModified();
+    long time = file.lastModified();
     if (file.isDirectory()) {
-      String[] list=file.list();
+      String[] list = file.list();
       if (list != null) {
         int len = list.length;
-        for (int c=0; c<len; c++) {
+        for (int c = 0; c < len; c++) {
           long time2 = getLastModifiedRecursive(new File(file, list[c]));
           if (time2 > time) {
             time = time2;
@@ -443,19 +444,19 @@ public abstract class WebPage extends PageServlet {
     Serialization serialization = getSerialization(req);
     final Charset charset = AnyDocument.ENCODING;
     ServletUtil.setContentType(
-      resp,
-      serialization.getContentType(),
-      charset
+        resp,
+        serialization.getContentType(),
+        charset
     );
     // Set additional headers
     setHeaders(req, resp);
     Doctype doctype = getDoctype(req); // Lookup once here for constant value.  Do not inline into the anonymous class below.
     return new DocumentEE(
-      resp,
-      new EncodingContextEE(doctype, serialization, charset, resp),
-      resp.getWriter(),
-      getAutonli(req),
-      getIndent(req)
+        resp,
+        new EncodingContextEE(doctype, serialization, charset, resp),
+        resp.getWriter(),
+        getAutonli(req),
+        getIndent(req)
     );
   }
 
@@ -482,9 +483,9 @@ public abstract class WebPage extends PageServlet {
     resp.resetBuffer();
     // Set the content type
     ServletUtil.setContentType(
-      resp,
-      SerializationEE.get(getServletContext(), req).getContentType(),
-      AnyDocument.ENCODING
+        resp,
+        SerializationEE.get(getServletContext(), req).getContentType(),
+        AnyDocument.ENCODING
     );
     // Set additional headers
     setHeaders(req, resp);
@@ -492,7 +493,7 @@ public abstract class WebPage extends PageServlet {
   }
 
   private static final ScopeEE.Request.Attribute<HttpServletResponse> RESPONSE_REQUEST_ATTRIBUTE =
-    ScopeEE.REQUEST.attribute(WebPage.class.getName() + ".resp");
+      ScopeEE.REQUEST.attribute(WebPage.class.getName() + ".resp");
 
   /**
    * Stores the current response in a request attribute named {@link #RESPONSE_REQUEST_ATTRIBUTE}.
@@ -534,7 +535,7 @@ public abstract class WebPage extends PageServlet {
    *   <li>Finally, dispatches the request to {@link #doGet(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}.</li>
    * </ol>
    *
-   * @see #doGet(WebSiteRequest,HttpServletResponse)
+   * @see #doGet(WebSiteRequest, HttpServletResponse)
    */
   @Override
   protected final void doGet(HttpServletRequest httpReq, HttpServletResponse resp) throws ServletException, IOException {
@@ -567,13 +568,13 @@ public abstract class WebPage extends PageServlet {
     String redirect = page.getRedirectURL(req);
     if (redirect != null) {
       HttpServletUtil.sendRedirect(
-        page.getRedirectType(),
-        req,
-        resp,
-        redirect,
-        EmptyURIParameters.getInstance(),
-        true,
-        false
+          page.getRedirectType(),
+          req,
+          resp,
+          redirect,
+          EmptyURIParameters.getInstance(),
+          true,
+          false
       );
       return;
     }
@@ -631,9 +632,9 @@ public abstract class WebPage extends PageServlet {
   //       Finally, this could all go to a writer that builds word indexes on-the-fly.
   //       This could support deferred attributes (at least in a servlet context), to avoid processing attributes that will be discarded
   public void doGet(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    DocumentEE document
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      DocumentEE document
   ) throws ServletException, IOException {
     WebPageLayout layout = getWebPageLayout(req);
     layout.doPage(req, resp, this, document, null, flow -> doGet(req, resp, layout, flow));
@@ -651,10 +652,10 @@ public abstract class WebPage extends PageServlet {
    */
   @SuppressWarnings("NoopMethodInAbstractClass")
   public <__ extends FlowContent<__>> void doGet(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPageLayout layout,
-    __ flow
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPageLayout layout,
+      __ flow
   ) throws ServletException, IOException {
     // Do nothing
   }
@@ -728,22 +729,22 @@ public abstract class WebPage extends PageServlet {
     String redirect = page.getRedirectURL(req);
     if (redirect != null) {
       HttpServletUtil.sendRedirect(
-        page.getRedirectType(),
-        req,
-        resp,
-        redirect,
-        EmptyURIParameters.getInstance(),
-        true,
-        false
+          page.getRedirectType(),
+          req,
+          resp,
+          redirect,
+          EmptyURIParameters.getInstance(),
+          true,
+          false
       );
       return;
     }
     if (
-      isLogout
-      || (
-        req.getParameter(WebSiteRequest.LOGIN_USERNAME) != null
-        && req.getParameter(WebSiteRequest.LOGIN_PASSWORD) != null
-      )
+        isLogout
+            || (
+            req.getParameter(WebSiteRequest.LOGIN_USERNAME) != null
+                && req.getParameter(WebSiteRequest.LOGIN_PASSWORD) != null
+        )
     ) {
       page.doGet(req, resp);
     } else {
@@ -758,7 +759,7 @@ public abstract class WebPage extends PageServlet {
    * or {@link WebSiteRequest#SEARCH_ENTIRE_SITE}, defaulting to {@link WebSiteRequest#SEARCH_THIS_AREA} for any other value.
    *
    * @see #doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-   * @see #doPost(WebSiteRequest,HttpServletResponse)
+   * @see #doPost(WebSiteRequest, HttpServletResponse)
    */
   protected void doPostWithSearch(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
     String query = req.getParameter(WebSiteRequest.SEARCH_QUERY);
@@ -772,28 +773,28 @@ public abstract class WebPage extends PageServlet {
           DocumentEE document = getDocument(req, resp);
           WebPageLayout layout = getWebPageLayout(req);
           layout.doPage(req, resp, this, document, "document.forms." + SEARCH_TWO + "." + WebSiteRequest.SEARCH_QUERY + ".select(); document.forms." + SEARCH_TWO + "." + WebSiteRequest.SEARCH_QUERY + ".focus();",
-            flow -> {
-              boolean entire_site = searchTarget.equals(WebSiteRequest.SEARCH_ENTIRE_SITE);
-              WebPage target = entire_site ? getRootPage() : this;
+              flow -> {
+                boolean entire_site = searchTarget.equals(WebSiteRequest.SEARCH_ENTIRE_SITE);
+                WebPage target = entire_site ? getRootPage() : this;
 
-              // If the target contains no pages, use its parent
-              if (target.getCachedChildren(req, resp).length == 0) {
-                target=target.getParent();
+                // If the target contains no pages, use its parent
+                if (target.getCachedChildren(req, resp).length == 0) {
+                  target = target.getParent();
+                }
+
+                // Get the list of words to search for
+                String[] words = Strings.split(query.replace('.', ' '));
+
+                List<SearchResult> results = new ArrayList<>();
+                if (words.length > 0) {
+                  // Perform the search
+                  target.search(words, req, resp, results, new CharArrayWriter(), new HashSet<>());
+                  Collections.sort(results);
+                  //Strings.sortObjectsAndFloatDescending(results, 1, 5);
+                }
+
+                layout.printSearchOutput(req, resp, this, flow, query, entire_site, results, words);
               }
-
-              // Get the list of words to search for
-              String[] words=Strings.split(query.replace('.', ' '));
-
-              List<SearchResult> results=new ArrayList<>();
-              if (words.length>0) {
-                // Perform the search
-                target.search(words, req, resp, results, new CharArrayWriter(), new HashSet<>());
-                Collections.sort(results);
-                //Strings.sortObjectsAndFloatDescending(results, 1, 5);
-              }
-
-              layout.printSearchOutput(req, resp, this, flow, query, entire_site, results, words);
-            }
           );
         } finally {
           DoctypeEE.set(req, oldDoctype);
@@ -852,9 +853,9 @@ public abstract class WebPage extends PageServlet {
    * @see #doPost(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.FlowContent)
    */
   public void doPost(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    DocumentEE document
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      DocumentEE document
   ) throws ServletException, IOException {
     WebPageLayout layout = getWebPageLayout(req);
     layout.doPage(req, resp, this, document, null, flow -> doPost(req, resp, layout, flow));
@@ -872,10 +873,10 @@ public abstract class WebPage extends PageServlet {
    * @see #doGet(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.FlowContent)
    */
   public <__ extends FlowContent<__>> void doPost(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPageLayout layout,
-    __ flow
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPageLayout layout,
+      __ flow
   ) throws ServletException, IOException {
     doGet(req, resp, layout, flow);
   }
@@ -890,8 +891,8 @@ public abstract class WebPage extends PageServlet {
   @Override
   public final boolean equals(Object obj) {
     return
-      (obj instanceof WebPage)
-      && equals((WebPage)obj)
+        (obj instanceof WebPage)
+            && equals((WebPage) obj)
     ;
   }
 
@@ -1045,7 +1046,7 @@ public abstract class WebPage extends PageServlet {
    */
   public final int getPageIndexInParent(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
     WebPage[] siblings = getParent().getCachedChildren(req, resp);
-    int len=siblings.length;
+    int len = siblings.length;
     for (int c = 0; c < len; c++) {
       if (siblings[c].equals(this)) {
         return c;
@@ -1061,11 +1062,11 @@ public abstract class WebPage extends PageServlet {
    * @return  the <code>WebPage</code> or <code>null</code> if not found
    */
   public final WebPage getNextPage(WebSiteRequest req, HttpServletResponse resp) throws ServletException {
-    WebPage parent=getParent();
+    WebPage parent = getParent();
     if (parent != null) {
       WebPage[] siblings = parent.getCachedChildren(req, resp);
-      int len=siblings.length;
-      for (int c=0; c<len; c++) {
+      int len = siblings.length;
+      for (int c = 0; c < len; c++) {
         if (siblings[c].getClass() == getClass()) {
           if (c < (len - 1)) {
             return siblings[c + 1];
@@ -1197,6 +1198,7 @@ public abstract class WebPage extends PageServlet {
    * Placeholder value used when constructor not found since concurrent maps do not allow null keys.
    */
   private static final Constructor<? extends WebPage> NO_SUCH_CONSTRUCTOR;
+
   static {
     try {
       NO_SUCH_CONSTRUCTOR = WebPage.class.getConstructor();
@@ -1206,6 +1208,7 @@ public abstract class WebPage extends PageServlet {
   }
 
   private static final ConcurrentMap<Class<? extends WebPage>, Constructor<? extends WebPage>> requestConstructors = new ConcurrentHashMap<>();
+
   @SuppressWarnings("unchecked")
   private static <W extends WebPage> Constructor<W> getRequestConstructor(Class<W> clazz) {
     Constructor<?> con = requestConstructors.get(clazz);
@@ -1215,12 +1218,13 @@ public abstract class WebPage extends PageServlet {
       } catch (NoSuchMethodException e) {
         con = NO_SUCH_CONSTRUCTOR;
       }
-      requestConstructors.put(clazz, (Constructor)con);
+      requestConstructors.put(clazz, (Constructor) con);
     }
-    return (con == NO_SUCH_CONSTRUCTOR) ? null : (Constructor)con;
+    return (con == NO_SUCH_CONSTRUCTOR) ? null : (Constructor) con;
   }
 
   private static final ConcurrentMap<Class<? extends WebPage>, Constructor<? extends WebPage>> paramsConstructors = new ConcurrentHashMap<>();
+
   @SuppressWarnings("unchecked")
   private static <W extends WebPage> Constructor<W> getParamsConstructor(Class<W> clazz) {
     Constructor<?> con = paramsConstructors.get(clazz);
@@ -1230,12 +1234,13 @@ public abstract class WebPage extends PageServlet {
       } catch (NoSuchMethodException e) {
         con = NO_SUCH_CONSTRUCTOR;
       }
-      paramsConstructors.put(clazz, (Constructor)con);
+      paramsConstructors.put(clazz, (Constructor) con);
     }
-    return (con == NO_SUCH_CONSTRUCTOR) ? null : (Constructor)con;
+    return (con == NO_SUCH_CONSTRUCTOR) ? null : (Constructor) con;
   }
 
   private static final ConcurrentMap<Class<? extends WebPage>, Constructor<? extends WebPage>> defaultConstructors = new ConcurrentHashMap<>();
+
   @SuppressWarnings("unchecked")
   private static <W extends WebPage> Constructor<W> getDefaultConstructor(Class<W> clazz) {
     Constructor<?> con = defaultConstructors.get(clazz);
@@ -1245,9 +1250,9 @@ public abstract class WebPage extends PageServlet {
       } catch (NoSuchMethodException e) {
         con = NO_SUCH_CONSTRUCTOR;
       }
-      defaultConstructors.put(clazz, (Constructor)con);
+      defaultConstructors.put(clazz, (Constructor) con);
     }
-    return (con == NO_SUCH_CONSTRUCTOR) ? null : (Constructor)con;
+    return (con == NO_SUCH_CONSTRUCTOR) ? null : (Constructor) con;
   }
 
   /**
@@ -1348,7 +1353,7 @@ public abstract class WebPage extends PageServlet {
    * @see  #getWebPage(java.lang.Class, com.aoapps.net.URIParameters)
    */
   public WebPage getWebPage(Class<? extends WebPage> clazz) throws ServletException {
-    return getWebPage(clazz, (URIParameters)null);
+    return getWebPage(clazz, (URIParameters) null);
   }
 
   /**
@@ -1443,7 +1448,7 @@ public abstract class WebPage extends PageServlet {
    */
   // TODO: Deprecate for lambda version
   public static WebPage getWebPage(ServletContext context, Class<? extends WebPage> clazz) throws ServletException {
-    return getWebPage(context, clazz, (URIParameters)null);
+    return getWebPage(context, clazz, (URIParameters) null);
   }
 
   /**
@@ -1542,12 +1547,12 @@ public abstract class WebPage extends PageServlet {
    * @see  #standardSearch
    */
   public void search(
-    String[] words,
-    WebSiteRequest req,
-    HttpServletResponse response,
-    List<SearchResult> results,
-    CharArrayWriter buffer,
-    Set<WebPage> finishedPages
+      String[] words,
+      WebSiteRequest req,
+      HttpServletResponse response,
+      List<SearchResult> results,
+      CharArrayWriter buffer,
+      Set<WebPage> finishedPages
   ) throws ServletException, IOException {
     standardSearch(words, req, response, results, buffer, finishedPages);
   }
@@ -1558,12 +1563,12 @@ public abstract class WebPage extends PageServlet {
    * @see  #search
    */
   public final void standardSearch(
-    String[] words,
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    List<SearchResult> results,
-    CharArrayWriter buffer,
-    Set<WebPage> finishedPages
+      String[] words,
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      List<SearchResult> results,
+      CharArrayWriter buffer,
+      Set<WebPage> finishedPages
   ) throws ServletException, IOException {
     if (finishedPages.add(this)) {
       String title = null;
@@ -1588,9 +1593,9 @@ public abstract class WebPage extends PageServlet {
         buffer.reset();
         // TODO: EncodingContext based on page settings, or XML always for search?
         DocumentEE document = new DocumentEE(
-          getServletContext(), req, resp, buffer,
-          false, // Do not auto-indent during search capture
-          false  // Do not indent during search capture
+            getServletContext(), req, resp, buffer,
+            false, // Do not auto-indent during search capture
+            false  // Do not indent during search capture
         );
         // Isolate page-scope registry
         Registry oldPageRegistry = RegistryEE.Page.get(req);
@@ -1609,20 +1614,20 @@ public abstract class WebPage extends PageServlet {
         for (int c = 0; c < len; c++) {
           String word = words[c];
           int wordMatch =
-            // Add the keywords with weight 10
-            (keywords == null ? 0 : (Strings.countOccurrences(keywords, word) * 10))
+              // Add the keywords with weight 10
+              (keywords == null ? 0 : (Strings.countOccurrences(keywords, word) * 10))
 
-            // Add the description with weight 5
-            + (description == null ? 0 : (Strings.countOccurrences(description, word) * 5))
+                  // Add the description with weight 5
+                  + (description == null ? 0 : (Strings.countOccurrences(description, word) * 5))
 
-            // Add the title with weight 5
-            + (title == null ? 0 : (Strings.countOccurrences(title, word) * 5))
+                  // Add the title with weight 5
+                  + (title == null ? 0 : (Strings.countOccurrences(title, word) * 5))
 
-            // Add the content with weight 1
-            + Strings.countOccurrences(content, word)
+                  // Add the content with weight 1
+                  + Strings.countOccurrences(content, word)
 
-            // Add the author with weight 1
-            + (author == null ? 0 : Strings.countOccurrences(author, word));
+                  // Add the author with weight 1
+                  + (author == null ? 0 : Strings.countOccurrences(author, word));
 
           if (wordMatch == 0) {
             totalMatches = 0;
@@ -1633,10 +1638,10 @@ public abstract class WebPage extends PageServlet {
 
         if (totalMatches > 0) {
           size +=
-            (keywords == null ? 0 : keywords.length())
-            + (description == null ? 0 : description.length())
-            + (title == null ? 0 : title.length())
-            + (author == null ? 0 : author.length());
+              (keywords == null ? 0 : keywords.length())
+                  + (description == null ? 0 : description.length())
+                  + (title == null ? 0 : title.length())
+                  + (author == null ? 0 : author.length());
         }
       } else {
         // Rebuild the search index if no longer valid
@@ -1654,9 +1659,9 @@ public abstract class WebPage extends PageServlet {
               buffer.reset();
               // TODO: EncodingContext based on page settings, or XML always for search?
               DocumentEE document = new DocumentEE(
-                getServletContext(), req, resp, buffer,
-                false, // Do not auto-indent during search capture
-                false  // Do not indent during search capture
+                  getServletContext(), req, resp, buffer,
+                  false, // Do not auto-indent during search capture
+                  false  // Do not indent during search capture
               );
               // Isolate page-scope registry
               Registry oldPageRegistry = RegistryEE.Page.get(req);
@@ -1698,11 +1703,11 @@ public abstract class WebPage extends PageServlet {
               }
 
               searchByteCount =
-                content.length()
-                + (keywords == null ? 0 : keywords.length())
-                + (description == null ? 0 : description.length())
-                + (title == null ? 0 : title.length())
-                + (author == null ? 0 : author.length());
+                  content.length()
+                      + (keywords == null ? 0 : keywords.length())
+                      + (description == null ? 0 : description.length())
+                      + (title == null ? 0 : title.length())
+                      + (author == null ? 0 : author.length());
               //searchWords.trimToSize();
               //searchCounts.trimToSize();
               this.searchLastModified = mySearchLastModified;
@@ -1739,23 +1744,23 @@ public abstract class WebPage extends PageServlet {
       }
 
       if (totalMatches > 0) {
-        float probability=
-          totalMatches
-          / (
-            size <= 0
-            ? 1.0f :
-            ((float)Math.log(size))
-          )
+        float probability =
+            totalMatches
+                / (
+                size <= 0
+                    ? 1.0f :
+                    ((float) Math.log(size))
+            )
         ;
         results.add(
-          new SearchResult(
-            req.getURL(this),
-            probability,
-            title == null ? getTitle(req) : title,
-            description == null ? getDescription(req) : description,
-            author == null ? getAuthor(req) : author,
-            authorHref == null ? getAuthorHref(req, resp) : authorHref
-          )
+            new SearchResult(
+                req.getURL(this),
+                probability,
+                title == null ? getTitle(req) : title,
+                description == null ? getDescription(req) : description,
+                author == null ? getAuthor(req) : author,
+                authorHref == null ? getAuthorHref(req, resp) : authorHref
+            )
         );
       }
 
@@ -1804,7 +1809,7 @@ public abstract class WebPage extends PageServlet {
     if (context != null) {
       return context;
     }
-    ServletContext sc=super.getServletContext();
+    ServletContext sc = super.getServletContext();
     if (sc == null) {
       throw new NullPointerException("ServletContext is null");
     }
@@ -1832,7 +1837,7 @@ public abstract class WebPage extends PageServlet {
    * Gets the context-relative path for the URL
    */
   public String getURLPath() throws ServletException {
-    return '/'+generateURLPath(this);
+    return '/' + generateURLPath(this);
   }
 
   /**

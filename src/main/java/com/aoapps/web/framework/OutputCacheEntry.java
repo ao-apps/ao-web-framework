@@ -24,7 +24,7 @@
 package com.aoapps.web.framework;
 
 /**
- * @see  WebPage#doGet(WebSiteRequest,HttpServletResponse)
+ * @see  WebPage#doGet(WebSiteRequest, HttpServletResponse)
  *
  * @author  AO Industries, Inc.
  */
@@ -37,8 +37,8 @@ public final class OutputCacheEntry {
   public final byte[] bytes;
 
   public OutputCacheEntry(Object outputCacheKey, long lastModified, byte[] bytes) {
-    this.outputCacheKey=outputCacheKey;
-    this.lastModified=lastModified;
-    this.bytes=bytes;
+    this.outputCacheKey = outputCacheKey;
+    this.lastModified = lastModified;
+    this.bytes = bytes;
   }
 }

@@ -50,10 +50,10 @@ public class TreePageData {
    */
   public TreePageData(String url, String description, boolean hasChildren, Collection<? extends String> path) {
     this(
-      url,
-      description,
-      hasChildren,
-      path.toArray(new String[path.size()])
+        url,
+        description,
+        hasChildren,
+        path.toArray(new String[path.size()])
     );
   }
 

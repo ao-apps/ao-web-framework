@@ -50,12 +50,12 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
 
   @Override
   public <__ extends FlowContent<__>> __ printStream(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPageLayout layout,
-    ContentEE<?> content,
-    __ contentLine,
-    InputStream in
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPageLayout layout,
+      ContentEE<?> content,
+      __ contentLine,
+      InputStream in
   ) throws ServletException, IOException {
     return printHTMLStream(req, resp, layout, content, contentLine, in, "aoLightLink", new AtomicReference<>());
   }
@@ -78,8 +78,8 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
       // Try ClassLoader for when modules enabled
       ClassLoader classloader = Thread.currentThread().getContextClassLoader();
       in = (classloader != null)
-        ? classloader.getResourceAsStream(resource)
-        : ClassLoader.getSystemResourceAsStream(resource);
+          ? classloader.getResourceAsStream(resource)
+          : ClassLoader.getSystemResourceAsStream(resource);
     }
     return in;
   }
@@ -104,14 +104,14 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
    */
   @SuppressWarnings("deprecation")
   public static <__ extends FlowContent<__>> __ printHTML(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPageLayout layout,
-    ContentEE<?> content,
-    __ contentLine,
-    String htmlContent,
-    String linkClass,
-    AtomicReference<FlowContent<?>> lightAreaRef
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPageLayout layout,
+      ContentEE<?> content,
+      __ contentLine,
+      String htmlContent,
+      String linkClass,
+      AtomicReference<FlowContent<?>> lightAreaRef
   ) throws ServletException, IOException {
     if (req == null) {
       contentLine.unsafe(htmlContent);
@@ -123,15 +123,15 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
         char ch = htmlContent.charAt(pos++);
         if (ch == '@') {
           // TODO: regionsMatches would be faster than repeated substring
-          if ((pos+4)<len && htmlContent.substring(pos, pos+4).equalsIgnoreCase("URL(")) {
-            int endPos=htmlContent.indexOf(')', pos+4);
+          if ((pos + 4) < len && htmlContent.substring(pos, pos + 4).equalsIgnoreCase("URL(")) {
+            int endPos = htmlContent.indexOf(')', pos + 4);
             if (endPos == -1) {
-              throw new IllegalArgumentException("Unable to find closing parenthesis for @URL( substitution, pos="+pos);
+              throw new IllegalArgumentException("Unable to find closing parenthesis for @URL( substitution, pos=" + pos);
             }
-            String className=htmlContent.substring(pos+4, endPos);
+            String className = htmlContent.substring(pos + 4, endPos);
             encodeTextInXhtmlAttribute(req.getEncodedURLForClass(className, resp), unsafe);
-            pos=endPos+1;
-          } else if ((pos+16)<len && htmlContent.substring(pos, pos+16).equalsIgnoreCase("BEGIN_LIGHT_AREA")) {
+            pos = endPos + 1;
+          } else if ((pos + 16) < len && htmlContent.substring(pos, pos + 16).equalsIgnoreCase("BEGIN_LIGHT_AREA")) {
             if (lightAreaRef.get() != null) {
               throw new IllegalStateException("@BEGIN_LIGHT_AREA may not be nested");
             }
@@ -140,28 +140,28 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
               throw new AssertionError("lightArea == null");
             }
             lightAreaRef.set(lightArea);
-            pos+=16;
-          } else if ((pos+14)<len && htmlContent.substring(pos, pos+14).equalsIgnoreCase("END_LIGHT_AREA")) {
+            pos += 16;
+          } else if ((pos + 14) < len && htmlContent.substring(pos, pos + 14).equalsIgnoreCase("END_LIGHT_AREA")) {
             FlowContent<?> lightArea = lightAreaRef.get();
             if (lightArea == null) {
               throw new IllegalStateException("@END_LIGHT_AREA does not have matching @BEGIN_LIGHT_AREA");
             }
             layout.endLightArea(req, resp, lightArea);
             lightAreaRef.set(null);
-            pos+=14;
-          } else if ((pos+16)<len && htmlContent.substring(pos, pos+16).equalsIgnoreCase("END_CONTENT_LINE")) {
+            pos += 14;
+          } else if ((pos + 16) < len && htmlContent.substring(pos, pos + 16).equalsIgnoreCase("END_CONTENT_LINE")) {
             layout.endContentLine(req, resp, contentLine);
-            pos+=16;
-          } else if ((pos+32)<len && htmlContent.substring(pos, pos+32).equalsIgnoreCase("PRINT_CONTENT_HORIZONTAL_DIVIDER")) {
+            pos += 16;
+          } else if ((pos + 32) < len && htmlContent.substring(pos, pos + 32).equalsIgnoreCase("PRINT_CONTENT_HORIZONTAL_DIVIDER")) {
             layout.contentHorizontalDivider(req, resp, content);
-            pos+=32;
-          } else if ((pos+18)<len && htmlContent.substring(pos, pos+18).equalsIgnoreCase("START_CONTENT_LINE")) {
+            pos += 32;
+          } else if ((pos + 18) < len && htmlContent.substring(pos, pos + 18).equalsIgnoreCase("START_CONTENT_LINE")) {
             contentLine = layout.startContentLine(req, resp, content);
             unsafe = contentLine.getRawUnsafe();
-            pos+=18;
-          } else if ((pos+10)<len && htmlContent.substring(pos, pos+10).equalsIgnoreCase("LINK_CLASS")) {
-            unsafe.write(linkClass == null?"aoLightLink":linkClass);
-            pos+=10;
+            pos += 18;
+          } else if ((pos + 10) < len && htmlContent.substring(pos, pos + 10).equalsIgnoreCase("LINK_CLASS")) {
+            unsafe.write(linkClass == null ? "aoLightLink" : linkClass);
+            pos += 10;
           } else {
             unsafe.write('@');
           }
@@ -173,14 +173,14 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
     return contentLine;
   }
 
-  private static final String[] tags={
-    "@PRINT_CONTENT_HORIZONTAL_DIVIDER",
-    "@START_CONTENT_LINE",
-    "@BEGIN_LIGHT_AREA",
-    "@END_CONTENT_LINE",
-    "@END_LIGHT_AREA",
-    "@LINK_CLASS",
-    "@URL"
+  private static final String[] tags = {
+      "@PRINT_CONTENT_HORIZONTAL_DIVIDER",
+      "@START_CONTENT_LINE",
+      "@BEGIN_LIGHT_AREA",
+      "@END_CONTENT_LINE",
+      "@END_LIGHT_AREA",
+      "@LINK_CLASS",
+      "@URL"
   };
 
   /**
@@ -192,14 +192,14 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
    */
   @SuppressWarnings("deprecation")
   public static <__ extends FlowContent<__>> __ printHTMLStream(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPageLayout layout,
-    ContentEE<?> content,
-    __ contentLine,
-    InputStream in,
-    String linkClass,
-    AtomicReference<FlowContent<?>> lightAreaRef
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPageLayout layout,
+      ContentEE<?> content,
+      __ contentLine,
+      InputStream in,
+      String linkClass,
+      AtomicReference<FlowContent<?>> lightAreaRef
   ) throws ServletException, IOException {
     if (in == null) {
       throw new NullPointerException("in is null");
@@ -211,27 +211,27 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
       Writer unsafe = contentLine.getRawUnsafe();
       StringBuilder buffer = null;
       int ch;
-      while ((ch=reader.read()) != -1) {
+      while ((ch = reader.read()) != -1) {
         if (ch == '@') {
           if (buffer == null) {
-            buffer=new StringBuilder();
+            buffer = new StringBuilder();
           }
           // Read until a tag is matched, or until a tag cannot be matched
           buffer.append('@');
-        Loop:
-          while ((ch=reader.read()) != -1) {
+          Loop:
+          while ((ch = reader.read()) != -1) {
             // If @ found, print buffer and reset for next tag
             if (ch == '@') {
               unsafe.write(buffer.toString());
               buffer.setLength(0);
               buffer.append('@');
             } else {
-              buffer.append((char)ch);
-              String tagPart=buffer.toString();
+              buffer.append((char) ch);
+              String tagPart = buffer.toString();
               // Does one of the tags begin with or match this tag
-              boolean found=false;
-              for (int c=0;c<tags.length;c++) {
-                String tag=tags[c];
+              boolean found = false;
+              for (int c = 0; c < tags.length; c++) {
+                String tag = tags[c];
                 if (tag.length() >= tagPart.length()) {
                   if (tags[c].equalsIgnoreCase(tagPart)) {
                     if (c == 0) {
@@ -261,18 +261,18 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
                       unsafe.write(linkClass == null ? "aoLightLink" : linkClass);
                     } else if (c == 6) {
                       // Read up to a ')'
-                      while ((ch=reader.read()) != -1) {
+                      while ((ch = reader.read()) != -1) {
                         if (ch == ')') {
-                          String className=buffer.toString().substring(5, buffer.length());
+                          String className = buffer.toString().substring(5, buffer.length());
                           encodeTextInXhtmlAttribute(req.getEncodedURLForClass(className, resp), unsafe);
                           buffer.setLength(0);
                           break;
                         } else {
-                          buffer.append((char)ch);
+                          buffer.append((char) ch);
                         }
                       }
-                      if (buffer.length()>0) {
-                        throw new IllegalArgumentException("Unable to find closing parenthesis for @URL( substitution, buffer="+buffer.toString());
+                      if (buffer.length() > 0) {
+                        throw new IllegalArgumentException("Unable to find closing parenthesis for @URL( substitution, buffer=" + buffer.toString());
                       }
                     } else {
                       throw new RuntimeException("This index should not be used because it is biffer than tags.length");
@@ -280,7 +280,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
                     buffer.setLength(0);
                     break Loop;
                   } else if (tags[c].toUpperCase().startsWith(tagPart.toUpperCase())) {
-                    found=true;
+                    found = true;
                     break;
                   }
                 } else {
@@ -296,7 +296,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
             }
           }
         } else {
-          unsafe.write((char)ch);
+          unsafe.write((char) ch);
         }
       }
     }

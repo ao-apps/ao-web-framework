@@ -95,7 +95,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    */
   // Matches aoweb-struts/Constants.LAYOUT
   public static final ScopeEE.Session.Attribute<String> LAYOUT =
-    ScopeEE.SESSION.attribute("layout");
+      ScopeEE.SESSION.attribute("layout");
 
   /**
    * Parameter name used for logout requests.
@@ -131,14 +131,14 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   // TODO: It would be good form for each user to have their own upload directory by username
   private static File getFileUploadDirectory(ServletContext servletContext) throws FileNotFoundException {
     File uploadDir = new File(
-      ScopeEE.Application.TEMPDIR.context(servletContext).get(),
-      "uploads"
+        ScopeEE.Application.TEMPDIR.context(servletContext).get(),
+        "uploads"
     );
     if (
-      !uploadDir.exists()
-      && !uploadDir.mkdirs()
-      // Check exists again, another thread may have created it and interfered with mkdirs
-      && !uploadDir.exists()
+        !uploadDir.exists()
+            && !uploadDir.mkdirs()
+            // Check exists again, another thread may have created it and interfered with mkdirs
+            && !uploadDir.exists()
     ) {
       throw new FileNotFoundException(uploadDir.getPath());
     }
@@ -167,31 +167,34 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   }
 
   private static String getExtension(String filename) {
-    int pos=filename.lastIndexOf('.');
-    if (pos == -1 || pos == (filename.length()-1)) {
+    int pos = filename.lastIndexOf('.');
+    if (pos == -1 || pos == (filename.length() - 1)) {
       return filename;
     } else {
-      return filename.substring(pos+1);
+      return filename.substring(pos + 1);
     }
   }
 
-  private static class MimeTypeLock {/* Empty lock class to help heap profile */}
-  private static final MimeTypeLock mimeTypeLock=new MimeTypeLock();
+  private static class MimeTypeLock {
+    // Empty lock class to help heap profile
+  }
+  private static final MimeTypeLock mimeTypeLock = new MimeTypeLock();
   private static Map<String, String> mimeTypes;
+
   // TODO: Should client-provided content-type take priority?
   private static String getContentType(Part part, String filename) throws IOException {
     synchronized (mimeTypeLock) {
       if (mimeTypes == null) {
-        Map<String, String> newMap=new HashMap<>();
+        Map<String, String> newMap = new HashMap<>();
         try (BufferedReader in = new BufferedReader(new InputStreamReader(WebSiteRequest.class.getResourceAsStream("mime.types")))) {
           String line;
-          while ((line=in.readLine()) != null) {
-            if (line.length()>0) {
+          while ((line = in.readLine()) != null) {
+            if (line.length() > 0) {
               if (line.charAt(0) != '#') {
-                String[] words=Strings.split(line);
-                if (words.length>0) {
-                  String type=words[0];
-                  for (int c=1;c<words.length;c++) {
+                String[] words = Strings.split(line);
+                if (words.length > 0) {
+                  String type = words[0];
+                  for (int c = 1; c < words.length; c++) {
                     newMap.put(words[1], type);
                   }
                 }
@@ -199,9 +202,9 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
             }
           }
         }
-        mimeTypes=newMap;
+        mimeTypes = newMap;
       }
-      String type=mimeTypes.get(getExtension(filename).toLowerCase());
+      String type = mimeTypes.get(getExtension(filename).toLowerCase());
       if (type != null) {
         return type;
       }
@@ -211,6 +214,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 
   // TODO: One ConcurrentMap per ServletContext
   private static final Map<Identifier, UploadedFile> uploadedFiles = new HashMap<>();
+
   private Identifier getNextID() {
     synchronized (uploadedFiles) {
       while (true) {
@@ -226,6 +230,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   // TODO: Start and stop with ServletContextListener.
   // TODO: Consider using ao-concurrent to avoid keeping a thread sleeping.
   private static Thread uploadedFileCleanup;
+
   private static void addUploadedFile(UploadedFile uf, final ServletContext servletContext) {
     synchronized (uploadedFiles) {
       uploadedFiles.put(uf.getID(), uf);
@@ -256,9 +261,9 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
                             Files.delete(file.toPath());
                           } catch (IOException e) {
                             logger.log(
-                              Level.SEVERE,
-                              "file.getPath()="+file.getPath(),
-                              e
+                                Level.SEVERE,
+                                "file.getPath()=" + file.getPath(),
+                                e
                             );
                           }
                         }
@@ -267,15 +272,15 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
                     }
                   }
                   // Delete the files that do not have an uploadedFile entry and are at least two hours old
-                  File dir=getFileUploadDirectory(servletContext);
-                  String[] list=dir.list();
+                  File dir = getFileUploadDirectory(servletContext);
+                  String[] list = dir.list();
                   if (list != null) {
                     for (String filename : list) {
                       File file = new File(dir, filename);
                       long fileAge = System.currentTimeMillis() - file.lastModified();
                       if (
-                        fileAge < (-2L * 60 * 60 * 1000)
-                        || fileAge > (2L * 60 * 60 * 1000)
+                          fileAge < (-2L * 60 * 60 * 1000)
+                              || fileAge > (2L * 60 * 60 * 1000)
                       ) {
                         boolean found = false;
                         iter = uploadedFiles.keySet().iterator();
@@ -291,9 +296,9 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
                             Files.delete(file.toPath());
                           } catch (IOException e) {
                             logger.log(
-                              Level.SEVERE,
-                              "file.getPath()="+file.getPath(),
-                              e
+                                Level.SEVERE,
+                                "file.getPath()=" + file.getPath(),
+                                e
                             );
                           }
                         }
@@ -343,11 +348,11 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
     super(req);
     this.sourcePage = sourcePage;
     this.req = req;
-    String contentType=req.getHeader("content-type");
+    String contentType = req.getHeader("content-type");
     if (
-      contentType != null
-      && contentType.length() >= ContentType.FORM_DATA.length()
-      && contentType.substring(0, ContentType.FORM_DATA.length()).equalsIgnoreCase(ContentType.FORM_DATA)
+        contentType != null
+            && contentType.length() >= ContentType.FORM_DATA.length()
+            && contentType.substring(0, ContentType.FORM_DATA.length()).equalsIgnoreCase(ContentType.FORM_DATA)
     ) {
       try {
         boolean keepFiles = false;
@@ -375,10 +380,10 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
                 String filename = part.getName();
                 // Not necessary since there is a clean-up thread: file.deleteOnExit(); // JDK implementation builds an ever-growing set
                 UploadedFile uf = new UploadedFile(
-                  HttpServletUtil.getSubmittedFileName(part),
-                  file,
-                  user,
-                  getContentType(part, filename) // TODO: Should this be the submitted filename?
+                    HttpServletUtil.getSubmittedFileName(part),
+                    file,
+                    user,
+                    getContentType(part, filename) // TODO: Should this be the submitted filename?
                 );
                 addUploadedFile(uf, sourcePage.getServletContext());
                 reqUploadedFiles.add(uf);
@@ -497,9 +502,9 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    */
   public String getEncodedURLForClass(String classname, URIParameters params, String fragment, HttpServletResponse resp) throws ServletException {
     return resp.encodeURL(
-      URIEncoder.encodeURI(
-        getContextPath() + getURLForClass(classname, params, fragment)
-      )
+        URIEncoder.encodeURI(
+            getContextPath() + getURLForClass(classname, params, fragment)
+        )
     );
   }
 
@@ -526,9 +531,9 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    */
   public String getEncodedURLForClass(String classname, URIParameters params, HttpServletResponse resp) throws ServletException {
     return resp.encodeURL(
-      URIEncoder.encodeURI(
-        getContextPath() + getURLForClass(classname, params)
-      )
+        URIEncoder.encodeURI(
+            getContextPath() + getURLForClass(classname, params)
+        )
     );
   }
 
@@ -561,9 +566,9 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
       }
     }
     return getURLForClass(
-      className,
-      (params == null || params.isEmpty()) ? null : new URIParametersMap(params),
-      fragment
+        className,
+        (params == null || params.isEmpty()) ? null : new URIParametersMap(params),
+        fragment
     );
   }
 
@@ -577,9 +582,9 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    */
   public String getEncodedURLForClass(String classAndParamsFragment, HttpServletResponse resp) throws ServletException {
     return resp.encodeURL(
-      URIEncoder.encodeURI(
-        getContextPath() + getURLForClass(classAndParamsFragment)
-      )
+        URIEncoder.encodeURI(
+            getContextPath() + getURLForClass(classAndParamsFragment)
+        )
     );
   }
 
@@ -617,9 +622,9 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    */
   public String getEncodedURLForPath(String path, URIParameters params, boolean keepSettings, HttpServletResponse resp) throws ServletException {
     return resp.encodeURL(
-      URIEncoder.encodeURI(
-        getContextPath() + getURLForPath(path, params, keepSettings)
-      )
+        URIEncoder.encodeURI(
+            getContextPath() + getURLForPath(path, params, keepSettings)
+        )
     );
   }
 
@@ -647,7 +652,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    * Gets the context-relative URL to a web page.
    */
   public String getURL(WebPage page) throws ServletException {
-    return getURL(page, (URIParameters)null);
+    return getURL(page, (URIParameters) null);
   }
 
   /**
@@ -660,9 +665,9 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    */
   public String getEncodedURL(WebPage page, HttpServletResponse resp) throws ServletException {
     return resp.encodeURL(
-      URIEncoder.encodeURI(
-        getContextPath() + getURL(page)
-      )
+        URIEncoder.encodeURI(
+            getContextPath() + getURL(page)
+        )
     );
   }
 
@@ -697,9 +702,9 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    */
   public String getEncodedURL(WebPage page, URIParameters params, HttpServletResponse resp) throws ServletException {
     return resp.encodeURL(
-      URIEncoder.encodeURI(
-        getContextPath() + getURL(page, params)
-      )
+        URIEncoder.encodeURI(
+            getContextPath() + getURL(page, params)
+        )
     );
   }
 
@@ -711,8 +716,8 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    */
   public String getURL(Class<? extends WebPage> clazz, URIParameters params) throws ServletException {
     return getURL(
-      WebPage.getWebPage(sourcePage.getServletContext(), clazz, params),
-      params
+        WebPage.getWebPage(sourcePage.getServletContext(), clazz, params),
+        params
     );
   }
 
@@ -729,14 +734,14 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    */
   public String getEncodedURL(Class<? extends WebPage> clazz, URIParameters params, HttpServletResponse resp) throws ServletException {
     return resp.encodeURL(
-      URIEncoder.encodeURI(
-        getContextPath() + getURL(clazz, params)
-      )
+        URIEncoder.encodeURI(
+            getContextPath() + getURL(clazz, params)
+        )
     );
   }
 
   public String getURL(Class<? extends WebPage> clazz) throws ServletException {
-    return getURL(clazz, (URIParameters)null);
+    return getURL(clazz, (URIParameters) null);
   }
 
   /**
@@ -749,9 +754,9 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    */
   public String getEncodedURL(Class<? extends WebPage> clazz, HttpServletResponse resp) throws ServletException {
     return resp.encodeURL(
-      URIEncoder.encodeURI(
-        getContextPath() + getURL(clazz)
-      )
+        URIEncoder.encodeURI(
+            getContextPath() + getURL(clazz)
+        )
     );
   }
 
@@ -773,7 +778,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    * @param  path  the context-relative path, with a beginning slash
    */
   public String getURLForPath(String path) throws ServletException {
-    return getURLForPath(path, (URIParameters)null);
+    return getURLForPath(path, (URIParameters) null);
   }
 
   /**
@@ -791,9 +796,9 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    */
   public String getEncodedURLForPath(String path, URIParameters params, HttpServletResponse resp) throws ServletException {
     return resp.encodeURL(
-      URIEncoder.encodeURI(
-        getContextPath() + getURLForPath(path, params)
-      )
+        URIEncoder.encodeURI(
+            getContextPath() + getURLForPath(path, params)
+        )
     );
   }
 
@@ -809,9 +814,9 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    */
   public String getEncodedURLForPath(String path, HttpServletResponse resp) throws ServletException {
     return resp.encodeURL(
-      URIEncoder.encodeURI(
-        getContextPath() + getURLForPath(path)
-      )
+        URIEncoder.encodeURI(
+            getContextPath() + getURLForPath(path)
+        )
     );
   }
 
@@ -821,8 +826,8 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   public boolean isLynx() {
     if (!isLynxDone) {
       String agent = req.getHeader("user-agent");
-      isLynx=agent != null && agent.toLowerCase(Locale.ROOT).contains("lynx");
-      isLynxDone=true;
+      isLynx = agent != null && agent.toLowerCase(Locale.ROOT).contains("lynx");
+      isLynxDone = true;
     }
     return isLynx;
   }
@@ -885,18 +890,18 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    */
   public static UploadedFile getUploadedFile(WebSiteUser owner, Identifier id, ServletContext context) throws SecurityException {
     synchronized (uploadedFiles) {
-      UploadedFile uf=uploadedFiles.get(id);
+      UploadedFile uf = uploadedFiles.get(id);
       if (uf != null) {
         if (uf.getOwner().equals(owner)) {
           return uf;
         } else {
           logger.log(
-            Level.SEVERE,
-            "UploadedFile found, but owner doesn''t match: uf.getOwner()=\"{0}\", owner=\"{1}\".",
-            new Object[] {
-              uf.getOwner(),
-              owner
-            }
+              Level.SEVERE,
+              "UploadedFile found, but owner doesn''t match: uf.getOwner()=\"{0}\", owner=\"{1}\".",
+              new Object[]{
+                  uf.getOwner(),
+                  owner
+              }
           );
         }
       }

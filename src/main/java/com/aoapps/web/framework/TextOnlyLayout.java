@@ -85,10 +85,11 @@ public class TextOnlyLayout extends WebPageLayout {
     @Override
     public void contextInitialized(ServletContextEvent event) {
       RegistryEE.Application.get(event.getServletContext())
-        .getGroup(RESOURCE_GROUP)
-        .styles
-        .add(LAYOUT_TEXT_CSS);
+          .getGroup(RESOURCE_GROUP)
+          .styles
+          .add(LAYOUT_TEXT_CSS);
     }
+
     @Override
     public void contextDestroyed(ServletContextEvent event) {
       // Do nothing
@@ -101,11 +102,11 @@ public class TextOnlyLayout extends WebPageLayout {
 
   @Override
   public void configureResources(
-    ServletContext servletContext,
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    Registry requestRegistry
+      ServletContext servletContext,
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      Registry requestRegistry
   ) {
     super.configureResources(servletContext, req, resp, page, requestRegistry);
     requestRegistry.activate(RESOURCE_GROUP);
@@ -118,11 +119,11 @@ public class TextOnlyLayout extends WebPageLayout {
     int visitedLinkColor = layout.getVisitedLinkColor(req);
     int activeLinkColor = layout.getActiveLinkColor(req);
     if (
-      backgroundColor != -1
-      || textColor != -1
-      || linkColor != -1
-      || visitedLinkColor != -1
-      || activeLinkColor != -1
+        backgroundColor != -1
+            || textColor != -1
+            || linkColor != -1
+            || visitedLinkColor != -1
+            || activeLinkColor != -1
     ) {
       try (var style = head.style()._c()) {
         if (backgroundColor != -1 || textColor != -1) {
@@ -166,11 +167,11 @@ public class TextOnlyLayout extends WebPageLayout {
 
   @Override
   public <__ extends FlowContent<__>> __ startPage(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    DocumentEE document,
-    String onload
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      DocumentEE document,
+      String onload
   ) throws ServletException, IOException {
     boolean isOkResponseStatus = (resp.getStatus() == HttpServletResponse.SC_OK);
     ServletContext servletContext = req.getServletContext();
@@ -194,11 +195,11 @@ public class TextOnlyLayout extends WebPageLayout {
       }
       // Mobile support
       head
-        .meta().name(AnyMETA.Name.VIEWPORT).content("width=device-width, initial-scale=1.0").__()
-        // TODO: This is probably only appropriate for single-page applications!
-        //       See https://medium.com/@firt/dont-use-ios-web-app-meta-tag-irresponsibly-in-your-progressive-web-apps-85d70f4438cb
-        .meta().name(AnyMETA.Name.APPLE_MOBILE_WEB_APP_CAPABLE).content("yes").__()
-        .meta().name(AnyMETA.Name.APPLE_MOBILE_WEB_APP_STATUS_BAR_STYLE).content("black").__();
+          .meta().name(AnyMETA.Name.VIEWPORT).content("width=device-width, initial-scale=1.0").__()
+          // TODO: This is probably only appropriate for single-page applications!
+          //       See https://medium.com/@firt/dont-use-ios-web-app-meta-tag-irresponsibly-in-your-progressive-web-apps-85d70f4438cb
+          .meta().name(AnyMETA.Name.APPLE_MOBILE_WEB_APP_CAPABLE).content("yes").__()
+          .meta().name(AnyMETA.Name.APPLE_MOBILE_WEB_APP_STATUS_BAR_STYLE).content("black").__();
       // Authors
       // TODO: 3.0.0: dcterms copyright
       String author = page.getAuthor(req);
@@ -208,10 +209,10 @@ public class TextOnlyLayout extends WebPageLayout {
       String authorHref = page.getAuthorHref(req, resp);
       if (authorHref != null && !(authorHref = authorHref.trim()).isEmpty()) {
         head.link(AnyLINK.Rel.AUTHOR).href(
-          // TODO: RFC 3986-only always?
-          resp.encodeURL(
-            URIEncoder.encodeURI(authorHref) // TODO: Conditionally convert from context-relative paths
-          )
+            // TODO: RFC 3986-only always?
+            resp.encodeURL(
+                URIEncoder.encodeURI(authorHref) // TODO: Conditionally convert from context-relative paths
+            )
         ).__();
       }
       head.title__(page.getTitle(req));
@@ -241,14 +242,14 @@ public class TextOnlyLayout extends WebPageLayout {
       page.configureResources(servletContext, req, resp, this, pageRegistry);
       // Render links
       Renderer.get(servletContext).renderStyles(
-        req,
-        resp,
-        head,
-        true, // registeredActivations
-        null, // No additional activations
-        requestRegistry, // request-scope
-        RegistryEE.Session.get(req.getSession(false)), // session-scope
-        pageRegistry
+          req,
+          resp,
+          head,
+          true, // registeredActivations
+          null, // No additional activations
+          requestRegistry, // request-scope
+          RegistryEE.Session.get(req.getSession(false)), // session-scope
+          pageRegistry
       );
       head.script().src(req.getEncodedURLForPath("/global.js", null, false, resp)).__();
       printJavascriptIncludes(req, resp, page, head);
@@ -265,152 +266,153 @@ public class TextOnlyLayout extends WebPageLayout {
     }
     BODY_c<HTML_c<DocumentEE>> body_c = body._c();
     TD_c<TR_c<TBODY_c<TABLE_c<BODY_c<HTML_c<DocumentEE>>>>>> td_c = body_c.table().cellspacing(10).cellpadding(0)._c()
-      .tbody_c()
+        .tbody_c()
         .tr_c()
-          .td().style("vertical-align:top").__(td -> {
-            printLogo(req, resp, page, td);
-            boolean isLoggedIn = req.isLoggedIn();
-            if (isLoggedIn) {
-              td.hr__()
-              .text("Logout: ")
-              .form()
-                .style("display:inline")
-                .id("logout_form")
-                .method(Method.Value.POST)
-                .action(req.getEncodedURL(page, resp))
-              .__(form -> form
-                .div().style("display:inline").__(div -> {
+        .td().style("vertical-align:top").__(td -> {
+      printLogo(req, resp, page, td);
+      boolean isLoggedIn = req.isLoggedIn();
+      if (isLoggedIn) {
+        td.hr__()
+            .text("Logout: ")
+            .form()
+            .style("display:inline")
+            .id("logout_form")
+            .method(Method.Value.POST)
+            .action(req.getEncodedURL(page, resp))
+            .__(form -> form
+                    .div().style("display:inline").__(div -> {
                   req.printFormFields(div);
                   div.input().hidden().name(WebSiteRequest.LOGOUT_REQUESTED).value(true).__()
-                  .input().submit__("Logout");
+                      .input().submit__("Logout");
                 })
-              );
-            } else {
-              td.hr__()
-              .text("Login: ")
-              .form()
-                .style("display:inline")
-                .id("login_form")
-                .method(Method.Value.POST)
-                .action(req.getEncodedURL(page, resp))
-              .__(form -> form
-                .div().style("display:inline").__(div -> {
+            );
+      } else {
+        td.hr__()
+            .text("Login: ")
+            .form()
+            .style("display:inline")
+            .id("login_form")
+            .method(Method.Value.POST)
+            .action(req.getEncodedURL(page, resp))
+            .__(form -> form
+                    .div().style("display:inline").__(div -> {
                   req.printFormFields(div);
                   div.input().hidden().name(WebSiteRequest.LOGIN_REQUESTED).value(true).__()
-                  .input().submit__("Login");
+                      .input().submit__("Login");
                 })
-              );
-            }
-            td.hr__()
-            .div().style("white-space:nowrap").__(div -> {
-              if (getLayoutChoices().length >= 2) {
-                div.text("Layout: ");
-              }
-              if (printWebPageLayoutSelector(req, resp, page, div)) {
-                div.br__();
-              }
-              div.text("Search: ").form().id("search_site").style("display:inline").method(Method.Value.POST).action(req.getEncodedURL(page, resp)).__(form -> form
+            );
+      }
+      td.hr__()
+          .div().style("white-space:nowrap").__(div -> {
+        if (getLayoutChoices().length >= 2) {
+          div.text("Layout: ");
+        }
+        if (printWebPageLayoutSelector(req, resp, page, div)) {
+          div.br__();
+        }
+        div.text("Search: ").form().id("search_site").style("display:inline").method(Method.Value.POST).action(req.getEncodedURL(page, resp)).__(form -> form
                 .div().style("display:inline").__(div2 -> {
-                  div2.input().hidden().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).__().autoNl();
-                  req.printFormFields(div2);
-                  div2.input().text().name(WebSiteRequest.SEARCH_QUERY).size(12).maxlength(255).__();
-                })
+              div2.input().hidden().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).__().autoNl();
+              req.printFormFields(div2);
+              div2.input().text().name(WebSiteRequest.SEARCH_QUERY).size(12).maxlength(255).__();
+            })
                 .br__()
-              );
-            })
-            .hr__()
-            // Display the parents
-            .b__("Current Location").br__()
-            .div().style("white-space:nowrap").__(div -> {
-              List<WebPage> parents = new ArrayList<>();
-              WebPage parent = page;
-              while (parent != null) {
-                if (parent.showInLocationPath(req)) {
-                  parents.add(parent);
-                }
-                parent = parent.getParent();
-              }
-              for (int c = (parents.size() - 1); c >= 0; c--) {
-                parent = parents.get(c);
-                String navAlt = parent.getNavImageAlt(req);
-                String navSuffix = parent.getNavImageSuffix(req);
-                div.a(req.getEncodedURL(parent, resp)).__(a -> {
-                  a.text(navAlt);
-                  if (navSuffix != null) {
-                    a.text(" (").text(navSuffix).text(')');
-                  }
-                }).br__();
-              }
-            })
-            .hr__()
-            // Related Pages
-            .b__("Related Pages").br__()
-            .div().style("white-space:nowrap").__(div -> {
-              WebPage[] related = page.getCachedChildren(req, resp);
-              WebPage parent = page;
-              if (related.length == 0) {
-                parent = page.getParent();
-                if (parent != null) {
-                  related = parent.getCachedChildren(req, resp);
-                }
-              }
-              for (int c = -1; c < related.length; c++) {
-                WebPage tpage;
-                if (c == -1) {
-                  if (parent != null && parent.includeNavImageAsParent()) {
-                    tpage = parent;
-                  } else {
-                    tpage = null;
-                  }
-                } else {
-                  tpage = related[c];
-                }
-                if (
-                  tpage != null
-                  && (
-                    tpage.useNavImage()
-                    || tpage.equals(page)
-                    || (
-                      tpage.includeNavImageAsParent()
-                      && tpage.equals(parent)
-                    )
-                  )
-                ) {
-                  String navAlt = tpage.getNavImageAlt(req);
-                  String navSuffix=tpage.getNavImageSuffix(req);
-                  //boolean isSelected=tpage.equals(page);
-                  div.a(tpage.getNavImageURL(req, resp, null)).__(a -> {
-                    a.text(navAlt);
-                    if (navSuffix != null) {
-                      a.text(" (").text(navSuffix).text(')');
-                    }
-                  }).br__();
-                }
-              }
-            })
-            .hr__();
-            printBelowRelatedPages(td, req);
-          })
-          .td().style("vertical-align:top")._c();
-            WebPage[] commonPages = getCommonPages(page, req);
-            if (commonPages != null && commonPages.length > 0) {
-              td_c.table().clazz("ao-packed").style("width:100%").__(table -> table
-                .tbody__(tbody -> tbody
-                  .tr__(tr -> {
-                    for (int c = 0; c < commonPages.length; c++) {
-                      if (c > 0) {
-                        tr.td().style("text-align:center", "width:1%").__('|');
-                      }
-                      WebPage tpage = commonPages[c];
-                      tr.td().style("white-space:nowrap", "text-align:center", "width:" + ((101 - commonPages.length) / commonPages.length) + "%").__(td -> td
-                        .a(tpage.getNavImageURL(req, resp, null)).__(tpage.getNavImageAlt(req))
-                      );
-                    }
-                  })
-                )
-              );
+        );
+      })
+          .hr__()
+          // Display the parents
+          .b__("Current Location").br__()
+          .div().style("white-space:nowrap").__(div -> {
+        List<WebPage> parents = new ArrayList<>();
+        WebPage parent = page;
+        while (parent != null) {
+          if (parent.showInLocationPath(req)) {
+            parents.add(parent);
+          }
+          parent = parent.getParent();
+        }
+        for (int c = (parents.size() - 1); c >= 0; c--) {
+          parent = parents.get(c);
+          String navAlt = parent.getNavImageAlt(req);
+          String navSuffix = parent.getNavImageSuffix(req);
+          div.a(req.getEncodedURL(parent, resp)).__(a -> {
+            a.text(navAlt);
+            if (navSuffix != null) {
+              a.text(" (").text(navSuffix).text(')');
             }
-    @SuppressWarnings("unchecked") __ flow = (__)td_c;
+          }).br__();
+        }
+      })
+          .hr__()
+          // Related Pages
+          .b__("Related Pages").br__()
+          .div().style("white-space:nowrap").__(div -> {
+        WebPage[] related = page.getCachedChildren(req, resp);
+        WebPage parent = page;
+        if (related.length == 0) {
+          parent = page.getParent();
+          if (parent != null) {
+            related = parent.getCachedChildren(req, resp);
+          }
+        }
+        for (int c = -1; c < related.length; c++) {
+          WebPage tpage;
+          if (c == -1) {
+            if (parent != null && parent.includeNavImageAsParent()) {
+              tpage = parent;
+            } else {
+              tpage = null;
+            }
+          } else {
+            tpage = related[c];
+          }
+          if (
+              tpage != null
+                  && (
+                  tpage.useNavImage()
+                      || tpage.equals(page)
+                      || (
+                      tpage.includeNavImageAsParent()
+                          && tpage.equals(parent)
+                  )
+              )
+          ) {
+            String navAlt = tpage.getNavImageAlt(req);
+            String navSuffix = tpage.getNavImageSuffix(req);
+            //boolean isSelected=tpage.equals(page);
+            div.a(tpage.getNavImageURL(req, resp, null)).__(a -> {
+              a.text(navAlt);
+              if (navSuffix != null) {
+                a.text(" (").text(navSuffix).text(')');
+              }
+            }).br__();
+          }
+        }
+      })
+          .hr__();
+      printBelowRelatedPages(td, req);
+    })
+        .td().style("vertical-align:top")._c();
+    WebPage[] commonPages = getCommonPages(page, req);
+    if (commonPages != null && commonPages.length > 0) {
+      td_c.table().clazz("ao-packed").style("width:100%").__(table -> table
+              .tbody__(tbody -> tbody
+                      .tr__(tr -> {
+                        for (int c = 0; c < commonPages.length; c++) {
+                          if (c > 0) {
+                            tr.td().style("text-align:center", "width:1%").__('|');
+                          }
+                          WebPage tpage = commonPages[c];
+                          tr.td().style("white-space:nowrap", "text-align:center", "width:" + ((101 - commonPages.length) / commonPages.length) + "%").__(td -> td
+                                  .a(tpage.getNavImageURL(req, resp, null)).__(tpage.getNavImageAlt(req))
+                          );
+                        }
+                      })
+              )
+      );
+    }
+    @SuppressWarnings("unchecked")
+    __ flow = (__) td_c;
     return flow;
   }
 
@@ -424,34 +426,34 @@ public class TextOnlyLayout extends WebPageLayout {
 
   @Override
   public void endPage(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    FlowContent<?> flow
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      FlowContent<?> flow
   ) throws ServletException, IOException {
     @SuppressWarnings("unchecked")
-    TD_c<TR_c<TBODY_c<TABLE_c<BODY_c<HTML_c<DocumentEE>>>>>> td_c = (TD_c)flow;
+    TD_c<TR_c<TBODY_c<TABLE_c<BODY_c<HTML_c<DocumentEE>>>>>> td_c = (TD_c) flow;
     DocumentEE document = td_c
-              .__()
-            .__()
-          .__()
         .__()
-      .__()
-    .__();
+        .__()
+        .__()
+        .__()
+        .__()
+        .__();
     assert document != null : "Is fully closed back to DocumentEE";
   }
 
   @Override
   public <
-    PC extends FlowContent<PC>,
-    __ extends ContentEE<__>
+      PC extends FlowContent<PC>,
+      __ extends ContentEE<__>
   > __ startContent(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    PC pc,
-    int[] contentColumnSpans,
-    String width
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      PC pc,
+      int[] contentColumnSpans,
+      String width
   ) throws ServletException, IOException {
     if (width == null) {
       width = page.getPreferredContentWidth(req);
@@ -469,78 +471,78 @@ public class TextOnlyLayout extends WebPageLayout {
       totalColumns = totalColumns_;
     }
     TBODY_c<TABLE_c<PC>> tbody = pc.table()
-      .clazz("ao-packed")
-      .style(getWidthStyle(width))
-    ._c()
-      .thead__(thead -> thead
-        .tr__(tr -> tr
-          .td().colspan(totalColumns).__(td -> td
-            .hr__()
-          )
+        .clazz("ao-packed")
+        .style(getWidthStyle(width))
+        ._c()
+        .thead__(thead -> thead
+                .tr__(tr -> tr
+                        .td().colspan(totalColumns).__(td -> td
+                            .hr__()
+                    )
+                )
         )
-      )
-      .tbody_c();
+        .tbody_c();
     @SuppressWarnings("unchecked")
-    __ content = (__)tbody;
+    __ content = (__) tbody;
     return content;
   }
 
   @Override
   public void contentTitle(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    ContentEE<?> content,
-    String title,
-    int contentColumns
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      ContentEE<?> content,
+      String title,
+      int contentColumns
   ) throws ServletException, IOException {
-    FlowContent<?> contentLine = startContentLine(req, resp, content, contentColumns, "center", null); {
-      contentLine.h1__(title);
-    } endContentLine(req, resp, contentLine);
+    FlowContent<?> contentLine = startContentLine(req, resp, content, contentColumns, "center", null);
+    contentLine.h1__(title);
+    endContentLine(req, resp, contentLine);
   }
 
   @Override
   public <__ extends FlowContent<__>> __ startContentLine(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    ContentEE<?> content,
-    int colspan,
-    String align,
-    String width
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      ContentEE<?> content,
+      int colspan,
+      String align,
+      String width
   ) throws ServletException, IOException {
     // Lying about "DocumentEE" here, but it makes the compiler happy and is otherwise irrelevant
     @SuppressWarnings("unchecked")
-    TBODY_c<TABLE_c<DocumentEE>> tbody = (TBODY_c)content;
+    TBODY_c<TABLE_c<DocumentEE>> tbody = (TBODY_c) content;
     align = trimNullIfEmpty(align);
     width = trimNullIfEmpty(width);
     TD_c<TR_c<TBODY_c<TABLE_c<DocumentEE>>>> td = tbody
-      .tr_c()
+        .tr_c()
         .td()
-          .style(
+        .style(
             align == null ? null : "text-align:" + align,
             getWidthStyle(width),
             "vertical-align:top"
-          )
-          .colspan(colspan)
+        )
+        .colspan(colspan)
         ._c();
     @SuppressWarnings("unchecked")
-    __ contentLine = (__)td;
+    __ contentLine = (__) td;
     return contentLine;
   }
 
   @Override
   public <__ extends FlowContent<__>> __ contentVerticalDivider(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    FlowContent<?> contentLine,
-    int direction,
-    int colspan,
-    int rowspan,
-    String align,
-    String width
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      FlowContent<?> contentLine,
+      int direction,
+      int colspan,
+      int rowspan,
+      String align,
+      String width
   ) throws ServletException, IOException {
     // Lying about "DocumentEE" here, but it makes the compiler happy and is otherwise irrelevant
     @SuppressWarnings("unchecked")
-    TD_c<TR_c<TBODY_c<TABLE_c<DocumentEE>>>> td = (TD_c)contentLine;
+    TD_c<TR_c<TBODY_c<TABLE_c<DocumentEE>>>> td = (TD_c) contentLine;
     align = trimNullIfEmpty(align);
     width = trimNullIfEmpty(width);
     TR_c<TBODY_c<TABLE_c<DocumentEE>>> tr = td.__();
@@ -553,48 +555,48 @@ public class TextOnlyLayout extends WebPageLayout {
       default: throw new IllegalArgumentException("Unknown direction: " + direction);
     }
     TD_c<TR_c<TBODY_c<TABLE_c<DocumentEE>>>> newTd = tr.td()
-      .style(
-        align == null ? null : "text-align:" + align,
-        getWidthStyle(width),
-        "vertical-align:top"
-      )
-      .colspan(colspan)
-      .rowspan(rowspan)
-    ._c();
+        .style(
+            align == null ? null : "text-align:" + align,
+            getWidthStyle(width),
+            "vertical-align:top"
+        )
+        .colspan(colspan)
+        .rowspan(rowspan)
+        ._c();
     @SuppressWarnings("unchecked")
-    __ newContentLine = (__)newTd;
+    __ newContentLine = (__) newTd;
     return newContentLine;
   }
 
   @Override
   public void endContentLine(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    FlowContent<?> contentLine,
-    int rowspan,
-    boolean endsInternal
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      FlowContent<?> contentLine,
+      int rowspan,
+      boolean endsInternal
   ) throws ServletException, IOException {
     // Lying about "DocumentEE" here, but it makes the compiler happy and is otherwise irrelevant
     @SuppressWarnings("unchecked")
-    TD_c<TR_c<TBODY_c<TABLE_c<DocumentEE>>>> td = (TD_c)contentLine;
+    TD_c<TR_c<TBODY_c<TABLE_c<DocumentEE>>>> td = (TD_c) contentLine;
     TABLE_c<DocumentEE> table = td
         .__()
-      .__()
-    .__();
+        .__()
+        .__();
     assert table != null : "Is fully closed back to TABLE_c";
   }
 
   @Override
   public void contentHorizontalDivider(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    ContentEE<?> content,
-    int[] colspansAndDirections,
-    boolean endsInternal
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      ContentEE<?> content,
+      int[] colspansAndDirections,
+      boolean endsInternal
   ) throws ServletException, IOException {
     // Lying about "DocumentEE" here, but it makes the compiler happy and is otherwise irrelevant
     @SuppressWarnings("unchecked")
-    TBODY_c<TABLE_c<DocumentEE>> tbody = (TBODY_c)content;
+    TBODY_c<TABLE_c<DocumentEE>> tbody = (TBODY_c) content;
     tbody.tr__(tr -> {
       for (int c = 0; c < colspansAndDirections.length; c += 2) {
         if (c > 0) {
@@ -614,25 +616,25 @@ public class TextOnlyLayout extends WebPageLayout {
         }
         int colspan = colspansAndDirections[c];
         tr.td()
-          .colspan(colspan)
-        .__(td -> td
-          .hr__()
-        );
+            .colspan(colspan)
+            .__(td -> td
+                    .hr__()
+            );
       }
     });
   }
 
   @Override
   public void endContent(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    ContentEE<?> content,
-    int[] contentColumnSpans
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      ContentEE<?> content,
+      int[] contentColumnSpans
   ) throws ServletException, IOException {
     // Lying about "DocumentEE" here, but it makes the compiler happy and is otherwise irrelevant
     @SuppressWarnings("unchecked")
-    TBODY_c<TABLE_c<DocumentEE>> tbody = (TBODY_c)content;
+    TBODY_c<TABLE_c<DocumentEE>> tbody = (TBODY_c) content;
     final int totalColumns;
     {
       int totalColumns_ = 0;
@@ -645,11 +647,11 @@ public class TextOnlyLayout extends WebPageLayout {
       totalColumns = totalColumns_;
     }
     tbody.tr__(tr -> tr
-      .td()
-        .colspan(totalColumns)
-      .__(td -> td
-        .hr__()
-      )
+            .td()
+            .colspan(totalColumns)
+            .__(td -> td
+                    .hr__()
+            )
     );
     TABLE_c<DocumentEE> table = tbody.__();
     String copyright = page.getCopyright(req, resp, page);
@@ -659,12 +661,12 @@ public class TextOnlyLayout extends WebPageLayout {
     if (copyright != null && !copyright.isEmpty()) {
       String copyright_ = copyright;
       table.tfoot__(tfoot -> tfoot
-        .tr__(tr -> tr
-          .td()
-            .colspan(totalColumns)
-            .style("text-align:center", "font-size:x-small")
-          .__(copyright_)
-        )
+              .tr__(tr -> tr
+                      .td()
+                      .colspan(totalColumns)
+                      .style("text-align:center", "font-size:x-small")
+                      .__(copyright_)
+              )
       );
     }
     table.__();
@@ -672,97 +674,97 @@ public class TextOnlyLayout extends WebPageLayout {
 
   @Override
   public <
-    PC extends FlowContent<PC>,
-    __ extends FlowContent<__>
+      PC extends FlowContent<PC>,
+      __ extends FlowContent<__>
   > __ startLightArea(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    PC pc,
-    String align,
-    String width,
-    boolean nowrap
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      PC pc,
+      String align,
+      String width,
+      boolean nowrap
   ) throws ServletException, IOException {
     align = trimNullIfEmpty(align);
     TD_c<TR_c<TBODY_c<TABLE_c<PC>>>> td = pc.table()
-      .clazz("ao-packed")
-      .style("border:5px outset #a0a0a0", getWidthStyle(width))
-    ._c()
-      .tbody_c()
+        .clazz("ao-packed")
+        .style("border:5px outset #a0a0a0", getWidthStyle(width))
+        ._c()
+        .tbody_c()
         .tr_c()
-          .td()
-            .clazz("aoLightRow")
-            .style(
-              "padding:4px",
-              (align != null) ? ("text-align:" + align) : null,
-              nowrap ? "white-space:nowrap" : null
-            )
-          ._c();
+        .td()
+        .clazz("aoLightRow")
+        .style(
+            "padding:4px",
+            (align != null) ? ("text-align:" + align) : null,
+            nowrap ? "white-space:nowrap" : null
+        )
+        ._c();
     @SuppressWarnings("unchecked")
-    __ lightArea = (__)td;
+    __ lightArea = (__) td;
     return lightArea;
   }
 
   @Override
   public void endLightArea(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    FlowContent<?> lightArea
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      FlowContent<?> lightArea
   ) throws ServletException, IOException {
     // Lying about "DocumentEE" here, but it makes the compiler happy and is otherwise irrelevant
     @SuppressWarnings("unchecked")
-    TD_c<TR_c<TBODY_c<TABLE_c<DocumentEE>>>> td = (TD_c)lightArea;
+    TD_c<TR_c<TBODY_c<TABLE_c<DocumentEE>>>> td = (TD_c) lightArea;
     TABLE_c<DocumentEE> table = td
         .__()
-      .__()
-    .__();
+        .__()
+        .__();
     assert table != null : "Is fully closed back to TABLE_c";
   }
 
   @Override
   public <
-    PC extends FlowContent<PC>,
-    __ extends FlowContent<__>
+      PC extends FlowContent<PC>,
+      __ extends FlowContent<__>
   > __ startWhiteArea(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    PC pc,
-    String align,
-    String width,
-    boolean nowrap
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      PC pc,
+      String align,
+      String width,
+      boolean nowrap
   ) throws ServletException, IOException {
     align = trimNullIfEmpty(align);
     TD_c<TR_c<TBODY_c<TABLE_c<PC>>>> td = pc.table()
-      .clazz("ao-packed")
-      .style("border:5px outset #a0a0a0", getWidthStyle(width))
-    ._c()
-      .tbody_c()
+        .clazz("ao-packed")
+        .style("border:5px outset #a0a0a0", getWidthStyle(width))
+        ._c()
+        .tbody_c()
         .tr_c()
-          .td()
-            .clazz("aoWhiteRow")
-            .style(
-              "padding:4px",
-              (align != null) ? ("text-align:" + align) : null,
-              nowrap ? "white-space:nowrap" : null
-            )
-          ._c();
+        .td()
+        .clazz("aoWhiteRow")
+        .style(
+            "padding:4px",
+            (align != null) ? ("text-align:" + align) : null,
+            nowrap ? "white-space:nowrap" : null
+        )
+        ._c();
     @SuppressWarnings("unchecked")
-    __ whiteArea = (__)td;
+    __ whiteArea = (__) td;
     return whiteArea;
   }
 
   @Override
   public void endWhiteArea(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    FlowContent<?> whiteArea
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      FlowContent<?> whiteArea
   ) throws ServletException, IOException {
     // Lying about "DocumentEE" here, but it makes the compiler happy and is otherwise irrelevant
     @SuppressWarnings("unchecked")
-    TD_c<TR_c<TBODY_c<TABLE_c<DocumentEE>>>> td = (TD_c)whiteArea;
+    TD_c<TR_c<TBODY_c<TABLE_c<DocumentEE>>>> td = (TD_c) whiteArea;
     TABLE_c<DocumentEE> table = td
         .__()
-      .__()
-    .__();
+        .__()
+        .__();
     assert table != null : "Is fully closed back to TABLE_c";
   }
 
@@ -776,10 +778,10 @@ public class TextOnlyLayout extends WebPageLayout {
   }
 
   public <__ extends FlowContent<__>> void printLogo(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    __ td
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      __ td
   ) throws ServletException, IOException {
     // Do nothing
   }

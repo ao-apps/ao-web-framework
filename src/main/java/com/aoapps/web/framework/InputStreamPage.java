@@ -47,17 +47,17 @@ public abstract class InputStreamPage extends WebPage {
   @Override
   @SuppressWarnings("unchecked")
   public <__ extends FlowContent<__>> void doGet(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPageLayout layout,
-    __ flow
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPageLayout layout,
+      __ flow
   ) throws ServletException, IOException {
     layout.content(req, resp, this, flow, content -> {
       layout.contentTitle(req, resp, this, content);
       layout.contentHorizontalDivider(req, resp, content);
       FlowContent<?> contentLine = layout.startContentLine(req, resp, content);
       try (InputStream in = getInputStream()) {
-        contentLine = printStream(req, resp, layout, content, (FlowContent)contentLine, in);
+        contentLine = printStream(req, resp, layout, content, (FlowContent) contentLine, in);
       }
       layout.endContentLine(req, resp, contentLine);
     });
@@ -74,12 +74,12 @@ public abstract class InputStreamPage extends WebPage {
    *          or {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.
    */
   public <__ extends FlowContent<__>> __ printStream(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPageLayout layout,
-    ContentEE<?> content,
-    __ contentLine,
-    InputStream in
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPageLayout layout,
+      ContentEE<?> content,
+      __ contentLine,
+      InputStream in
   ) throws ServletException, IOException {
     printStreamStatic(contentLine, in);
     return contentLine;

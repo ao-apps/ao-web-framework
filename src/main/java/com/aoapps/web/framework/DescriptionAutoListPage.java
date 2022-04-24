@@ -43,11 +43,11 @@ public abstract class DescriptionAutoListPage extends AutoListPage {
    */
   @Override
   public <__ extends FlowContent<__>> __ printContentStart(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPageLayout layout,
-    ContentEE<?> content,
-    __ contentLine
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPageLayout layout,
+      ContentEE<?> content,
+      __ contentLine
   ) throws ServletException, IOException {
     contentLine.text(getDescription(req));
     return contentLine;

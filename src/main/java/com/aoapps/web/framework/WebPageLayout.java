@@ -55,16 +55,16 @@ public abstract class WebPageLayout {
    * Directional references.
    */
   public static final int
-    NONE = 0,
-    UP = 1,
-    DOWN = 2,
-    UP_AND_DOWN = 3
+      NONE = 0,
+      UP = 1,
+      DOWN = 2,
+      UP_AND_DOWN = 3
   ;
 
   private final String[] layoutChoices;
 
   protected WebPageLayout(String[] layoutChoices) {
-    this.layoutChoices=layoutChoices;
+    this.layoutChoices = layoutChoices;
   }
 
   /**
@@ -86,45 +86,45 @@ public abstract class WebPageLayout {
    */
   @SuppressWarnings("NoopMethodInAbstractClass")
   public void configureResources(
-    ServletContext servletContext,
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    Registry requestRegistry
+      ServletContext servletContext,
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      Registry requestRegistry
   ) {
     // Do nothing
   }
 
   public <__ extends FlowContent<__>> boolean printWebPageLayoutSelector(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    __ flow
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      __ flow
   ) throws ServletException, IOException {
     if (layoutChoices.length >= 2) {
       flow.script().out(script -> {
         script.indent().append("function selectLayout(layout) {").incDepth().nl();
         for (String choice : layoutChoices) {
           script
-            .indent()
-            .append("if (layout == ")
-            .text(choice)
-            .append(") window.top.location.href=")
-            .text(req.getEncodedURL(page, URIParametersMap.of(WebSiteRequest.LAYOUT.getName(), choice), resp))
-            .append(';')
-            .nl();
+              .indent()
+              .append("if (layout == ")
+              .text(choice)
+              .append(") window.top.location.href=")
+              .text(req.getEncodedURL(page, URIParametersMap.of(WebSiteRequest.LAYOUT.getName(), choice), resp))
+              .append(';')
+              .nl();
         }
         script.decDepth().indent().append('}');
       }).__()
-      .form().action("").style("display:inline").__(form -> form
-        .div().style("display:inline").__(div -> div
-          // TODO: Constant for "layout_selector"?
-          .select().name("layout_selector").onchange("selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);").__(select -> {
-            for (String choice : layoutChoices) {
-              select.option().value(choice).selected(choice.equalsIgnoreCase(getName())).__(choice); // TODO: .equals() like aoindustries.com:DefaultSkin.java?
-            }
-          })
-        )
+          .form().action("").style("display:inline").__(form -> form
+              .div().style("display:inline").__(div -> div
+                  // TODO: Constant for "layout_selector"?
+                  .select().name("layout_selector").onchange("selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);").__(select -> {
+                for (String choice : layoutChoices) {
+                  select.option().value(choice).selected(choice.equalsIgnoreCase(getName())).__(choice); // TODO: .equals() like aoindustries.com:DefaultSkin.java?
+                }
+              })
+          )
       );
       return true;
     } else {
@@ -147,11 +147,11 @@ public abstract class WebPageLayout {
    * @see  DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
    */
   public abstract <__ extends FlowContent<__>> __ startPage(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    DocumentEE document,
-    String onload
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      DocumentEE document,
+      String onload
   ) throws ServletException, IOException;
 
   /**
@@ -168,10 +168,10 @@ public abstract class WebPageLayout {
    * @see  DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
    */
   public abstract void endPage(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    FlowContent<?> flow
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      FlowContent<?> flow
   ) throws ServletException, IOException;
 
   /**
@@ -191,12 +191,12 @@ public abstract class WebPageLayout {
    * @see  DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
    */
   public final <__ extends FlowContent<__>, Ex extends Throwable> void doPage(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    DocumentEE document,
-    String onload,
-    ServletConsumerE<? super __, Ex> body
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      DocumentEE document,
+      String onload,
+      ServletConsumerE<? super __, Ex> body
   ) throws ServletException, IOException, Ex {
     __ flow = startPage(req, resp, page, document, onload);
     if (body != null) {
@@ -222,12 +222,12 @@ public abstract class WebPageLayout {
    * @see  DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
    */
   public final <Ex extends Throwable> void doPage(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    DocumentEE document,
-    String onload,
-    ServletRunnableE<Ex> body
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      DocumentEE document,
+      String onload,
+      ServletRunnableE<Ex> body
   ) throws ServletException, IOException, Ex {
     FlowContent<?> flow = startPage(req, resp, page, document, onload);
     if (body != null) {
@@ -244,41 +244,41 @@ public abstract class WebPageLayout {
    * @see WebPage#doPostWithSearch(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
    */
   public <__ extends FlowContent<__>> void printSearchOutput(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    __ flow,
-    String query,
-    boolean isEntireSite,
-    List<SearchResult> results,
-    String[] words
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      __ flow,
+      String query,
+      boolean isEntireSite,
+      List<SearchResult> results,
+      String[] words
   ) throws ServletException, IOException {
     content(req, resp, page, flow, 1, "600px", 1, content -> {
       contentTitle(req, resp, content, "Search Results");
       contentHorizontalDivider(req, resp, content);
       contentLine(req, resp, content, 1, "center", null, 1, false, contentLine ->
-        lightArea(req, resp, contentLine, null, "300", true, lightArea -> lightArea
-          .form("").id(WebPage.SEARCH_TWO).method(Method.Value.POST).__(form -> {
-            req.printFormFields(form);
-            form.table().clazz("ao-packed").__(table -> table
-              .tbody__(tbody -> tbody
-                .tr__(tr -> tr
-                  .td().style("white-space:nowrap").__(td -> td
-                    .text("Word(s) to search for:").sp()
-                    .input().text().size(24).name(WebSiteRequest.SEARCH_QUERY).value(query).__().br__()
-                    .text("Search Location:").sp().input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).checked(isEntireSite).__()
-                    .sp().text("Entire Site").nbsp(3).input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_THIS_AREA).checked(!isEntireSite).__()
-                    .sp().text("This Area").br__()
-                    .br__()
-                    .div().style("text-align:center").__(div -> div
-                      .input().submit().clazz("ao_button").value(" Search ").__()
-                    )
-                  )
-                )
-              )
-            );
-          })
-        )
+          lightArea(req, resp, contentLine, null, "300", true, lightArea -> lightArea
+                  .form("").id(WebPage.SEARCH_TWO).method(Method.Value.POST).__(form -> {
+                req.printFormFields(form);
+                form.table().clazz("ao-packed").__(table -> table
+                        .tbody__(tbody -> tbody
+                                .tr__(tr -> tr
+                                        .td().style("white-space:nowrap").__(td -> td
+                                            .text("Word(s) to search for:").sp()
+                                            .input().text().size(24).name(WebSiteRequest.SEARCH_QUERY).value(query).__().br__()
+                                            .text("Search Location:").sp().input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).checked(isEntireSite).__()
+                                            .sp().text("Entire Site").nbsp(3).input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_THIS_AREA).checked(!isEntireSite).__()
+                                            .sp().text("This Area").br__()
+                                            .br__()
+                                            .div().style("text-align:center").__(div -> div
+                                                .input().submit().clazz("ao_button").value(" Search ").__()
+                                        )
+                                    )
+                                )
+                        )
+                );
+              })
+          )
       );
       contentHorizontalDivider(req, resp, content);
       contentLine(req, resp, content, 1, "center", null, 1, false, contentLine -> {
@@ -288,48 +288,48 @@ public abstract class WebPageLayout {
           }
         } else {
           lightArea(req, resp, contentLine, lightArea -> lightArea
-            .table().clazz("ao-packed", "aoLightRow").__(table -> {
-              table.thead__(thead -> thead
-                .tr__(tr -> tr
-                  .th().style("white-space:nowrap").__("% Match")
-                  .th().style("white-space:nowrap").__("Title")
-                  .th().style("white-space:nowrap").__("\u00A0")
-                  .th().style("white-space:nowrap").__("Description")
-                )
-              );
+                  .table().clazz("ao-packed", "aoLightRow").__(table -> {
+                table.thead__(thead -> thead
+                        .tr__(tr -> tr
+                                .th().style("white-space:nowrap").__("% Match")
+                                .th().style("white-space:nowrap").__("Title")
+                                .th().style("white-space:nowrap").__("\u00A0")
+                                .th().style("white-space:nowrap").__("Description")
+                        )
+                );
 
-              // Find the highest probability
-              float highest = results.get(0).getProbability();
+                // Find the highest probability
+                float highest = results.get(0).getProbability();
 
-              // Display the results
-              int size = results.size();
-              if (size > 0) {
-                table.tbody__(tbody -> {
-                  for (int c = 0; c < size; c++) {
-                    String rowClass= (c & 1) == 0 ? "aoLightRow":"aoDarkRow";
-                    String linkClass = (c & 1) == 0 ? "aoDarkLink":"aoLightLink";
-                    SearchResult result = results.get(c);
-                    String url = result.getUrl();
-                    String title = result.getTitle();
-                    String description = result.getDescription();
-                    tbody.tr().clazz(rowClass).__(tr -> tr
-                      .td().style("white-space:nowrap", "text-align:center").__(Math.round(99 * result.getProbability() / highest) + "%")
-                      .td().style("white-space:nowrap", "text-align:left").__(td -> td
-                        .a().clazz(linkClass).href(
-                          resp.encodeURL(
-                            URIEncoder.encodeURI(
-                              req.getContextPath() + url
-                            )
+                // Display the results
+                int size = results.size();
+                if (size > 0) {
+                  table.tbody__(tbody -> {
+                    for (int c = 0; c < size; c++) {
+                      String rowClass = (c & 1) == 0 ? "aoLightRow" : "aoDarkRow";
+                      String linkClass = (c & 1) == 0 ? "aoDarkLink" : "aoLightLink";
+                      SearchResult result = results.get(c);
+                      String url = result.getUrl();
+                      String title = result.getTitle();
+                      String description = result.getDescription();
+                      tbody.tr().clazz(rowClass).__(tr -> tr
+                              .td().style("white-space:nowrap", "text-align:center").__(Math.round(99 * result.getProbability() / highest) + "%")
+                              .td().style("white-space:nowrap", "text-align:left").__(td -> td
+                                  .a().clazz(linkClass).href(
+                                  resp.encodeURL(
+                                      URIEncoder.encodeURI(
+                                          req.getContextPath() + url
+                                      )
+                                  )
+                              ).__(title)
                           )
-                        ).__(title)
-                      )
-                      .td().style("white-space:nowrap").__("\u00A0\u00A0\u00A0")
-                      .td().style("white-space:nowrap", "text-align:left").__(description)
-                    );
-                  }
-                });
-              }
-            })
+                              .td().style("white-space:nowrap").__("\u00A0\u00A0\u00A0")
+                              .td().style("white-space:nowrap", "text-align:left").__(description)
+                      );
+                    }
+                  });
+                }
+              })
           );
         }
       });
@@ -357,15 +357,15 @@ public abstract class WebPageLayout {
    *          and {@link #endContent(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int[])}.
    */
   public final <
-    PC extends FlowContent<PC>,
-    __ extends ContentEE<__>
+      PC extends FlowContent<PC>,
+      __ extends ContentEE<__>
   > __ startContent(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    PC pc
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      PC pc
   ) throws ServletException, IOException {
-    return startContent(req, resp, page, pc, new int[] {1}, null);
+    return startContent(req, resp, page, pc, new int[]{1}, null);
   }
 
   /**
@@ -391,17 +391,17 @@ public abstract class WebPageLayout {
    *          and {@link #endContent(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int[])}.
    */
   public final <
-    PC extends FlowContent<PC>,
-    __ extends ContentEE<__>
+      PC extends FlowContent<PC>,
+      __ extends ContentEE<__>
   > __ startContent(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    PC pc,
-    int contentColumns,
-    String width
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      PC pc,
+      int contentColumns,
+      String width
   ) throws ServletException, IOException {
-    return startContent(req, resp, page, pc, new int[] {contentColumns}, width);
+    return startContent(req, resp, page, pc, new int[]{contentColumns}, width);
   }
 
   /**
@@ -427,15 +427,15 @@ public abstract class WebPageLayout {
    *          and {@link #endContent(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int[])}.
    */
   public abstract <
-    PC extends FlowContent<PC>,
-    __ extends ContentEE<__>
+      PC extends FlowContent<PC>,
+      __ extends ContentEE<__>
   > __ startContent(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    PC pc,
-    int[] contentColumnSpans,
-    String width
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      PC pc,
+      int[] contentColumnSpans,
+      String width
   ) throws ServletException, IOException;
 
   /**
@@ -447,10 +447,10 @@ public abstract class WebPageLayout {
    *                  or {@link #startContent(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
    */
   public final void contentTitle(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    ContentEE<?> content
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      ContentEE<?> content
   ) throws ServletException, IOException {
     contentTitle(req, resp, content, page.getTitle(req), 1);
   }
@@ -464,11 +464,11 @@ public abstract class WebPageLayout {
    *                  or {@link #startContent(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
    */
   public final void contentTitle(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    ContentEE<?> content,
-    int contentColumns
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      ContentEE<?> content,
+      int contentColumns
   ) throws ServletException, IOException {
     contentTitle(req, resp, content, page.getTitle(req), contentColumns);
   }
@@ -482,10 +482,10 @@ public abstract class WebPageLayout {
    *                  or {@link #startContent(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
    */
   public final void contentTitle(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    ContentEE<?> content,
-    String title
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      ContentEE<?> content,
+      String title
   ) throws ServletException, IOException {
     contentTitle(req, resp, content, title, 1);
   }
@@ -499,11 +499,11 @@ public abstract class WebPageLayout {
    *                  or {@link #startContent(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
    */
   public abstract void contentTitle(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    ContentEE<?> content,
-    String title,
-    int contentColumns
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      ContentEE<?> content,
+      String title,
+      int contentColumns
   ) throws ServletException, IOException;
 
   /**
@@ -522,9 +522,9 @@ public abstract class WebPageLayout {
    *          and {@link #endContentLine(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, boolean)}.
    */
   public final <__ extends FlowContent<__>> __ startContentLine(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    ContentEE<?> content
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      ContentEE<?> content
   ) throws ServletException, IOException {
     return startContentLine(req, resp, content, 1, null, null);
   }
@@ -545,12 +545,12 @@ public abstract class WebPageLayout {
    *          and {@link #endContentLine(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, boolean)}.
    */
   public abstract <__ extends FlowContent<__>> __ startContentLine(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    ContentEE<?> content,
-    int colspan,
-    String align,
-    String width
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      ContentEE<?> content,
+      int colspan,
+      String align,
+      String width
   ) throws ServletException, IOException;
 
   /**
@@ -569,9 +569,9 @@ public abstract class WebPageLayout {
    *          and {@link #endContentLine(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, boolean)}.
    */
   public final <__ extends FlowContent<__>> __ contentVerticalDivider(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    FlowContent<?> contentLine
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      FlowContent<?> contentLine
   ) throws ServletException, IOException {
     return contentVerticalDivider(req, resp, contentLine, UP_AND_DOWN, 1, 1, null, null);
   }
@@ -592,14 +592,14 @@ public abstract class WebPageLayout {
    *          and {@link #endContentLine(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, boolean)}.
    */
   public abstract <__ extends FlowContent<__>> __ contentVerticalDivider(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    FlowContent<?> contentLine,
-    int direction, // TODO: This should be an enum, or maybe "boolean visible" like aoweb-struts:Skin.java
-    int colspan,
-    int rowspan,
-    String align,
-    String width
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      FlowContent<?> contentLine,
+      int direction, // TODO: This should be an enum, or maybe "boolean visible" like aoweb-struts:Skin.java
+      int colspan,
+      int rowspan,
+      String align,
+      String width
   ) throws ServletException, IOException;
 
   /**
@@ -612,9 +612,9 @@ public abstract class WebPageLayout {
    *                      or {@link #contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.
    */
   public final void endContentLine(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    FlowContent<?> contentLine
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      FlowContent<?> contentLine
   ) throws ServletException, IOException {
     endContentLine(req, resp, contentLine, 1, false);
   }
@@ -629,11 +629,11 @@ public abstract class WebPageLayout {
    *                      or {@link #contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.
    */
   public abstract void endContentLine(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    FlowContent<?> contentLine,
-    int rowspan,
-    boolean endsInternal
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      FlowContent<?> contentLine,
+      int rowspan,
+      boolean endsInternal
   ) throws ServletException, IOException;
 
   /**
@@ -648,13 +648,13 @@ public abstract class WebPageLayout {
    * @see  #endContentLine(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
    */
   public final <
-    __ extends FlowContent<__>,
-    Ex extends Throwable
+      __ extends FlowContent<__>,
+      Ex extends Throwable
   > void contentLine(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    ContentEE<?> content,
-    ServletConsumerE<? super __, Ex> contentLine
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      ContentEE<?> content,
+      ServletConsumerE<? super __, Ex> contentLine
   ) throws ServletException, IOException, Ex {
     this.<__, Ex>contentLine(req, resp, content, 1, null, null, 1, false, contentLine);
   }
@@ -671,13 +671,13 @@ public abstract class WebPageLayout {
    * @see  #endContentLine(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
    */
   public final <
-    __ extends FlowContent<__>,
-    Ex extends Throwable
+      __ extends FlowContent<__>,
+      Ex extends Throwable
   > void contentLine(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    ContentEE<?> content,
-    ServletRunnableE<Ex> contentLine
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      ContentEE<?> content,
+      ServletRunnableE<Ex> contentLine
   ) throws ServletException, IOException, Ex {
     contentLine(req, resp, content, 1, null, null, 1, false, contentLine);
   }
@@ -694,24 +694,24 @@ public abstract class WebPageLayout {
    * @see  #endContentLine(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, boolean)
    */
   public final <
-    __ extends FlowContent<__>,
-    Ex extends Throwable
+      __ extends FlowContent<__>,
+      Ex extends Throwable
   > void contentLine(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    ContentEE<?> content,
-    int colspan,
-    String align,
-    String width,
-    int endRowspan,
-    boolean endsInternal,
-    ServletConsumerE<? super __, Ex> contentLine
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      ContentEE<?> content,
+      int colspan,
+      String align,
+      String width,
+      int endRowspan,
+      boolean endsInternal,
+      ServletConsumerE<? super __, Ex> contentLine
   ) throws ServletException, IOException, Ex {
-    __ flow = startContentLine(req, resp, content, colspan, align, width); {
-      if (contentLine != null) {
-        contentLine.accept(flow);
-      }
-    } endContentLine(req, resp, flow, endRowspan, endsInternal);
+    __ flow = startContentLine(req, resp, content, colspan, align, width);
+    if (contentLine != null) {
+      contentLine.accept(flow);
+    }
+    endContentLine(req, resp, flow, endRowspan, endsInternal);
   }
 
   /**
@@ -726,24 +726,24 @@ public abstract class WebPageLayout {
    * @see  #endContentLine(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, boolean)
    */
   public final <
-    __ extends FlowContent<__>,
-    Ex extends Throwable
+      __ extends FlowContent<__>,
+      Ex extends Throwable
   > void contentLine(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    ContentEE<?> content,
-    int colspan,
-    String align,
-    String width,
-    int endRowspan,
-    boolean endsInternal,
-    ServletRunnableE<Ex> contentLine
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      ContentEE<?> content,
+      int colspan,
+      String align,
+      String width,
+      int endRowspan,
+      boolean endsInternal,
+      ServletRunnableE<Ex> contentLine
   ) throws ServletException, IOException, Ex {
-    __ flow = startContentLine(req, resp, content, colspan, align, width); {
-      if (contentLine != null) {
-        contentLine.run();
-      }
-    } endContentLine(req, resp, flow, endRowspan, endsInternal);
+    __ flow = startContentLine(req, resp, content, colspan, align, width);
+    if (contentLine != null) {
+      contentLine.run();
+    }
+    endContentLine(req, resp, flow, endRowspan, endsInternal);
   }
 
   /**
@@ -755,11 +755,11 @@ public abstract class WebPageLayout {
    *                  or {@link #startContent(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
    */
   public final void contentHorizontalDivider(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    ContentEE<?> content
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      ContentEE<?> content
   ) throws ServletException, IOException {
-    contentHorizontalDivider(req, resp, content, new int[] {1}, false);
+    contentHorizontalDivider(req, resp, content, new int[]{1}, false);
   }
 
   /**
@@ -771,13 +771,13 @@ public abstract class WebPageLayout {
    *                  or {@link #startContent(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
    */
   public final void contentHorizontalDivider(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    ContentEE<?> content,
-    int colspan,
-    boolean endsInternal
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      ContentEE<?> content,
+      int colspan,
+      boolean endsInternal
   ) throws ServletException, IOException {
-    contentHorizontalDivider(req, resp, content, new int[] {colspan}, endsInternal);
+    contentHorizontalDivider(req, resp, content, new int[]{colspan}, endsInternal);
   }
 
   /**
@@ -789,11 +789,11 @@ public abstract class WebPageLayout {
    *                  or {@link #startContent(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
    */
   public abstract void contentHorizontalDivider(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    ContentEE<?> content,
-    int[] colspansAndDirections,
-    boolean endsInternal
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      ContentEE<?> content,
+      int[] colspansAndDirections,
+      boolean endsInternal
   ) throws ServletException, IOException;
 
   /**
@@ -805,12 +805,12 @@ public abstract class WebPageLayout {
    *                  or {@link #startContent(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
    */
   public final void endContent(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    ContentEE<?> content
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      ContentEE<?> content
   ) throws ServletException, IOException {
-    endContent(req, resp, page, content, new int[] {1});
+    endContent(req, resp, page, content, new int[]{1});
   }
 
   /**
@@ -822,13 +822,13 @@ public abstract class WebPageLayout {
    *                  or {@link #startContent(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
    */
   public final void endContent(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    ContentEE<?> content,
-    int contentColumns
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      ContentEE<?> content,
+      int contentColumns
   ) throws ServletException, IOException {
-    endContent(req, resp, page, content, new int[] {contentColumns});
+    endContent(req, resp, page, content, new int[]{contentColumns});
   }
 
   /**
@@ -840,11 +840,11 @@ public abstract class WebPageLayout {
    *                  or {@link #startContent(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
    */
   public abstract void endContent(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    ContentEE<?> content,
-    int[] contentColumnSpans
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      ContentEE<?> content,
+      int[] contentColumnSpans
   ) throws ServletException, IOException;
 
   /**
@@ -860,17 +860,17 @@ public abstract class WebPageLayout {
    * @see  #endContent(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE)
    */
   public final <
-    PC extends FlowContent<PC>,
-    __ extends ContentEE<__>,
-    Ex extends Throwable
+      PC extends FlowContent<PC>,
+      __ extends ContentEE<__>,
+      Ex extends Throwable
   > void content(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    PC pc,
-    ServletConsumerE<? super __, Ex> content
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      PC pc,
+      ServletConsumerE<? super __, Ex> content
   ) throws ServletException, IOException, Ex {
-    this.<PC, __, Ex>content(req, resp, page, pc, new int[] {1}, null, new int[] {1}, content);
+    this.<PC, __, Ex>content(req, resp, page, pc, new int[]{1}, null, new int[]{1}, content);
   }
 
   /**
@@ -886,17 +886,17 @@ public abstract class WebPageLayout {
    * @see  #endContent(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE)
    */
   public final <
-    PC extends FlowContent<PC>,
-    __ extends ContentEE<__>,
-    Ex extends Throwable
+      PC extends FlowContent<PC>,
+      __ extends ContentEE<__>,
+      Ex extends Throwable
   > void content(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    PC pc,
-    ServletRunnableE<Ex> content
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      PC pc,
+      ServletRunnableE<Ex> content
   ) throws ServletException, IOException, Ex {
-    content(req, resp, page, pc, new int[] {1}, null, new int[] {1}, content);
+    content(req, resp, page, pc, new int[]{1}, null, new int[]{1}, content);
   }
 
   /**
@@ -912,20 +912,20 @@ public abstract class WebPageLayout {
    * @see  #endContent(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int)
    */
   public final <
-    PC extends FlowContent<PC>,
-    __ extends ContentEE<__>,
-    Ex extends Throwable
+      PC extends FlowContent<PC>,
+      __ extends ContentEE<__>,
+      Ex extends Throwable
   > void content(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    PC pc,
-    int startContentColumns,
-    String width,
-    int endContentColumns,
-    ServletConsumerE<? super __, Ex> content
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      PC pc,
+      int startContentColumns,
+      String width,
+      int endContentColumns,
+      ServletConsumerE<? super __, Ex> content
   ) throws ServletException, IOException, Ex {
-    this.<PC, __, Ex>content(req, resp, page, pc, new int[] {startContentColumns}, width, new int[] {endContentColumns}, content);
+    this.<PC, __, Ex>content(req, resp, page, pc, new int[]{startContentColumns}, width, new int[]{endContentColumns}, content);
   }
 
   /**
@@ -941,20 +941,20 @@ public abstract class WebPageLayout {
    * @see  #endContent(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int)
    */
   public final <
-    PC extends FlowContent<PC>,
-    __ extends ContentEE<__>,
-    Ex extends Throwable
+      PC extends FlowContent<PC>,
+      __ extends ContentEE<__>,
+      Ex extends Throwable
   > void content(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    PC pc,
-    int startContentColumns,
-    String width,
-    int endContentColumns,
-    ServletRunnableE<Ex> content
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      PC pc,
+      int startContentColumns,
+      String width,
+      int endContentColumns,
+      ServletRunnableE<Ex> content
   ) throws ServletException, IOException, Ex {
-    content(req, resp, page, pc, new int[] {startContentColumns}, width, new int[] {endContentColumns}, content);
+    content(req, resp, page, pc, new int[]{startContentColumns}, width, new int[]{endContentColumns}, content);
   }
 
   /**
@@ -970,24 +970,24 @@ public abstract class WebPageLayout {
    * @see  #endContent(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int[])
    */
   public final <
-    PC extends FlowContent<PC>,
-    __ extends ContentEE<__>,
-    Ex extends Throwable
+      PC extends FlowContent<PC>,
+      __ extends ContentEE<__>,
+      Ex extends Throwable
   > void content(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    PC pc,
-    int[] startContentColumnSpans,
-    String width,
-    int[] endContentColumnSpans,
-    ServletConsumerE<? super __, Ex> content
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      PC pc,
+      int[] startContentColumnSpans,
+      String width,
+      int[] endContentColumnSpans,
+      ServletConsumerE<? super __, Ex> content
   ) throws ServletException, IOException, Ex {
-    __ contentEE = startContent(req, resp, page, pc, startContentColumnSpans, width); {
-      if (content != null) {
-        content.accept(contentEE);
-      }
-    } endContent(req, resp, page, contentEE, endContentColumnSpans);
+    __ contentEE = startContent(req, resp, page, pc, startContentColumnSpans, width);
+    if (content != null) {
+      content.accept(contentEE);
+    }
+    endContent(req, resp, page, contentEE, endContentColumnSpans);
   }
 
   /**
@@ -1003,24 +1003,24 @@ public abstract class WebPageLayout {
    * @see  #endContent(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int[])
    */
   public final <
-    PC extends FlowContent<PC>,
-    __ extends ContentEE<__>,
-    Ex extends Throwable
+      PC extends FlowContent<PC>,
+      __ extends ContentEE<__>,
+      Ex extends Throwable
   > void content(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    PC pc,
-    int[] startContentColumnSpans,
-    String width,
-    int[] endContentColumnSpans,
-    ServletRunnableE<Ex> content
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      PC pc,
+      int[] startContentColumnSpans,
+      String width,
+      int[] endContentColumnSpans,
+      ServletRunnableE<Ex> content
   ) throws ServletException, IOException, Ex {
-    __ contentEE = startContent(req, resp, page, pc, startContentColumnSpans, width); {
-      if (content != null) {
-        content.run();
-      }
-    } endContent(req, resp, page, contentEE, endContentColumnSpans);
+    __ contentEE = startContent(req, resp, page, pc, startContentColumnSpans, width);
+    if (content != null) {
+      content.run();
+    }
+    endContent(req, resp, page, contentEE, endContentColumnSpans);
   }
 
   /**
@@ -1069,12 +1069,12 @@ public abstract class WebPageLayout {
    *          to finish the area.
    */
   public final <
-    PC extends FlowContent<PC>,
-    __ extends FlowContent<__>
+      PC extends FlowContent<PC>,
+      __ extends FlowContent<__>
   > __ startLightArea(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    PC pc
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      PC pc
   ) throws ServletException, IOException {
     return startLightArea(req, resp, pc, null, null, false);
   }
@@ -1090,15 +1090,15 @@ public abstract class WebPageLayout {
    *          to finish the area.
    */
   public abstract <
-    PC extends FlowContent<PC>,
-    __ extends FlowContent<__>
+      PC extends FlowContent<PC>,
+      __ extends FlowContent<__>
   > __ startLightArea(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    PC pc,
-    String align,
-    String width,
-    boolean nowrap
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      PC pc,
+      String align,
+      String width,
+      boolean nowrap
   ) throws ServletException, IOException;
 
   /**
@@ -1109,9 +1109,9 @@ public abstract class WebPageLayout {
    *                    or {@link #startLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, boolean)}.
    */
   public abstract void endLightArea(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    FlowContent<?> lightArea
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      FlowContent<?> lightArea
   ) throws ServletException, IOException;
 
   /**
@@ -1127,20 +1127,20 @@ public abstract class WebPageLayout {
    * @see  #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
    */
   public final <
-    PC extends FlowContent<PC>,
-    __ extends FlowContent<__>,
-    Ex extends Throwable
+      PC extends FlowContent<PC>,
+      __ extends FlowContent<__>,
+      Ex extends Throwable
   > void lightArea(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    PC pc,
-    ServletConsumerE<? super __, Ex> lightArea
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      PC pc,
+      ServletConsumerE<? super __, Ex> lightArea
   ) throws ServletException, IOException, Ex {
-    __ flow = startLightArea(req, resp, pc); {
-      if (lightArea != null) {
-        lightArea.accept(flow);
-      }
-    } endLightArea(req, resp, flow);
+    __ flow = startLightArea(req, resp, pc);
+    if (lightArea != null) {
+      lightArea.accept(flow);
+    }
+    endLightArea(req, resp, flow);
   }
 
   /**
@@ -1155,19 +1155,19 @@ public abstract class WebPageLayout {
    * @see  #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
    */
   public final <
-    PC extends FlowContent<PC>,
-    Ex extends Throwable
+      PC extends FlowContent<PC>,
+      Ex extends Throwable
   > void lightArea(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    PC pc,
-    ServletRunnableE<Ex> lightArea
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      PC pc,
+      ServletRunnableE<Ex> lightArea
   ) throws ServletException, IOException, Ex {
-    FlowContent<?> flow = startLightArea(req, resp, pc); {
-      if (lightArea != null) {
-        lightArea.run();
-      }
-    } endLightArea(req, resp, flow);
+    FlowContent<?> flow = startLightArea(req, resp, pc);
+    if (lightArea != null) {
+      lightArea.run();
+    }
+    endLightArea(req, resp, flow);
   }
 
   /**
@@ -1183,23 +1183,23 @@ public abstract class WebPageLayout {
    * @see  #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
    */
   public final <
-    PC extends FlowContent<PC>,
-    __ extends FlowContent<__>,
-    Ex extends Throwable
+      PC extends FlowContent<PC>,
+      __ extends FlowContent<__>,
+      Ex extends Throwable
   > void lightArea(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    PC pc,
-    String align,
-    String width,
-    boolean nowrap,
-    ServletConsumerE<? super __, Ex> lightArea
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      PC pc,
+      String align,
+      String width,
+      boolean nowrap,
+      ServletConsumerE<? super __, Ex> lightArea
   ) throws ServletException, IOException, Ex {
-    __ flow = startLightArea(req, resp, pc, align, width, nowrap); {
-      if (lightArea != null) {
-        lightArea.accept(flow);
-      }
-    } endLightArea(req, resp, flow);
+    __ flow = startLightArea(req, resp, pc, align, width, nowrap);
+    if (lightArea != null) {
+      lightArea.accept(flow);
+    }
+    endLightArea(req, resp, flow);
   }
 
   /**
@@ -1214,22 +1214,22 @@ public abstract class WebPageLayout {
    * @see  #endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
    */
   public final <
-    PC extends FlowContent<PC>,
-    Ex extends Throwable
+      PC extends FlowContent<PC>,
+      Ex extends Throwable
   > void lightArea(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    PC pc,
-    String align,
-    String width,
-    boolean nowrap,
-    ServletRunnableE<Ex> lightArea
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      PC pc,
+      String align,
+      String width,
+      boolean nowrap,
+      ServletRunnableE<Ex> lightArea
   ) throws ServletException, IOException, Ex {
-    FlowContent<?> flow = startLightArea(req, resp, pc, align, width, nowrap); {
-      if (lightArea != null) {
-        lightArea.run();
-      }
-    } endLightArea(req, resp, flow);
+    FlowContent<?> flow = startLightArea(req, resp, pc, align, width, nowrap);
+    if (lightArea != null) {
+      lightArea.run();
+    }
+    endLightArea(req, resp, flow);
   }
 
   /**
@@ -1243,12 +1243,12 @@ public abstract class WebPageLayout {
    *          to finish the area.
    */
   public final <
-    PC extends FlowContent<PC>,
-    __ extends FlowContent<__>
+      PC extends FlowContent<PC>,
+      __ extends FlowContent<__>
   > __ startWhiteArea(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    PC pc
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      PC pc
   ) throws ServletException, IOException {
     return startWhiteArea(req, resp, pc, null, null, false);
   }
@@ -1264,15 +1264,15 @@ public abstract class WebPageLayout {
    *          to finish the area.
    */
   public abstract <
-    PC extends FlowContent<PC>,
-    __ extends FlowContent<__>
+      PC extends FlowContent<PC>,
+      __ extends FlowContent<__>
   > __ startWhiteArea(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    PC pc,
-    String align,
-    String width,
-    boolean nowrap
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      PC pc,
+      String align,
+      String width,
+      boolean nowrap
   ) throws ServletException, IOException;
 
   /**
@@ -1283,9 +1283,9 @@ public abstract class WebPageLayout {
    *                    or {@link #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, boolean)}.
    */
   public abstract void endWhiteArea(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    FlowContent<?> whiteArea
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      FlowContent<?> whiteArea
   ) throws ServletException, IOException;
 
   /**
@@ -1301,20 +1301,20 @@ public abstract class WebPageLayout {
    * @see  #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
    */
   public final <
-    PC extends FlowContent<PC>,
-    __ extends FlowContent<__>,
-    Ex extends Throwable
+      PC extends FlowContent<PC>,
+      __ extends FlowContent<__>,
+      Ex extends Throwable
   > void whiteArea(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    PC pc,
-    ServletConsumerE<? super __, Ex> whiteArea
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      PC pc,
+      ServletConsumerE<? super __, Ex> whiteArea
   ) throws ServletException, IOException, Ex {
-    __ flow = startWhiteArea(req, resp, pc); {
-      if (whiteArea != null) {
-        whiteArea.accept(flow);
-      }
-    } endWhiteArea(req, resp, flow);
+    __ flow = startWhiteArea(req, resp, pc);
+    if (whiteArea != null) {
+      whiteArea.accept(flow);
+    }
+    endWhiteArea(req, resp, flow);
   }
 
   /**
@@ -1329,19 +1329,19 @@ public abstract class WebPageLayout {
    * @see  #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
    */
   public final <
-    PC extends FlowContent<PC>,
-    Ex extends Throwable
+      PC extends FlowContent<PC>,
+      Ex extends Throwable
   > void whiteArea(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    PC pc,
-    ServletRunnableE<Ex> whiteArea
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      PC pc,
+      ServletRunnableE<Ex> whiteArea
   ) throws ServletException, IOException, Ex {
-    FlowContent<?> flow = startWhiteArea(req, resp, pc); {
-      if (whiteArea != null) {
-        whiteArea.run();
-      }
-    } endWhiteArea(req, resp, flow);
+    FlowContent<?> flow = startWhiteArea(req, resp, pc);
+    if (whiteArea != null) {
+      whiteArea.run();
+    }
+    endWhiteArea(req, resp, flow);
   }
 
   /**
@@ -1357,23 +1357,23 @@ public abstract class WebPageLayout {
    * @see  #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
    */
   public final <
-    PC extends FlowContent<PC>,
-    __ extends FlowContent<__>,
-    Ex extends Throwable
+      PC extends FlowContent<PC>,
+      __ extends FlowContent<__>,
+      Ex extends Throwable
   > void whiteArea(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    PC pc,
-    String align,
-    String width,
-    boolean nowrap,
-    ServletConsumerE<? super __, Ex> whiteArea
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      PC pc,
+      String align,
+      String width,
+      boolean nowrap,
+      ServletConsumerE<? super __, Ex> whiteArea
   ) throws ServletException, IOException, Ex {
-    __ flow = startWhiteArea(req, resp, pc, align, width, nowrap); {
-      if (whiteArea != null) {
-        whiteArea.accept(flow);
-      }
-    } endWhiteArea(req, resp, flow);
+    __ flow = startWhiteArea(req, resp, pc, align, width, nowrap);
+    if (whiteArea != null) {
+      whiteArea.accept(flow);
+    }
+    endWhiteArea(req, resp, flow);
   }
 
   /**
@@ -1388,22 +1388,22 @@ public abstract class WebPageLayout {
    * @see  #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
    */
   public final <
-    PC extends FlowContent<PC>,
-    Ex extends Throwable
+      PC extends FlowContent<PC>,
+      Ex extends Throwable
   > void whiteArea(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    PC pc,
-    String align,
-    String width,
-    boolean nowrap,
-    ServletRunnableE<Ex> whiteArea
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      PC pc,
+      String align,
+      String width,
+      boolean nowrap,
+      ServletRunnableE<Ex> whiteArea
   ) throws ServletException, IOException, Ex {
-    FlowContent<?> flow = startWhiteArea(req, resp, pc, align, width, nowrap); {
-      if (whiteArea != null) {
-        whiteArea.run();
-      }
-    } endWhiteArea(req, resp, flow);
+    FlowContent<?> flow = startWhiteArea(req, resp, pc, align, width, nowrap);
+    if (whiteArea != null) {
+      whiteArea.run();
+    }
+    endWhiteArea(req, resp, flow);
   }
 
   /**
@@ -1412,10 +1412,10 @@ public abstract class WebPageLayout {
   public abstract String getName();
 
   protected <__ extends ScriptSupportingContent<__>> void printJavascriptIncludes(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    __ content
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      __ content
   ) throws ServletException, IOException {
     Object src = page.getJavascriptSrc(req);
     if (src != null) {
@@ -1426,9 +1426,9 @@ public abstract class WebPageLayout {
           content.script().src(req.getEncodedURLForPath('/' + sa[c], null, false, resp)).__();
         }
       } else if (src instanceof Class) {
-        content.script().src(req.getEncodedURL(((Class<?>)src).asSubclass(WebPage.class), null, resp)).__();
+        content.script().src(req.getEncodedURL(((Class<?>) src).asSubclass(WebPage.class), null, resp)).__();
       } else if (src instanceof WebPage) {
-        content.script().src(req.getEncodedURL((WebPage)src, resp)).__();
+        content.script().src(req.getEncodedURL((WebPage) src, resp)).__();
       } else {
         content.script().src(req.getEncodedURLForPath('/' + src.toString(), null, false, resp)).__();
       }

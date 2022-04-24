@@ -38,12 +38,12 @@ public class SearchResult implements Comparable<SearchResult> {
   private final String authorHref;
 
   public SearchResult(
-    String url,
-    float probability,
-    String title,
-    String description,
-    String author,
-    String authorHref
+      String url,
+      float probability,
+      String title,
+      String description,
+      String author,
+      String authorHref
   ) {
     this.url = url;
     this.probability = probability;

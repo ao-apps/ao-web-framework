@@ -53,23 +53,24 @@ public class SearchLayout extends WebPageLayout {
 
   @Override
   public <__ extends FlowContent<__>> __ startPage(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    DocumentEE document,
-    String onload
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      DocumentEE document,
+      String onload
   ) {
     // Do nothing
-    @SuppressWarnings("unchecked") __ flow = (__)document;
+    @SuppressWarnings("unchecked")
+    __ flow = (__) document;
     return flow;
   }
 
   @Override
   public void endPage(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    FlowContent<?> flow
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      FlowContent<?> flow
   ) {
     // Do nothing
   }
@@ -81,148 +82,148 @@ public class SearchLayout extends WebPageLayout {
 
   @Override
   public <
-    PC extends FlowContent<PC>,
-    __ extends ContentEE<__>
+      PC extends FlowContent<PC>,
+      __ extends ContentEE<__>
   > __ startContent(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    PC pc,
-    int[] contentColumnSpans,
-    String width
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      PC pc,
+      int[] contentColumnSpans,
+      String width
   ) {
     // Do nothing
     @SuppressWarnings("unchecked")
-    __ content = (__)pc;
+    __ content = (__) pc;
     return content;
   }
 
   @Override
   public void contentTitle(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    ContentEE<?> content,
-    String title,
-    int contentColumns
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      ContentEE<?> content,
+      String title,
+      int contentColumns
   ) {
     // Do nothing
   }
 
   @Override
   public <__ extends FlowContent<__>> __ startContentLine(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    ContentEE<?> content,
-    int colspan,
-    String align,
-    String width
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      ContentEE<?> content,
+      int colspan,
+      String align,
+      String width
   ) {
     // Do nothing
     @SuppressWarnings("unchecked")
-    __ contentLine = (__)content;
+    __ contentLine = (__) content;
     return contentLine;
   }
 
   @Override
   public <__ extends FlowContent<__>> __ contentVerticalDivider(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    FlowContent<?> contentLine,
-    int direction,
-    int colspan,
-    int rowspan,
-    String align,
-    String width
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      FlowContent<?> contentLine,
+      int direction,
+      int colspan,
+      int rowspan,
+      String align,
+      String width
   ) {
     // Do nothing
     @SuppressWarnings("unchecked")
-    __ newContentLine = (__)contentLine;
+    __ newContentLine = (__) contentLine;
     return newContentLine;
   }
 
   @Override
   public void endContentLine(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    FlowContent<?> contentLine,
-    int rowspan,
-    boolean endsInternal
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      FlowContent<?> contentLine,
+      int rowspan,
+      boolean endsInternal
   ) {
     // Do nothing
   }
 
   @Override
   public void contentHorizontalDivider(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    ContentEE<?> content,
-    int[] colspansAndDirections,
-    boolean endsInternal
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      ContentEE<?> content,
+      int[] colspansAndDirections,
+      boolean endsInternal
   ) {
     // Do nothing
   }
 
   @Override
   public void endContent(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    WebPage page,
-    ContentEE<?> content,
-    int[] contentColumnSpans
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      ContentEE<?> content,
+      int[] contentColumnSpans
   ) {
     // Do nothing
   }
 
   @Override
   public <
-    PC extends FlowContent<PC>,
-    __ extends FlowContent<__>
+      PC extends FlowContent<PC>,
+      __ extends FlowContent<__>
   > __ startLightArea(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    PC pc,
-    String align,
-    String width,
-    boolean nowrap
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      PC pc,
+      String align,
+      String width,
+      boolean nowrap
   ) throws ServletException, IOException {
     // Do nothing
     @SuppressWarnings("unchecked")
-    __ lightArea = (__)pc;
+    __ lightArea = (__) pc;
     return lightArea;
   }
 
   @Override
   public void endLightArea(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    FlowContent<?> lightArea
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      FlowContent<?> lightArea
   ) throws ServletException, IOException {
     // Do nothing
   }
 
   @Override
   public <
-    PC extends FlowContent<PC>,
-    __ extends FlowContent<__>
+      PC extends FlowContent<PC>,
+      __ extends FlowContent<__>
   > __ startWhiteArea(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    PC pc,
-    String align,
-    String width,
-    boolean nowrap
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      PC pc,
+      String align,
+      String width,
+      boolean nowrap
   ) throws ServletException, IOException {
     // Do nothing
     @SuppressWarnings("unchecked")
-    __ whiteArea = (__)pc;
+    __ whiteArea = (__) pc;
     return whiteArea;
   }
 
   @Override
   public void endWhiteArea(
-    WebSiteRequest req,
-    HttpServletResponse resp,
-    FlowContent<?> whiteArea
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      FlowContent<?> whiteArea
   ) throws ServletException, IOException {
     // Do nothing
   }
