@@ -34,3 +34,6 @@ f741ae4f66e47fc46222a494cf1a1820401b03f6
 
 # Working on readme styling.
 59ba75040f44f2960f9c06a1d8e7495214b5cbe7
+
+# Performed automatic source code clean-up with rewrite-maven-plugin
+0288140c6ef4b624449a78b87b100549878396e9
