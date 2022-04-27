@@ -123,7 +123,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
         char ch = htmlContent.charAt(pos++);
         if (ch == '@') {
           // TODO: regionsMatches would be faster than repeated substring
-          if ((pos + 4) < len && htmlContent.substring(pos, pos + 4).equalsIgnoreCase("URL(")) {
+          if ((pos + 4) < len && "URL(".equalsIgnoreCase(htmlContent.substring(pos, pos + 4))) {
             int endPos = htmlContent.indexOf(')', pos + 4);
             if (endPos == -1) {
               throw new IllegalArgumentException("Unable to find closing parenthesis for @URL( substitution, pos=" + pos);
@@ -131,7 +131,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
             String className = htmlContent.substring(pos + 4, endPos);
             encodeTextInXhtmlAttribute(req.getEncodedURLForClass(className, resp), unsafe);
             pos = endPos + 1;
-          } else if ((pos + 16) < len && htmlContent.substring(pos, pos + 16).equalsIgnoreCase("BEGIN_LIGHT_AREA")) {
+          } else if ((pos + 16) < len && "BEGIN_LIGHT_AREA".equalsIgnoreCase(htmlContent.substring(pos, pos + 16))) {
             if (lightAreaRef.get() != null) {
               throw new IllegalStateException("@BEGIN_LIGHT_AREA may not be nested");
             }
@@ -141,7 +141,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
             }
             lightAreaRef.set(lightArea);
             pos += 16;
-          } else if ((pos + 14) < len && htmlContent.substring(pos, pos + 14).equalsIgnoreCase("END_LIGHT_AREA")) {
+          } else if ((pos + 14) < len && "END_LIGHT_AREA".equalsIgnoreCase(htmlContent.substring(pos, pos + 14))) {
             FlowContent<?> lightArea = lightAreaRef.get();
             if (lightArea == null) {
               throw new IllegalStateException("@END_LIGHT_AREA does not have matching @BEGIN_LIGHT_AREA");
@@ -149,17 +149,17 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
             layout.endLightArea(req, resp, lightArea);
             lightAreaRef.set(null);
             pos += 14;
-          } else if ((pos + 16) < len && htmlContent.substring(pos, pos + 16).equalsIgnoreCase("END_CONTENT_LINE")) {
+          } else if ((pos + 16) < len && "END_CONTENT_LINE".equalsIgnoreCase(htmlContent.substring(pos, pos + 16))) {
             layout.endContentLine(req, resp, contentLine);
             pos += 16;
-          } else if ((pos + 32) < len && htmlContent.substring(pos, pos + 32).equalsIgnoreCase("PRINT_CONTENT_HORIZONTAL_DIVIDER")) {
+          } else if ((pos + 32) < len && "PRINT_CONTENT_HORIZONTAL_DIVIDER".equalsIgnoreCase(htmlContent.substring(pos, pos + 32))) {
             layout.contentHorizontalDivider(req, resp, content);
             pos += 32;
-          } else if ((pos + 18) < len && htmlContent.substring(pos, pos + 18).equalsIgnoreCase("START_CONTENT_LINE")) {
+          } else if ((pos + 18) < len && "START_CONTENT_LINE".equalsIgnoreCase(htmlContent.substring(pos, pos + 18))) {
             contentLine = layout.startContentLine(req, resp, content);
             unsafe = contentLine.getRawUnsafe();
             pos += 18;
-          } else if ((pos + 10) < len && htmlContent.substring(pos, pos + 10).equalsIgnoreCase("LINK_CLASS")) {
+          } else if ((pos + 10) < len && "LINK_CLASS".equalsIgnoreCase(htmlContent.substring(pos, pos + 10))) {
             unsafe.write(linkClass == null ? "aoLightLink" : linkClass);
             pos += 10;
           } else {

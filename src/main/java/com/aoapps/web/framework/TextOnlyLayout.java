@@ -173,7 +173,7 @@ public class TextOnlyLayout extends WebPageLayout {
       DocumentEE document,
       String onload
   ) throws ServletException, IOException {
-    boolean isOkResponseStatus = (resp.getStatus() == HttpServletResponse.SC_OK);
+    boolean isOkResponseStatus = resp.getStatus() == HttpServletResponse.SC_OK;
     ServletContext servletContext = req.getServletContext();
     String trackingId = getGoogleAnalyticsNewTrackingCode(servletContext);
     // Write doctype
@@ -331,7 +331,7 @@ public class TextOnlyLayout extends WebPageLayout {
           }
           parent = parent.getParent();
         }
-        for (int c = (parents.size() - 1); c >= 0; c--) {
+        for (int c = parents.size() - 1; c >= 0; c--) {
           parent = parents.get(c);
           String navAlt = parent.getNavImageAlt(req);
           String navSuffix = parent.getNavImageSuffix(req);
