@@ -23,11 +23,14 @@
 
 package com.aoapps.web.framework;
 
+import static com.aoapps.lang.Strings.trimNullIfEmpty;
+import static com.aoapps.taglib.AttributeUtils.getWidthStyle;
+
 import com.aoapps.encoding.ChainWriter;
 import com.aoapps.encoding.Doctype;
 import com.aoapps.html.any.AnyLINK;
 import com.aoapps.html.any.AnyMETA;
-import com.aoapps.html.any.attributes.Enum.Method;
+import com.aoapps.html.any.attributes.enumeration.Method;
 import com.aoapps.html.servlet.BODY;
 import com.aoapps.html.servlet.BODY_c;
 import com.aoapps.html.servlet.ContentEE;
@@ -41,9 +44,7 @@ import com.aoapps.html.servlet.TD_c;
 import com.aoapps.html.servlet.TR_c;
 import com.aoapps.html.util.GoogleAnalytics;
 import com.aoapps.html.util.HeadUtil;
-import static com.aoapps.lang.Strings.trimNullIfEmpty;
 import com.aoapps.net.URIEncoder;
-import static com.aoapps.taglib.AttributeUtils.getWidthStyle;
 import com.aoapps.web.resources.registry.Group;
 import com.aoapps.web.resources.registry.Registry;
 import com.aoapps.web.resources.registry.Style;
@@ -80,14 +81,17 @@ public class TextOnlyLayout extends WebPageLayout {
 
   public static final Style LAYOUT_TEXT_CSS = new Style("/layout/text/layout-text.css");
 
-  @WebListener
+  /**
+   * Registers the text layout styles in {@link RegistryEE}.
+   */
+  @WebListener("Registers the text layout styles in RegistryEE.")
   public static class Initializer implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent event) {
       RegistryEE.Application.get(event.getServletContext())
           .getGroup(RESOURCE_GROUP)
-          .styles
-          .add(LAYOUT_TEXT_CSS);
+              .styles
+              .add(LAYOUT_TEXT_CSS);
     }
 
     @Override
@@ -112,6 +116,9 @@ public class TextOnlyLayout extends WebPageLayout {
     requestRegistry.activate(RESOURCE_GROUP);
   }
 
+  /**
+   * Writes the body color CSS stylesheet, if needed.
+   */
   public static void writeBodyColorStyle(WebPageLayout layout, WebSiteRequest req, HEAD__<?> head) throws IOException {
     int backgroundColor = layout.getBackgroundColor(req);
     int textColor = layout.getTextColor(req);
@@ -251,7 +258,7 @@ public class TextOnlyLayout extends WebPageLayout {
           RegistryEE.Session.get(req.getSession(false)), // session-scope
           pageRegistry
       );
-      head.script().src(req.getEncodedURLForPath("/global.js", null, false, resp)).__();
+      head.script().src(req.getEncodedUrlForPath("/global.js", null, false, resp)).__();
       printJavascriptIncludes(req, resp, page, head);
       writeBodyColorStyle(this, req, head);
       // TODO: Canonical?
@@ -269,146 +276,146 @@ public class TextOnlyLayout extends WebPageLayout {
         .tbody_c()
         .tr_c()
         .td().style("vertical-align:top").__(td -> {
-      printLogo(req, resp, page, td);
-      boolean isLoggedIn = req.isLoggedIn();
-      if (isLoggedIn) {
-        td.hr__()
-            .text("Logout: ")
-            .form()
-            .style("display:inline")
-            .id("logout_form")
-            .method(Method.Value.POST)
-            .action(req.getEncodedURL(page, resp))
-            .__(form -> form
+          printLogo(req, resp, page, td);
+          boolean isLoggedIn = req.isLoggedIn();
+          if (isLoggedIn) {
+            td.hr__()
+                .text("Logout: ")
+                .form()
+                .style("display:inline")
+                .id("logout_form")
+                .method(Method.Value.POST)
+                .action(req.getEncodedUrl(page, resp))
+                .__(form -> form
                     .div().style("display:inline").__(div -> {
-                  req.printFormFields(div);
-                  div.input().hidden().name(WebSiteRequest.LOGOUT_REQUESTED).value(true).__()
-                      .input().submit__("Logout");
-                })
-            );
-      } else {
-        td.hr__()
-            .text("Login: ")
-            .form()
-            .style("display:inline")
-            .id("login_form")
-            .method(Method.Value.POST)
-            .action(req.getEncodedURL(page, resp))
-            .__(form -> form
-                    .div().style("display:inline").__(div -> {
-                  req.printFormFields(div);
-                  div.input().hidden().name(WebSiteRequest.LOGIN_REQUESTED).value(true).__()
-                      .input().submit__("Login");
-                })
-            );
-      }
-      td.hr__()
-          .div().style("white-space:nowrap").__(div -> {
-        if (getLayoutChoices().length >= 2) {
-          div.text("Layout: ");
-        }
-        if (printWebPageLayoutSelector(req, resp, page, div)) {
-          div.br__();
-        }
-        div.text("Search: ").form().id("search_site").style("display:inline").method(Method.Value.POST).action(req.getEncodedURL(page, resp)).__(form -> form
-                .div().style("display:inline").__(div2 -> {
-              div2.input().hidden().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).__().autoNl();
-              req.printFormFields(div2);
-              div2.input().text().name(WebSiteRequest.SEARCH_QUERY).size(12).maxlength(255).__();
-            })
-                .br__()
-        );
-      })
-          .hr__()
-          // Display the parents
-          .b__("Current Location").br__()
-          .div().style("white-space:nowrap").__(div -> {
-        List<WebPage> parents = new ArrayList<>();
-        WebPage parent = page;
-        while (parent != null) {
-          if (parent.showInLocationPath(req)) {
-            parents.add(parent);
-          }
-          parent = parent.getParent();
-        }
-        for (int c = parents.size() - 1; c >= 0; c--) {
-          parent = parents.get(c);
-          String navAlt = parent.getNavImageAlt(req);
-          String navSuffix = parent.getNavImageSuffix(req);
-          div.a(req.getEncodedURL(parent, resp)).__(a -> {
-            a.text(navAlt);
-            if (navSuffix != null) {
-              a.text(" (").text(navSuffix).text(')');
-            }
-          }).br__();
-        }
-      })
-          .hr__()
-          // Related Pages
-          .b__("Related Pages").br__()
-          .div().style("white-space:nowrap").__(div -> {
-        WebPage[] related = page.getCachedChildren(req, resp);
-        WebPage parent = page;
-        if (related.length == 0) {
-          parent = page.getParent();
-          if (parent != null) {
-            related = parent.getCachedChildren(req, resp);
-          }
-        }
-        for (int c = -1; c < related.length; c++) {
-          WebPage tpage;
-          if (c == -1) {
-            if (parent != null && parent.includeNavImageAsParent()) {
-              tpage = parent;
-            } else {
-              tpage = null;
-            }
+                      req.printFormFields(div);
+                      div.input().hidden().name(WebSiteRequest.LOGOUT_REQUESTED).value(true).__()
+                          .input().submit__("Logout");
+                    })
+                );
           } else {
-            tpage = related[c];
+            td.hr__()
+                .text("Login: ")
+                .form()
+                .style("display:inline")
+                .id("login_form")
+                .method(Method.Value.POST)
+                .action(req.getEncodedUrl(page, resp))
+                .__(form -> form
+                    .div().style("display:inline").__(div -> {
+                      req.printFormFields(div);
+                      div.input().hidden().name(WebSiteRequest.LOGIN_REQUESTED).value(true).__()
+                          .input().submit__("Login");
+                    })
+                );
           }
-          if (
-              tpage != null
-                  && (
-                  tpage.useNavImage()
-                      || tpage.equals(page)
-                      || (
-                      tpage.includeNavImageAsParent()
-                          && tpage.equals(parent)
-                  )
-              )
-          ) {
-            String navAlt = tpage.getNavImageAlt(req);
-            String navSuffix = tpage.getNavImageSuffix(req);
-            //boolean isSelected=tpage.equals(page);
-            div.a(tpage.getNavImageURL(req, resp, null)).__(a -> {
-              a.text(navAlt);
-              if (navSuffix != null) {
-                a.text(" (").text(navSuffix).text(')');
-              }
-            }).br__();
-          }
-        }
-      })
-          .hr__();
-      printBelowRelatedPages(td, req);
-    })
+          td.hr__()
+              .div().style("white-space:nowrap").__(div -> {
+                if (getLayoutChoices().length >= 2) {
+                  div.text("Layout: ");
+                }
+                if (printWebPageLayoutSelector(req, resp, page, div)) {
+                  div.br__();
+                }
+                div.text("Search: ").form().id("search_site").style("display:inline").method(Method.Value.POST).action(req.getEncodedUrl(page, resp)).__(form -> form
+                    .div().style("display:inline").__(div2 -> {
+                      div2.input().hidden().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).__().autoNl();
+                      req.printFormFields(div2);
+                      div2.input().text().name(WebSiteRequest.SEARCH_QUERY).size(12).maxlength(255).__();
+                    })
+                    .br__()
+                );
+              })
+              .hr__()
+              // Display the parents
+              .b__("Current Location").br__()
+              .div().style("white-space:nowrap").__(div -> {
+                List<WebPage> parents = new ArrayList<>();
+                WebPage parent = page;
+                while (parent != null) {
+                  if (parent.showInLocationPath(req)) {
+                    parents.add(parent);
+                  }
+                  parent = parent.getParent();
+                }
+                for (int c = parents.size() - 1; c >= 0; c--) {
+                  parent = parents.get(c);
+                  String navAlt = parent.getNavImageAlt(req);
+                  String navSuffix = parent.getNavImageSuffix(req);
+                  div.a(req.getEncodedUrl(parent, resp)).__(a -> {
+                    a.text(navAlt);
+                    if (navSuffix != null) {
+                      a.text(" (").text(navSuffix).text(')');
+                    }
+                  }).br__();
+                }
+              })
+              .hr__()
+              // Related Pages
+              .b__("Related Pages").br__()
+              .div().style("white-space:nowrap").__(div -> {
+                WebPage[] related = page.getCachedChildren(req, resp);
+                WebPage parent = page;
+                if (related.length == 0) {
+                  parent = page.getParent();
+                  if (parent != null) {
+                    related = parent.getCachedChildren(req, resp);
+                  }
+                }
+                for (int c = -1; c < related.length; c++) {
+                  WebPage tpage;
+                  if (c == -1) {
+                    if (parent != null && parent.includeNavImageAsParent()) {
+                      tpage = parent;
+                    } else {
+                      tpage = null;
+                    }
+                  } else {
+                    tpage = related[c];
+                  }
+                  if (
+                      tpage != null
+                      && (
+                          tpage.useNavImage()
+                              || tpage.equals(page)
+                              || (
+                              tpage.includeNavImageAsParent()
+                                  && tpage.equals(parent)
+                          )
+                      )
+                  ) {
+                    String navAlt = tpage.getNavImageAlt(req);
+                    String navSuffix = tpage.getNavImageSuffix(req);
+                    //boolean isSelected=tpage.equals(page);
+                    div.a(tpage.getNavImageUrl(req, resp, null)).__(a -> {
+                      a.text(navAlt);
+                      if (navSuffix != null) {
+                        a.text(" (").text(navSuffix).text(')');
+                      }
+                    }).br__();
+                  }
+                }
+              })
+              .hr__();
+          printBelowRelatedPages(td, req);
+        })
         .td().style("vertical-align:top")._c();
     WebPage[] commonPages = getCommonPages(page, req);
     if (commonPages != null && commonPages.length > 0) {
       td_c.table().clazz("ao-packed").style("width:100%").__(table -> table
-              .tbody__(tbody -> tbody
-                      .tr__(tr -> {
-                        for (int c = 0; c < commonPages.length; c++) {
-                          if (c > 0) {
-                            tr.td().style("text-align:center", "width:1%").__('|');
-                          }
-                          WebPage tpage = commonPages[c];
-                          tr.td().style("white-space:nowrap", "text-align:center", "width:" + ((101 - commonPages.length) / commonPages.length) + "%").__(td -> td
-                                  .a(tpage.getNavImageURL(req, resp, null)).__(tpage.getNavImageAlt(req))
-                          );
-                        }
-                      })
-              )
+          .tbody__(tbody -> tbody
+              .tr__(tr -> {
+                for (int c = 0; c < commonPages.length; c++) {
+                  if (c > 0) {
+                    tr.td().style("text-align:center", "width:1%").__('|');
+                  }
+                  WebPage tpage = commonPages[c];
+                  tr.td().style("white-space:nowrap", "text-align:center", "width:" + ((101 - commonPages.length) / commonPages.length) + "%").__(td -> td
+                      .a(tpage.getNavImageUrl(req, resp, null)).__(tpage.getNavImageAlt(req))
+                  );
+                }
+              })
+          )
       );
     }
     @SuppressWarnings("unchecked")
@@ -447,7 +454,7 @@ public class TextOnlyLayout extends WebPageLayout {
   public <
       PC extends FlowContent<PC>,
       __ extends ContentEE<__>
-  > __ startContent(
+      > __ startContent(
       WebSiteRequest req,
       HttpServletResponse resp,
       WebPage page,
@@ -460,26 +467,26 @@ public class TextOnlyLayout extends WebPageLayout {
     }
     width = trimNullIfEmpty(width);
     final int totalColumns;
-    {
-      int totalColumns_ = 0;
-      for (int c = 0; c < contentColumnSpans.length; c++) {
-        if (c > 0) {
-          totalColumns_++;
+      {
+        int totalColumnsTmp = 0;
+        for (int c = 0; c < contentColumnSpans.length; c++) {
+          if (c > 0) {
+            totalColumnsTmp++;
+          }
+          totalColumnsTmp += contentColumnSpans[c];
         }
-        totalColumns_ += contentColumnSpans[c];
+        totalColumns = totalColumnsTmp;
       }
-      totalColumns = totalColumns_;
-    }
     TBODY_c<TABLE_c<PC>> tbody = pc.table()
         .clazz("ao-packed")
         .style(getWidthStyle(width))
         ._c()
         .thead__(thead -> thead
-                .tr__(tr -> tr
-                        .td().colspan(totalColumns).__(td -> td
-                            .hr__()
-                    )
+            .tr__(tr -> tr
+                .td().colspan(totalColumns).__(td -> td
+                    .hr__()
                 )
+            )
         )
         .tbody_c();
     @SuppressWarnings("unchecked")
@@ -552,7 +559,8 @@ public class TextOnlyLayout extends WebPageLayout {
         break;
       case NONE:
         break;
-      default: throw new IllegalArgumentException("Unknown direction: " + direction);
+      default:
+        throw new IllegalArgumentException("Unknown direction: " + direction);
     }
     TD_c<TR_c<TBODY_c<TABLE_c<DocumentEE>>>> newTd = tr.td()
         .style(
@@ -611,14 +619,15 @@ public class TextOnlyLayout extends WebPageLayout {
             case UP_AND_DOWN:
               tr.td__('\u00A0');
               break;
-            default: throw new IllegalArgumentException("Unknown direction: " + direction);
+            default:
+              throw new IllegalArgumentException("Unknown direction: " + direction);
           }
         }
         int colspan = colspansAndDirections[c];
         tr.td()
             .colspan(colspan)
             .__(td -> td
-                    .hr__()
+                .hr__()
             );
       }
     });
@@ -636,22 +645,22 @@ public class TextOnlyLayout extends WebPageLayout {
     @SuppressWarnings("unchecked")
     TBODY_c<TABLE_c<DocumentEE>> tbody = (TBODY_c) content;
     final int totalColumns;
-    {
-      int totalColumns_ = 0;
-      for (int c = 0; c < contentColumnSpans.length; c++) {
-        if (c > 0) {
-          totalColumns_ += 1;
+      {
+        int totalColumnsTmp = 0;
+        for (int c = 0; c < contentColumnSpans.length; c++) {
+          if (c > 0) {
+            totalColumnsTmp += 1;
+          }
+          totalColumnsTmp += contentColumnSpans[c];
         }
-        totalColumns_ += contentColumnSpans[c];
+        totalColumns = totalColumnsTmp;
       }
-      totalColumns = totalColumns_;
-    }
     tbody.tr__(tr -> tr
-            .td()
-            .colspan(totalColumns)
-            .__(td -> td
-                    .hr__()
-            )
+        .td()
+        .colspan(totalColumns)
+        .__(td -> td
+            .hr__()
+        )
     );
     TABLE_c<DocumentEE> table = tbody.__();
     String copyright = page.getCopyright(req, resp, page);
@@ -659,14 +668,14 @@ public class TextOnlyLayout extends WebPageLayout {
       copyright = copyright.trim();
     }
     if (copyright != null && !copyright.isEmpty()) {
-      String copyright_ = copyright;
+      String myCopyright = copyright;
       table.tfoot__(tfoot -> tfoot
-              .tr__(tr -> tr
-                      .td()
-                      .colspan(totalColumns)
-                      .style("text-align:center", "font-size:x-small")
-                      .__(copyright_)
-              )
+          .tr__(tr -> tr
+              .td()
+              .colspan(totalColumns)
+              .style("text-align:center", "font-size:x-small")
+              .__(myCopyright)
+          )
       );
     }
     table.__();
@@ -676,7 +685,7 @@ public class TextOnlyLayout extends WebPageLayout {
   public <
       PC extends FlowContent<PC>,
       __ extends FlowContent<__>
-  > __ startLightArea(
+      > __ startLightArea(
       WebSiteRequest req,
       HttpServletResponse resp,
       PC pc,
@@ -724,7 +733,7 @@ public class TextOnlyLayout extends WebPageLayout {
   public <
       PC extends FlowContent<PC>,
       __ extends FlowContent<__>
-  > __ startWhiteArea(
+      > __ startWhiteArea(
       WebSiteRequest req,
       HttpServletResponse resp,
       PC pc,

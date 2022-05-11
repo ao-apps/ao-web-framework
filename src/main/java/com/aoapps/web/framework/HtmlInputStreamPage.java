@@ -24,6 +24,7 @@
 package com.aoapps.web.framework;
 
 import static com.aoapps.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
+
 import com.aoapps.html.servlet.ContentEE;
 import com.aoapps.html.servlet.FlowContent;
 import com.aoapps.lang.io.IoUtils;
@@ -44,7 +45,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author  AO Industries, Inc.
  */
-public abstract class HTMLInputStreamPage extends InputStreamPage {
+public abstract class HtmlInputStreamPage extends InputStreamPage {
 
   private static final long serialVersionUID = 1L;
 
@@ -57,7 +58,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
       __ contentLine,
       InputStream in
   ) throws ServletException, IOException {
-    return printHTMLStream(req, resp, layout, content, contentLine, in, "aoLightLink", new AtomicReference<>());
+    return printHtmlStream(req, resp, layout, content, contentLine, in, "aoLightLink", new AtomicReference<>());
   }
 
   /**
@@ -65,15 +66,15 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
    */
   @Override
   public InputStream getInputStream() throws IOException {
-    return getHTMLInputStream(getClass());
+    return getHtmlInputStream(getClass());
   }
 
   /**
    * Gets the HTML file with the same name as the provided Class or {@code null} when not found.
    */
-  public static InputStream getHTMLInputStream(Class<?> clazz) {
+  public static InputStream getHtmlInputStream(Class<?> clazz) {
     String resource = clazz.getName().replace('.', '/') + ".html";
-    InputStream in = HTMLInputStreamPage.class.getResourceAsStream("/" + resource);
+    InputStream in = HtmlInputStreamPage.class.getResourceAsStream("/" + resource);
     if (in == null) {
       // Try ClassLoader for when modules enabled
       ClassLoader classloader = Thread.currentThread().getContextClassLoader();
@@ -100,10 +101,10 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
    *          {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
    *          or {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.
    *
-   * @see  #printHTMLStream(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.ContentEE, com.aoapps.html.servlet.FlowContent, java.io.InputStream, java.lang.String, java.util.concurrent.atomic.AtomicReference)
+   * @see  #printHtmlStream(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.ContentEE, com.aoapps.html.servlet.FlowContent, java.io.InputStream, java.lang.String, java.util.concurrent.atomic.AtomicReference)
    */
   @SuppressWarnings("deprecation")
-  public static <__ extends FlowContent<__>> __ printHTML(
+  public static <__ extends FlowContent<__>> __ printHtml(
       WebSiteRequest req,
       HttpServletResponse resp,
       WebPageLayout layout,
@@ -129,7 +130,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
               throw new IllegalArgumentException("Unable to find closing parenthesis for @URL( substitution, pos=" + pos);
             }
             String className = htmlContent.substring(pos + 4, endPos);
-            encodeTextInXhtmlAttribute(req.getEncodedURLForClass(className, resp), unsafe);
+            encodeTextInXhtmlAttribute(req.getEncodedUrlForClass(className, resp), unsafe);
             pos = endPos + 1;
           } else if ((pos + 16) < len && "BEGIN_LIGHT_AREA".equalsIgnoreCase(htmlContent.substring(pos, pos + 16))) {
             if (lightAreaRef.get() != null) {
@@ -184,14 +185,16 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
   };
 
   /**
+   * Prints HTML with template substitutions.
+   *
    * @return  The current {@code contentLine}, which may have been replaced by a call to
    *          {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
    *          or {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.
    *
-   * @see  #printHTML(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.ContentEE, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, java.util.concurrent.atomic.AtomicReference)
+   * @see  #printHtml(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.ContentEE, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, java.util.concurrent.atomic.AtomicReference)
    */
   @SuppressWarnings("deprecation")
-  public static <__ extends FlowContent<__>> __ printHTMLStream(
+  public static <__ extends FlowContent<__>> __ printHtmlStream(
       WebSiteRequest req,
       HttpServletResponse resp,
       WebPageLayout layout,
@@ -264,7 +267,7 @@ public abstract class HTMLInputStreamPage extends InputStreamPage {
                       while ((ch = reader.read()) != -1) {
                         if (ch == ')') {
                           String className = buffer.toString().substring(5, buffer.length());
-                          encodeTextInXhtmlAttribute(req.getEncodedURLForClass(className, resp), unsafe);
+                          encodeTextInXhtmlAttribute(req.getEncodedUrlForClass(className, resp), unsafe);
                           buffer.setLength(0);
                           break;
                         } else {

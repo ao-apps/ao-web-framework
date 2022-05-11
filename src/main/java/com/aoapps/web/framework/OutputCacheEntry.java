@@ -24,10 +24,13 @@
 package com.aoapps.web.framework;
 
 /**
+ * One entry in the output cache.
+ *
  * @see  WebPage#doGet(WebSiteRequest, HttpServletResponse)
  *
  * @author  AO Industries, Inc.
  */
+// TODO: This is no longer used?
 public final class OutputCacheEntry {
 
   public final Object outputCacheKey;
@@ -36,6 +39,9 @@ public final class OutputCacheEntry {
 
   public final byte[] bytes;
 
+  /**
+   * Creates a new output cache entry.
+   */
   public OutputCacheEntry(Object outputCacheKey, long lastModified, byte[] bytes) {
     this.outputCacheKey = outputCacheKey;
     this.lastModified = lastModified;

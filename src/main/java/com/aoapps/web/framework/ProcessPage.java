@@ -48,7 +48,7 @@ public abstract class ProcessPage extends InputStreamPage {
   }
 
   /**
-   * Gets the process that the contents should be read from
+   * Gets the process that the contents should be read from.
    */
   public abstract Process getProcess() throws IOException;
 

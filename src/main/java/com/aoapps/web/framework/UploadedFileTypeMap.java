@@ -29,6 +29,8 @@ import javax.activation.FileTypeMap;
 import javax.servlet.ServletContext;
 
 /**
+ * A mapping used for managing upload file content types.
+ *
  * @author  AO Industries, Inc.
  */
 public final class UploadedFileTypeMap extends FileTypeMap {

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ao-web-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
+Copyright (C) 2022  AO Industries, Inc.
+    support@aoindustries.com
+    7262 Bull Pen Cir
+    Mobile, AL 36695
+
+This file is part of ao-web-framework.
+
+ao-web-framework is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ao-web-framework is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<!DOCTYPE suppressions PUBLIC
+  "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+  "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+
+<suppressions>
+
+  <!-- Using "Ex" for generic exceptions, since "E" if often "Element" -->
+  <suppress
+    checks="MethodTypeParameterName"
+    message="'Ex'"
+  />
+
+  <!-- ao-fluent-html -->
+  <suppress
+    checks="MethodTypeParameterName"
+    message="'(__|PC)'"
+  />
+  <suppress
+    checks="LocalVariableName"
+    message="'(body_c|html_c|td_c)'"
+  />
+
+  <!-- Consistency with standard "URLDecoder", "URLEncoder", and "URL" -->
+  <suppress
+    checks="AbbreviationAsWordInName"
+    files="[/\\]com[/\\]aoapps[/\\]web[/\\]framework[/\\]DumpURLs\.java$"
+    message="'DumpURLs'"
+  />
+
+  <!-- Will not split declaration to avoid duplicating Javadoc comment -->
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoapps[/\\]web[/\\]framework[/\\]WebPageLayout\.java$"
+  />
+
+  <!-- Will not reorder overloads -->
+  <suppress
+    checks="OverloadMethodsDeclarationOrder"
+    files="[/\\]com[/\\]aoapps[/\\]web[/\\]framework[/\\]TreePage\.java$"
+  />
+  <suppress
+    checks="OverloadMethodsDeclarationOrder"
+    files="[/\\]com[/\\]aoapps[/\\]web[/\\]framework[/\\]WebPage\.java$"
+  />
+  <suppress
+    checks="OverloadMethodsDeclarationOrder"
+    files="[/\\]com[/\\]aoapps[/\\]web[/\\]framework[/\\]WebSiteRequest\.java$"
+  />
+
+</suppressions>

@@ -69,6 +69,8 @@ public abstract class InputStreamPage extends WebPage {
   public abstract InputStream getInputStream() throws IOException;
 
   /**
+   * Stream input to servlet output.
+   *
    * @return  The current {@code contentLine}, which may have been replaced by a call to
    *          {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
    *          or {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.

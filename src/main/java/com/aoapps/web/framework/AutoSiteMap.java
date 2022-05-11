@@ -50,7 +50,7 @@ public abstract class AutoSiteMap extends TreePage {
       WebPage[] children = page.getCachedChildren(req, resp);
       data.add(
           new TreePageData(
-              req.getURL(page),
+              req.getUrl(page),
               page.getDescription(req),
               children.length > 0,
               path

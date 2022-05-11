@@ -132,7 +132,7 @@ public class RedirectWebPage extends WebPage {
   }
 
   @Override
-  public String getRedirectURL(WebSiteRequest req) throws ServletException {
+  public String getRedirectUrl(WebSiteRequest req) throws ServletException {
     return path;
   }
 
@@ -142,7 +142,7 @@ public class RedirectWebPage extends WebPage {
   }
 
   @Override
-  public String getURLPath() {
+  public String getUrlPath() {
     return path;
   }
 

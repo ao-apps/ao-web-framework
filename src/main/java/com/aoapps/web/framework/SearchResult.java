@@ -37,6 +37,9 @@ public class SearchResult implements Comparable<SearchResult> {
   private final String author;
   private final String authorHref;
 
+  /**
+   * Creates a new search result.
+   */
   public SearchResult(
       String url,
       float probability,

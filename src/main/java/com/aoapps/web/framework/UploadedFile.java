@@ -37,32 +37,42 @@ public final class UploadedFile {
   private final Identifier id;
   private final String filename;
   private final File storageFile;
-  private final long create_time;
+  private final long createTime;
   private final WebSiteUser owner;
   private final String contentType;
 
   private static class LastAccessLock {
     // Empty lock class to help heap profile
   }
+
   private final LastAccessLock lastAccessLock = new LastAccessLock();
   private long lastAccessed;
 
+  /**
+   * Creates a new upload file.
+   */
   UploadedFile(String filename, File storageFile, WebSiteUser owner, String contentType) {
     this.id = new Identifier(storageFile.getName());
     this.filename = filename;
     this.storageFile = storageFile;
-    this.create_time = this.lastAccessed = System.currentTimeMillis();
+    this.createTime = this.lastAccessed = System.currentTimeMillis();
     this.owner = owner;
     this.contentType = contentType;
   }
 
-  public Identifier getID() {
+  /**
+   * Gets the ID for the upload file.
+   */
+  public Identifier getId() {
     synchronized (lastAccessLock) {
       lastAccessed = System.currentTimeMillis();
     }
     return id;
   }
 
+  /**
+   * Gets the filename for the upload file.
+   */
   public String getFilename() {
     synchronized (lastAccessLock) {
       lastAccessed = System.currentTimeMillis();
@@ -70,6 +80,9 @@ public final class UploadedFile {
     return filename;
   }
 
+  /**
+   * Gets the storage file for the upload file.
+   */
   public File getStorageFile() {
     synchronized (lastAccessLock) {
       lastAccessed = System.currentTimeMillis();
@@ -77,13 +90,19 @@ public final class UploadedFile {
     return storageFile;
   }
 
+  /**
+   * Gets the create time for the upload file.
+   */
   public long getCreateTime() {
     synchronized (lastAccessLock) {
       lastAccessed = System.currentTimeMillis();
     }
-    return create_time;
+    return createTime;
   }
 
+  /**
+   * Gets the owner for the upload file.
+   */
   public WebSiteUser getOwner() {
     synchronized (lastAccessLock) {
       lastAccessed = System.currentTimeMillis();
@@ -91,6 +110,9 @@ public final class UploadedFile {
     return owner;
   }
 
+  /**
+   * Gets the content type for the upload file.
+   */
   public String getContentType() {
     synchronized (lastAccessLock) {
       lastAccessed = System.currentTimeMillis();
@@ -98,6 +120,9 @@ public final class UploadedFile {
     return contentType;
   }
 
+  /**
+   * Gets the last access time for the upload file.
+   */
   public long getLastAccessed() {
     synchronized (lastAccessLock) {
       return lastAccessed;

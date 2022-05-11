@@ -58,13 +58,13 @@ public abstract class AutoListPage extends WebPage {
         layout.contentHorizontalDivider(req, resp, content);
         FlowContent<?> contentLine = layout.startContentLine(req, resp, content);
         contentLine = printContentStart(req, resp, layout, content, (FlowContent) contentLine);
-        {
-          contentLine.table().cellpadding(0).cellspacing(10).__(table -> table
-                  .tbody__(tbody ->
-                      printPageList(tbody, req, resp, this, layout)
-                  )
-          );
-        }
+          {
+            contentLine.table().cellpadding(0).cellspacing(10).__(table -> table
+                .tbody__(tbody ->
+                    printPageList(tbody, req, resp, this, layout)
+                )
+            );
+          }
         layout.endContentLine(req, resp, contentLine);
       });
     }
@@ -97,8 +97,8 @@ public abstract class AutoListPage extends WebPage {
     for (int c = 0; c < len; c++) {
       WebPage page = pages[c];
       tbody.tr__(tr -> tr
-              .td().style("white-space:nowrap").__(td -> td
-                  .a().clazz("aoLightLink").href(req == null ? null : req.getEncodedURL(page, resp)).__(page.getShortTitle(req))
+          .td().style("white-space:nowrap").__(td -> td
+              .a().clazz("aoLightLink").href(req == null ? null : req.getEncodedUrl(page, resp)).__(page.getShortTitle(req))
           )
               .td().style("width:12px", "white-space:nowrap").__("\u00A0")
               .td().style("white-space:nowrap").__(page.getDescription(req))

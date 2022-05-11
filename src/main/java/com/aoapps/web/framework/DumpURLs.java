@@ -54,7 +54,7 @@ public abstract class DumpURLs extends WebPage {
         "The following is a list of all unique servlet URLs in the site and may be used to add this site to\n"
             + "search engines:"
     )
-        .pre__(pre -> printURLs(req, resp, pre, getRootPage(), new HashSet<>()));
+        .pre__(pre -> printUrls(req, resp, pre, getRootPage(), new HashSet<>()));
   }
 
   @Override
@@ -101,16 +101,16 @@ public abstract class DumpURLs extends WebPage {
     return "List URLs";
   }
 
-  private void printURLs(WebSiteRequest req, HttpServletResponse resp, PhrasingContent<?> pre, WebPage page, Set<WebPage> finishedPages) throws ServletException, IOException {
+  private void printUrls(WebSiteRequest req, HttpServletResponse resp, PhrasingContent<?> pre, WebPage page, Set<WebPage> finishedPages) throws ServletException, IOException {
     boolean doNl = !finishedPages.isEmpty();
     if (finishedPages.add(page)) {
       if (doNl) {
         pre.nl();
       }
-      pre.a().clazz("aoLightLink").href(req.getEncodedURL(page, resp)).__(req.getURL(page));
+      pre.a().clazz("aoLightLink").href(req.getEncodedUrl(page, resp)).__(req.getUrl(page));
 
       for (WebPage child : page.getCachedChildren(req, resp)) {
-        printURLs(req, resp, pre, child, finishedPages);
+        printUrls(req, resp, pre, child, finishedPages);
       }
     }
   }

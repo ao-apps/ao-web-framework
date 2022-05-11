@@ -27,7 +27,7 @@ import com.aoapps.encoding.Doctype;
 import com.aoapps.encoding.Serialization;
 import com.aoapps.encoding.servlet.DoctypeEE;
 import com.aoapps.encoding.servlet.SerializationEE;
-import com.aoapps.html.any.attributes.Enum.Method;
+import com.aoapps.html.any.attributes.enumeration.Method;
 import com.aoapps.html.servlet.ContentEE;
 import com.aoapps.html.servlet.DocumentEE;
 import com.aoapps.html.servlet.FlowContent;
@@ -58,8 +58,7 @@ public abstract class WebPageLayout {
       NONE = 0,
       UP = 1,
       DOWN = 2,
-      UP_AND_DOWN = 3
-  ;
+      UP_AND_DOWN = 3;
 
   private final String[] layoutChoices;
 
@@ -95,6 +94,9 @@ public abstract class WebPageLayout {
     // Do nothing
   }
 
+  /**
+   * Prints the layout selector.
+   */
   public <__ extends FlowContent<__>> boolean printWebPageLayoutSelector(
       WebSiteRequest req,
       HttpServletResponse resp,
@@ -110,7 +112,7 @@ public abstract class WebPageLayout {
               .append("if (layout == ")
               .text(choice)
               .append(") window.top.location.href=")
-              .text(req.getEncodedURL(page, URIParametersMap.of(WebSiteRequest.LAYOUT.getName(), choice), resp))
+              .text(req.getEncodedUrl(page, URIParametersMap.of(WebSiteRequest.LAYOUT.getName(), choice), resp))
               .append(';')
               .nl();
         }
@@ -120,10 +122,10 @@ public abstract class WebPageLayout {
               .div().style("display:inline").__(div -> div
                   // TODO: Constant for "layout_selector"?
                   .select().name("layout_selector").onchange("selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);").__(select -> {
-                for (String choice : layoutChoices) {
-                  select.option().value(choice).selected(choice.equalsIgnoreCase(getName())).__(choice); // TODO: .equals() like aoindustries.com:DefaultSkin.java?
-                }
-              })
+                    for (String choice : layoutChoices) {
+                      select.option().value(choice).selected(choice.equalsIgnoreCase(getName())).__(choice); // TODO: .equals() like aoindustries.com:DefaultSkin.java?
+                    }
+                  })
           )
       );
       return true;
@@ -258,24 +260,24 @@ public abstract class WebPageLayout {
       contentHorizontalDivider(req, resp, content);
       contentLine(req, resp, content, 1, "center", null, 1, false, contentLine ->
           lightArea(req, resp, contentLine, null, "300", true, lightArea -> lightArea
-                  .form("").id(WebPage.SEARCH_TWO).method(Method.Value.POST).__(form -> {
+              .form("").id(WebPage.SEARCH_TWO).method(Method.Value.POST).__(form -> {
                 req.printFormFields(form);
                 form.table().clazz("ao-packed").__(table -> table
-                        .tbody__(tbody -> tbody
-                                .tr__(tr -> tr
-                                        .td().style("white-space:nowrap").__(td -> td
-                                            .text("Word(s) to search for:").sp()
-                                            .input().text().size(24).name(WebSiteRequest.SEARCH_QUERY).value(query).__().br__()
-                                            .text("Search Location:").sp().input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).checked(isEntireSite).__()
-                                            .sp().text("Entire Site").nbsp(3).input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_THIS_AREA).checked(!isEntireSite).__()
-                                            .sp().text("This Area").br__()
-                                            .br__()
-                                            .div().style("text-align:center").__(div -> div
-                                                .input().submit().clazz("ao_button").value(" Search ").__()
-                                        )
-                                    )
+                    .tbody__(tbody -> tbody
+                        .tr__(tr -> tr
+                            .td().style("white-space:nowrap").__(td -> td
+                                .text("Word(s) to search for:").sp()
+                                .input().text().size(24).name(WebSiteRequest.SEARCH_QUERY).value(query).__().br__()
+                                .text("Search Location:").sp().input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_ENTIRE_SITE).checked(isEntireSite).__()
+                                .sp().text("Entire Site").nbsp(3).input().radio().name(WebSiteRequest.SEARCH_TARGET).value(WebSiteRequest.SEARCH_THIS_AREA).checked(!isEntireSite).__()
+                                .sp().text("This Area").br__()
+                                .br__()
+                                .div().style("text-align:center").__(div -> div
+                                    .input().submit().clazz("ao_button").value(" Search ").__()
                                 )
+                            )
                         )
+                    )
                 );
               })
           )
@@ -288,14 +290,14 @@ public abstract class WebPageLayout {
           }
         } else {
           lightArea(req, resp, contentLine, lightArea -> lightArea
-                  .table().clazz("ao-packed", "aoLightRow").__(table -> {
+              .table().clazz("ao-packed", "aoLightRow").__(table -> {
                 table.thead__(thead -> thead
-                        .tr__(tr -> tr
-                                .th().style("white-space:nowrap").__("% Match")
-                                .th().style("white-space:nowrap").__("Title")
-                                .th().style("white-space:nowrap").__("\u00A0")
-                                .th().style("white-space:nowrap").__("Description")
-                        )
+                    .tr__(tr -> tr
+                        .th().style("white-space:nowrap").__("% Match")
+                        .th().style("white-space:nowrap").__("Title")
+                        .th().style("white-space:nowrap").__("\u00A0")
+                        .th().style("white-space:nowrap").__("Description")
+                    )
                 );
 
                 // Find the highest probability
@@ -313,9 +315,9 @@ public abstract class WebPageLayout {
                       String title = result.getTitle();
                       String description = result.getDescription();
                       tbody.tr().clazz(rowClass).__(tr -> tr
-                              .td().style("white-space:nowrap", "text-align:center").__(Math.round(99 * result.getProbability() / highest) + "%")
-                              .td().style("white-space:nowrap", "text-align:left").__(td -> td
-                                  .a().clazz(linkClass).href(
+                          .td().style("white-space:nowrap", "text-align:center").__(Math.round(99 * result.getProbability() / highest) + "%")
+                          .td().style("white-space:nowrap", "text-align:left").__(td -> td
+                              .a().clazz(linkClass).href(
                                   resp.encodeURL(
                                       URIEncoder.encodeURI(
                                           req.getContextPath() + url
@@ -323,8 +325,8 @@ public abstract class WebPageLayout {
                                   )
                               ).__(title)
                           )
-                              .td().style("white-space:nowrap").__("\u00A0\u00A0\u00A0")
-                              .td().style("white-space:nowrap", "text-align:left").__(description)
+                          .td().style("white-space:nowrap").__("\u00A0\u00A0\u00A0")
+                          .td().style("white-space:nowrap", "text-align:left").__(description)
                       );
                     }
                   });
@@ -359,7 +361,7 @@ public abstract class WebPageLayout {
   public final <
       PC extends FlowContent<PC>,
       __ extends ContentEE<__>
-  > __ startContent(
+      > __ startContent(
       WebSiteRequest req,
       HttpServletResponse resp,
       WebPage page,
@@ -393,7 +395,7 @@ public abstract class WebPageLayout {
   public final <
       PC extends FlowContent<PC>,
       __ extends ContentEE<__>
-  > __ startContent(
+      > __ startContent(
       WebSiteRequest req,
       HttpServletResponse resp,
       WebPage page,
@@ -429,7 +431,7 @@ public abstract class WebPageLayout {
   public abstract <
       PC extends FlowContent<PC>,
       __ extends ContentEE<__>
-  > __ startContent(
+      > __ startContent(
       WebSiteRequest req,
       HttpServletResponse resp,
       WebPage page,
@@ -650,7 +652,7 @@ public abstract class WebPageLayout {
   public final <
       __ extends FlowContent<__>,
       Ex extends Throwable
-  > void contentLine(
+      > void contentLine(
       WebSiteRequest req,
       HttpServletResponse resp,
       ContentEE<?> content,
@@ -673,7 +675,7 @@ public abstract class WebPageLayout {
   public final <
       __ extends FlowContent<__>,
       Ex extends Throwable
-  > void contentLine(
+      > void contentLine(
       WebSiteRequest req,
       HttpServletResponse resp,
       ContentEE<?> content,
@@ -696,7 +698,7 @@ public abstract class WebPageLayout {
   public final <
       __ extends FlowContent<__>,
       Ex extends Throwable
-  > void contentLine(
+      > void contentLine(
       WebSiteRequest req,
       HttpServletResponse resp,
       ContentEE<?> content,
@@ -728,7 +730,7 @@ public abstract class WebPageLayout {
   public final <
       __ extends FlowContent<__>,
       Ex extends Throwable
-  > void contentLine(
+      > void contentLine(
       WebSiteRequest req,
       HttpServletResponse resp,
       ContentEE<?> content,
@@ -863,7 +865,7 @@ public abstract class WebPageLayout {
       PC extends FlowContent<PC>,
       __ extends ContentEE<__>,
       Ex extends Throwable
-  > void content(
+      > void content(
       WebSiteRequest req,
       HttpServletResponse resp,
       WebPage page,
@@ -889,7 +891,7 @@ public abstract class WebPageLayout {
       PC extends FlowContent<PC>,
       __ extends ContentEE<__>,
       Ex extends Throwable
-  > void content(
+      > void content(
       WebSiteRequest req,
       HttpServletResponse resp,
       WebPage page,
@@ -915,7 +917,7 @@ public abstract class WebPageLayout {
       PC extends FlowContent<PC>,
       __ extends ContentEE<__>,
       Ex extends Throwable
-  > void content(
+      > void content(
       WebSiteRequest req,
       HttpServletResponse resp,
       WebPage page,
@@ -944,7 +946,7 @@ public abstract class WebPageLayout {
       PC extends FlowContent<PC>,
       __ extends ContentEE<__>,
       Ex extends Throwable
-  > void content(
+      > void content(
       WebSiteRequest req,
       HttpServletResponse resp,
       WebPage page,
@@ -973,7 +975,7 @@ public abstract class WebPageLayout {
       PC extends FlowContent<PC>,
       __ extends ContentEE<__>,
       Ex extends Throwable
-  > void content(
+      > void content(
       WebSiteRequest req,
       HttpServletResponse resp,
       WebPage page,
@@ -983,11 +985,11 @@ public abstract class WebPageLayout {
       int[] endContentColumnSpans,
       ServletConsumerE<? super __, Ex> content
   ) throws ServletException, IOException, Ex {
-    __ contentEE = startContent(req, resp, page, pc, startContentColumnSpans, width);
+    __ contentEe = startContent(req, resp, page, pc, startContentColumnSpans, width);
     if (content != null) {
-      content.accept(contentEE);
+      content.accept(contentEe);
     }
-    endContent(req, resp, page, contentEE, endContentColumnSpans);
+    endContent(req, resp, page, contentEe, endContentColumnSpans);
   }
 
   /**
@@ -1006,7 +1008,7 @@ public abstract class WebPageLayout {
       PC extends FlowContent<PC>,
       __ extends ContentEE<__>,
       Ex extends Throwable
-  > void content(
+      > void content(
       WebSiteRequest req,
       HttpServletResponse resp,
       WebPage page,
@@ -1016,11 +1018,11 @@ public abstract class WebPageLayout {
       int[] endContentColumnSpans,
       ServletRunnableE<Ex> content
   ) throws ServletException, IOException, Ex {
-    __ contentEE = startContent(req, resp, page, pc, startContentColumnSpans, width);
+    __ contentEe = startContent(req, resp, page, pc, startContentColumnSpans, width);
     if (content != null) {
       content.run();
     }
-    endContent(req, resp, page, contentEE, endContentColumnSpans);
+    endContent(req, resp, page, contentEe, endContentColumnSpans);
   }
 
   /**
@@ -1071,7 +1073,7 @@ public abstract class WebPageLayout {
   public final <
       PC extends FlowContent<PC>,
       __ extends FlowContent<__>
-  > __ startLightArea(
+      > __ startLightArea(
       WebSiteRequest req,
       HttpServletResponse resp,
       PC pc
@@ -1092,7 +1094,7 @@ public abstract class WebPageLayout {
   public abstract <
       PC extends FlowContent<PC>,
       __ extends FlowContent<__>
-  > __ startLightArea(
+      > __ startLightArea(
       WebSiteRequest req,
       HttpServletResponse resp,
       PC pc,
@@ -1130,7 +1132,7 @@ public abstract class WebPageLayout {
       PC extends FlowContent<PC>,
       __ extends FlowContent<__>,
       Ex extends Throwable
-  > void lightArea(
+      > void lightArea(
       WebSiteRequest req,
       HttpServletResponse resp,
       PC pc,
@@ -1157,7 +1159,7 @@ public abstract class WebPageLayout {
   public final <
       PC extends FlowContent<PC>,
       Ex extends Throwable
-  > void lightArea(
+      > void lightArea(
       WebSiteRequest req,
       HttpServletResponse resp,
       PC pc,
@@ -1186,7 +1188,7 @@ public abstract class WebPageLayout {
       PC extends FlowContent<PC>,
       __ extends FlowContent<__>,
       Ex extends Throwable
-  > void lightArea(
+      > void lightArea(
       WebSiteRequest req,
       HttpServletResponse resp,
       PC pc,
@@ -1216,7 +1218,7 @@ public abstract class WebPageLayout {
   public final <
       PC extends FlowContent<PC>,
       Ex extends Throwable
-  > void lightArea(
+      > void lightArea(
       WebSiteRequest req,
       HttpServletResponse resp,
       PC pc,
@@ -1245,7 +1247,7 @@ public abstract class WebPageLayout {
   public final <
       PC extends FlowContent<PC>,
       __ extends FlowContent<__>
-  > __ startWhiteArea(
+      > __ startWhiteArea(
       WebSiteRequest req,
       HttpServletResponse resp,
       PC pc
@@ -1266,7 +1268,7 @@ public abstract class WebPageLayout {
   public abstract <
       PC extends FlowContent<PC>,
       __ extends FlowContent<__>
-  > __ startWhiteArea(
+      > __ startWhiteArea(
       WebSiteRequest req,
       HttpServletResponse resp,
       PC pc,
@@ -1304,7 +1306,7 @@ public abstract class WebPageLayout {
       PC extends FlowContent<PC>,
       __ extends FlowContent<__>,
       Ex extends Throwable
-  > void whiteArea(
+      > void whiteArea(
       WebSiteRequest req,
       HttpServletResponse resp,
       PC pc,
@@ -1331,7 +1333,7 @@ public abstract class WebPageLayout {
   public final <
       PC extends FlowContent<PC>,
       Ex extends Throwable
-  > void whiteArea(
+      > void whiteArea(
       WebSiteRequest req,
       HttpServletResponse resp,
       PC pc,
@@ -1360,7 +1362,7 @@ public abstract class WebPageLayout {
       PC extends FlowContent<PC>,
       __ extends FlowContent<__>,
       Ex extends Throwable
-  > void whiteArea(
+      > void whiteArea(
       WebSiteRequest req,
       HttpServletResponse resp,
       PC pc,
@@ -1390,7 +1392,7 @@ public abstract class WebPageLayout {
   public final <
       PC extends FlowContent<PC>,
       Ex extends Throwable
-  > void whiteArea(
+      > void whiteArea(
       WebSiteRequest req,
       HttpServletResponse resp,
       PC pc,
@@ -1423,14 +1425,14 @@ public abstract class WebPageLayout {
         String[] sa = (String[]) src;
         int len = sa.length;
         for (int c = 0; c < len; c++) {
-          content.script().src(req.getEncodedURLForPath('/' + sa[c], null, false, resp)).__();
+          content.script().src(req.getEncodedUrlForPath('/' + sa[c], null, false, resp)).__();
         }
       } else if (src instanceof Class) {
-        content.script().src(req.getEncodedURL(((Class<?>) src).asSubclass(WebPage.class), null, resp)).__();
+        content.script().src(req.getEncodedUrl(((Class<?>) src).asSubclass(WebPage.class), null, resp)).__();
       } else if (src instanceof WebPage) {
-        content.script().src(req.getEncodedURL((WebPage) src, resp)).__();
+        content.script().src(req.getEncodedUrl((WebPage) src, resp)).__();
       } else {
-        content.script().src(req.getEncodedURLForPath('/' + src.toString(), null, false, resp)).__();
+        content.script().src(req.getEncodedUrlForPath('/' + src.toString(), null, false, resp)).__();
       }
     }
   }

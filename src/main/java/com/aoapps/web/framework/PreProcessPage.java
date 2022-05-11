@@ -31,7 +31,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Takes the output of a native process and puts it in a PRE block
+ * Takes the output of a native process and puts it in a PRE block.
  *
  * @author  AO Industries, Inc.
  */

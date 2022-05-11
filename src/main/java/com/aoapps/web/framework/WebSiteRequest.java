@@ -178,6 +178,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   private static class MimeTypeLock {
     // Empty lock class to help heap profile
   }
+
   private static final MimeTypeLock mimeTypeLock = new MimeTypeLock();
   private static Map<String, String> mimeTypes;
 
@@ -215,7 +216,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   // TODO: One ConcurrentMap per ServletContext
   private static final Map<Identifier, UploadedFile> uploadedFiles = new HashMap<>();
 
-  private Identifier getNextID() {
+  private Identifier getNextId() {
     synchronized (uploadedFiles) {
       while (true) {
         Identifier id = new Identifier(getSecureRandom());
@@ -233,7 +234,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
 
   private static void addUploadedFile(UploadedFile uf, final ServletContext servletContext) {
     synchronized (uploadedFiles) {
-      uploadedFiles.put(uf.getID(), uf);
+      uploadedFiles.put(uf.getId(), uf);
 
       if (uploadedFileCleanup == null) {
         uploadedFileCleanup = new Thread() {
@@ -343,6 +344,9 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   private boolean isLinux;
   private boolean isLinuxDone;
 
+  /**
+   * Creates a new website request wrapper.
+   */
   @SuppressWarnings("OverridableMethodCallInConstructor")
   public WebSiteRequest(WebPage sourcePage, HttpServletRequest req) throws ServletException {
     super(req);
@@ -369,7 +373,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
                 // Get a copy of the file in our upload directory
                 File file;
                 while (true) {
-                  File newFile = new File(uploadDirectory, String.valueOf(getNextID()));
+                  File newFile = new File(uploadDirectory, String.valueOf(getNextId()));
                   if (!newFile.exists()) {
                     file = newFile;
                     break;
@@ -476,10 +480,10 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    * @param  params  Only adds a value when the name has not already been added to the URL.
    *                 This does not support multiple values, only the first is used.
    */
-  public String getURLForClass(String classname, URIParameters params, String fragment) throws ServletException {
+  public String getUrlForClass(String classname, URIParameters params, String fragment) throws ServletException {
     try {
       Class<? extends WebPage> clazz = Class.forName(classname).asSubclass(WebPage.class);
-      String url = getURL(clazz, params);
+      String url = getUrl(clazz, params);
       if (fragment != null) {
         url += fragment;
       }
@@ -490,7 +494,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   }
 
   /**
-   * {@linkplain #getURLForClass(java.lang.String, com.aoapps.net.URIParameters, java.lang.String) Gets the URL}, including:
+   * {@linkplain #getUrlForClass(java.lang.String, com.aoapps.net.URIParameters, java.lang.String) Gets the URL}.  Including:
    * <ol>
    * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
    * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
@@ -500,10 +504,10 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    * @param  params  Only adds a value when the name has not already been added to the URL.
    *                 This does not support multiple values, only the first is used.
    */
-  public String getEncodedURLForClass(String classname, URIParameters params, String fragment, HttpServletResponse resp) throws ServletException {
+  public String getEncodedUrlForClass(String classname, URIParameters params, String fragment, HttpServletResponse resp) throws ServletException {
     return resp.encodeURL(
         URIEncoder.encodeURI(
-            getContextPath() + getURLForClass(classname, params, fragment)
+            getContextPath() + getUrlForClass(classname, params, fragment)
         )
     );
   }
@@ -514,12 +518,12 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    * @param  params  Only adds a value when the name has not already been added to the URL.
    *                 This does not support multiple values, only the first is used.
    */
-  public String getURLForClass(String classname, URIParameters params) throws ServletException {
-    return getURLForClass(classname, params, null);
+  public String getUrlForClass(String classname, URIParameters params) throws ServletException {
+    return getUrlForClass(classname, params, null);
   }
 
   /**
-   * {@linkplain #getURLForClass(java.lang.String, com.aoapps.net.URIParameters) Gets the URL}, including:
+   * {@linkplain #getUrlForClass(java.lang.String, com.aoapps.net.URIParameters) Gets the URL}.  Including:
    * <ol>
    * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
    * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
@@ -529,10 +533,10 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    * @param  params  Only adds a value when the name has not already been added to the URL.
    *                 This does not support multiple values, only the first is used.
    */
-  public String getEncodedURLForClass(String classname, URIParameters params, HttpServletResponse resp) throws ServletException {
+  public String getEncodedUrlForClass(String classname, URIParameters params, HttpServletResponse resp) throws ServletException {
     return resp.encodeURL(
         URIEncoder.encodeURI(
-            getContextPath() + getURLForClass(classname, params)
+            getContextPath() + getUrlForClass(classname, params)
         )
     );
   }
@@ -541,8 +545,10 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    * Gets a context-relative URL from a String containing a classname and optional parameters/fragment.
    * Parameters and fragment should already be URL encoded but not XML encoded.
    */
-  public String getURLForClass(String classAndParamsFragment) throws ServletException {
-    String className, params, fragment;
+  public String getUrlForClass(String classAndParamsFragment) throws ServletException {
+    String className;
+    String params;
+    String fragment;
     int pos = URIParser.getPathEnd(classAndParamsFragment);
     if (pos >= classAndParamsFragment.length()) {
       className = classAndParamsFragment;
@@ -565,7 +571,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
         fragment = classAndParamsFragment.substring(pos + 1);
       }
     }
-    return getURLForClass(
+    return getUrlForClass(
         className,
         (params == null || params.isEmpty()) ? null : new URIParametersMap(params),
         fragment
@@ -573,17 +579,17 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   }
 
   /**
-   * {@linkplain #getURLForClass(java.lang.String) Gets the URL}, including:
+   * {@linkplain #getUrlForClass(java.lang.String) Gets the URL}.  Including:
    * <ol>
    * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
    * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
    * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
    * </ol>
    */
-  public String getEncodedURLForClass(String classAndParamsFragment, HttpServletResponse resp) throws ServletException {
+  public String getEncodedUrlForClass(String classAndParamsFragment, HttpServletResponse resp) throws ServletException {
     return resp.encodeURL(
         URIEncoder.encodeURI(
-            getContextPath() + getURLForClass(classAndParamsFragment)
+            getContextPath() + getUrlForClass(classAndParamsFragment)
         )
     );
   }
@@ -596,7 +602,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    *
    * @param  path  the context-relative path, with a beginning slash
    */
-  public String getURLForPath(String path, URIParameters params, boolean keepSettings) throws ServletException {
+  public String getUrlForPath(String path, URIParameters params, boolean keepSettings) throws ServletException {
     StringBuilder url = new StringBuilder();
     url.append(path);
     Set<String> finishedParams = new HashSet<>();
@@ -608,7 +614,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   }
 
   /**
-   * {@linkplain #getURLForPath(java.lang.String, com.aoapps.net.URIParameters, boolean) Gets the URL}, including:
+   * {@linkplain #getUrlForPath(java.lang.String, com.aoapps.net.URIParameters, boolean) Gets the URL}.  Including:
    * <ol>
    * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
    * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
@@ -620,10 +626,10 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    * @param  params  Only adds a value when the name has not already been added to the URL.
    *                 This does not support multiple values, only the first is used.
    */
-  public String getEncodedURLForPath(String path, URIParameters params, boolean keepSettings, HttpServletResponse resp) throws ServletException {
+  public String getEncodedUrlForPath(String path, URIParameters params, boolean keepSettings, HttpServletResponse resp) throws ServletException {
     return resp.encodeURL(
         URIEncoder.encodeURI(
-            getContextPath() + getURLForPath(path, params, keepSettings)
+            getContextPath() + getUrlForPath(path, params, keepSettings)
         )
     );
   }
@@ -651,22 +657,22 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   /**
    * Gets the context-relative URL to a web page.
    */
-  public String getURL(WebPage page) throws ServletException {
-    return getURL(page, (URIParameters) null);
+  public String getUrl(WebPage page) throws ServletException {
+    return getUrl(page, (URIParameters) null);
   }
 
   /**
-   * {@linkplain #getURL(com.aoapps.web.framework.WebPage) Gets the URL}, including:
+   * {@linkplain #getUrl(com.aoapps.web.framework.WebPage) Gets the URL}.  Including:
    * <ol>
    * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
    * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
    * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
    * </ol>
    */
-  public String getEncodedURL(WebPage page, HttpServletResponse resp) throws ServletException {
+  public String getEncodedUrl(WebPage page, HttpServletResponse resp) throws ServletException {
     return resp.encodeURL(
         URIEncoder.encodeURI(
-            getContextPath() + getURL(page)
+            getContextPath() + getUrl(page)
         )
     );
   }
@@ -677,12 +683,12 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    * @param  params  Only adds a value when the name has not already been added to the URL.
    *                 This does not support multiple values, only the first is used.
    */
-  public String getURL(WebPage page, URIParameters params) throws ServletException {
+  public String getUrl(WebPage page, URIParameters params) throws ServletException {
     Set<String> finishedParams = new HashSet<>();
     StringBuilder url = new StringBuilder();
-    url.append(page.getURLPath());
+    url.append(page.getUrlPath());
     boolean hasQuery = appendParams(url, params, finishedParams, false);
-    hasQuery = appendParams(url, page.getURLParams(this), finishedParams, hasQuery);
+    hasQuery = appendParams(url, page.getUrlParams(this), finishedParams, hasQuery);
 
     /*hasQuery = */appendSettings(finishedParams, hasQuery, url);
 
@@ -690,7 +696,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   }
 
   /**
-   * {@linkplain #getURL(com.aoapps.web.framework.WebPage, com.aoapps.net.URIParameters) Gets the URL}, including:
+   * {@linkplain #getUrl(com.aoapps.web.framework.WebPage, com.aoapps.net.URIParameters) Gets the URL}.  Including:
    * <ol>
    * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
    * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
@@ -700,10 +706,10 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    * @param  params  Only adds a value when the name has not already been added to the URL.
    *                 This does not support multiple values, only the first is used.
    */
-  public String getEncodedURL(WebPage page, URIParameters params, HttpServletResponse resp) throws ServletException {
+  public String getEncodedUrl(WebPage page, URIParameters params, HttpServletResponse resp) throws ServletException {
     return resp.encodeURL(
         URIEncoder.encodeURI(
-            getContextPath() + getURL(page, params)
+            getContextPath() + getUrl(page, params)
         )
     );
   }
@@ -714,15 +720,15 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    * @param  params  Only adds a value when the name has not already been added to the URL.
    *                 This does not support multiple values, only the first is used.
    */
-  public String getURL(Class<? extends WebPage> clazz, URIParameters params) throws ServletException {
-    return getURL(
+  public String getUrl(Class<? extends WebPage> clazz, URIParameters params) throws ServletException {
+    return getUrl(
         WebPage.getWebPage(sourcePage.getServletContext(), clazz, params),
         params
     );
   }
 
   /**
-   * {@linkplain #getURL(java.lang.Class, com.aoapps.net.URIParameters) Gets the URL}, including:
+   * {@linkplain #getUrl(java.lang.Class, com.aoapps.net.URIParameters) Gets the URL}.  Including:
    * <ol>
    * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
    * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
@@ -732,30 +738,30 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    * @param  params  Only adds a value when the name has not already been added to the URL.
    *                 This does not support multiple values, only the first is used.
    */
-  public String getEncodedURL(Class<? extends WebPage> clazz, URIParameters params, HttpServletResponse resp) throws ServletException {
+  public String getEncodedUrl(Class<? extends WebPage> clazz, URIParameters params, HttpServletResponse resp) throws ServletException {
     return resp.encodeURL(
         URIEncoder.encodeURI(
-            getContextPath() + getURL(clazz, params)
+            getContextPath() + getUrl(clazz, params)
         )
     );
   }
 
-  public String getURL(Class<? extends WebPage> clazz) throws ServletException {
-    return getURL(clazz, (URIParameters) null);
+  public String getUrl(Class<? extends WebPage> clazz) throws ServletException {
+    return getUrl(clazz, (URIParameters) null);
   }
 
   /**
-   * {@linkplain #getURL(java.lang.Class) Gets the URL}, including:
+   * {@linkplain #getUrl(java.lang.Class) Gets the URL}.  Including:
    * <ol>
    * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
    * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
    * <li>Then {@linkplain HttpServletResponse#encodeURL(java.lang.String) response encoding}</li>
    * </ol>
    */
-  public String getEncodedURL(Class<? extends WebPage> clazz, HttpServletResponse resp) throws ServletException {
+  public String getEncodedUrl(Class<? extends WebPage> clazz, HttpServletResponse resp) throws ServletException {
     return resp.encodeURL(
         URIEncoder.encodeURI(
-            getContextPath() + getURL(clazz)
+            getContextPath() + getUrl(clazz)
         )
     );
   }
@@ -768,8 +774,8 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    * @param  params  Only adds a value when the name has not already been added to the URL.
    *                 This does not support multiple values, only the first is used.
    */
-  public String getURLForPath(String path, URIParameters params) throws ServletException {
-    return getURLForPath(path, params, true);
+  public String getUrlForPath(String path, URIParameters params) throws ServletException {
+    return getUrlForPath(path, params, true);
   }
 
   /**
@@ -777,12 +783,12 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    *
    * @param  path  the context-relative path, with a beginning slash
    */
-  public String getURLForPath(String path) throws ServletException {
-    return getURLForPath(path, (URIParameters) null);
+  public String getUrlForPath(String path) throws ServletException {
+    return getUrlForPath(path, (URIParameters) null);
   }
 
   /**
-   * {@linkplain #getURLForPath(java.lang.String, com.aoapps.net.URIParameters) Gets the URL}, including:
+   * {@linkplain #getUrlForPath(java.lang.String, com.aoapps.net.URIParameters) Gets the URL}.  Including:
    * <ol>
    * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
    * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
@@ -794,16 +800,16 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    * @param  params  Only adds a value when the name has not already been added to the URL.
    *                 This does not support multiple values, only the first is used.
    */
-  public String getEncodedURLForPath(String path, URIParameters params, HttpServletResponse resp) throws ServletException {
+  public String getEncodedUrlForPath(String path, URIParameters params, HttpServletResponse resp) throws ServletException {
     return resp.encodeURL(
         URIEncoder.encodeURI(
-            getContextPath() + getURLForPath(path, params)
+            getContextPath() + getUrlForPath(path, params)
         )
     );
   }
 
   /**
-   * {@linkplain #getURLForPath(java.lang.String) Gets the URL}, including:
+   * {@linkplain #getUrlForPath(java.lang.String) Gets the URL}.  Including:
    * <ol>
    * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
    * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
@@ -812,16 +818,16 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
    *
    * @param  path  the context-relative path, with a beginning slash
    */
-  public String getEncodedURLForPath(String path, HttpServletResponse resp) throws ServletException {
+  public String getEncodedUrlForPath(String path, HttpServletResponse resp) throws ServletException {
     return resp.encodeURL(
         URIEncoder.encodeURI(
-            getContextPath() + getURLForPath(path)
+            getContextPath() + getUrlForPath(path)
         )
     );
   }
 
   /**
-   * Determines if the request is for a Lynx browser
+   * Determines if the request is for a Lynx browser.
    */
   public boolean isLynx() {
     if (!isLynxDone) {
@@ -833,7 +839,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   }
 
   /**
-   * Determines if the request is for a BlackBerry browser
+   * Determines if the request is for a BlackBerry browser.
    */
   public boolean isBlackBerry() {
     if (!isBlackBerryDone) {
@@ -845,7 +851,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   }
 
   /**
-   * Determines if the request is for a Linux browser
+   * Determines if the request is for a Linux browser.
    */
   public boolean isLinux() {
     if (!isLinuxDone) {
@@ -863,14 +869,17 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
     // Do nothing
   }
 
-// Unused 2021-02-22:
-//  /**
-//   * Prints the hidden variables that contain all of the current settings.
-//   */
-//  protected static <__ extends FlowContent<__>> void printHiddenField(__ form form, String name, String value) throws IOException {
-//    form.input().hidden().name(name).value(value).__().autoNl();
-//  }
+  // Unused 2021-02-22:
+  ///**
+  // * Prints the hidden variables that contain all of the current settings.
+  // */
+  //protected static <__ extends FlowContent<__>> void printHiddenField(__ form form, String name, String value) throws IOException {
+  //  form.input().hidden().name(name).value(value).__().autoNl();
+  //}
 
+  /**
+   * Gets the set of files uploaded during this request.
+   */
   public List<UploadedFile> getUploadedFiles() {
     if (reqUploadedFiles == null) {
       Collections.emptyList();

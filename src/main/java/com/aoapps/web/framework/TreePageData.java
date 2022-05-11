@@ -26,6 +26,8 @@ package com.aoapps.web.framework;
 import java.util.Collection;
 
 /**
+ * Models data used for one page in the page tree.
+ *
  * @author  AO Industries, Inc.
  */
 public class TreePageData {
@@ -36,6 +38,8 @@ public class TreePageData {
   private final String[] path;
 
   /**
+   * Creates new tree page data.
+   *
    * @param path The path of display names.
    */
   public TreePageData(String url, String description, boolean hasChildren, String ... path) {
@@ -46,6 +50,8 @@ public class TreePageData {
   }
 
   /**
+   * Creates new tree page data.
+   *
    * @param path The path of display names, extracted via {@link Collection#toArray(java.lang.Object[])}
    */
   public TreePageData(String url, String description, boolean hasChildren, Collection<? extends String> path) {

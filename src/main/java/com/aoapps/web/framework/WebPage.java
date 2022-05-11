@@ -236,7 +236,7 @@ public abstract class WebPage extends PageServlet {
    *   <li>Ensures the {@linkplain WebPage#canAccess(com.aoapps.web.framework.WebSiteUser) user can access the page},
    *       returns {@code -1} for unknown
    *       when not authorized.</li>
-   *   <li>If {@linkplain #getRedirectURL(com.aoapps.web.framework.WebSiteRequest) is a redirect},
+   *   <li>If {@linkplain #getRedirectUrl(com.aoapps.web.framework.WebSiteRequest) is a redirect},
    *       returns {@code -1} for unknown.</li>
    *   <li>Finally, dispatches the request to {@link #getLastModified(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}.</li>
    * </ol>
@@ -263,7 +263,7 @@ public abstract class WebPage extends PageServlet {
       }
 
       // If redirected
-      if (page.getRedirectURL(req) != null) {
+      if (page.getRedirectUrl(req) != null) {
         return -1;
       }
 
@@ -478,7 +478,7 @@ public abstract class WebPage extends PageServlet {
    * @see DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
    * @see #setHeaders(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)
    */
-  protected OutputStream getHTMLOutputStream(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
+  protected OutputStream getHtmlOutputStream(WebSiteRequest req, HttpServletResponse resp) throws ServletException, IOException {
     // Clear the output buffer
     resp.resetBuffer();
     // Set the content type
@@ -529,7 +529,7 @@ public abstract class WebPage extends PageServlet {
    *   <li>Ensures the {@linkplain WebPage#canAccess(com.aoapps.web.framework.WebSiteUser) user can access the page},
    *       invokes {@link WebPage#printUnauthorizedPage(com.aoapps.web.framework.WebPage, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
    *       when not authorized and stops here.</li>
-   *   <li>If {@linkplain #getRedirectURL(com.aoapps.web.framework.WebSiteRequest) is a redirect},
+   *   <li>If {@linkplain #getRedirectUrl(com.aoapps.web.framework.WebSiteRequest) is a redirect},
    *       {@linkplain HttpServletUtil#sendRedirect(int, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.String, com.aoapps.net.URIParameters, boolean, boolean) sends the redirect}
    *       of the {@linkplain #getRedirectType() correct type} and stops here.</li>
    *   <li>Finally, dispatches the request to {@link #doGet(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}.</li>
@@ -565,7 +565,7 @@ public abstract class WebPage extends PageServlet {
       page.printUnauthorizedPage(page, req, resp);
       return;
     }
-    String redirect = page.getRedirectURL(req);
+    String redirect = page.getRedirectUrl(req);
     if (redirect != null) {
       HttpServletUtil.sendRedirect(
           page.getRedirectType(),
@@ -685,7 +685,7 @@ public abstract class WebPage extends PageServlet {
    *   <li>Ensures the {@linkplain WebPage#canAccess(com.aoapps.web.framework.WebSiteUser) user can access the page},
    *       invokes {@link WebPage#printUnauthorizedPage(com.aoapps.web.framework.WebPage, com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}
    *       when not authorized and stops here.</li>
-   *   <li>If {@linkplain #getRedirectURL(com.aoapps.web.framework.WebSiteRequest) is a redirect},
+   *   <li>If {@linkplain #getRedirectUrl(com.aoapps.web.framework.WebSiteRequest) is a redirect},
    *       {@linkplain HttpServletUtil#sendRedirect(int, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.String, com.aoapps.net.URIParameters, boolean, boolean) sends the redirect}
    *       of the {@linkplain #getRedirectType() correct type} and stops here.</li>
    *   <li>Avoid unexpected POST action after a (re)login: If has parameter {@link WebSiteRequest#LOGIN_REQUESTED}="true"
@@ -726,7 +726,7 @@ public abstract class WebPage extends PageServlet {
       page.printUnauthorizedPage(page, req, resp);
       return;
     }
-    String redirect = page.getRedirectURL(req);
+    String redirect = page.getRedirectUrl(req);
     if (redirect != null) {
       HttpServletUtil.sendRedirect(
           page.getRedirectType(),
@@ -772,10 +772,12 @@ public abstract class WebPage extends PageServlet {
         try {
           DocumentEE document = getDocument(req, resp);
           WebPageLayout layout = getWebPageLayout(req);
-          layout.doPage(req, resp, this, document, "document.forms." + SEARCH_TWO + "." + WebSiteRequest.SEARCH_QUERY + ".select(); document.forms." + SEARCH_TWO + "." + WebSiteRequest.SEARCH_QUERY + ".focus();",
+          layout.doPage(req, resp, this, document,
+              "document.forms." + SEARCH_TWO + "." + WebSiteRequest.SEARCH_QUERY + ".select();"
+                  + " document.forms." + SEARCH_TWO + "." + WebSiteRequest.SEARCH_QUERY + ".focus();",
               flow -> {
-                boolean entire_site = searchTarget.equals(WebSiteRequest.SEARCH_ENTIRE_SITE);
-                WebPage target = entire_site ? getRootPage() : this;
+                boolean entireSite = searchTarget.equals(WebSiteRequest.SEARCH_ENTIRE_SITE);
+                WebPage target = entireSite ? getRootPage() : this;
 
                 // If the target contains no pages, use its parent
                 if (target.getCachedChildren(req, resp).length == 0) {
@@ -793,7 +795,7 @@ public abstract class WebPage extends PageServlet {
                   //Strings.sortObjectsAndFloatDescending(results, 1, 5);
                 }
 
-                layout.printSearchOutput(req, resp, this, flow, query, entire_site, results, words);
+                layout.printSearchOutput(req, resp, this, flow, query, entireSite, results, words);
               }
           );
         } finally {
@@ -892,8 +894,7 @@ public abstract class WebPage extends PageServlet {
   public final boolean equals(Object obj) {
     return
         (obj instanceof WebPage)
-            && equals((WebPage) obj)
-    ;
+            && equals((WebPage) obj);
   }
 
   /**
@@ -956,7 +957,7 @@ public abstract class WebPage extends PageServlet {
    *
    * @see  WebPageLayout
    */
-  public String getContentVAlign(WebSiteRequest req) {
+  public String getContentValign(WebSiteRequest req) {
     return "top";
   }
 
@@ -1010,7 +1011,7 @@ public abstract class WebPage extends PageServlet {
    *
    * @see #getShortTitle(com.aoapps.web.framework.WebSiteRequest)
    * @see #getNavImageSuffix(com.aoapps.web.framework.WebSiteRequest)
-   * @see #getNavImageURL(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.net.URIParameters)
+   * @see #getNavImageUrl(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.net.URIParameters)
    */
   public String getNavImageAlt(WebSiteRequest req) throws ServletException {
     return getShortTitle(req);
@@ -1022,7 +1023,7 @@ public abstract class WebPage extends PageServlet {
    * the beginning is truncated and <code>...</code> appended so that both fit the image.
    *
    * @see #getNavImageAlt(com.aoapps.web.framework.WebSiteRequest)
-   * @see #getNavImageURL(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.net.URIParameters)
+   * @see #getNavImageUrl(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.net.URIParameters)
    */
   public String getNavImageSuffix(WebSiteRequest req) throws ServletException {
     return null;
@@ -1037,8 +1038,8 @@ public abstract class WebPage extends PageServlet {
    * @see #getNavImageAlt(com.aoapps.web.framework.WebSiteRequest)
    * @see #getNavImageSuffix(com.aoapps.web.framework.WebSiteRequest)
    */
-  public String getNavImageURL(WebSiteRequest req, HttpServletResponse resp, URIParameters params) throws ServletException {
-    return req.getEncodedURL(this, params, resp);
+  public String getNavImageUrl(WebSiteRequest req, HttpServletResponse resp, URIParameters params) throws ServletException {
+    return req.getEncodedUrl(this, params, resp);
   }
 
   /**
@@ -1102,7 +1103,7 @@ public abstract class WebPage extends PageServlet {
   }
 
   /**
-   * Gets the JavaScript that should be executed with the onload event of the body tag
+   * Gets the JavaScript that should be executed with the onload event of the body tag.
    *
    * @param  req  the current <code>WebSiteRequest</code>
    *
@@ -1119,6 +1120,7 @@ public abstract class WebPage extends PageServlet {
    * <p>
    * Pages will also not be cached if the configuration property is set to anything
    * other than <code>"true"</code>
+   * </p>
    *
    * @return a <code>WebPage[]</code> of all of the lower-level pages
    *
@@ -1143,7 +1145,7 @@ public abstract class WebPage extends PageServlet {
    * @return  the context-relative or absolute URL to redirect to or <code>null</code> for
    *          no redirect.
    */
-  public String getRedirectURL(WebSiteRequest req) throws ServletException {
+  public String getRedirectUrl(WebSiteRequest req) throws ServletException {
     return null;
   }
 
@@ -1183,11 +1185,13 @@ public abstract class WebPage extends PageServlet {
    *
    * @see  EmptyURIParameters#getInstance()
    */
-  public URIParameters getURLParams(WebSiteRequest req) throws ServletException {
+  public URIParameters getUrlParams(WebSiteRequest req) throws ServletException {
     return null;
   }
 
   /**
+   * Gets a web page given no parameters.
+   *
    * @see  #getWebPage(javax.servlet.ServletContext, java.lang.Class, com.aoapps.web.framework.WebSiteRequest)
    */
   public WebPage getWebPage(Class<? extends WebPage> clazz, WebSiteRequest req) throws ServletException {
@@ -1339,6 +1343,8 @@ public abstract class WebPage extends PageServlet {
   }
 
   /**
+   * Gets a web page with parameters.
+   *
    * @param  params  The parameters used to select the right instance.
    *
    * @see  #getWebPage(javax.servlet.ServletContext, java.lang.Class, com.aoapps.net.URIParameters)
@@ -1501,6 +1507,7 @@ public abstract class WebPage extends PageServlet {
    * <p>
    * By default calls {@link #isHandler(com.aoapps.net.URIParameters)}, wrapping request in
    * {@link ServletRequestParameters}.  When no request, uses {@link EmptyURIParameters}.
+   * </p>
    *
    * @see  #getWebPage(javax.servlet.ServletContext, java.lang.Class, com.aoapps.web.framework.WebSiteRequest)
    */
@@ -1653,7 +1660,7 @@ public abstract class WebPage extends PageServlet {
               description = getDescription(req);
               author = getAuthor(req);
               authorHref = getAuthorHref(req, resp);
-              String keywords = getKeywords(req);
+              final String keywords = getKeywords(req);
 
               // Get the HTML content
               buffer.reset();
@@ -1673,7 +1680,7 @@ public abstract class WebPage extends PageServlet {
               } finally {
                 RegistryEE.Page.set(req, oldPageRegistry);
               }
-              String content = buffer.toString();
+              final String content = buffer.toString();
 
               // Remove all the indexed words
               searchWords.clear();
@@ -1750,11 +1757,10 @@ public abstract class WebPage extends PageServlet {
                 size <= 0
                     ? 1.0f :
                     ((float) Math.log(size))
-            )
-        ;
+            );
         results.add(
             new SearchResult(
-                req.getURL(this),
+                req.getUrl(this),
                 probability,
                 title == null ? getTitle(req) : title,
                 description == null ? getDescription(req) : description,
@@ -1823,36 +1829,37 @@ public abstract class WebPage extends PageServlet {
   /**
    * Gets the copyright information for this page.  Defaults to the copyright of the parent page.
    * May not contain HTML.
-   *
-   * // TODO: 3.0.0: Use dcterms:
+   * <p>
+   * TODO: 3.0.0: Use dcterms:
    *          http://stackoverflow.com/questions/6665312/is-the-copyright-meta-tag-valid-in-html5
    *          https://wiki.whatwg.org/wiki/MetaExtensions
    *          http://dublincore.org/documents/dcmi-terms/
+   * </p>
    */
   public String getCopyright(WebSiteRequest req, HttpServletResponse resp, WebPage requestPage) throws ServletException {
     return getParent().getCopyright(req, resp, requestPage);
   }
 
   /**
-   * Gets the context-relative path for the URL
+   * Gets the context-relative path for the URL.
    */
-  public String getURLPath() throws ServletException {
-    return '/' + generateURLPath(this);
+  public String getUrlPath() throws ServletException {
+    return '/' + generateUrlPath(this);
   }
 
   /**
-   * Generates a URL path for this or another page, please call getURLPath() instead.
+   * Generates a URL path for this or another page, please call getUrlPath() instead.
    * The default behavior is to ask the parent to generate the URL.  Therefore the
    * top-level <code>WebPage</code> of a site must implement this method.
    */
-  public String generateURLPath(WebPage page) throws ServletException {
-    return getParent().generateURLPath(page);
+  public String generateUrlPath(WebPage page) throws ServletException {
+    return getParent().generateUrlPath(page);
   }
 
   /**
    * Gets the URL pattern for this page as used in <code>web.xml</code>.
    */
-  public String getURLPattern() throws ServletException {
-    return getURLPath();
+  public String getUrlPattern() throws ServletException {
+    return getUrlPath();
   }
 }

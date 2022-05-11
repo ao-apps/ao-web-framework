@@ -24,7 +24,7 @@
 package com.aoapps.web.framework;
 
 import com.aoapps.encoding.JavaScriptWriter;
-import com.aoapps.html.any.attributes.Enum.Method;
+import com.aoapps.html.any.attributes.enumeration.Method;
 import com.aoapps.html.servlet.CODE_c;
 import com.aoapps.html.servlet.DocumentEE;
 import com.aoapps.html.servlet.FlowContent;
@@ -44,6 +44,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * A tree page creates a user interactive hierarchical representation of the site tree structure.
+ *
  * @author  AO Industries, Inc.
  */
 public abstract class TreePage extends WebPage {
@@ -181,7 +183,7 @@ public abstract class TreePage extends WebPage {
           longest = width;
         }
       }
-      int longest_ = longest;
+      int myLongest = longest;
       flow.pre__(pre -> {
         String[] last = EmptyArrays.EMPTY_STRING_ARRAY;
         for (int c = 0; c < treeLen; c++) {
@@ -248,7 +250,7 @@ public abstract class TreePage extends WebPage {
             }
             width += p.length() + 1;
           }
-          pre.sp(longest_ - width).text(tree.get(c).getDescription()).nl();
+          pre.sp(myLongest - width).text(tree.get(c).getDescription()).nl();
 
           last = path;
         }
@@ -322,7 +324,7 @@ public abstract class TreePage extends WebPage {
         opened[0] = true;
       }
     }
-    boolean[] opened_ = opened;
+    boolean[] myOpened = opened;
 
     layout.content(req, resp, this, flow, content -> {
       layout.contentTitle(req, resp, this, content);
@@ -347,230 +349,230 @@ public abstract class TreePage extends WebPage {
 
         // Write the form containing the current settings
         contentLine.form("").id("tree_form").method(Method.Value.POST).__(form -> form
-                .div__(div -> {
-                  req.printFormFields(div);
-                  div.input().hidden().name("scroll_to_x").value(scrollToX).__().autoNl()
-                      .input().hidden().name("scroll_to_y").value(scrollToY).__().autoNl();
-                  for (int c = 0; c < treeLen; c++) {
-                    div.input().hidden().name("opened_" + c).value(opened_[c]).__().autoNl();
-                  }
+            .div__(div -> {
+              req.printFormFields(div);
+              div.input().hidden().name("scroll_to_x").value(scrollToX).__().autoNl()
+                  .input().hidden().name("scroll_to_y").value(scrollToY).__().autoNl();
+              for (int c = 0; c < treeLen; c++) {
+                div.input().hidden().name("opened_" + c).value(myOpened[c]).__().autoNl();
+              }
 
-                  // Display the tree in a table with links for opening/closing the different parts
-                  div.table().clazz("ao-packed").__(table -> {
-                    String[] last = EmptyArrays.EMPTY_STRING_ARRAY;
-                    for (int c = 0; c < treeLen; c++) {
-                      int c_ = c;
-                      String[] path = paths[c];
-                      final int pathLen = path.length;
+              // Display the tree in a table with links for opening/closing the different parts
+              div.table().clazz("ao-packed").__(table -> {
+                String[] last = EmptyArrays.EMPTY_STRING_ARRAY;
+                for (int c = 0; c < treeLen; c++) {
+                  int myC = c;
+                  String[] path = paths[c];
+                  final int pathLen = path.length;
 
-                      // Every parent must be open for this to be visible
-                      boolean visible = true;
-                      Loop2 :
-                      for (int d = 0; d < (pathLen - 1); d++) {
-                        // Find the first row that has all the path up to current step
-                        for (int e = 0; e < c; e++) {
-                          String[] parentpath = paths[e];
-                          if (parentpath.length > d) {
-                            boolean isParent = true;
-                            for (int f = 0; f <= d; f++) {
-                              if (!parentpath[f].equals(path[f])) {
-                                isParent = false;
-                                break;
-                              }
-                            }
-                            if (isParent) {
-                              if (!opened_[e]) {
-                                visible = false;
-                                break Loop2;
-                              }
-                              break;
-                            }
+                  // Every parent must be open for this to be visible
+                  boolean visible = true;
+                  LOOP2:
+                  for (int d = 0; d < (pathLen - 1); d++) {
+                    // Find the first row that has all the path up to current step
+                    for (int e = 0; e < c; e++) {
+                      String[] parentpath = paths[e];
+                      if (parentpath.length > d) {
+                        boolean isParent = true;
+                        for (int f = 0; f <= d; f++) {
+                          if (!parentpath[f].equals(path[f])) {
+                            isParent = false;
+                            break;
                           }
                         }
-                      }
-                      if (visible) {
-                        String[] last_ = last;
-                        table.tbody__(tbody -> tbody
-                                .tr__(tr -> tr
-                                        .td().style("white-space:nowrap", "border:0px").__(td -> td
-                                            .table().clazz("ao-packed").__(table2 -> table2
-                                                .tbody__(tbody2 -> tbody2
-                                                        .tr__(tr2 -> {
-                                                          var td2 = tr2.td().style("white-space:nowrap", "border:0px")._c();
-                                                          int max = Math.min(pathLen - 1, last_.length);
-                                                          int pos = 0;
-
-                                                          // Skip the part of the path that is already displayed by the parent
-                                                          for (; pos < max; pos++) {
-                                                            if (last_[pos].equals(path[pos])) {
-                                                              boolean hasMore = false;
-                                                              for (int d = c_ + 1; d < treeLen; d++) {
-                                                                int end = pos;
-                                                                for (int e = 0; e < end; e++) {
-                                                                  if (paths[d][e].equals(path[e])) {
-                                                                    if (e == (end - 1) && !paths[d][end].equals(path[end])) {
-                                                                      hasMore = true;
-                                                                      break;
-                                                                    }
-                                                                  } else {
-                                                                    break;
-                                                                  }
-                                                                }
-                                                              }
-                                                              td2.img()
-                                                                  .src(req.getEncodedURL(this, URIParametersMap.of("image_num", (hasMore ? 1 : 0)), resp))
-                                                                  .style("border:0px", "display:inline", "vertical-align:bottom")
-                                                                  .width(IMAGE_WIDTH)
-                                                                  .height(IMAGE_HEIGHT)
-                                                                  .alt("")
-                                                                  .__();
-                                                            } else {
-                                                              break;
-                                                            }
-                                                          }
-
-                                                          // Display the remaining part of the path
-                                                          for (; pos < pathLen; pos++) {
-                                                            if (path[pos].length() > 0) {
-                                                              // Determine has sub items
-                                                              boolean hasSub = false;
-                                                              if (c_ < (treeLen - 1)) {
-                                                                String[] next_path = paths[c_ + 1];
-                                                                if (next_path.length >= pathLen) {
-                                                                  hasSub = true;
-                                                                  for (int e = 0; e < pathLen; e++) {
-                                                                    String tempPath = path[e];
-                                                                    if (tempPath.length() > 0 && !tempPath.equals(next_path[e])) {
-                                                                      hasSub = false;
-                                                                      break;
-                                                                    }
-                                                                  }
-                                                                }
-                                                              }
-
-                                                              // Determine if the line continues farther down
-                                                              final boolean hasMore;
-                                                              {
-                                                                boolean found = false;
-                                                                for (int d = c_; d < treeLen; d++) {
-                                                                  int end = pos;
-                                                                  for (int e = 0; e < end; e++) {
-                                                                    if (paths[d][e].equals(path[e])) {
-                                                                      if (e == (end - 1) && !paths[d][end].equals(path[end])) {
-                                                                        found = true;
-                                                                        break;
-                                                                      }
-                                                                    } else {
-                                                                      break;
-                                                                    }
-                                                                  }
-                                                                }
-                                                                hasMore = found;
-                                                              }
-
-                                                              if (hasSub) {
-                                                                td2.a().href(
-                                                                    "javascript:"
-                                                                        + (opened_[c_] ? "closeNode(" : "openNode(")
-                                                                        + c_
-                                                                        + ");"
-                                                                ).__((Union_Interactive_Phrasing<?> a) -> a
-                                                                        .img()
-                                                                        .alt(opened_[c_] ? "Close" : "Open")
-                                                                        .src(
-                                                                            req.getEncodedURL(
-                                                                                this,
-                                                                                URIParametersMap.of(
-                                                                                    "image_num",
-                                                                                    opened_[c_]
-                                                                                        ? (hasMore ? 4 : (c_ > 0 ? 5 : 9))
-                                                                                        : (hasMore ? 6 : (c_ > 0 ? 7 : 8))
-                                                                                ),
-                                                                                resp
-                                                                            )
-                                                                        ).style("vertical-align:bottom", "border:0px", "display:inline")
-                                                                        .width(IMAGE_WIDTH)
-                                                                        .height(IMAGE_HEIGHT)
-                                                                        .__()
-                                                                );
-                                                              } else {
-                                                                td2.img()
-                                                                    .src(
-                                                                        req.getEncodedURL(
-                                                                            this,
-                                                                            URIParametersMap.of("image_num", (hasMore ? 2 : 3)),
-                                                                            resp
-                                                                        )
-                                                                    ).style("vertical-align", "bottom; border:0px", "display:inline")
-                                                                    .width(IMAGE_WIDTH)
-                                                                    .height(IMAGE_HEIGHT)
-                                                                    .alt("")
-                                                                    .__();
-                                                              }
-                                                              td2.img()
-                                                                  .src(req.getEncodedURL(this, URIParametersMap.of("image_num", 0), resp))
-                                                                  .style("vertical-align:bottom", "border:0px", "display:inline")
-                                                                  .width(4)
-                                                                  .height(IMAGE_HEIGHT)
-                                                                  .alt("")
-                                                                  .__();
-                                                              // Close and open new TD
-                                                              td2 = td2.__().td().style("white-space:nowrap")._c();
-                                                            }
-
-                                                            boolean useCodeFont = useCodeFont(req);
-                                                            CODE_c<?> code;
-                                                            PhrasingContent<?> phrasing;
-                                                            if (useCodeFont) {
-                                                              code = td2.code_c();
-                                                              phrasing = code;
-                                                            } else {
-                                                              code = null;
-                                                              phrasing = td2;
-                                                            }
-                                                            String href;
-                                                            if (
-                                                                (
-                                                                    (pathLen >= 2 && pos == (pathLen - 2) && path[pathLen - 1].length() == 0)
-                                                                        || (pos == (pathLen - 1) && path[pathLen - 1].length() > 0)
-                                                                ) && (href = tree.get(c_).getUrl()) != null
-                                                            ) {
-                                                              phrasing.a().clazz("aoLightLink").href(
-                                                                  resp.encodeURL(
-                                                                      URIEncoder.encodeURI(
-                                                                          req.getContextPath() + href
-                                                                      )
-                                                                  )
-                                                              ).__(path[pos]);
-                                                            } else if (!path[pos].isEmpty()) {
-                                                              phrasing.text(path[pos]);
-                                                            }
-                                                            if (code != null) {
-                                                              code.__();
-                                                            }
-                                                          }
-                                                          td2.__();
-                                                        })
-                                                )
-                                        )
-                                    )
-                                        .td().style("white-space:nowrap", "width:20px").__(td -> td
-                                            .img()
-                                            .src(req.getEncodedURL(this, URIParametersMap.of("image_num", 0), resp))
-                                            .style("vertical-align:bottom", "border:0px", "display:inline")
-                                            .width(20)
-                                            .height(1)
-                                            .alt("")
-                                            .__()
-                                    )
-                                        .td().style("white-space:nowrap").__(tree.get(c_).getDescription())
-                                )
-                        );
-                        last = path;
+                        if (isParent) {
+                          if (!myOpened[e]) {
+                            visible = false;
+                            break LOOP2;
+                          }
+                          break;
+                        }
                       }
                     }
-                  });
-                })
+                  }
+                  if (visible) {
+                    String[] myLast = last;
+                    table.tbody__(tbody -> tbody
+                        .tr__(tr -> tr
+                            .td().style("white-space:nowrap", "border:0px").__(td -> td
+                                .table().clazz("ao-packed").__(table2 -> table2
+                                    .tbody__(tbody2 -> tbody2
+                                        .tr__(tr2 -> {
+                                          var td2 = tr2.td().style("white-space:nowrap", "border:0px")._c();
+                                          int max = Math.min(pathLen - 1, myLast.length);
+                                          int pos = 0;
+
+                                          // Skip the part of the path that is already displayed by the parent
+                                          for (; pos < max; pos++) {
+                                            if (myLast[pos].equals(path[pos])) {
+                                              boolean hasMore = false;
+                                              for (int d = myC + 1; d < treeLen; d++) {
+                                                int end = pos;
+                                                for (int e = 0; e < end; e++) {
+                                                  if (paths[d][e].equals(path[e])) {
+                                                    if (e == (end - 1) && !paths[d][end].equals(path[end])) {
+                                                      hasMore = true;
+                                                      break;
+                                                    }
+                                                  } else {
+                                                    break;
+                                                  }
+                                                }
+                                              }
+                                              td2.img()
+                                                  .src(req.getEncodedUrl(this, URIParametersMap.of("image_num", (hasMore ? 1 : 0)), resp))
+                                                  .style("border:0px", "display:inline", "vertical-align:bottom")
+                                                  .width(IMAGE_WIDTH)
+                                                  .height(IMAGE_HEIGHT)
+                                                  .alt("")
+                                                  .__();
+                                            } else {
+                                              break;
+                                            }
+                                          }
+
+                                          // Display the remaining part of the path
+                                          for (; pos < pathLen; pos++) {
+                                            if (path[pos].length() > 0) {
+                                              // Determine has sub items
+                                              boolean hasSub = false;
+                                              if (myC < (treeLen - 1)) {
+                                                String[] nextPath = paths[myC + 1];
+                                                if (nextPath.length >= pathLen) {
+                                                  hasSub = true;
+                                                  for (int e = 0; e < pathLen; e++) {
+                                                    String tempPath = path[e];
+                                                    if (tempPath.length() > 0 && !tempPath.equals(nextPath[e])) {
+                                                      hasSub = false;
+                                                      break;
+                                                    }
+                                                  }
+                                                }
+                                              }
+
+                                              // Determine if the line continues farther down
+                                              final boolean hasMore;
+                                                {
+                                                  boolean found = false;
+                                                  for (int d = myC; d < treeLen; d++) {
+                                                    int end = pos;
+                                                    for (int e = 0; e < end; e++) {
+                                                      if (paths[d][e].equals(path[e])) {
+                                                        if (e == (end - 1) && !paths[d][end].equals(path[end])) {
+                                                          found = true;
+                                                          break;
+                                                        }
+                                                      } else {
+                                                        break;
+                                                      }
+                                                    }
+                                                  }
+                                                  hasMore = found;
+                                                }
+
+                                              if (hasSub) {
+                                                td2.a().href(
+                                                    "javascript:"
+                                                        + (myOpened[myC] ? "closeNode(" : "openNode(")
+                                                        + myC
+                                                        + ");"
+                                                ).__((Union_Interactive_Phrasing<?> a) -> a
+                                                    .img()
+                                                    .alt(myOpened[myC] ? "Close" : "Open")
+                                                    .src(
+                                                        req.getEncodedUrl(
+                                                            this,
+                                                            URIParametersMap.of(
+                                                                "image_num",
+                                                                myOpened[myC]
+                                                                    ? (hasMore ? 4 : (myC > 0 ? 5 : 9))
+                                                                    : (hasMore ? 6 : (myC > 0 ? 7 : 8))
+                                                            ),
+                                                            resp
+                                                        )
+                                                    ).style("vertical-align:bottom", "border:0px", "display:inline")
+                                                    .width(IMAGE_WIDTH)
+                                                    .height(IMAGE_HEIGHT)
+                                                    .__()
+                                                );
+                                              } else {
+                                                td2.img()
+                                                    .src(
+                                                        req.getEncodedUrl(
+                                                            this,
+                                                            URIParametersMap.of("image_num", (hasMore ? 2 : 3)),
+                                                            resp
+                                                        )
+                                                    ).style("vertical-align", "bottom; border:0px", "display:inline")
+                                                    .width(IMAGE_WIDTH)
+                                                    .height(IMAGE_HEIGHT)
+                                                    .alt("")
+                                                    .__();
+                                              }
+                                              td2.img()
+                                                  .src(req.getEncodedUrl(this, URIParametersMap.of("image_num", 0), resp))
+                                                  .style("vertical-align:bottom", "border:0px", "display:inline")
+                                                  .width(4)
+                                                  .height(IMAGE_HEIGHT)
+                                                  .alt("")
+                                                  .__();
+                                              // Close and open new TD
+                                              td2 = td2.__().td().style("white-space:nowrap")._c();
+                                            }
+
+                                            boolean useCodeFont = useCodeFont(req);
+                                            CODE_c<?> code;
+                                            PhrasingContent<?> phrasing;
+                                            if (useCodeFont) {
+                                              code = td2.code_c();
+                                              phrasing = code;
+                                            } else {
+                                              code = null;
+                                              phrasing = td2;
+                                            }
+                                            String href;
+                                            if (
+                                                (
+                                                    (pathLen >= 2 && pos == (pathLen - 2) && path[pathLen - 1].length() == 0)
+                                                        || (pos == (pathLen - 1) && path[pathLen - 1].length() > 0)
+                                                ) && (href = tree.get(myC).getUrl()) != null
+                                            ) {
+                                              phrasing.a().clazz("aoLightLink").href(
+                                                  resp.encodeURL(
+                                                      URIEncoder.encodeURI(
+                                                          req.getContextPath() + href
+                                                      )
+                                                  )
+                                              ).__(path[pos]);
+                                            } else if (!path[pos].isEmpty()) {
+                                              phrasing.text(path[pos]);
+                                            }
+                                            if (code != null) {
+                                              code.__();
+                                            }
+                                          }
+                                          td2.__();
+                                        })
+                                    )
+                                )
+                            )
+                            .td().style("white-space:nowrap", "width:20px").__(td -> td
+                                .img()
+                                .src(req.getEncodedUrl(this, URIParametersMap.of("image_num", 0), resp))
+                                .style("vertical-align:bottom", "border:0px", "display:inline")
+                                .width(20)
+                                .height(1)
+                                .alt("")
+                                .__()
+                            )
+                            .td().style("white-space:nowrap").__(tree.get(myC).getDescription())
+                        )
+                    );
+                    last = path;
+                  }
+                }
+              });
+            })
         );
       });
     });
