@@ -346,7 +346,10 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
     }
   }
 
-  @WebListener("Shuts-down background clean-up thread on application stop")
+  /**
+   * Shuts-down background clean-up thread on application stop.
+   */
+  @WebListener("Shuts-down background clean-up thread on application stop.")
   public static class Initializer implements ServletContextListener {
 
     @Override

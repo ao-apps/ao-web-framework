@@ -141,9 +141,9 @@ public abstract class WebPageLayout {
    * on the request, and these must be considered in the HTML generation.
    * </p>
    *
-   * @param  The onload script.  When {@code null}, the
-   *         {@linkplain WebPage#getOnloadScript(com.aoapps.web.framework.WebSiteRequest) page's default onload}
-   *         is used.
+   * @param  onload The onload script.  When {@code null}, the
+   *                {@linkplain WebPage#getOnloadScript(com.aoapps.web.framework.WebSiteRequest) page's default onload}
+   *                is used.
    *
    * @return  The {@link FlowContent} that should be used to write the page contents.
    *          This is also given to {@link #endPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
