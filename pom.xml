@@ -25,7 +25,7 @@ along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.aoapps</groupId><artifactId>ao-oss-parent</artifactId><version>1.18.0-POST-SNAPSHOT</version>
+    <groupId>com.aoapps</groupId><artifactId>ao-oss-parent</artifactId><version>1.19.0-SNAPSHOT</version>
     <relativePath>../parent/pom.xml</relativePath>
   </parent>
 
@@ -227,7 +227,7 @@ along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
             <configuration>
               <offlineLinks combine.children="append">
                 <!-- Direct -->
-                <!-- ao-javadoc-offline: <groupId>javax.activation</groupId><artifactId>activation</artifactId><classifier>javadoc</classifier> --><!-- TODO: https://jakarta.ee/specifications/activation/1.2/apidocs/ -->
+                <!-- ao-javadoc-offline: <groupId>javax.activation</groupId><artifactId>activation</artifactId><classifier>javadoc</classifier> -->
                 <offlineLink>
                   <url>https://oss.aoapps.com/collections/apidocs/</url>
                   <location>${project.build.directory}/offlineLinks/com.aoapps/ao-collections</location>
