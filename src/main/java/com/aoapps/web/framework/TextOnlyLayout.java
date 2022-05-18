@@ -201,12 +201,7 @@ public class TextOnlyLayout extends WebPageLayout {
         GoogleAnalytics.writeAnalyticsJs(head, trackingId);
       }
       // Mobile support
-      head
-          .meta().name(AnyMETA.Name.VIEWPORT).content("width=device-width, initial-scale=1.0").__()
-          // TODO: This is probably only appropriate for single-page applications!
-          //       See https://medium.com/@firt/dont-use-ios-web-app-meta-tag-irresponsibly-in-your-progressive-web-apps-85d70f4438cb
-          .meta().name(AnyMETA.Name.APPLE_MOBILE_WEB_APP_CAPABLE).content("yes").__()
-          .meta().name(AnyMETA.Name.APPLE_MOBILE_WEB_APP_STATUS_BAR_STYLE).content("black").__();
+      head.meta().name(AnyMETA.Name.VIEWPORT).content("width=device-width, initial-scale=1.0").__();
       // Authors
       // TODO: 3.0.0: dcterms copyright
       String author = page.getAuthor(req);
