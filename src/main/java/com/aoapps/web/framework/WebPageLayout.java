@@ -120,10 +120,10 @@ public abstract class WebPageLayout {
       }).__()
           .form().action("").style("display:inline").__(form -> form
               .div().style("display:inline").__(div -> div
-                  // TODO: Constant for "layout_selector"?
+                  // TODO: 3.0.0: Constant for "layout_selector"?
                   .select().name("layout_selector").onchange("selectLayout(this.form.layout_selector.options[this.form.layout_selector.selectedIndex].value);").__(select -> {
                     for (String choice : layoutChoices) {
-                      select.option().value(choice).selected(choice.equalsIgnoreCase(getName())).__(choice); // TODO: .equals() like aoindustries.com:DefaultSkin.java?
+                      select.option().value(choice).selected(choice.equalsIgnoreCase(getName())).__(choice); // TODO: 3.0.0: .equals() like aoindustries.com:DefaultSkin.java?
                     }
                   })
           )
@@ -601,7 +601,7 @@ public abstract class WebPageLayout {
       WebSiteRequest req,
       HttpServletResponse resp,
       FlowContent<?> contentLine,
-      int direction, // TODO: This should be an enum, or maybe "boolean visible" like aoweb-struts:Skin.java
+      int direction, // TODO: 3.0.0: This should be an enum, or maybe "boolean visible" like aoweb-struts:Skin.java
       int colspan,
       int rowspan,
       String align,

@@ -211,9 +211,9 @@ public class TextOnlyLayout extends WebPageLayout {
       String authorHref = page.getAuthorHref(req, resp);
       if (authorHref != null && !(authorHref = authorHref.trim()).isEmpty()) {
         head.link(AnyLINK.Rel.AUTHOR).href(
-            // TODO: RFC 3986-only always?
+            // TODO: 3.0.0: RFC 3986-only always? (this should be replaced by Dublic core)
             resp.encodeURL(
-                URIEncoder.encodeURI(authorHref) // TODO: Conditionally convert from context-relative paths
+                URIEncoder.encodeURI(authorHref) // TODO: 3.0.0: Conditionally convert from context-relative paths (this should be replaced by Dublic core)
             )
         ).__();
       }
@@ -256,7 +256,7 @@ public class TextOnlyLayout extends WebPageLayout {
       head.script().src(req.getEncodedUrlForPath("/global.js", null, false, resp)).__();
       printJavascriptIncludes(req, resp, page, head);
       writeBodyColorStyle(this, req, head);
-      // TODO: Canonical?
+      // TODO: 3.0.0: Canonical?
     });
     BODY<HTML_c<DocumentEE>> body = html_c.body();
     if (onload == null) {

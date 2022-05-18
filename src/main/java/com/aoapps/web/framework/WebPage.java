@@ -1385,7 +1385,7 @@ public abstract class WebPage extends PageServlet {
    *
    * @see  #isHandler(com.aoapps.net.URIParameters)
    */
-  // TODO: Deprecate for lambda version
+  // TODO: 3.0.0: Deprecate for lambda version
   public static WebPage getWebPage(ServletContext context, Class<? extends WebPage> clazz, URIParameters params) throws ServletException {
     if (params == null) {
       params = EmptyURIParameters.getInstance();
@@ -1453,7 +1453,7 @@ public abstract class WebPage extends PageServlet {
    *
    * @see  #getWebPage(javax.servlet.ServletContext, java.lang.Class, com.aoapps.net.URIParameters)
    */
-  // TODO: Deprecate for lambda version
+  // TODO: 3.0.0: Deprecate for lambda version
   public static WebPage getWebPage(ServletContext context, Class<? extends WebPage> clazz) throws ServletException {
     return getWebPage(context, clazz, (URIParameters) null);
   }
