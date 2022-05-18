@@ -57,7 +57,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.security.auth.login.LoginException;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
@@ -228,9 +231,8 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
     }
   }
 
-  // TODO: Start and stop with ServletContextListener.
   // TODO: Consider using ao-concurrent to avoid keeping a thread sleeping.
-  private static Thread uploadedFileCleanup;
+  private static volatile Thread uploadedFileCleanup;
 
   private static void addUploadedFile(UploadedFile uf, final ServletContext servletContext) {
     synchronized (uploadedFiles) {
@@ -241,7 +243,8 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
           @Override
           @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "SleepWhileInLoop"})
           public void run() {
-            while (!Thread.currentThread().isInterrupted()) {
+            final Thread currentThread = Thread.currentThread();
+            while (currentThread == uploadedFileCleanup && !currentThread.isInterrupted()) {
               try {
                 sleep(10L * 60 * 1000);
 
@@ -310,7 +313,9 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
               } catch (ThreadDeath td) {
                 throw td;
               } catch (InterruptedException err) {
-                logger.log(Level.WARNING, null, err);
+                if (currentThread == uploadedFileCleanup) {
+                  logger.log(Level.WARNING, null, err);
+                }
                 // Restore the interrupted status
                 Thread.currentThread().interrupt();
               } catch (Throwable t) {
@@ -328,6 +333,30 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
         };
         uploadedFileCleanup.start();
       }
+    }
+  }
+
+  private static void stopUploadedFileCleanup() {
+    synchronized (uploadedFiles) {
+      Thread t = uploadedFileCleanup;
+      if (t != null) {
+        uploadedFileCleanup = null;
+        t.interrupt();
+      }
+    }
+  }
+
+  @WebListener("Shuts-down background clean-up thread on application stop")
+  public static class Initializer implements ServletContextListener {
+
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+      // Nothing to do
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+      stopUploadedFileCleanup();
     }
   }
 
