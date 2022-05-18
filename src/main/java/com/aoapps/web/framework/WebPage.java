@@ -1597,21 +1597,28 @@ public abstract class WebPage extends PageServlet {
 
         // Get the HTML content
         buffer.reset();
-        // TODO: EncodingContext based on page settings, or XML always for search?
-        DocumentEE document = new DocumentEE(
-            getServletContext(), req, resp, buffer,
-            false, // Do not auto-indent during search capture
-            false  // Do not indent during search capture
-        );
-        // Isolate page-scope registry
-        Registry oldPageRegistry = RegistryEE.Page.get(req);
+        Serialization oldSerialization = SerializationEE.replace(req, getSerialization(req));
         try {
-          // TODO: Set serialization based on page settings, or XML always for search?
-          // TODO: Set doctype based on page settings?
-          RegistryEE.Page.set(req, new Registry());
-          doGet(null, null, document);
+          Doctype oldDoctype = DoctypeEE.replace(req, getDoctype(req));
+          try {
+            DocumentEE document = new DocumentEE(
+                getServletContext(), req, resp, buffer,
+                false, // Do not auto-indent during search capture
+                false  // Do not indent during search capture
+            );
+            // Isolate page-scope registry
+            Registry oldPageRegistry = RegistryEE.Page.get(req);
+            try {
+              RegistryEE.Page.set(req, new Registry());
+              doGet(null, null, document);
+            } finally {
+              RegistryEE.Page.set(req, oldPageRegistry);
+            }
+          } finally {
+            DoctypeEE.set(req, oldDoctype);
+          }
         } finally {
-          RegistryEE.Page.set(req, oldPageRegistry);
+          SerializationEE.set(req, oldSerialization);
         }
         String content = buffer.toString();
         size = buffer.size();
@@ -1663,21 +1670,28 @@ public abstract class WebPage extends PageServlet {
 
               // Get the HTML content
               buffer.reset();
-              // TODO: EncodingContext based on page settings, or XML always for search?
-              DocumentEE document = new DocumentEE(
-                  getServletContext(), req, resp, buffer,
-                  false, // Do not auto-indent during search capture
-                  false  // Do not indent during search capture
-              );
-              // Isolate page-scope registry
-              Registry oldPageRegistry = RegistryEE.Page.get(req);
+              Serialization oldSerialization = SerializationEE.replace(req, getSerialization(req));
               try {
-                RegistryEE.Page.set(req, new Registry());
-                // TODO: Set serialization based on page settings, or XML always for search?
-                // TODO: Set doctype based on page settings?
-                doGet(null, null, document);
+                Doctype oldDoctype = DoctypeEE.replace(req, getDoctype(req));
+                try {
+                  DocumentEE document = new DocumentEE(
+                      getServletContext(), req, resp, buffer,
+                      false, // Do not auto-indent during search capture
+                      false  // Do not indent during search capture
+                  );
+                  // Isolate page-scope registry
+                  Registry oldPageRegistry = RegistryEE.Page.get(req);
+                  try {
+                    RegistryEE.Page.set(req, new Registry());
+                    doGet(null, null, document);
+                  } finally {
+                    RegistryEE.Page.set(req, oldPageRegistry);
+                  }
+                } finally {
+                  DoctypeEE.set(req, oldDoctype);
+                }
               } finally {
-                RegistryEE.Page.set(req, oldPageRegistry);
+                SerializationEE.set(req, oldSerialization);
               }
               final String content = buffer.toString();
 
