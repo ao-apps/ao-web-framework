@@ -997,11 +997,10 @@ public abstract class WebPage extends PageServlet {
   }
 
   /**
-   * Gets the keywords for this page.  By default, the keywords of the parent page are used.
+   * Gets the keywords for this page.  By default, no keywords.
    */
-  // TODO: Is it correct to use keywords of parent?
   public String getKeywords(WebSiteRequest req) throws ServletException {
-    return getParent().getKeywords(req);
+    return null;
   }
 
   /**
