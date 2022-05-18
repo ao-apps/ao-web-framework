@@ -1103,6 +1103,8 @@ public abstract class WebPage extends PageServlet {
 
   /**
    * Gets the JavaScript that should be executed with the onload event of the body tag.
+   * This is a default only used when a {@code null} onload is passed to
+   * {@link WebPageLayout#startPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String)}.
    *
    * @param  req  the current <code>WebSiteRequest</code>
    *

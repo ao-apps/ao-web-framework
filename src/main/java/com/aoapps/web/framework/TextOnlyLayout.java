@@ -259,7 +259,6 @@ public class TextOnlyLayout extends WebPageLayout {
       // TODO: Canonical?
     });
     BODY<HTML_c<DocumentEE>> body = html_c.body();
-    // TODO: These onloads should be merged?
     if (onload == null) {
       onload = page.getOnloadScript(req);
     }
