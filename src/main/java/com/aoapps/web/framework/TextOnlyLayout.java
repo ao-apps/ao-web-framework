@@ -657,6 +657,17 @@ public class TextOnlyLayout extends WebPageLayout {
         )
     );
     TABLE_c<DocumentEE> table = tbody.__();
+    endContentCopyright(req, resp, page, table, totalColumns);
+    table.__();
+  }
+
+  protected void endContentCopyright(
+      WebSiteRequest req,
+      HttpServletResponse resp,
+      WebPage page,
+      TABLE_c<DocumentEE> table,
+      int totalColumns
+  ) throws ServletException, IOException {
     String copyright = page.getCopyright(req, resp, page);
     if (copyright != null) {
       copyright = copyright.trim();
@@ -672,7 +683,6 @@ public class TextOnlyLayout extends WebPageLayout {
           )
       );
     }
-    table.__();
   }
 
   @Override
