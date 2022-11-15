@@ -37,7 +37,7 @@ along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T22:08:31-05:00"
-    dateModified="2022-05-18T17:33:01-05:00"
+    dateModified="2022-11-15T11:18:43-06:00"
   >
     <c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
       <changelog:release
@@ -179,7 +179,7 @@ along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
         </li>
         <li>
           No longer excluding
-          <ao:a rel="nofollow" href="https://www.oracle.com/technetwork/java/javaee/documentation/avaee6sdku1-relnotes-326908.html">Java EE Web API 6</ao:a>
+          <ao:a rel="nofollow" href="https://docs.oracle.com/javaee/6/">Java EE Web API 6</ao:a>
           from <ao:a href="https://www.mojohaus.org/versions-maven-plugin/examples/advancing-dependency-versions.html#Controlling_which_dependencies_are_processed">version updates</ao:a>.
           Instead, projects are encouraged to use the new
           <core:link book="/javaee-web-api-bom" page="/index.jspx" /> project.
