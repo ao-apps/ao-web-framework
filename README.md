@@ -29,7 +29,7 @@ exist, such as [SemanticCMS Core](https://github.com/ao-apps/semanticcms-core).
 * [Project Home](https://oss.aoapps.com/web-framework/)
 * [Changelog](https://oss.aoapps.com/web-framework/changelog)
 * [API Docs](https://oss.aoapps.com/web-framework/apidocs/)
-* [Maven Central Repository](https://central.sonatype.com/search?namespace=com.aoapps&q=a%3Aao-web-framework)
+* [Maven Central Repository](https://central.sonatype.com/artifact/com.aoapps/ao-web-framework)
 * [GitHub](https://github.com/ao-apps/ao-web-framework)
 
 ## Contact Us
