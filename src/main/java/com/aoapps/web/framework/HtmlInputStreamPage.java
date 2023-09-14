@@ -1,6 +1,6 @@
 /*
  * ao-web-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2015, 2016, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2015, 2016, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Pulls the content from a file with the same name and location as the <code>.class</code>
  * and <code>.java</code> but with a <code>.html</code> extension.  As the file is being
- * sent to the client, any <code>href='@<i>classname</i>'</code> URL is rewritten and
+ * sent to the client, any <code>href="@<i>classname</i>"</code> URL is rewritten and
  * maintains the current <code>WebSiteRequest</code> parameters.
  *
  * @author  AO Industries, Inc.
