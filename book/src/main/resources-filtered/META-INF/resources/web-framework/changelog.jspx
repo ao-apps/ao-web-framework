@@ -37,7 +37,7 @@ along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T22:08:31-05:00"
-    dateModified="2022-11-15T11:18:43-06:00"
+    dateModified="2023-09-20T16:47:30Z"
   >
     <c:set var="latestRelease" value="2.0.0" />
     <c:if test="${
@@ -203,7 +203,7 @@ along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
       <ul>
         <li>
           Removed uses of <ao:a rel="nofollow" href="@{javadoc.link.javase}java.base/java/io/File#deleteOnExit--">File.deleteOnExit()</ao:a>
-          to avoid a <ao:a href="https://bugs.openjdk.java.net/browse/JDK-4872014">JDK memory leak</ao:a> in long-running applications.
+          to avoid a <ao:a href="https://bugs.openjdk.org/browse/JDK-4872014">JDK memory leak</ao:a> in long-running applications.
         </li>
       </ul>
     </changelog:release>
