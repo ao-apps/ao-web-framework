@@ -1,6 +1,6 @@
 /*
  * ao-web-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2003-2013, 2015, 2016, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2015, 2016, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -418,7 +418,7 @@ public class TextOnlyLayout extends WebPageLayout {
   }
 
   /**
-   * Gets the Google Analytics New Tracking Code (ga.js) or <code>null</code>
+   * Gets the Google Analytics 4 (GA4) Measurement ID or <code>null</code>
    * if unavailable.
    */
   public String getGoogleAnalyticsNewTrackingCode(ServletContext servletContext) {
