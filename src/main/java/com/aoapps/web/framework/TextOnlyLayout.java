@@ -182,10 +182,10 @@ public class TextOnlyLayout extends WebPageLayout {
       String onload
   ) throws ServletException, IOException {
     ServletContext servletContext = req.getServletContext();
-    String trackingId = getGoogleAnalyticsNewTrackingCode(servletContext);
+    final String trackingId = getGoogleAnalyticsNewTrackingCode(servletContext);
     // Locate registries
-    Registry requestRegistry = RegistryEE.Request.get(servletContext, req);
-    Registry pageRegistry = RegistryEE.Page.get(req);
+    final Registry requestRegistry = RegistryEE.Request.get(servletContext, req);
+    final Registry pageRegistry = RegistryEE.Page.get(req);
     if (pageRegistry == null) {
       throw new ServletException("page-scope registry not found.  WebPage.service(ServletRequest,ServletResponse) invoked?");
     }
@@ -479,8 +479,8 @@ public class TextOnlyLayout extends WebPageLayout {
         .__();
     // Locate registries
     ServletContext servletContext = req.getServletContext();
-    Registry requestRegistry = RegistryEE.Request.get(servletContext, req);
-    Registry pageRegistry = RegistryEE.Page.get(req);
+    final Registry requestRegistry = RegistryEE.Request.get(servletContext, req);
+    final Registry pageRegistry = RegistryEE.Page.get(req);
     if (pageRegistry == null) {
       throw new ServletException("page-scope registry not found.  WebPage.service(ServletRequest,ServletResponse) invoked?");
     }
