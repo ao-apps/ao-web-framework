@@ -47,6 +47,7 @@ import com.aoapps.html.util.HeadUtil;
 import com.aoapps.net.URIEncoder;
 import com.aoapps.web.resources.registry.Group;
 import com.aoapps.web.resources.registry.Registry;
+import com.aoapps.web.resources.registry.Script;
 import com.aoapps.web.resources.registry.Style;
 import com.aoapps.web.resources.renderer.Renderer;
 import com.aoapps.web.resources.servlet.RegistryEE;
@@ -183,6 +184,16 @@ public class TextOnlyLayout extends WebPageLayout {
     boolean isOkResponseStatus = resp.getStatus() == HttpServletResponse.SC_OK;
     ServletContext servletContext = req.getServletContext();
     String trackingId = getGoogleAnalyticsNewTrackingCode(servletContext);
+    // Locate registries
+    Registry requestRegistry = RegistryEE.Request.get(servletContext, req);
+    Registry pageRegistry = RegistryEE.Page.get(req);
+    if (pageRegistry == null) {
+      throw new ServletException("page-scope registry not found.  WebPage.service(ServletRequest,ServletResponse) invoked?");
+    }
+    // Configure layout resources
+    configureResources(servletContext, req, resp, page, requestRegistry);
+    // Configure page resources
+    page.configureResources(servletContext, req, resp, this, pageRegistry);
     // Write doctype
     document.xmlDeclaration();
     document.doctype();
@@ -200,10 +211,22 @@ public class TextOnlyLayout extends WebPageLayout {
       } else {
         GoogleAnalytics.writeAnalyticsJs(head, trackingId);
       }
+      // Render scripts
+      Renderer.get(servletContext).renderScripts(
+          req,
+          resp,
+          head,
+          true, // registeredActivations
+          null, // No additional activations
+          Script.Position.HEAD_START,
+          requestRegistry,
+          RegistryEE.Session.get(req.getSession(false)), // Lookup each time since session might have been created
+          pageRegistry
+      );
       // Mobile support
       head.meta().name(AnyMETA.Name.VIEWPORT).content("width=device-width, initial-scale=1.0").__();
       // Authors
-      // TODO: 3.0.0: dcterms copyright
+      // TODO: dcterms copyright
       String author = page.getAuthor(req);
       if (author != null && !(author = author.trim()).isEmpty()) {
         head.meta().name(AnyMETA.Name.AUTHOR).content(author).__();
@@ -211,9 +234,9 @@ public class TextOnlyLayout extends WebPageLayout {
       String authorHref = page.getAuthorHref(req, resp);
       if (authorHref != null && !(authorHref = authorHref.trim()).isEmpty()) {
         head.link(AnyLINK.Rel.AUTHOR).href(
-            // TODO: 3.0.0: RFC 3986-only always? (this should be replaced by Dublic core)
+            // TODO: RFC 3986-only always? (this should be replaced by Dublic core)
             resp.encodeURL(
-                URIEncoder.encodeURI(authorHref) // TODO: 3.0.0: Conditionally convert from context-relative paths (this should be replaced by Dublic core)
+                URIEncoder.encodeURI(authorHref) // TODO: Conditionally convert from context-relative paths
             )
         ).__();
       }
@@ -226,22 +249,13 @@ public class TextOnlyLayout extends WebPageLayout {
       if (keywords != null && !(keywords = keywords.trim()).isEmpty()) {
         head.meta().name(AnyMETA.Name.KEYWORDS).content(keywords).__();
       }
-      // TODO: 3.0.0: Review HTML 4/HTML 5 differences from here
+      // TODO: Review HTML 4/HTML 5 differences from here
       String copyright = page.getCopyright(req, resp, page);
       if (copyright != null && !(copyright = copyright.trim()).isEmpty()) {
-        // TODO: 3.0.0: Dublin Core: https://stackoverflow.com/questions/6665312/is-the-copyright-meta-tag-valid-in-html5
+        // TODO: Dublin Core: https://stackoverflow.com/questions/6665312/is-the-copyright-meta-tag-valid-in-html5
         head.meta().name("copyright").content(copyright).__();
       }
 
-      // Configure layout resources
-      Registry requestRegistry = RegistryEE.Request.get(servletContext, req);
-      configureResources(servletContext, req, resp, page, requestRegistry);
-      // Configure page resources
-      Registry pageRegistry = RegistryEE.Page.get(req);
-      if (pageRegistry == null) {
-        throw new ServletException("page-scope registry not found.  WebPage.service(ServletRequest,ServletResponse) invoked?");
-      }
-      page.configureResources(servletContext, req, resp, this, pageRegistry);
       // Render links
       Renderer.get(servletContext).renderStyles(
           req,
@@ -249,16 +263,29 @@ public class TextOnlyLayout extends WebPageLayout {
           head,
           true, // registeredActivations
           null, // No additional activations
-          requestRegistry, // request-scope
-          RegistryEE.Session.get(req.getSession(false)), // session-scope
+          requestRegistry,
+          RegistryEE.Session.get(req.getSession(false)), // Lookup each time since session might have been created
           pageRegistry
       );
       head.script().src(req.getEncodedUrlForPath("/global.js", null, false, resp)).__();
       printJavascriptIncludes(req, resp, page, head);
       writeBodyColorStyle(this, req, head);
-      // TODO: 3.0.0: Canonical?
+      // TODO: Canonical?
+      // Render scripts
+      Renderer.get(servletContext).renderScripts(
+          req,
+          resp,
+          head,
+          true, // registeredActivations
+          null, // No additional activations
+          Script.Position.HEAD_END,
+          requestRegistry,
+          RegistryEE.Session.get(req.getSession(false)), // Lookup each time since session might have been created
+          pageRegistry
+      );
     });
     BODY<HTML_c<DocumentEE>> body = html_c.body();
+    // TODO: These onloads should be merged?
     if (onload == null) {
       onload = page.getOnloadScript(req);
     }
@@ -266,6 +293,18 @@ public class TextOnlyLayout extends WebPageLayout {
       body.onload(onload);
     }
     BODY_c<HTML_c<DocumentEE>> body_c = body._c();
+    // Render scripts
+    Renderer.get(servletContext).renderScripts(
+        req,
+        resp,
+        body_c,
+        true, // registeredActivations
+        null, // No additional activations
+        Script.Position.BODY_START,
+        requestRegistry,
+        RegistryEE.Session.get(req.getSession(false)), // Lookup each time since session might have been created
+        pageRegistry
+    );
     TD_c<TR_c<TBODY_c<TABLE_c<BODY_c<HTML_c<DocumentEE>>>>>> td_c = body_c.table().cellspacing(10).cellpadding(0)._c()
         .tbody_c()
         .tr_c()
@@ -434,11 +473,31 @@ public class TextOnlyLayout extends WebPageLayout {
   ) throws ServletException, IOException {
     @SuppressWarnings("unchecked")
     TD_c<TR_c<TBODY_c<TABLE_c<BODY_c<HTML_c<DocumentEE>>>>>> td_c = (TD_c) flow;
-    DocumentEE document = td_c
+    BODY_c<HTML_c<DocumentEE>> body_c = td_c
         .__()
         .__()
         .__()
-        .__()
+        .__();
+    // Locate registries
+    ServletContext servletContext = req.getServletContext();
+    Registry requestRegistry = RegistryEE.Request.get(servletContext, req);
+    Registry pageRegistry = RegistryEE.Page.get(req);
+    if (pageRegistry == null) {
+      throw new ServletException("page-scope registry not found.  WebPage.service(ServletRequest,ServletResponse) invoked?");
+    }
+    // Render scripts
+    Renderer.get(servletContext).renderScripts(
+        req,
+        resp,
+        body_c,
+        true, // registeredActivations
+        null, // No additional activations
+        Script.Position.BODY_END,
+        requestRegistry,
+        RegistryEE.Session.get(req.getSession(false)), // Lookup each time since session might have been created
+        pageRegistry
+    );
+    DocumentEE document = body_c
         .__()
         .__();
     assert document != null : "Is fully closed back to DocumentEE";
