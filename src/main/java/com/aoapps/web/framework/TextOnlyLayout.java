@@ -181,7 +181,6 @@ public class TextOnlyLayout extends WebPageLayout {
       DocumentEE document,
       String onload
   ) throws ServletException, IOException {
-    boolean isOkResponseStatus = resp.getStatus() == HttpServletResponse.SC_OK;
     ServletContext servletContext = req.getServletContext();
     String trackingId = getGoogleAnalyticsNewTrackingCode(servletContext);
     // Locate registries
@@ -201,7 +200,7 @@ public class TextOnlyLayout extends WebPageLayout {
     HTML_c<DocumentEE> html_c = document.html().lang()._c();
     html_c.head__(head -> {
       // If this is not the default layout, then robots noindex
-      if (!isOkResponseStatus || !getName().equals(getLayoutChoices()[0])) {
+      if (resp.getStatus() != HttpServletResponse.SC_OK || !getName().equals(getLayoutChoices()[0])) {
         head.meta().name(AnyMETA.Name.ROBOTS).content("noindex, nofollow").__();
       }
       HeadUtil.standardMeta(head, resp.getContentType());
