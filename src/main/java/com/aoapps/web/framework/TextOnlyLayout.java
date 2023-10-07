@@ -27,7 +27,6 @@ import static com.aoapps.lang.Strings.trimNullIfEmpty;
 import static com.aoapps.taglib.AttributeUtils.getWidthStyle;
 
 import com.aoapps.encoding.ChainWriter;
-import com.aoapps.encoding.Doctype;
 import com.aoapps.html.any.AnyLINK;
 import com.aoapps.html.any.AnyMETA;
 import com.aoapps.html.any.attributes.enumeration.Method;
@@ -204,12 +203,7 @@ public class TextOnlyLayout extends WebPageLayout {
         head.meta().name(AnyMETA.Name.ROBOTS).content("noindex, nofollow").__();
       }
       HeadUtil.standardMeta(head, resp.getContentType());
-      Doctype doctype = document.encodingContext.getDoctype();
-      if (doctype == Doctype.HTML5) {
-        GoogleAnalytics.writeGlobalSiteTag(head, trackingId);
-      } else {
-        GoogleAnalytics.writeAnalyticsJs(head, trackingId);
-      }
+      GoogleAnalytics.writeScriptByDoctype(head, trackingId);
       // Render scripts
       Renderer.get(servletContext).renderScripts(
           req,
