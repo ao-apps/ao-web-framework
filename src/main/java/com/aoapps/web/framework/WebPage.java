@@ -151,9 +151,8 @@ public abstract class WebPage extends PageServlet {
 
   /**
    * Configures the {@linkplain com.aoapps.web.resources.servlet.RegistryEE.Page page-scope web resources} that this page uses.
-   * <p>
-   * Implementers should call <code>super.configureResources(…)</code> as a matter of convention, despite this default implementation doing nothing.
-   * </p>
+   *
+   * <p>Implementers should call <code>super.configureResources(…)</code> as a matter of convention, despite this default implementation doing nothing.</p>
    */
   @SuppressWarnings("NoopMethodInAbstractClass")
   public void configureResources(
@@ -428,10 +427,9 @@ public abstract class WebPage extends PageServlet {
    *       to {@linkplain AnyDocument#ENCODING the default <code>UTF-8</code>}.</li>
    *   <li>Sets any {@linkplain #setHeaders(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse) additional headers}.</li>
    * </ol>
-   * <p>
-   * Both the {@link Serialization} and {@link Doctype} may have been set
-   * on the request, and these must be considered in the content type.
-   * </p>
+   *
+   * <p>Both the {@link Serialization} and {@link Doctype} may have been set
+   * on the request, and these must be considered in the content type.</p>
    *
    * @see SerializationEE#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
    * @see DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
@@ -469,10 +467,9 @@ public abstract class WebPage extends PageServlet {
    *       to {@linkplain AnyDocument#ENCODING the default <code>UTF-8</code>}.</li>
    *   <li>Sets any {@linkplain #setHeaders(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse) additional headers}.</li>
    * </ol>
-   * <p>
-   * Both the {@link Serialization} and {@link Doctype} may have been set
-   * on the request, and these must be considered in the content type.
-   * </p>
+   *
+   * <p>Both the {@link Serialization} and {@link Doctype} may have been set
+   * on the request, and these must be considered in the content type.</p>
    *
    * @see SerializationEE#get(javax.servlet.ServletContext, javax.servlet.http.HttpServletRequest)
    * @see DoctypeEE#get(javax.servlet.ServletContext, javax.servlet.ServletRequest)
@@ -1118,10 +1115,9 @@ public abstract class WebPage extends PageServlet {
    * Gets all of the pages that are children of this one in the page hierarchy.
    * Unless overridden, the pages are cached in a <code>WebPage[]</code> for
    * faster access.  The actual list of pages is obtained from {@link #getChildren(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse)}.
-   * <p>
-   * Pages will also not be cached if the configuration property is set to anything
-   * other than <code>"true"</code>
-   * </p>
+   *
+   * <p>Pages will also not be cached if the configuration property is set to anything
+   * other than <code>"true"</code></p>
    *
    * @return a <code>WebPage[]</code> of all of the lower-level pages
    *
@@ -1264,13 +1260,12 @@ public abstract class WebPage extends PageServlet {
    * Gets an instance of <code>WebPage</code> given the <code>Class</code>.
    * Instances returned should never have the <code>init</code> method
    * called and should allocate a minimal set of resources.
-   * <p>
-   * Unless caching is disabled, the generated pages are stored in a
-   * cache and resolved using the pages <code>isHandler</code> method.
-   * </p>
-   * <p>
-   * When creating a new instance of {@link WebPage}, searches for constructors in the following order:
-   * </p>
+   *
+   * <p>Unless caching is disabled, the generated pages are stored in a
+   * cache and resolved using the pages <code>isHandler</code> method.</p>
+   *
+   * <p>When creating a new instance of {@link WebPage}, searches for constructors in the following order:</p>
+   *
    * <ol>
    * <li>Single argument {@link WebSiteRequest}, given the request.</li>
    * <li>Single argument {@link URIParameters}, given a {@link ServletRequestParameters} wrapper around request.</li>
@@ -1367,10 +1362,10 @@ public abstract class WebPage extends PageServlet {
    * Gets an instance of <code>WebPage</code> given the <code>Class</code>.
    * Instances returned should never have the <code>init</code> method
    * called and should allocate a minimal set of resources.
-   * <p>
-   * Unless caching is disabled, the generated pages are stored in a
-   * cache and resolved using the pages <code>isHander</code> method.
-   * </p>
+   *
+   * <p>Unless caching is disabled, the generated pages are stored in a
+   * cache and resolved using the pages <code>isHander</code> method.</p>
+   *
    * <ol>
    * <li>Single argument {@link URIParameters}, given the parameters.</li>
    * <li>No-args constructor.</li>
@@ -1436,10 +1431,10 @@ public abstract class WebPage extends PageServlet {
    * Gets an instance of <code>WebPage</code> given the <code>Class</code>.
    * Instances returned should never have the <code>init</code> method
    * called and should allocate a minimal set of resources.
-   * <p>
-   * Unless caching is disabled, the generated pages are stored in a
-   * cache and resolved using the pages <code>isHander</code> method.
-   * </p>
+   *
+   * <p>Unless caching is disabled, the generated pages are stored in a
+   * cache and resolved using the pages <code>isHander</code> method.</p>
+   *
    * <ol>
    * <li>Single argument {@link URIParameters}, given empty parameters.</li>
    * <li>No-args constructor.</li>
@@ -1468,11 +1463,10 @@ public abstract class WebPage extends PageServlet {
   /**
    * Gets the current layout for this page.
    * When req is null, should return {@link SearchLayout} or equivalent.
-   * <p>
-   * This default implementation returns {@link SearchLayout#getInstance()} for
+   *
+   * <p>This default implementation returns {@link SearchLayout#getInstance()} for
    * a search request (req is null), or inherits the layout of the
-   * {@linkplain #getParent() parent}.
-   * </p>
+   * {@linkplain #getParent() parent}.</p>
    *
    * @param  req  the {@link WebSiteRequest} for this request, or {@code null} when searching
    *
@@ -1505,10 +1499,9 @@ public abstract class WebPage extends PageServlet {
 
   /**
    * Determines if this page is the instance that should handle a particular request.
-   * <p>
-   * By default calls {@link #isHandler(com.aoapps.net.URIParameters)}, wrapping request in
-   * {@link ServletRequestParameters}.  When no request, uses {@link EmptyURIParameters}.
-   * </p>
+   *
+   * <p>By default calls {@link #isHandler(com.aoapps.net.URIParameters)}, wrapping request in
+   * {@link ServletRequestParameters}.  When no request, uses {@link EmptyURIParameters}.</p>
    *
    * @see  #getWebPage(javax.servlet.ServletContext, java.lang.Class, com.aoapps.web.framework.WebSiteRequest)
    */
@@ -1518,10 +1511,9 @@ public abstract class WebPage extends PageServlet {
 
   /**
    * Determines if this page is the instance that represents a certain set of parameters.
-   * <p>
-   * By default returns <code>true</code>, meaning it is a handler for any parameters
-   * for this <code>Class</code>.
-   * </p>
+   *
+   * <p>By default returns <code>true</code>, meaning it is a handler for any parameters
+   * for this <code>Class</code>.</p>
    *
    * @see  #getWebPage(javax.servlet.ServletContext, java.lang.Class, com.aoapps.net.URIParameters)
    */
@@ -1844,12 +1836,11 @@ public abstract class WebPage extends PageServlet {
   /**
    * Gets the copyright information for this page.  Defaults to the copyright of the parent page.
    * May not contain HTML.
-   * <p>
-   * TODO: 3.0.0: Use dcterms:
+   *
+   * <p>TODO: 3.0.0: Use dcterms:
    *          http://stackoverflow.com/questions/6665312/is-the-copyright-meta-tag-valid-in-html5
    *          https://wiki.whatwg.org/wiki/MetaExtensions
-   *          http://dublincore.org/documents/dcmi-terms/
-   * </p>
+   *          http://dublincore.org/documents/dcmi-terms/</p>
    */
   public String getCopyright(WebSiteRequest req, HttpServletResponse resp, WebPage requestPage) throws ServletException {
     return getParent().getCopyright(req, resp, requestPage);

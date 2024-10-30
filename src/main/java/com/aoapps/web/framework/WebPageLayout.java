@@ -1,6 +1,6 @@
 /*
  * ao-web-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2015, 2016, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2015, 2016, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -79,9 +79,8 @@ public abstract class WebPageLayout {
 
   /**
    * Configures the {@linkplain com.aoapps.web.resources.servlet.RegistryEE.Request request-scope web resources} that this layout uses.
-   * <p>
-   * Implementers should call <code>super.configureResources(…)</code> as a matter of convention, despite this default implementation doing nothing.
-   * </p>
+   *
+   * <p>Implementers should call <code>super.configureResources(…)</code> as a matter of convention, despite this default implementation doing nothing.</p>
    */
   @SuppressWarnings("NoopMethodInAbstractClass")
   public void configureResources(
@@ -136,10 +135,9 @@ public abstract class WebPageLayout {
 
   /**
    * Writes all of the HTML preceding the content of the page.
-   * <p>
-   * Both the {@link Serialization} and {@link Doctype} may have been set
-   * on the request, and these must be considered in the HTML generation.
-   * </p>
+   *
+   * <p>Both the {@link Serialization} and {@link Doctype} may have been set
+   * on the request, and these must be considered in the HTML generation.</p>
    *
    * @param  onload The onload script.  When {@code null}, the
    *                {@linkplain WebPage#getOnloadScript(com.aoapps.web.framework.WebSiteRequest) page's default onload}
@@ -162,10 +160,9 @@ public abstract class WebPageLayout {
 
   /**
    * Writes all of the HTML following the content of the page.
-   * <p>
-   * Both the {@link Serialization} and {@link Doctype} may have been set
-   * on the request, and these must be considered in the HTML generation.
-   * </p>
+   *
+   * <p>Both the {@link Serialization} and {@link Doctype} may have been set
+   * on the request, and these must be considered in the HTML generation.</p>
    *
    * @param  flow  The {@link FlowContent} that was returned by
    *               {@link #startPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String)}.
@@ -184,10 +181,9 @@ public abstract class WebPageLayout {
    * {@linkplain #startPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String) Starts the page},
    * invokes the given page body, then
    * {@linkplain #endPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent) ends the page}.
-   * <p>
-   * Both the {@link Serialization} and {@link Doctype} may have been set
-   * on the request, and these must be considered in the HTML generation.
-   * </p>
+   *
+   * <p>Both the {@link Serialization} and {@link Doctype} may have been set
+   * on the request, and these must be considered in the HTML generation.</p>
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
@@ -215,10 +211,9 @@ public abstract class WebPageLayout {
    * {@linkplain #startPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String) Starts the page},
    * invokes the given page body, then
    * {@linkplain #endPage(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent) ends the page}.
-   * <p>
-   * Both the {@link Serialization} and {@link Doctype} may have been set
-   * on the request, and these must be considered in the HTML generation.
-   * </p>
+   *
+   * <p>Both the {@link Serialization} and {@link Doctype} may have been set
+   * on the request, and these must be considered in the HTML generation.</p>
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
