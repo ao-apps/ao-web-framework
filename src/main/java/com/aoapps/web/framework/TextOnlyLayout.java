@@ -1,6 +1,6 @@
 /*
  * ao-web-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2003-2013, 2015, 2016, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2015, 2016, 2019, 2020, 2021, 2022, 2023, 2025  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -513,16 +513,16 @@ public class TextOnlyLayout extends WebPageLayout {
     }
     width = trimNullIfEmpty(width);
     final int totalColumns;
-      {
-        int totalColumnsTmp = 0;
-        for (int c = 0; c < contentColumnSpans.length; c++) {
-          if (c > 0) {
-            totalColumnsTmp++;
-          }
-          totalColumnsTmp += contentColumnSpans[c];
+    {
+      int totalColumnsTmp = 0;
+      for (int c = 0; c < contentColumnSpans.length; c++) {
+        if (c > 0) {
+          totalColumnsTmp++;
         }
-        totalColumns = totalColumnsTmp;
+        totalColumnsTmp += contentColumnSpans[c];
       }
+      totalColumns = totalColumnsTmp;
+    }
     TBODY_c<TABLE_c<PC>> tbody = pc.table()
         .clazz("ao-packed")
         .style(getWidthStyle(width))
@@ -691,16 +691,16 @@ public class TextOnlyLayout extends WebPageLayout {
     @SuppressWarnings("unchecked")
     TBODY_c<TABLE_c<DocumentEE>> tbody = (TBODY_c) content;
     final int totalColumns;
-      {
-        int totalColumnsTmp = 0;
-        for (int c = 0; c < contentColumnSpans.length; c++) {
-          if (c > 0) {
-            totalColumnsTmp += 1;
-          }
-          totalColumnsTmp += contentColumnSpans[c];
+    {
+      int totalColumnsTmp = 0;
+      for (int c = 0; c < contentColumnSpans.length; c++) {
+        if (c > 0) {
+          totalColumnsTmp += 1;
         }
-        totalColumns = totalColumnsTmp;
+        totalColumnsTmp += contentColumnSpans[c];
       }
+      totalColumns = totalColumnsTmp;
+    }
     tbody.tr__(tr -> tr
         .td()
         .colspan(totalColumns)

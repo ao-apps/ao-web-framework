@@ -1,6 +1,6 @@
 /*
  * ao-web-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2014, 2015, 2016, 2019, 2020, 2021, 2022 AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2014, 2015, 2016, 2019, 2020, 2021, 2022, 2025 AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -452,23 +452,23 @@ public abstract class TreePage extends WebPage {
 
                                               // Determine if the line continues farther down
                                               final boolean hasMore;
-                                                {
-                                                  boolean found = false;
-                                                  for (int d = myC; d < treeLen; d++) {
-                                                    int end = pos;
-                                                    for (int e = 0; e < end; e++) {
-                                                      if (paths[d][e].equals(path[e])) {
-                                                        if (e == (end - 1) && !paths[d][end].equals(path[end])) {
-                                                          found = true;
-                                                          break;
-                                                        }
-                                                      } else {
+                                              {
+                                                boolean found = false;
+                                                for (int d = myC; d < treeLen; d++) {
+                                                  int end = pos;
+                                                  for (int e = 0; e < end; e++) {
+                                                    if (paths[d][e].equals(path[e])) {
+                                                      if (e == (end - 1) && !paths[d][end].equals(path[end])) {
+                                                        found = true;
                                                         break;
                                                       }
+                                                    } else {
+                                                      break;
                                                     }
                                                   }
-                                                  hasMore = found;
                                                 }
+                                                hasMore = found;
+                                              }
 
                                               if (hasSub) {
                                                 td2.a().href(
