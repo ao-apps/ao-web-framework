@@ -242,7 +242,7 @@ public abstract class TreePage extends WebPage {
                     && (
                     pos < (pathLen - 1)
                         || tree.get(c).hasChildren()
-                )
+                  )
             ) {
               pre.text('/');
             } else {
@@ -535,7 +535,7 @@ public abstract class TreePage extends WebPage {
                                                 (
                                                     (pathLen >= 2 && pos == (pathLen - 2) && path[pathLen - 1].length() == 0)
                                                         || (pos == (pathLen - 1) && path[pathLen - 1].length() > 0)
-                                                ) && (href = tree.get(myC).getUrl()) != null
+                                                  ) && (href = tree.get(myC).getUrl()) != null
                                             ) {
                                               phrasing.a().clazz("aoLightLink").href(
                                                   resp.encodeURL(

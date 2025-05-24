@@ -401,14 +401,14 @@ public class TextOnlyLayout extends WebPageLayout {
                   }
                   if (
                       tpage != null
-                      && (
+                        && (
                           tpage.useNavImage()
                               || tpage.equals(page)
                               || (
                               tpage.includeNavImageAsParent()
                                   && tpage.equals(parent)
                           )
-                      )
+                        )
                   ) {
                     String navAlt = tpage.getNavImageAlt(req);
                     String navSuffix = tpage.getNavImageSuffix(req);
