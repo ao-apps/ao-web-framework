@@ -901,12 +901,12 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   }
 
   // Unused 2021-02-22:
-  ///**
-  // * Prints the hidden variables that contain all of the current settings.
-  // */
-  //protected static <__ extends FlowContent<__>> void printHiddenField(__ form form, String name, String value) throws IOException {
-  //  form.input().hidden().name(name).value(value).__().autoNl();
-  //}
+  // /**
+  //  * Prints the hidden variables that contain all of the current settings.
+  //  */
+  // protected static <__ extends FlowContent<__>> void printHiddenField(__ form form, String name, String value) throws IOException {
+  //   form.input().hidden().name(name).value(value).__().autoNl();
+  // }
 
   /**
    * Gets the set of files uploaded during this request.

@@ -147,7 +147,7 @@ public abstract class WebPage extends PageServlet {
   // TODO: Use a full HTML parser for extraction, JTidy or newer alternative
   public static final Pattern reHTMLPattern = Pattern.compile("<[^>]*>");
 
-  //private static Pattern reWordPattern = Pattern.compile("(\\w*)");
+  // private static Pattern reWordPattern = Pattern.compile("(\\w*)");
 
   /**
    * Configures the {@linkplain com.aoapps.web.resources.servlet.RegistryEE.Page page-scope web resources} that this page uses.
@@ -178,7 +178,7 @@ public abstract class WebPage extends PageServlet {
     // Iterate through all the words in the content
     StringTokenizer st = new StringTokenizer(words, " ");
     while (st.hasMoreTokens()) {
-      String word = st.nextToken().toLowerCase(); //reWordPattern.getMatch(st.nextToken()).toString(1);
+      String word = st.nextToken().toLowerCase(); // reWordPattern.getMatch(st.nextToken()).toString(1);
 
       // Find the index of the word
       int index = searchWords.indexOf(word);
@@ -789,7 +789,7 @@ public abstract class WebPage extends PageServlet {
                   // Perform the search
                   target.search(words, req, resp, results, new CharArrayWriter(), new HashSet<>());
                   Collections.sort(results);
-                  //Strings.sortObjectsAndFloatDescending(results, 1, 5);
+                  // Strings.sortObjectsAndFloatDescending(results, 1, 5);
                 }
 
                 layout.printSearchOutput(req, resp, this, flow, query, entireSite, results, words);
@@ -1722,8 +1722,8 @@ public abstract class WebPage extends PageServlet {
                       + (description == null ? 0 : description.length())
                       + (title == null ? 0 : title.length())
                       + (author == null ? 0 : author.length());
-              //searchWords.trimToSize();
-              //searchCounts.trimToSize();
+              // searchWords.trimToSize();
+              // searchCounts.trimToSize();
               this.searchLastModified = mySearchLastModified;
             }
           }

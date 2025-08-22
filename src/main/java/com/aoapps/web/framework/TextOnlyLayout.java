@@ -412,7 +412,7 @@ public class TextOnlyLayout extends WebPageLayout {
                   ) {
                     String navAlt = tpage.getNavImageAlt(req);
                     String navSuffix = tpage.getNavImageSuffix(req);
-                    //boolean isSelected=tpage.equals(page);
+                    // boolean isSelected=tpage.equals(page);
                     div.a(tpage.getNavImageUrl(req, resp, null)).__(a -> {
                       a.text(navAlt);
                       if (navSuffix != null) {

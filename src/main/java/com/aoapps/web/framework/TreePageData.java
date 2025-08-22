@@ -42,7 +42,7 @@ public class TreePageData {
    *
    * @param path The path of display names.
    */
-  public TreePageData(String url, String description, boolean hasChildren, String ... path) {
+  public TreePageData(String url, String description, boolean hasChildren, String... path) {
     this.url = url;
     this.description = description;
     this.hasChilren = hasChildren;
