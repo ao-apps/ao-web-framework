@@ -8,14 +8,14 @@
 [![semantic versioning: 2.0.0](https://oss.aoapps.com/ao-badges/semver-2.0.0.svg)](https://semver.org/spec/v2.0.0.html)
 [![license: LGPL v3](https://oss.aoapps.com/ao-badges/license-lgpl-3.0.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 
-[![Build](https://github.com/ao-apps/ao-web-framework/actions/workflows/build.yml/badge.svg?branch=javaee)](https://github.com/ao-apps/ao-web-framework/actions?query=workflow%3ABuild)
+[![Build](https://github.com/ao-apps/ao-web-framework/actions/workflows/build.yml/badge.svg?branch=jakartaee)](https://github.com/ao-apps/ao-web-framework/actions?query=workflow%3ABuild)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.aoapps/ao-web-framework/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aoapps/ao-web-framework)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?branch=javaee&project=com.aoapps%3Aao-web-framework&metric=alert_status)](https://sonarcloud.io/dashboard?branch=javaee&id=com.aoapps%3Aao-web-framework)
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?branch=javaee&project=com.aoapps%3Aao-web-framework&metric=ncloc)](https://sonarcloud.io/component_measures?branch=javaee&id=com.aoapps%3Aao-web-framework&metric=ncloc)  
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?branch=javaee&project=com.aoapps%3Aao-web-framework&metric=reliability_rating)](https://sonarcloud.io/component_measures?branch=javaee&id=com.aoapps%3Aao-web-framework&metric=Reliability)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?branch=javaee&project=com.aoapps%3Aao-web-framework&metric=security_rating)](https://sonarcloud.io/component_measures?branch=javaee&id=com.aoapps%3Aao-web-framework&metric=Security)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?branch=javaee&project=com.aoapps%3Aao-web-framework&metric=sqale_rating)](https://sonarcloud.io/component_measures?branch=javaee&id=com.aoapps%3Aao-web-framework&metric=Maintainability)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?branch=javaee&project=com.aoapps%3Aao-web-framework&metric=coverage)](https://sonarcloud.io/component_measures?branch=javaee&id=com.aoapps%3Aao-web-framework&metric=Coverage)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?branch=jakartaee&project=com.aoapps%3Aao-web-framework&metric=alert_status)](https://sonarcloud.io/dashboard?branch=jakartaee&id=com.aoapps%3Aao-web-framework)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?branch=jakartaee&project=com.aoapps%3Aao-web-framework&metric=ncloc)](https://sonarcloud.io/component_measures?branch=jakartaee&id=com.aoapps%3Aao-web-framework&metric=ncloc)  
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?branch=jakartaee&project=com.aoapps%3Aao-web-framework&metric=reliability_rating)](https://sonarcloud.io/component_measures?branch=jakartaee&id=com.aoapps%3Aao-web-framework&metric=Reliability)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?branch=jakartaee&project=com.aoapps%3Aao-web-framework&metric=security_rating)](https://sonarcloud.io/component_measures?branch=jakartaee&id=com.aoapps%3Aao-web-framework&metric=Security)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?branch=jakartaee&project=com.aoapps%3Aao-web-framework&metric=sqale_rating)](https://sonarcloud.io/component_measures?branch=jakartaee&id=com.aoapps%3Aao-web-framework&metric=Maintainability)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?branch=jakartaee&project=com.aoapps%3Aao-web-framework&metric=coverage)](https://sonarcloud.io/component_measures?branch=jakartaee&id=com.aoapps%3Aao-web-framework&metric=Coverage)
 
 Legacy servlet-based web framework, superfast and capable but tedious to use.
 
