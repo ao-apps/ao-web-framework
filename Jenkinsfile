@@ -37,18 +37,18 @@ def upstreamProjects = [
   // No Jenkins: <groupId>javax.activation</groupId><artifactId>activation</artifactId>
   'collections', // <groupId>com.aoapps</groupId><artifactId>ao-collections</artifactId>
   'encoding', // <groupId>com.aoapps</groupId><artifactId>ao-encoding</artifactId>
-  'encoding-servlet', // <groupId>com.aoapps</groupId><artifactId>ao-encoding-servlet</artifactId>
+  'encoding-servlet-javaee', // <groupId>com.aoapps</groupId><artifactId>ao-encoding-servlet</artifactId>
   'fluent-html-any', // <groupId>com.aoapps</groupId><artifactId>ao-fluent-html-any</artifactId>
-  'fluent-html-servlet', // <groupId>com.aoapps</groupId><artifactId>ao-fluent-html-servlet</artifactId>
+  'fluent-html-servlet-javaee', // <groupId>com.aoapps</groupId><artifactId>ao-fluent-html-servlet</artifactId>
   'fluent-html-util', // <groupId>com.aoapps</groupId><artifactId>ao-fluent-html-util</artifactId>
   'lang', // <groupId>com.aoapps</groupId><artifactId>ao-lang</artifactId>
   'net-types', // <groupId>com.aoapps</groupId><artifactId>ao-net-types</artifactId>
   'security', // <groupId>com.aoapps</groupId><artifactId>ao-security</artifactId>
-  'servlet-util', // <groupId>com.aoapps</groupId><artifactId>ao-servlet-util</artifactId>
-  'taglib', // <groupId>com.aoapps</groupId><artifactId>ao-taglib</artifactId>
+  'servlet-util-javaee', // <groupId>com.aoapps</groupId><artifactId>ao-servlet-util</artifactId>
+  'taglib-javaee', // <groupId>com.aoapps</groupId><artifactId>ao-taglib</artifactId>
   'web-resources/registry', // <groupId>com.aoapps</groupId><artifactId>ao-web-resources-registry</artifactId>
-  'web-resources/renderer', // <groupId>com.aoapps</groupId><artifactId>ao-web-resources-renderer</artifactId>
-  'web-resources/servlet', // <groupId>com.aoapps</groupId><artifactId>ao-web-resources-servlet</artifactId>
+  'web-resources/renderer-javaee', // <groupId>com.aoapps</groupId><artifactId>ao-web-resources-renderer</artifactId>
+  'web-resources/servlet-javaee', // <groupId>com.aoapps</groupId><artifactId>ao-web-resources-servlet</artifactId>
   // No Jenkins: <groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId>
 
   // BOM

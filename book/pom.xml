@@ -89,7 +89,7 @@ along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
 
   <ciManagement>
     <system>Jenkins</system>
-    <url>https://jenkins.aoindustries.com/job/ao/job/oss/job/web-framework-book/</url>
+    <url>https://jenkins.aoindustries.com/job/ao/job/oss/job/web-framework-book-javaee/</url>
   </ciManagement>
   <!-- Only one allowed in POM:
   <ciManagement>
