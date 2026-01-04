@@ -38,6 +38,9 @@ along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
     <module.name>com.aoapps.web.framework</module.name>
     <javadoc.breadcrumbs><![CDATA[<a target="${javadoc.target}" href="https://oss.aoapps.com/">AO OSS</a>
 / <a target="${javadoc.target}" href="${project.url}">Web Framework</a>]]></javadoc.breadcrumbs>
+    <!-- Jakarta EE 10 -->
+    <javaee.version>10</javaee.version>
+    <javadoc.link.javaee>${javadoc.link.jakartaee.10}</javadoc.link.javaee>
     <!-- TODO: Implement tests -->
     <sonar.coverage.exclusions>**.*</sonar.coverage.exclusions>
   </properties>
@@ -133,7 +136,6 @@ along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
                 <configuration>
                   <artifactItems>
                     <!-- Direct -->
-                    <!-- ao-javadoc-offline: <groupId>javax.activation</groupId><artifactId>activation</artifactId><classifier>javadoc</classifier> -->
                     <artifactItem>
                       <groupId>com.aoapps</groupId><artifactId>ao-collections</artifactId><classifier>javadoc</classifier>
                       <includes>element-list, package-list</includes>
@@ -204,7 +206,8 @@ along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
                       <includes>element-list, package-list</includes>
                       <outputDirectory>${project.build.directory}/offlineLinks/com.aoapps/ao-web-resources-servlet</outputDirectory>
                     </artifactItem>
-                    <!-- ao-javadoc-offline: <groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId><classifier>javadoc</classifier> -->
+                    <!-- ao-javadoc-offline: <groupId>jakarta.activation</groupId><artifactId>jakarta.activation-api</artifactId><classifier>javadoc</classifier> -->
+                    <!-- ao-javadoc-offline: <groupId>jakarta.servlet</groupId><artifactId>jakarta.servlet-api</artifactId><classifier>javadoc</classifier> -->
                   </artifactItems>
                 </configuration>
               </execution>
@@ -215,7 +218,6 @@ along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
             <configuration>
               <offlineLinks combine.children="append">
                 <!-- Direct -->
-                <!-- ao-javadoc-offline: <groupId>javax.activation</groupId><artifactId>activation</artifactId><classifier>javadoc</classifier> -->
                 <offlineLink>
                   <url>https://oss.aoapps.com/collections/apidocs/</url>
                   <location>${project.build.directory}/offlineLinks/com.aoapps/ao-collections</location>
@@ -272,7 +274,8 @@ along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
                   <url>https://oss.aoapps.com/web-resources/servlet/apidocs/</url>
                   <location>${project.build.directory}/offlineLinks/com.aoapps/ao-web-resources-servlet</location>
                 </offlineLink>
-                <!-- ao-javadoc-offline: <groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId><classifier>javadoc</classifier> -->
+                <!-- ao-javadoc-offline: <groupId>jakarta.activation</groupId><artifactId>jakarta.activation-api</artifactId><classifier>javadoc</classifier> -->
+                <!-- ao-javadoc-offline: <groupId>jakarta.servlet</groupId><artifactId>jakarta.servlet-api</artifactId><classifier>javadoc</classifier> -->
               </offlineLinks>
             </configuration>
           </plugin>
@@ -300,44 +303,12 @@ along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
         <org.apache.maven.plugins.maven-javadoc-plugin.version>${org.apache.maven.plugins.maven-javadoc-plugin.version.compat}</org.apache.maven.plugins.maven-javadoc-plugin.version>
         <copy-element-list-to-package-list-before-javadoc.phase>prepare-package</copy-element-list-to-package-list-before-javadoc.phase>
       </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.felix</groupId><artifactId>maven-bundle-plugin</artifactId>
-            <configuration>
-              <instructions>
-                <!--
-                  Releases use "Automatic-Module-Name" instead of "module-info.java"
-                  since has direct dependencies that are not yet modularized:
-                  activation-1.1.1.jar
-                  javax.el-api-3.0.0.jar
-                  javax.servlet.jsp-api-2.3.3.jar
-                  javax.servlet-api-3.1.0.jar
-                -->
-                <Automatic-Module-Name>${module.name}</Automatic-Module-Name>
-                <Private-Package>!.</Private-Package>
-              </instructions>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId><artifactId>maven-jar-plugin</artifactId>
-            <configuration>
-              <excludes>
-                <exclude>**/module-info.class</exclude>
-              </excludes>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
     </profile>
   </profiles>
 
   <dependencyManagement>
     <dependencies>
       <!-- Direct -->
-      <dependency>
-        <groupId>javax.activation</groupId><artifactId>activation</artifactId><version>1.1.1</version>
-      </dependency>
       <dependency>
         <groupId>com.aoapps</groupId><artifactId>ao-collections</artifactId><version>4.0.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
       </dependency>
@@ -380,7 +351,10 @@ along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
       <dependency>
         <groupId>com.aoapps</groupId><artifactId>ao-web-resources-servlet</artifactId><version>0.7.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
       </dependency>
-      <!-- javaee-web-api-bom: <groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId> -->
+      <dependency>
+        <groupId>jakarta.activation</groupId><artifactId>jakarta.activation-api</artifactId><version>2.1.4</version>
+      </dependency>
+      <!-- jakartaee-web-profile-bom: <groupId>jakarta.servlet</groupId><artifactId>jakarta.servlet-api</artifactId> -->
       <!-- Transitive -->
       <dependency>
         <groupId>com.aoapps</groupId><artifactId>ao-encoding-taglib</artifactId><version>6.0.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
@@ -409,11 +383,11 @@ along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
       <dependency>
         <groupId>org.apache.commons</groupId><artifactId>commons-lang3</artifactId><version>3.20.0</version>
       </dependency>
-      <!-- javaee-web-api-bom: <groupId>javax.el</groupId><artifactId>javax.el-api</artifactId> -->
-      <!-- javaee-web-api-bom: <groupId>javax.servlet.jsp</groupId><artifactId>javax.servlet.jsp-api</artifactId> -->
+      <!-- jakartaee-web-profile-bom: <groupId>jakarta.el</groupId><artifactId>jakarta.el-api</artifactId> -->
+      <!-- jakartaee-web-profile-bom: <groupId>jakarta.servlet.jsp</groupId><artifactId>jakarta.servlet.jsp-api</artifactId> -->
       <!-- Imports -->
       <dependency>
-        <groupId>com.aoapps</groupId><artifactId>javaee-web-api-bom</artifactId><version>7.0.1-POST-SNAPSHOT</version>
+        <groupId>com.aoapps</groupId><artifactId>jakartaee-web-profile-bom</artifactId><version>10.0.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -422,9 +396,6 @@ along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
 
   <dependencies>
     <!-- Direct -->
-    <dependency>
-      <groupId>javax.activation</groupId><artifactId>activation</artifactId>
-    </dependency>
     <dependency>
       <groupId>com.aoapps</groupId><artifactId>ao-collections</artifactId>
     </dependency>
@@ -468,7 +439,10 @@ along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
       <groupId>com.aoapps</groupId><artifactId>ao-web-resources-servlet</artifactId>
     </dependency>
     <dependency>
-      <groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId>
+      <groupId>jakarta.activation</groupId><artifactId>jakarta.activation-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.servlet</groupId><artifactId>jakarta.servlet-api</artifactId>
     </dependency>
   </dependencies>
 </project>

@@ -1,6 +1,6 @@
 /*
  * ao-web-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2015, 2016, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2015, 2016, 2019, 2020, 2021, 2022, 2023, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -28,14 +28,14 @@ import static com.aoapps.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlA
 import com.aoapps.html.servlet.ContentEE;
 import com.aoapps.html.servlet.FlowContent;
 import com.aoapps.lang.io.IoUtils;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.concurrent.atomic.AtomicReference;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Pulls the content from a file with the same name and location as the <code>.class</code>
@@ -89,19 +89,19 @@ public abstract class HtmlInputStreamPage extends InputStreamPage {
    * Prints HTML content, parsing for special <code>@</code> tags.  Types of tags include:
    * <ul>
    *   <li>@URL(classname)    Loads a WebPage of the given class and builds a URL to it</li>
-   *   <li>@BEGIN_LIGHT_AREA  Calls {@link WebPageLayout#startLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}</li>
-   *   <li>@END_LIGHT_AREA    Calls {@link WebPageLayout#endLightArea(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}</li>
-   *   <li>@END_CONTENT_LINE  Calls {@link WebPageLayout#endContentLine(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}</li>
-   *   <li>@PRINT_CONTENT_HORIZONTAL_DIVIDER  Calls {@link WebPageLayout#contentHorizontalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)}</li>
-   *   <li>@START_CONTENT_LINE  Calls {@link WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)}</li>
+   *   <li>@BEGIN_LIGHT_AREA  Calls {@link WebPageLayout#startLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}</li>
+   *   <li>@END_LIGHT_AREA    Calls {@link WebPageLayout#endLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}</li>
+   *   <li>@END_CONTENT_LINE  Calls {@link WebPageLayout#endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}</li>
+   *   <li>@PRINT_CONTENT_HORIZONTAL_DIVIDER  Calls {@link WebPageLayout#contentHorizontalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)}</li>
+   *   <li>@START_CONTENT_LINE  Calls {@link WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)}</li>
    *   <li>@LINK_CLASS        The preferred link class for this element</li>
    * </ul>
    *
    * @return  The current {@code contentLine}, which may have been replaced by a call to
-   *          {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
-   *          or {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.
+   *          {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
+   *          or {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.
    *
-   * @see  #printHtmlStream(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.ContentEE, com.aoapps.html.servlet.FlowContent, java.io.InputStream, java.lang.String, java.util.concurrent.atomic.AtomicReference)
+   * @see  #printHtmlStream(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.ContentEE, com.aoapps.html.servlet.FlowContent, java.io.InputStream, java.lang.String, java.util.concurrent.atomic.AtomicReference)
    */
   @SuppressWarnings("deprecation")
   public static <__ extends FlowContent<__>> __ printHtml(
@@ -188,10 +188,10 @@ public abstract class HtmlInputStreamPage extends InputStreamPage {
    * Prints HTML with template substitutions.
    *
    * @return  The current {@code contentLine}, which may have been replaced by a call to
-   *          {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
-   *          or {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.
+   *          {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
+   *          or {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.
    *
-   * @see  #printHtml(com.aoapps.web.framework.WebSiteRequest, javax.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.ContentEE, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, java.util.concurrent.atomic.AtomicReference)
+   * @see  #printHtml(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.ContentEE, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, java.util.concurrent.atomic.AtomicReference)
    */
   @SuppressWarnings("deprecation")
   public static <__ extends FlowContent<__>> __ printHtmlStream(

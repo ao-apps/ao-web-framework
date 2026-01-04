@@ -1,6 +1,6 @@
 /*
  * ao-web-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -35,6 +35,15 @@ import com.aoapps.net.URIParser;
 import com.aoapps.security.Identifier;
 import com.aoapps.servlet.attribute.ScopeEE;
 import com.aoapps.servlet.http.HttpServletUtil;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebListener;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -56,15 +65,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.security.auth.login.LoginException;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebListener;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 
 /**
  * A <code>WebSiteSettings</code> contains all the values that a user may customize while they view the web site.
@@ -952,7 +952,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   /**
    * Gets the person who is logged in or <code>null</code> if no login is performed for this request.
    *
-   * @param  resp  The current response or {@code null} when invoked from {@link WebPage#getLastModified(javax.servlet.http.HttpServletRequest)}
+   * @param  resp  The current response or {@code null} when invoked from {@link WebPage#getLastModified(jakarta.servlet.http.HttpServletRequest)}
    *
    * @exception LoginException if an invalid login attempt is made or the user credentials are not found
    */

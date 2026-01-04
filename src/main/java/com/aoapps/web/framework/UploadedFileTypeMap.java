@@ -1,6 +1,6 @@
 /*
  * ao-web-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2009, 2015, 2016, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2015, 2016, 2019, 2020, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -24,9 +24,9 @@
 package com.aoapps.web.framework;
 
 import com.aoapps.security.Identifier;
+import jakarta.activation.FileTypeMap;
+import jakarta.servlet.ServletContext;
 import java.io.File;
-import javax.activation.FileTypeMap;
-import javax.servlet.ServletContext;
 
 /**
  * A mapping used for managing upload file content types.
