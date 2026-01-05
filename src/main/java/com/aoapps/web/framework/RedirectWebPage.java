@@ -1,6 +1,6 @@
 /*
  * ao-web-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2007-2009, 2015, 2016, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2007-2009, 2015, 2016, 2019, 2020, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -53,9 +53,19 @@ public class RedirectWebPage extends WebPage {
    *
    * @param  path  the context-relative path, with a preceding slash (/)
    */
-  public RedirectWebPage(ServletContext context, WebPage parent, String path, int redirectType, String description, String keywords, String navImageAlt, String title) {
+  @SuppressWarnings("LeakingThisInConstructor")
+  public RedirectWebPage(
+      ServletContext context,
+      WebPage parent,
+      String path,
+      int redirectType,
+      String description,
+      String keywords,
+      String navImageAlt,
+      String title
+  ) throws ServletException {
     super();
-    setServletContext(context);
+    initServlet(context, this, Integer.toString(redirectType) + " redirect to " + path);
     this.parent = parent;
     this.path = path;
     this.redirectType = redirectType;

@@ -1,6 +1,6 @@
 /*
  * ao-web-framework - Legacy servlet-based web framework, superfast and capable but tedious to use.
- * Copyright (C) 2000-2013, 2015, 2016, 2019, 2020, 2021, 2022, 2024, 2025  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2015, 2016, 2019, 2020, 2021, 2022, 2024, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -54,6 +54,7 @@ import java.lang.reflect.Constructor;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -64,9 +65,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
 import javax.security.auth.login.LoginException;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -1257,6 +1260,37 @@ public abstract class WebPage extends PageServlet {
   }
 
   /**
+   * Initializes a {@link WebPage} to emulate the servlet life cycle.
+   *
+   * <p>TODO: WebPage is an {@link HttpServlet}, but at the same time exists outside the normal lifecycle of servlets.
+   * This framework instantiates and caches WebPage instances separately from the servlets managed by
+   * the servlet container.</p>
+   */
+  static void initServlet(ServletContext context, WebPage page, String servletName) throws ServletException {
+    page.init(new ServletConfig() {
+      @Override
+      public String getServletName() {
+        return servletName;
+      }
+
+      @Override
+      public ServletContext getServletContext() {
+        return context;
+      }
+
+      @Override
+      public String getInitParameter(String name) {
+        return null;
+      }
+
+      @Override
+      public Enumeration<String> getInitParameterNames() {
+        return Collections.emptyEnumeration();
+      }
+    });
+  }
+
+  /**
    * Gets an instance of <code>WebPage</code> given the <code>Class</code>.
    * Instances returned should never have the <code>init</code> method
    * called and should allocate a minimal set of resources.
@@ -1329,7 +1363,7 @@ public abstract class WebPage extends PageServlet {
           }
         }
       }
-      page.setServletContext(context);
+      initServlet(context, page, clazz.getName());
       if (cached == null) {
         webPageCache.put(clazz, cached = new ArrayList<>());
       }
@@ -1418,7 +1452,12 @@ public abstract class WebPage extends PageServlet {
           throw new ServletException("No constructor found for getWebPage: " + clazz.getName());
         }
       }
-      page.setServletContext(context);
+      String servletName = clazz.getName();
+      String query = params.toString();
+      if (!query.isEmpty()) {
+        servletName += '?' + query;
+      }
+      initServlet(context, page, servletName);
       if (cached == null) {
         webPageCache.put(clazz, cached = new ArrayList<>());
       }
@@ -1813,24 +1852,6 @@ public abstract class WebPage extends PageServlet {
    */
   public boolean showInLocationPath(WebSiteRequest req) {
     return true;
-  }
-
-  private ServletContext context;
-
-  @Override
-  public ServletContext getServletContext() {
-    if (context != null) {
-      return context;
-    }
-    ServletContext sc = super.getServletContext();
-    if (sc == null) {
-      throw new NullPointerException("ServletContext is null");
-    }
-    return sc;
-  }
-
-  final void setServletContext(ServletContext context) {
-    this.context = context;
   }
 
   /**
