@@ -46,9 +46,11 @@ import com.aoapps.servlet.http.HttpServletUtil;
 import com.aoapps.web.resources.registry.Registry;
 import com.aoapps.web.resources.servlet.PageServlet;
 import com.aoapps.web.resources.servlet.RegistryEE;
+import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.CharArrayWriter;
@@ -59,6 +61,7 @@ import java.lang.reflect.Constructor;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -1257,6 +1260,37 @@ public abstract class WebPage extends PageServlet {
   }
 
   /**
+   * Initializes a {@link WebPage} to emulate the servlet life cycle.
+   *
+   * <p>TODO: WebPage is an {@link HttpServlet}, but at the same time exists outside the normal lifecycle of servlets.
+   * This framework instantiates and caches WebPage instances separately from the servlets managed by
+   * the servlet container.</p>
+   */
+  static void initServlet(ServletContext context, WebPage page, String servletName) throws ServletException {
+    page.init(new ServletConfig() {
+      @Override
+      public String getServletName() {
+        return servletName;
+      }
+
+      @Override
+      public ServletContext getServletContext() {
+        return context;
+      }
+
+      @Override
+      public String getInitParameter(String name) {
+        return null;
+      }
+
+      @Override
+      public Enumeration<String> getInitParameterNames() {
+        return Collections.emptyEnumeration();
+      }
+    });
+  }
+
+  /**
    * Gets an instance of <code>WebPage</code> given the <code>Class</code>.
    * Instances returned should never have the <code>init</code> method
    * called and should allocate a minimal set of resources.
@@ -1329,7 +1363,7 @@ public abstract class WebPage extends PageServlet {
           }
         }
       }
-      page.setServletContext(context);
+      initServlet(context, page, clazz.getName());
       if (cached == null) {
         webPageCache.put(clazz, cached = new ArrayList<>());
       }
@@ -1418,7 +1452,12 @@ public abstract class WebPage extends PageServlet {
           throw new ServletException("No constructor found for getWebPage: " + clazz.getName());
         }
       }
-      page.setServletContext(context);
+      String servletName = clazz.getName();
+      String query = params.toString();
+      if (!query.isEmpty()) {
+        servletName += '?' + query;
+      }
+      initServlet(context, page, servletName);
       if (cached == null) {
         webPageCache.put(clazz, cached = new ArrayList<>());
       }
@@ -1813,24 +1852,6 @@ public abstract class WebPage extends PageServlet {
    */
   public boolean showInLocationPath(WebSiteRequest req) {
     return true;
-  }
-
-  private ServletContext context;
-
-  @Override
-  public ServletContext getServletContext() {
-    if (context != null) {
-      return context;
-    }
-    ServletContext sc = super.getServletContext();
-    if (sc == null) {
-      throw new NullPointerException("ServletContext is null");
-    }
-    return sc;
-  }
-
-  final void setServletContext(ServletContext context) {
-    this.context = context;
   }
 
   /**

@@ -53,9 +53,19 @@ public class RedirectWebPage extends WebPage {
    *
    * @param  path  the context-relative path, with a preceding slash (/)
    */
-  public RedirectWebPage(ServletContext context, WebPage parent, String path, int redirectType, String description, String keywords, String navImageAlt, String title) {
+  @SuppressWarnings("LeakingThisInConstructor")
+  public RedirectWebPage(
+      ServletContext context,
+      WebPage parent,
+      String path,
+      int redirectType,
+      String description,
+      String keywords,
+      String navImageAlt,
+      String title
+  ) throws ServletException {
     super();
-    setServletContext(context);
+    initServlet(context, this, Integer.toString(redirectType) + " redirect to " + path);
     this.parent = parent;
     this.path = path;
     this.redirectType = redirectType;
