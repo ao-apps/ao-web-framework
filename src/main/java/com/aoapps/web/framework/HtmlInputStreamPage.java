@@ -101,7 +101,7 @@ public abstract class HtmlInputStreamPage extends InputStreamPage {
    *          {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
    *          or {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.
    *
-   * @see  #printHtmlStream(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.ContentEE, com.aoapps.html.servlet.FlowContent, java.io.InputStream, java.lang.String, java.util.concurrent.atomic.AtomicReference)
+   * @see  HtmlInputStreamPage#printHtmlStream(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.ContentEE, com.aoapps.html.servlet.FlowContent, java.io.InputStream, java.lang.String, java.util.concurrent.atomic.AtomicReference)
    */
   @SuppressWarnings("deprecation")
   public static <__ extends FlowContent<__>> __ printHtml(
@@ -191,7 +191,7 @@ public abstract class HtmlInputStreamPage extends InputStreamPage {
    *          {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
    *          or {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.
    *
-   * @see  #printHtml(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.ContentEE, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, java.util.concurrent.atomic.AtomicReference)
+   * @see  HtmlInputStreamPage#printHtml(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPageLayout, com.aoapps.html.servlet.ContentEE, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, java.util.concurrent.atomic.AtomicReference)
    */
   @SuppressWarnings("deprecation")
   public static <__ extends FlowContent<__>> __ printHtmlStream(

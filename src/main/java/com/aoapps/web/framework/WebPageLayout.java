@@ -144,7 +144,7 @@ public abstract class WebPageLayout {
    *                is used.
    *
    * @return  The {@link FlowContent} that should be used to write the page contents.
-   *          This is also given to {@link #endPage(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
+   *          This is also given to {@link WebPageLayout#endPage(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
    *          to finish the template.
    *
    * @see  SerializationEE#get(jakarta.servlet.ServletContext, jakarta.servlet.http.HttpServletRequest)
@@ -165,7 +165,7 @@ public abstract class WebPageLayout {
    * on the request, and these must be considered in the HTML generation.</p>
    *
    * @param  flow  The {@link FlowContent} that was returned by
-   *               {@link #startPage(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String)}.
+   *               {@link WebPageLayout#startPage(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String)}.
    *
    * @see  SerializationEE#get(jakarta.servlet.ServletContext, jakarta.servlet.http.HttpServletRequest)
    * @see  DoctypeEE#get(jakarta.servlet.ServletContext, jakarta.servlet.ServletRequest)
@@ -178,17 +178,17 @@ public abstract class WebPageLayout {
   ) throws ServletException, IOException;
 
   /**
-   * {@linkplain #startPage(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String) Starts the page},
+   * {@linkplain WebPageLayout#startPage(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String) Starts the page},
    * invokes the given page body, then
-   * {@linkplain #endPage(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent) ends the page}.
+   * {@linkplain WebPageLayout#endPage(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent) ends the page}.
    *
    * <p>Both the {@link Serialization} and {@link Doctype} may have been set
    * on the request, and these must be considered in the HTML generation.</p>
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #startPage(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String)
-   * @see  #endPage(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)
+   * @see  WebPageLayout#startPage(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String)
+   * @see  WebPageLayout#endPage(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)
    * @see  SerializationEE#get(jakarta.servlet.ServletContext, jakarta.servlet.http.HttpServletRequest)
    * @see  DoctypeEE#get(jakarta.servlet.ServletContext, jakarta.servlet.ServletRequest)
    */
@@ -208,17 +208,17 @@ public abstract class WebPageLayout {
   }
 
   /**
-   * {@linkplain #startPage(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String) Starts the page},
+   * {@linkplain WebPageLayout#startPage(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String) Starts the page},
    * invokes the given page body, then
-   * {@linkplain #endPage(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent) ends the page}.
+   * {@linkplain WebPageLayout#endPage(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent) ends the page}.
    *
    * <p>Both the {@link Serialization} and {@link Doctype} may have been set
    * on the request, and these must be considered in the HTML generation.</p>
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #startPage(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String)
-   * @see  #endPage(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)
+   * @see  WebPageLayout#startPage(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.DocumentEE, java.lang.String)
+   * @see  WebPageLayout#endPage(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)
    * @see  SerializationEE#get(jakarta.servlet.ServletContext, jakarta.servlet.http.HttpServletRequest)
    * @see  DoctypeEE#get(jakarta.servlet.ServletContext, jakarta.servlet.ServletRequest)
    */
@@ -348,18 +348,18 @@ public abstract class WebPageLayout {
    * @param  <__>  This content model, which will be the parent content model of child elements
    *
    * @return  The {@link ContentEE} that should be used to write the area contents.
-   *          This is also given to {@link #contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, java.lang.String)},
-   *          {@link #contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE)},
-   *          {@link #contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, java.lang.String, int)},
-   *          {@link #contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int)},
-   *          {@link #startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)},
-   *          {@link #startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, java.lang.String, java.lang.String)},
-   *          {@link #contentHorizontalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)},
-   *          {@link #contentHorizontalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, boolean)},
-   *          {@link #contentHorizontalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int[], boolean)},
-   *          {@link #endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE)},
-   *          {@link #endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int)},
-   *          and {@link #endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int[])}.
+   *          This is also given to {@link WebPageLayout#contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, java.lang.String)},
+   *          {@link WebPageLayout#contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE)},
+   *          {@link WebPageLayout#contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, java.lang.String, int)},
+   *          {@link WebPageLayout#contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int)},
+   *          {@link WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)},
+   *          {@link WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, java.lang.String, java.lang.String)},
+   *          {@link WebPageLayout#contentHorizontalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)},
+   *          {@link WebPageLayout#contentHorizontalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, boolean)},
+   *          {@link WebPageLayout#contentHorizontalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int[], boolean)},
+   *          {@link WebPageLayout#endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE)},
+   *          {@link WebPageLayout#endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int)},
+   *          and {@link WebPageLayout#endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int[])}.
    */
   public final <
       PC extends FlowContent<PC>,
@@ -382,18 +382,18 @@ public abstract class WebPageLayout {
    *                When {@code ""}, will force no width specified.
    *
    * @return  The {@link ContentEE} that should be used to write the area contents.
-   *          This is also given to {@link #contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, java.lang.String)},
-   *          {@link #contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE)},
-   *          {@link #contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, java.lang.String, int)},
-   *          {@link #contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int)},
-   *          {@link #startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)},
-   *          {@link #startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, java.lang.String, java.lang.String)},
-   *          {@link #contentHorizontalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)},
-   *          {@link #contentHorizontalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, boolean)},
-   *          {@link #contentHorizontalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int[], boolean)},
-   *          {@link #endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE)},
-   *          {@link #endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int)},
-   *          and {@link #endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int[])}.
+   *          This is also given to {@link WebPageLayout#contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, java.lang.String)},
+   *          {@link WebPageLayout#contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE)},
+   *          {@link WebPageLayout#contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, java.lang.String, int)},
+   *          {@link WebPageLayout#contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int)},
+   *          {@link WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)},
+   *          {@link WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, java.lang.String, java.lang.String)},
+   *          {@link WebPageLayout#contentHorizontalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)},
+   *          {@link WebPageLayout#contentHorizontalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, boolean)},
+   *          {@link WebPageLayout#contentHorizontalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int[], boolean)},
+   *          {@link WebPageLayout#endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE)},
+   *          {@link WebPageLayout#endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int)},
+   *          and {@link WebPageLayout#endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int[])}.
    */
   public final <
       PC extends FlowContent<PC>,
@@ -418,18 +418,18 @@ public abstract class WebPageLayout {
    *                When {@code ""}, will force no width specified.
    *
    * @return  The {@link ContentEE} that should be used to write the area contents.
-   *          This is also given to {@link #contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, java.lang.String)},
-   *          {@link #contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE)},
-   *          {@link #contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, java.lang.String, int)},
-   *          {@link #contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int)},
-   *          {@link #startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)},
-   *          {@link #startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, java.lang.String, java.lang.String)},
-   *          {@link #contentHorizontalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)},
-   *          {@link #contentHorizontalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, boolean)},
-   *          {@link #contentHorizontalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int[], boolean)},
-   *          {@link #endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE)},
-   *          {@link #endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int)},
-   *          and {@link #endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int[])}.
+   *          This is also given to {@link WebPageLayout#contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, java.lang.String)},
+   *          {@link WebPageLayout#contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE)},
+   *          {@link WebPageLayout#contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, java.lang.String, int)},
+   *          {@link WebPageLayout#contentTitle(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int)},
+   *          {@link WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)},
+   *          {@link WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, java.lang.String, java.lang.String)},
+   *          {@link WebPageLayout#contentHorizontalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)},
+   *          {@link WebPageLayout#contentHorizontalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, boolean)},
+   *          {@link WebPageLayout#contentHorizontalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int[], boolean)},
+   *          {@link WebPageLayout#endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE)},
+   *          {@link WebPageLayout#endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int)},
+   *          and {@link WebPageLayout#endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int[])}.
    */
   public abstract <
       PC extends FlowContent<PC>,
@@ -447,9 +447,9 @@ public abstract class WebPageLayout {
    * Prints an entire content line including the provided title.  The colspan should match the total colspan in startContent for proper appearance
    *
    * @param  content  The {@link ContentEE} that was returned by
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
-   *                  or {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
+   *                  or {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
    */
   public final void contentTitle(
       WebSiteRequest req,
@@ -464,9 +464,9 @@ public abstract class WebPageLayout {
    * Prints an entire content line including the provided title.  The colspan should match the total colspan in startContent for proper appearance
    *
    * @param  content  The {@link ContentEE} that was returned by
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
-   *                  or {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
+   *                  or {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
    */
   public final void contentTitle(
       WebSiteRequest req,
@@ -482,9 +482,9 @@ public abstract class WebPageLayout {
    * Prints an entire content line including the provided title.  The colspan should match the total colspan in startContent for proper appearance
    *
    * @param  content  The {@link ContentEE} that was returned by
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
-   *                  or {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
+   *                  or {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
    */
   public final void contentTitle(
       WebSiteRequest req,
@@ -499,9 +499,9 @@ public abstract class WebPageLayout {
    * Prints an entire content line including the provided title.  The colspan should match the total colspan in startContent for proper appearance
    *
    * @param  content  The {@link ContentEE} that was returned by
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
-   *                  or {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
+   *                  or {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
    */
   public abstract void contentTitle(
       WebSiteRequest req,
@@ -516,15 +516,15 @@ public abstract class WebPageLayout {
    *
    * @param  <__>  This content model, which will be the parent content model of child elements
    * @param  content  The {@link ContentEE} that was returned by
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
-   *                  or {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
+   *                  or {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
    *
    * @return  The {@link FlowContent} that should be used to write the line contents.
-   *          This is also given to {@link #contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
-   *          {@link #contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)},
-   *          {@link #endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
-   *          and {@link #endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, boolean)}.
+   *          This is also given to {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
+   *          {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)},
+   *          {@link WebPageLayout#endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
+   *          and {@link WebPageLayout#endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, boolean)}.
    */
   public final <__ extends FlowContent<__>> __ startContentLine(
       WebSiteRequest req,
@@ -539,15 +539,15 @@ public abstract class WebPageLayout {
    *
    * @param  <__>  This content model, which will be the parent content model of child elements
    * @param  content  The {@link ContentEE} that was returned by
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
-   *                  or {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
+   *                  or {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
    *
    * @return  The {@link FlowContent} that should be used to write the line contents.
-   *          This is also given to {@link #contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
-   *          {@link #contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)},
-   *          {@link #endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
-   *          and {@link #endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, boolean)}.
+   *          This is also given to {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
+   *          {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)},
+   *          {@link WebPageLayout#endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
+   *          and {@link WebPageLayout#endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, boolean)}.
    */
   public abstract <__ extends FlowContent<__>> __ startContentLine(
       WebSiteRequest req,
@@ -562,16 +562,16 @@ public abstract class WebPageLayout {
    * Ends one part of a line and starts the next.
    *
    * @param  contentLine  The {@link FlowContent} that was returned by
-   *                      {@link #startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)},
-   *                      {@link #startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, java.lang.String, java.lang.String)},
-   *                      {@link #contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
-   *                      or {@link #contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.
+   *                      {@link WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)},
+   *                      {@link WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, java.lang.String, java.lang.String)},
+   *                      {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
+   *                      or {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.
    *
    * @return  The {@link FlowContent} that should be used to write the line contents.
-   *          This is also given to {@link #contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
-   *          {@link #contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)},
-   *          {@link #endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
-   *          and {@link #endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, boolean)}.
+   *          This is also given to {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
+   *          {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)},
+   *          {@link WebPageLayout#endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
+   *          and {@link WebPageLayout#endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, boolean)}.
    */
   public final <__ extends FlowContent<__>> __ contentVerticalDivider(
       WebSiteRequest req,
@@ -585,16 +585,16 @@ public abstract class WebPageLayout {
    * Ends one part of a line and starts the next.
    *
    * @param  contentLine  The {@link FlowContent} that was returned by
-   *                      {@link #startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)},
-   *                      {@link #startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, java.lang.String, java.lang.String)},
-   *                      {@link #contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
-   *                      or {@link #contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.
+   *                      {@link WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)},
+   *                      {@link WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, java.lang.String, java.lang.String)},
+   *                      {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
+   *                      or {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.
    *
    * @return  The {@link FlowContent} that should be used to write the line contents.
-   *          This is also given to {@link #contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
-   *          {@link #contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)},
-   *          {@link #endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
-   *          and {@link #endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, boolean)}.
+   *          This is also given to {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
+   *          {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)},
+   *          {@link WebPageLayout#endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
+   *          and {@link WebPageLayout#endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, boolean)}.
    */
   public abstract <__ extends FlowContent<__>> __ contentVerticalDivider(
       WebSiteRequest req,
@@ -611,10 +611,10 @@ public abstract class WebPageLayout {
    * Ends one line of content.
    *
    * @param  contentLine  The {@link FlowContent} that was returned by
-   *                      {@link #startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)},
-   *                      {@link #startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, java.lang.String, java.lang.String)},
-   *                      {@link #contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
-   *                      or {@link #contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.
+   *                      {@link WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)},
+   *                      {@link WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, java.lang.String, java.lang.String)},
+   *                      {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
+   *                      or {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.
    */
   public final void endContentLine(
       WebSiteRequest req,
@@ -628,10 +628,10 @@ public abstract class WebPageLayout {
    * Ends one line of content.
    *
    * @param  contentLine  The {@link FlowContent} that was returned by
-   *                      {@link #startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)},
-   *                      {@link #startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, java.lang.String, java.lang.String)},
-   *                      {@link #contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
-   *                      or {@link #contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.
+   *                      {@link WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)},
+   *                      {@link WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, java.lang.String, java.lang.String)},
+   *                      {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)},
+   *                      or {@link WebPageLayout#contentVerticalDivider(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, int, int, java.lang.String, java.lang.String)}.
    */
   public abstract void endContentLine(
       WebSiteRequest req,
@@ -642,15 +642,15 @@ public abstract class WebPageLayout {
   ) throws ServletException, IOException;
 
   /**
-   * {@linkplain #startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE) Starts a content line},
+   * {@linkplain WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE) Starts a content line},
    * invokes the given line body, then
-   * {@linkplain #endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the content line}.
+   * {@linkplain WebPageLayout#endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the content line}.
    *
    * @param  <__>  This content model, which will be the parent content model of child elements
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)
-   * @see  #endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+   * @see  WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)
+   * @see  WebPageLayout#endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
    */
   public final <
       __ extends FlowContent<__>,
@@ -665,15 +665,15 @@ public abstract class WebPageLayout {
   }
 
   /**
-   * {@linkplain #startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE) Starts a content line},
+   * {@linkplain WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE) Starts a content line},
    * invokes the given line body, then
-   * {@linkplain #endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the content line}.
+   * {@linkplain WebPageLayout#endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the content line}.
    *
    * @param  <__>  This content model, which will be the parent content model of child elements
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)
-   * @see  #endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+   * @see  WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE)
+   * @see  WebPageLayout#endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
    */
   public final <
       __ extends FlowContent<__>,
@@ -688,15 +688,15 @@ public abstract class WebPageLayout {
   }
 
   /**
-   * {@linkplain #startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, java.lang.String, java.lang.String) Starts a content line},
+   * {@linkplain WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, java.lang.String, java.lang.String) Starts a content line},
    * invokes the given line body, then
-   * {@linkplain #endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, boolean) ends the content line}.
+   * {@linkplain WebPageLayout#endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, boolean) ends the content line}.
    *
    * @param  <__>  This content model, which will be the parent content model of child elements
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, java.lang.String, java.lang.String)
-   * @see  #endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, boolean)
+   * @see  WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, java.lang.String, java.lang.String)
+   * @see  WebPageLayout#endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, boolean)
    */
   public final <
       __ extends FlowContent<__>,
@@ -720,15 +720,15 @@ public abstract class WebPageLayout {
   }
 
   /**
-   * {@linkplain #startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, java.lang.String, java.lang.String) Starts a content line},
+   * {@linkplain WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, java.lang.String, java.lang.String) Starts a content line},
    * invokes the given line body, then
-   * {@linkplain #endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, boolean) ends the content line}.
+   * {@linkplain WebPageLayout#endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, boolean) ends the content line}.
    *
    * @param  <__>  This content model, which will be the parent content model of child elements
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, java.lang.String, java.lang.String)
-   * @see  #endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, boolean)
+   * @see  WebPageLayout#startContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.ContentEE, int, java.lang.String, java.lang.String)
+   * @see  WebPageLayout#endContentLine(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, int, boolean)
    */
   public final <
       __ extends FlowContent<__>,
@@ -755,9 +755,9 @@ public abstract class WebPageLayout {
    * Prints a horizontal divider.
    *
    * @param  content  The {@link ContentEE} that was returned by
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
-   *                  or {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
+   *                  or {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
    */
   public final void contentHorizontalDivider(
       WebSiteRequest req,
@@ -771,9 +771,9 @@ public abstract class WebPageLayout {
    * Prints a horizontal divider of the provided colspan.
    *
    * @param  content  The {@link ContentEE} that was returned by
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
-   *                  or {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
+   *                  or {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
    */
   public final void contentHorizontalDivider(
       WebSiteRequest req,
@@ -789,9 +789,9 @@ public abstract class WebPageLayout {
    * Prints a horizontal divider of the provided colspans.
    *
    * @param  content  The {@link ContentEE} that was returned by
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
-   *                  or {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
+   *                  or {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
    */
   public abstract void contentHorizontalDivider(
       WebSiteRequest req,
@@ -805,9 +805,9 @@ public abstract class WebPageLayout {
    * Ends the content area of a page.
    *
    * @param  content  The {@link ContentEE} that was returned by
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
-   *                  or {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
+   *                  or {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
    */
   public final void endContent(
       WebSiteRequest req,
@@ -822,9 +822,9 @@ public abstract class WebPageLayout {
    * Ends the content area of a page.
    *
    * @param  content  The {@link ContentEE} that was returned by
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
-   *                  or {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
+   *                  or {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
    */
   public final void endContent(
       WebSiteRequest req,
@@ -840,9 +840,9 @@ public abstract class WebPageLayout {
    * Ends the content area of a page.
    *
    * @param  content  The {@link ContentEE} that was returned by
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
-   *                  {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
-   *                  or {@link #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)}
+   *                  {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)}
+   *                  or {@link WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)}.
    */
   public abstract void endContent(
       WebSiteRequest req,
@@ -853,16 +853,16 @@ public abstract class WebPageLayout {
   ) throws ServletException, IOException;
 
   /**
-   * {@linkplain #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent) Starts a content area},
+   * {@linkplain WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent) Starts a content area},
    * invokes the given area body, then
-   * {@linkplain #endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE) ends the content area}.
+   * {@linkplain WebPageLayout#endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE) ends the content area}.
    *
    * @param  <PC>  The parent content model this area is within
    * @param  <__>  This content model, which will be the parent content model of child elements
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)
-   * @see  #endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE)
+   * @see  WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)
+   * @see  WebPageLayout#endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE)
    */
   public final <
       PC extends FlowContent<PC>,
@@ -879,16 +879,16 @@ public abstract class WebPageLayout {
   }
 
   /**
-   * {@linkplain #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent) Starts a content area},
+   * {@linkplain WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent) Starts a content area},
    * invokes the given area body, then
-   * {@linkplain #endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE) ends the content area}.
+   * {@linkplain WebPageLayout#endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE) ends the content area}.
    *
    * @param  <PC>  The parent content model this area is within
    * @param  <__>  This content model, which will be the parent content model of child elements
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)
-   * @see  #endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE)
+   * @see  WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent)
+   * @see  WebPageLayout#endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE)
    */
   public final <
       PC extends FlowContent<PC>,
@@ -905,16 +905,16 @@ public abstract class WebPageLayout {
   }
 
   /**
-   * {@linkplain #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String) Starts a content area},
+   * {@linkplain WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String) Starts a content area},
    * invokes the given area body, then
-   * {@linkplain #endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int) ends the content area}.
+   * {@linkplain WebPageLayout#endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int) ends the content area}.
    *
    * @param  <PC>  The parent content model this area is within
    * @param  <__>  This content model, which will be the parent content model of child elements
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)
-   * @see  #endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int)
+   * @see  WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)
+   * @see  WebPageLayout#endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int)
    */
   public final <
       PC extends FlowContent<PC>,
@@ -934,16 +934,16 @@ public abstract class WebPageLayout {
   }
 
   /**
-   * {@linkplain #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String) Starts a content area},
+   * {@linkplain WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String) Starts a content area},
    * invokes the given area body, then
-   * {@linkplain #endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int) ends the content area}.
+   * {@linkplain WebPageLayout#endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int) ends the content area}.
    *
    * @param  <PC>  The parent content model this area is within
    * @param  <__>  This content model, which will be the parent content model of child elements
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)
-   * @see  #endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int)
+   * @see  WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int, java.lang.String)
+   * @see  WebPageLayout#endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int)
    */
   public final <
       PC extends FlowContent<PC>,
@@ -963,16 +963,16 @@ public abstract class WebPageLayout {
   }
 
   /**
-   * {@linkplain #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String) Starts a content area},
+   * {@linkplain WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String) Starts a content area},
    * invokes the given area body, then
-   * {@linkplain #endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int[]) ends the content area}.
+   * {@linkplain WebPageLayout#endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int[]) ends the content area}.
    *
    * @param  <PC>  The parent content model this area is within
    * @param  <__>  This content model, which will be the parent content model of child elements
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)
-   * @see  #endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int[])
+   * @see  WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)
+   * @see  WebPageLayout#endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int[])
    */
   public final <
       PC extends FlowContent<PC>,
@@ -996,16 +996,16 @@ public abstract class WebPageLayout {
   }
 
   /**
-   * {@linkplain #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String) Starts a content area},
+   * {@linkplain WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String) Starts a content area},
    * invokes the given area body, then
-   * {@linkplain #endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int[]) ends the content area}.
+   * {@linkplain WebPageLayout#endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int[]) ends the content area}.
    *
    * @param  <PC>  The parent content model this area is within
    * @param  <__>  This content model, which will be the parent content model of child elements
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)
-   * @see  #endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int[])
+   * @see  WebPageLayout#startContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.FlowContent, int[], java.lang.String)
+   * @see  WebPageLayout#endContent(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.web.framework.WebPage, com.aoapps.html.servlet.ContentEE, int[])
    */
   public final <
       PC extends FlowContent<PC>,
@@ -1070,7 +1070,7 @@ public abstract class WebPageLayout {
    * @param  <__>  This content model, which will be the parent content model of child elements
    *
    * @return  The {@link FlowContent} that should be used to write the area contents.
-   *          This is also given to {@link #endLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
+   *          This is also given to {@link WebPageLayout#endLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
    *          to finish the area.
    */
   public final <
@@ -1091,7 +1091,7 @@ public abstract class WebPageLayout {
    * @param  <__>  This content model, which will be the parent content model of child elements
    *
    * @return  The {@link FlowContent} that should be used to write the area contents.
-   *          This is also given to {@link #endLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
+   *          This is also given to {@link WebPageLayout#endLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
    *          to finish the area.
    */
   public abstract <
@@ -1110,8 +1110,8 @@ public abstract class WebPageLayout {
    * Ends a lighter area of the site.
    *
    * @param  lightArea  The {@link FlowContent} that was returned by
-   *                    {@link #startLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
-   *                    or {@link #startLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, boolean)}.
+   *                    {@link WebPageLayout#startLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
+   *                    or {@link WebPageLayout#startLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, boolean)}.
    */
   public abstract void endLightArea(
       WebSiteRequest req,
@@ -1120,16 +1120,16 @@ public abstract class WebPageLayout {
   ) throws ServletException, IOException;
 
   /**
-   * {@linkplain #startLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a light area},
+   * {@linkplain WebPageLayout#startLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a light area},
    * invokes the given area body, then
-   * {@linkplain #endLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the light area}.
+   * {@linkplain WebPageLayout#endLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the light area}.
    *
    * @param  <PC>  The parent content model this area is within
    * @param  <__>  This content model, which will be the parent content model of child elements
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #startLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
-   * @see  #endLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+   * @see  WebPageLayout#startLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+   * @see  WebPageLayout#endLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
    */
   public final <
       PC extends FlowContent<PC>,
@@ -1149,15 +1149,15 @@ public abstract class WebPageLayout {
   }
 
   /**
-   * {@linkplain #startLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a light area},
+   * {@linkplain WebPageLayout#startLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a light area},
    * invokes the given area body, then
-   * {@linkplain #endLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the light area}.
+   * {@linkplain WebPageLayout#endLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the light area}.
    *
    * @param  <PC>  The parent content model this area is within
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #startLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
-   * @see  #endLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+   * @see  WebPageLayout#startLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+   * @see  WebPageLayout#endLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
    */
   public final <
       PC extends FlowContent<PC>,
@@ -1176,16 +1176,16 @@ public abstract class WebPageLayout {
   }
 
   /**
-   * {@linkplain #startLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a light area},
+   * {@linkplain WebPageLayout#startLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a light area},
    * invokes the given area body, then
-   * {@linkplain #endLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the light area}.
+   * {@linkplain WebPageLayout#endLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the light area}.
    *
    * @param  <PC>  The parent content model this area is within
    * @param  <__>  This content model, which will be the parent content model of child elements
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #startLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
-   * @see  #endLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+   * @see  WebPageLayout#startLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+   * @see  WebPageLayout#endLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
    */
   public final <
       PC extends FlowContent<PC>,
@@ -1208,15 +1208,15 @@ public abstract class WebPageLayout {
   }
 
   /**
-   * {@linkplain #startLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a light area},
+   * {@linkplain WebPageLayout#startLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a light area},
    * invokes the given area body, then
-   * {@linkplain #endLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the light area}.
+   * {@linkplain WebPageLayout#endLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the light area}.
    *
    * @param  <PC>  The parent content model this area is within
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #startLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
-   * @see  #endLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+   * @see  WebPageLayout#startLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+   * @see  WebPageLayout#endLightArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
    */
   public final <
       PC extends FlowContent<PC>,
@@ -1244,7 +1244,7 @@ public abstract class WebPageLayout {
    * @param  <__>  This content model, which will be the parent content model of child elements
    *
    * @return  The {@link FlowContent} that should be used to write the area contents.
-   *          This is also given to {@link #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
+   *          This is also given to {@link WebPageLayout#endWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
    *          to finish the area.
    */
   public final <
@@ -1265,7 +1265,7 @@ public abstract class WebPageLayout {
    * @param  <__>  This content model, which will be the parent content model of child elements
    *
    * @return  The {@link FlowContent} that should be used to write the area contents.
-   *          This is also given to {@link #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
+   *          This is also given to {@link WebPageLayout#endWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
    *          to finish the area.
    */
   public abstract <
@@ -1284,8 +1284,8 @@ public abstract class WebPageLayout {
    * Ends a white area of the site.
    *
    * @param  whiteArea  The {@link FlowContent} that was returned by
-   *                    {@link #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
-   *                    or {@link #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, boolean)}.
+   *                    {@link WebPageLayout#startWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)}
+   *                    or {@link WebPageLayout#startWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent, java.lang.String, java.lang.String, boolean)}.
    */
   public abstract void endWhiteArea(
       WebSiteRequest req,
@@ -1294,16 +1294,16 @@ public abstract class WebPageLayout {
   ) throws ServletException, IOException;
 
   /**
-   * {@linkplain #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a white area},
+   * {@linkplain WebPageLayout#startWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a white area},
    * invokes the given area body, then
-   * {@linkplain #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the white area}.
+   * {@linkplain WebPageLayout#endWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the white area}.
    *
    * @param  <PC>  The parent content model this area is within
    * @param  <__>  This content model, which will be the parent content model of child elements
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
-   * @see  #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+   * @see  WebPageLayout#startWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+   * @see  WebPageLayout#endWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
    */
   public final <
       PC extends FlowContent<PC>,
@@ -1323,15 +1323,15 @@ public abstract class WebPageLayout {
   }
 
   /**
-   * {@linkplain #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a white area},
+   * {@linkplain WebPageLayout#startWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a white area},
    * invokes the given area body, then
-   * {@linkplain #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the white area}.
+   * {@linkplain WebPageLayout#endWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the white area}.
    *
    * @param  <PC>  The parent content model this area is within
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
-   * @see  #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+   * @see  WebPageLayout#startWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+   * @see  WebPageLayout#endWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
    */
   public final <
       PC extends FlowContent<PC>,
@@ -1350,16 +1350,16 @@ public abstract class WebPageLayout {
   }
 
   /**
-   * {@linkplain #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a white area},
+   * {@linkplain WebPageLayout#startWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a white area},
    * invokes the given area body, then
-   * {@linkplain #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the white area}.
+   * {@linkplain WebPageLayout#endWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the white area}.
    *
    * @param  <PC>  The parent content model this area is within
    * @param  <__>  This content model, which will be the parent content model of child elements
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
-   * @see  #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+   * @see  WebPageLayout#startWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+   * @see  WebPageLayout#endWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
    */
   public final <
       PC extends FlowContent<PC>,
@@ -1382,15 +1382,15 @@ public abstract class WebPageLayout {
   }
 
   /**
-   * {@linkplain #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a white area},
+   * {@linkplain WebPageLayout#startWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) Begins a white area},
    * invokes the given area body, then
-   * {@linkplain #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the white area}.
+   * {@linkplain WebPageLayout#endWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent) ends the white area}.
    *
    * @param  <PC>  The parent content model this area is within
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #startWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
-   * @see  #endWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+   * @see  WebPageLayout#startWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
+   * @see  WebPageLayout#endWhiteArea(com.aoapps.web.framework.WebSiteRequest, jakarta.servlet.http.HttpServletResponse, com.aoapps.html.servlet.FlowContent)
    */
   public final <
       PC extends FlowContent<PC>,

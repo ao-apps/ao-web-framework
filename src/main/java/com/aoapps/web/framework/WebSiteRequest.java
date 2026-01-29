@@ -79,17 +79,17 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   public static final String SEARCH_QUERY = "search_query";
 
   /**
-   * Parameter that contains the search target (current {@link #SEARCH_ENTIRE_SITE} or {@link #SEARCH_THIS_AREA}).
+   * Parameter that contains the search target (current {@link WebSiteRequest#SEARCH_ENTIRE_SITE} or {@link WebSiteRequest#SEARCH_THIS_AREA}).
    */
   public static final String SEARCH_TARGET = "search_target";
 
   /**
-   * Parameter value for {@link #SEARCH_TARGET} to search the entire site.
+   * Parameter value for {@link WebSiteRequest#SEARCH_TARGET} to search the entire site.
    */
   public static final String SEARCH_ENTIRE_SITE = "entire_site";
 
   /**
-   * Parameter value for {@link #SEARCH_TARGET} to search the current area of the site.
+   * Parameter value for {@link WebSiteRequest#SEARCH_TARGET} to search the current area of the site.
    */
   public static final String SEARCH_THIS_AREA = "this_area";
 
@@ -525,7 +525,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   }
 
   /**
-   * {@linkplain #getUrlForClass(java.lang.String, com.aoapps.net.URIParameters, java.lang.String) Gets the URL}.  Including:
+   * {@linkplain WebSiteRequest#getUrlForClass(java.lang.String, com.aoapps.net.URIParameters, java.lang.String) Gets the URL}.  Including:
    * <ol>
    * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
    * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
@@ -554,7 +554,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   }
 
   /**
-   * {@linkplain #getUrlForClass(java.lang.String, com.aoapps.net.URIParameters) Gets the URL}.  Including:
+   * {@linkplain WebSiteRequest#getUrlForClass(java.lang.String, com.aoapps.net.URIParameters) Gets the URL}.  Including:
    * <ol>
    * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
    * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
@@ -610,7 +610,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   }
 
   /**
-   * {@linkplain #getUrlForClass(java.lang.String) Gets the URL}.  Including:
+   * {@linkplain WebSiteRequest#getUrlForClass(java.lang.String) Gets the URL}.  Including:
    * <ol>
    * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
    * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
@@ -645,7 +645,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   }
 
   /**
-   * {@linkplain #getUrlForPath(java.lang.String, com.aoapps.net.URIParameters, boolean) Gets the URL}.  Including:
+   * {@linkplain WebSiteRequest#getUrlForPath(java.lang.String, com.aoapps.net.URIParameters, boolean) Gets the URL}.  Including:
    * <ol>
    * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
    * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
@@ -693,7 +693,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   }
 
   /**
-   * {@linkplain #getUrl(com.aoapps.web.framework.WebPage) Gets the URL}.  Including:
+   * {@linkplain WebSiteRequest#getUrl(com.aoapps.web.framework.WebPage) Gets the URL}.  Including:
    * <ol>
    * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
    * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
@@ -727,7 +727,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   }
 
   /**
-   * {@linkplain #getUrl(com.aoapps.web.framework.WebPage, com.aoapps.net.URIParameters) Gets the URL}.  Including:
+   * {@linkplain WebSiteRequest#getUrl(com.aoapps.web.framework.WebPage, com.aoapps.net.URIParameters) Gets the URL}.  Including:
    * <ol>
    * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
    * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
@@ -759,7 +759,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   }
 
   /**
-   * {@linkplain #getUrl(java.lang.Class, com.aoapps.net.URIParameters) Gets the URL}.  Including:
+   * {@linkplain WebSiteRequest#getUrl(java.lang.Class, com.aoapps.net.URIParameters) Gets the URL}.  Including:
    * <ol>
    * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
    * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
@@ -782,7 +782,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   }
 
   /**
-   * {@linkplain #getUrl(java.lang.Class) Gets the URL}.  Including:
+   * {@linkplain WebSiteRequest#getUrl(java.lang.Class) Gets the URL}.  Including:
    * <ol>
    * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
    * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
@@ -819,7 +819,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   }
 
   /**
-   * {@linkplain #getUrlForPath(java.lang.String, com.aoapps.net.URIParameters) Gets the URL}.  Including:
+   * {@linkplain WebSiteRequest#getUrlForPath(java.lang.String, com.aoapps.net.URIParameters) Gets the URL}.  Including:
    * <ol>
    * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
    * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
@@ -840,7 +840,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
   }
 
   /**
-   * {@linkplain #getUrlForPath(java.lang.String) Gets the URL}.  Including:
+   * {@linkplain WebSiteRequest#getUrlForPath(java.lang.String) Gets the URL}.  Including:
    * <ol>
    * <li>Prefixing {@linkplain HttpServletRequest#getContextPath() context path}</li>
    * <li>Encoded to ASCII-only <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986</a> format</li>
