@@ -189,7 +189,7 @@ public abstract class WebPage extends PageServlet {
         // Add to the word list
         searchWords.add(word);
         index = searchWords.indexOf(word);
-        searchCounts.add(index, new int[]{weight});
+        searchCounts.add(index, new int[] {weight});
       } else {
         // Increment the existing count
         searchCounts.get(index)[0] += weight;

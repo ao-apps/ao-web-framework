@@ -938,7 +938,7 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
           logger.log(
               Level.SEVERE,
               "UploadedFile found, but owner doesn''t match: uf.getOwner()=\"{0}\", owner=\"{1}\".",
-              new Object[]{
+              new Object[] {
                   uf.getOwner(),
                   owner
               }

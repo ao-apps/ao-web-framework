@@ -370,7 +370,7 @@ public abstract class WebPageLayout {
       WebPage page,
       PC pc
   ) throws ServletException, IOException {
-    return startContent(req, resp, page, pc, new int[]{1}, null);
+    return startContent(req, resp, page, pc, new int[] {1}, null);
   }
 
   /**
@@ -406,7 +406,7 @@ public abstract class WebPageLayout {
       int contentColumns,
       String width
   ) throws ServletException, IOException {
-    return startContent(req, resp, page, pc, new int[]{contentColumns}, width);
+    return startContent(req, resp, page, pc, new int[] {contentColumns}, width);
   }
 
   /**
@@ -764,7 +764,7 @@ public abstract class WebPageLayout {
       HttpServletResponse resp,
       ContentEE<?> content
   ) throws ServletException, IOException {
-    contentHorizontalDivider(req, resp, content, new int[]{1}, false);
+    contentHorizontalDivider(req, resp, content, new int[] {1}, false);
   }
 
   /**
@@ -782,7 +782,7 @@ public abstract class WebPageLayout {
       int colspan,
       boolean endsInternal
   ) throws ServletException, IOException {
-    contentHorizontalDivider(req, resp, content, new int[]{colspan}, endsInternal);
+    contentHorizontalDivider(req, resp, content, new int[] {colspan}, endsInternal);
   }
 
   /**
@@ -815,7 +815,7 @@ public abstract class WebPageLayout {
       WebPage page,
       ContentEE<?> content
   ) throws ServletException, IOException {
-    endContent(req, resp, page, content, new int[]{1});
+    endContent(req, resp, page, content, new int[] {1});
   }
 
   /**
@@ -833,7 +833,7 @@ public abstract class WebPageLayout {
       ContentEE<?> content,
       int contentColumns
   ) throws ServletException, IOException {
-    endContent(req, resp, page, content, new int[]{contentColumns});
+    endContent(req, resp, page, content, new int[] {contentColumns});
   }
 
   /**
@@ -875,7 +875,7 @@ public abstract class WebPageLayout {
       PC pc,
       ServletConsumerE<? super __, Ex> content
   ) throws ServletException, IOException, Ex {
-    this.<PC, __, Ex>content(req, resp, page, pc, new int[]{1}, null, new int[]{1}, content);
+    this.<PC, __, Ex>content(req, resp, page, pc, new int[] {1}, null, new int[] {1}, content);
   }
 
   /**
@@ -901,7 +901,7 @@ public abstract class WebPageLayout {
       PC pc,
       ServletRunnableE<Ex> content
   ) throws ServletException, IOException, Ex {
-    content(req, resp, page, pc, new int[]{1}, null, new int[]{1}, content);
+    content(req, resp, page, pc, new int[] {1}, null, new int[] {1}, content);
   }
 
   /**
@@ -930,7 +930,7 @@ public abstract class WebPageLayout {
       int endContentColumns,
       ServletConsumerE<? super __, Ex> content
   ) throws ServletException, IOException, Ex {
-    this.<PC, __, Ex>content(req, resp, page, pc, new int[]{startContentColumns}, width, new int[]{endContentColumns}, content);
+    this.<PC, __, Ex>content(req, resp, page, pc, new int[] {startContentColumns}, width, new int[] {endContentColumns}, content);
   }
 
   /**
@@ -959,7 +959,7 @@ public abstract class WebPageLayout {
       int endContentColumns,
       ServletRunnableE<Ex> content
   ) throws ServletException, IOException, Ex {
-    content(req, resp, page, pc, new int[]{startContentColumns}, width, new int[]{endContentColumns}, content);
+    content(req, resp, page, pc, new int[] {startContentColumns}, width, new int[] {endContentColumns}, content);
   }
 
   /**
