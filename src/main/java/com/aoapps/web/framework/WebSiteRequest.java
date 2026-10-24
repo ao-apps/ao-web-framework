@@ -313,16 +313,16 @@ public class WebSiteRequest extends HttpServletRequestWrapper {
                 throw td;
               } catch (InterruptedException err) {
                 if (currentThread == uploadedFileCleanup) {
-                  logger.log(Level.WARNING, null, err);
+                  logger.log(Level.WARNING, "TODO: message here", err);
                 }
                 // Restore the interrupted status
                 Thread.currentThread().interrupt();
               } catch (Throwable t) {
-                logger.log(Level.SEVERE, null, t);
+                logger.log(Level.SEVERE, "TODO: message here", t);
                 try {
                   sleep(60L * 1000);
                 } catch (InterruptedException err) {
-                  logger.log(Level.WARNING, null, err);
+                  logger.log(Level.WARNING, "TODO: message here", err);
                   // Restore the interrupted status
                   Thread.currentThread().interrupt();
                 }
