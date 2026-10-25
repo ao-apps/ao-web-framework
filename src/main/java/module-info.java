@@ -21,7 +21,6 @@
  * along with ao-web-framework.  If not, see <https://www.gnu.org/licenses/>.
  */
 module com.aoapps.web.framework {
-  exports com.aoapps.web.framework;
   // Direct
   requires com.aoapps.collections; // <groupId>com.aoapps</groupId><artifactId>ao-collections</artifactId>
   requires com.aoapps.encoding; // <groupId>com.aoapps</groupId><artifactId>ao-encoding</artifactId>
@@ -41,4 +40,6 @@ module com.aoapps.web.framework {
   requires jakarta.servlet; // <groupId>jakarta.servlet</groupId><artifactId>jakarta.servlet-api</artifactId>
   // Java SE
   requires java.logging;
+
+  exports com.aoapps.web.framework;
 }
